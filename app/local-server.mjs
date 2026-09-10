@@ -1,15 +1,17 @@
 import http from 'node:http';
-import { readFile, writeFile, mkdir, rename, stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { meta, setup, validateAction, applyAction, viewFor } from './src/logic.js';
+import { JsonAdventureStorage } from './server/storage-json.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.json':'application/json', '.woff2':'font/woff2' };
 
 export function createLocalServer({ saveDir = path.join(root, '.local-data') } = {}) {
   const rooms = new Map();
+  const storage = new JsonAdventureStorage(saveDir);
   const publicDir = path.join(root, 'public');
   const server = http.createServer(async (req, res) => {
     try {
@@ -39,10 +41,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
     for (const [ws, player] of room.clients) send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view:viewFor(room.state,player), result:null, meta });
   };
   async function persist(name, state) {
-    await mkdir(saveDir, { recursive:true });
-    const target = path.join(saveDir, name + '.json');
-    await writeFile(target + '.tmp', JSON.stringify(state), 'utf8');
-    await rename(target + '.tmp', target);
+    await storage.save(name,state);
   }
   wss.on('connection', (ws, name) => {
     if (!rooms.has(name)) rooms.set(name, { state:null, clients:new Map(), queue:Promise.resolve() });
@@ -59,8 +58,8 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
           if (typeof message.playerId !== 'string' || !message.playerId.trim() || message.playerId.length > 128) return fail('playerId required');
           if (room.clients.has(ws)) return fail('already joined');
           if (!room.state) {
-            try { room.state = JSON.parse(await readFile(path.join(saveDir,name + '.json'),'utf8')); }
-            catch (error) { if (error.code !== 'ENOENT') throw error; room.state = setup([message.playerId]); await persist(name,room.state); }
+            room.state = await storage.load(name);
+            if (!room.state) { room.state = setup([message.playerId]); await persist(name,room.state); }
           }
           room.clients.set(ws,message.playerId); broadcast(room); return;
         }

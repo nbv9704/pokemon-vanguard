@@ -47,7 +47,38 @@ Roadmap nguồn: `ROADMAP.md`.
 - Browser QA: room test riêng tải Home, mở Battle Arena, bắt đầu Single Battle, resolve lượt 1 sang lượt 2 có animation, rồi điều hướng Settings; console 0 error/warning.
 - Save/gameplay/UI: không đổi schema hoặc luật; room test tách riêng khỏi adventure chính.
 
+## M0-05 — Storage adapter và migration dry-run
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Storage: `server/storage-json.mjs` đọc/lưu JSON bằng file tạm + atomic rename, kiểm room name, backup và restore bản JSON hợp lệ.
+- Server: `local-server.mjs` sử dụng adapter; save lỗi/corrupt không bị thay bằng adventure trắng.
+- Migration: `server/migrations.mjs` chuyển v1→v2 thuần và idempotent; giữ wallet, pity, summons, wins, badges, mail, legacy level/item; tạo mon/build/team ID ổn định.
+- Active battle: save có trận v1 chưa kết thúc trả trạng thái deferred và giữ nguyên bytes/state; schema mới hơn bị từ chối.
+- Dry-run: lệnh tài liệu hóa chạy thành công trên bản backup, báo 14 Mon/14 builds/team 6 và xác nhận không file nào bị đổi.
+- Restore: được kiểm trên thư mục tạm qua backup→thay state→restore; chưa có nút UI và chưa restore save thật.
+
+## M1-01 — Build validation và sáu chỉ số v2
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn: `logic-src/10-v2-builds.js`; được ghép vào logic thuần nhưng chưa bật trong adventure v1.
+- Luật: sáu stats, tổng 32 points/tối đa 16 mỗi stat, alignment neutral hoặc +10%/−10% trên hai non-HP stats khác nhau.
+- Validation: bốn move khác nhau thuộc movepool, Ability thuộc loài, item thuộc catalog.
+- Snapshot: BattleMon giữ bản build độc lập; sửa build sau khi tạo không đổi stats/PP của trận.
+
+## M1-02 — Damage, PP, accuracy và RNG v2
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn: `logic-src/20-v2-damage.js`; chưa thay battle v1 cho tới khi phase engine hoàn tất.
+- Damage: physical/special, stage −6..+6, STAB, đơn/song hệ, weather, terrain, burn và spread/incoming/outgoing modifiers.
+- Golden tests: damage 42 neutral, 84 khắc hệ, 0 miễn nhiễm; kiểm thêm ¼× và 4×.
+- PP: cập nhật immutable; Guard, miễn nhiễm và miss vẫn tiêu PP; noPP không tiêu thêm.
+- RNG/accuracy: seeded và deterministic; Struggle định nghĩa power 50 cùng recoil theo damage thực tế.
+- Validation chung sau ba ticket: `npm run check` đạt; `npm test` đạt 21/21.
+
 ## Việc tiếp theo
 
-- Ticket: M0-05 — storage adapter, migration pure function, fixture v1/v2 và dry-run/restore flow.
-- Migration ở M0-05 chưa được tự động áp vào save người dùng; chỉ kiểm tra trên bản copy tới khi M3 bật engine v2.
+- Ticket: M1-03 — battle phase machine, command validation, priority/tie, switch và target theo slot.
+- Engine v2 tiếp tục đứng sau nền kỹ thuật; game người dùng vẫn chạy v1 cho tới gate M3.

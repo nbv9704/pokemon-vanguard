@@ -34,6 +34,14 @@ npm test
 
 `npm run check` cũng xác nhận hợp đồng catalog v2 trong `app/content`: ID ổn định của 36 loài, 12 hệ, phân bổ đơn/song hệ, coverage type, asset tương ứng và các enum hiệu ứng. Có thể chạy riêng bằng `npm run check:content`. Catalog v2 hiện là dữ liệu chuẩn bị cho roadmap và chưa thay đổi gameplay v1.
 
+Kiểm tra migration trên **một bản sao** của save, không ghi thay đổi:
+
+```powershell
+npm run migrate:save -- --dry-run --input D:\duong-dan\ban-sao-save.json
+```
+
+Storage adapter có backup/restore được kiểm thử tự động, nhưng migration v2 chưa được bật cho save thật. Các fragment `10-v2-builds.js` và `20-v2-damage.js` chứa nền build/damage v2; adventure hiện vẫn dùng luật v1 cho tới khi hoàn thành phase engine và giao diện M3.
+
 Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư một lần, triệu hồi, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
 
 ## Cấu trúc

@@ -1,7 +1,8 @@
 {
   "formatVersion": 1,
   "fragments": [
+    "10-v2-builds.js",
+    "20-v2-damage.js",
     "90-public-api.js"
   ]
 }
-
