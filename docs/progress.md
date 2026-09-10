@@ -10,6 +10,7 @@ Roadmap nguồn: `ROADMAP.md`.
 - Baseline: `npm run check` đạt; `npm test` đạt 6/6 tests.
 - Save: đã sao lưu bốn file JSON vào `backups/pre-m0-20260911-015222`; tất cả bản sao đọc được và SHA-256 khớp nguồn.
 - Git: khởi tạo repository local; saves, backups, logs, dependencies và secrets được ignore.
+- Checkpoint baseline: `514a47b` (`chore: establish local roadmap baseline`).
 - Thay đổi gameplay: không.
 
 ## M0-02 — Hợp đồng catalog và ID
@@ -19,6 +20,7 @@ Roadmap nguồn: `ROADMAP.md`.
 - Phạm vi: schema catalog, enum dùng chung, mapping ổn định cho 36 loài, validator content và script npm.
 - Kết quả: tạo contract catalog và hai JSON Schema; mapping 36 loài có 12 đơn hệ/24 song hệ; `coverageType` độc lập với hệ cơ thể.
 - Validation: `npm run check` đạt; `npm test` đạt 9/9 tests. Negative tests xác nhận chặn ID trùng, type array sai, enum/effect và coverage type không hỗ trợ.
+- Checkpoint chứa triển khai: `514a47b`.
 - Thay đổi gameplay: không; dữ liệu này chưa được battle engine sử dụng cho đến bước generator.
 
 ## Việc tiếp theo
