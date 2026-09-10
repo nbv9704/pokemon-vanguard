@@ -23,7 +23,20 @@ Roadmap nguồn: `ROADMAP.md`.
 - Checkpoint chứa triển khai: `514a47b`.
 - Thay đổi gameplay: không; dữ liệu này chưa được battle engine sử dụng cho đến bước generator.
 
+## M0-03 — Generator, dev runner và legacy engine
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn luật: `app/logic-src/manifest.json` liệt kê fragment theo thứ tự; `app/src/logic.js` là artifact sinh deterministic có source hash.
+- Legacy: `app/server/legacy/logic-v1.js` đóng băng từ logic v1 trước generator; không dùng làm nơi phát triển luật v2.
+- An toàn build: syntax được kiểm trên file tạm rồi mới atomic rename; test xác nhận fragment lỗi không thay bản build hợp lệ cuối.
+- Dev: `npm run dev` compile trước khi mở server, theo dõi `logic-src` và `content`, debounce 150 ms; server Node watch chỉ nhận artifact hợp lệ.
+- Contract: checker từ chối export ngoài đúng sáu tên được phép.
+- Validation: `npm run check` đạt; `npm test` đạt 11/11; parity test bao phủ setup, claim, summon, team, double battle và một turn/event.
+- Runtime smoke: dev runner mở thành công trên cổng tạm 55273 và dừng được; server chính tại `127.0.0.1:3100` vẫn trả HTTP 200.
+- Thay đổi gameplay/save: không.
+
 ## Việc tiếp theo
 
-- Ticket: M0-03 — generator/fragment, dev runner và legacy engine adapter.
-- Điều kiện giữ nguyên: output logic phải deterministic, đúng sáu export và không làm thay đổi hành vi v1.
+- Ticket: M0-04 — tách client store/network/router theo module mà không đổi giao diện và hành vi.
+- Sau M0-04: M0-05 storage adapter và migration dry-run, chưa tự nâng save người dùng.

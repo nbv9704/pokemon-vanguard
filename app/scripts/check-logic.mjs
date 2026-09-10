@@ -88,6 +88,8 @@ for (const [pattern, why] of ADVISORY) {
 }
 
 const logic = await import(pathToFileURL(logicPath).href);
+const unexpected = Object.keys(logic).filter((name) => !REQUIRED.includes(name));
+for (const name of unexpected) problems.push(`unexpected export: ${name}`);
 for (const name of REQUIRED) {
   if (!(name in logic)) problems.push(`missing export: ${name}`);
 }

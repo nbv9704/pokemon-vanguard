@@ -8,6 +8,11 @@ Do not deploy or modify the older Higgsfield site unless the user asks.
 in `app/.local-data/`. Never commit or delete player saves as a development step.
 Keep battle and economy rules in the pure `app/src/logic.js` module.
 
+`app/src/logic.js` is now generated. Edit the explicitly ordered files in
+`app/logic-src/`, then run `npm run compile:logic`; never edit the generated file
+directly. `app/server/legacy/logic-v1.js` is the frozen v1 engine used only for
+old in-progress battles and parity tests. Do not change it while building v2.
+
 The inherited cloud files and `app/AGENTS.md` describe the original template.
 Their game-logic validation contract still applies, but their cloud build,
 Bun, deployment, and Durable Object commands are not the active local workflow.

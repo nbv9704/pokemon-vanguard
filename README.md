@@ -14,7 +14,7 @@ npm run dev
 Mở http://localhost:3100. Hoặc nhấp đúp `start-local.cmd` ở thư mục dự án.
 
 - Sửa HTML/CSS/JS trong `app/public`, rồi tải lại trình duyệt để xem thay đổi.
-- Sửa luật chơi trong `app/src/logic.js`: máy chủ tự khởi động lại khi dùng `npm run dev`.
+- Sửa luật trong `app/logic-src`, rồi chạy `npm run compile:logic`. Khi dùng `npm run dev`, trình biên dịch theo dõi fragment/catalog và chỉ khởi động lại máy chủ sau khi tạo được `app/src/logic.js` hợp lệ.
 - Dừng bằng Ctrl+C trong terminal đang chạy máy chủ.
 - Chạy `npm run start` nếu không cần tự khởi động lại.
 - Máy chủ chỉ lắng nghe trên máy này, không mở truy cập từ mạng LAN.
@@ -39,7 +39,8 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 ## Cấu trúc
 
 - `app/local-server.mjs`: máy chủ HTTP/WebSocket local và lưu file.
-- `app/src/logic.js`: dữ liệu quái, luật chiến đấu, vật phẩm, thời tiết, kinh tế.
+- `app/logic-src/`: nguồn luật có thứ tự; `app/src/logic.js` là file được sinh tự động và không sửa trực tiếp.
+- `app/server/legacy/logic-v1.js`: bản luật v1 đóng băng để kiểm tra tương thích và kết thúc trận cũ khi migration được bật.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.
