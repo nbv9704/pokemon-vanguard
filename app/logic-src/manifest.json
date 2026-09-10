@@ -3,6 +3,9 @@
   "fragments": [
     "10-v2-builds.js",
     "20-v2-damage.js",
+    "30-v2-phases.js",
+    "40-v2-effects.js",
+    "50-v2-lifecycle.js",
     "90-public-api.js"
   ]
 }

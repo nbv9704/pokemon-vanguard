@@ -78,7 +78,39 @@ Roadmap nguồn: `ROADMAP.md`.
 - RNG/accuracy: seeded và deterministic; Struggle định nghĩa power 50 cùng recoil theo damage thực tế.
 - Validation chung sau ba ticket: `npm run check` đạt; `npm test` đạt 21/21.
 
+## M1-03 — Phase machine, command, queue, switch và target
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Depends on: M1-02
+- Nguồn: `logic-src/30-v2-phases.js`.
+- Kết quả: transition hợp lệ giữa tám phase; hai phe commit command một lần; chỉ tạo queue khi đủ hai gói lệnh.
+- Queue: switch → priority → effective speed → tie key được sinh trước bằng RNG seeded; kiểm thử nhiều seed cho thấy mirror tie có cả A lẫn B đi trước.
+- Double: actor gắn `battleMonId`, target dùng `{side, slot}`, fallback foe slot thấp nhất; switch trùng reserve bị từ chối và giữ PP/status khi rời sân.
+
+## M1-04 — Conditions, Ability và held items
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Depends on: M1-03
+- Nguồn: `logic-src/40-v2-effects.js`.
+- Conditions: Burn/Poison/Slow/Sleep, Guard chain, Sun/Rain/Snow/Sand, Meadow/Storm, Tailwind/Barrier; field layers độc lập và duration không cộng dồn.
+- Catalog hooks: đăng ký đủ 24 Ability và 12 held items bằng bảng hook tường minh, không `eval`; bao phủ entry, stat, accuracy, damage, survive, after-damage, status và end-turn.
+- Luật quan trọng: miễn status theo hệ, chỉ một major status, Cure Berry dùng một lần, sturdy-heart trước Focus Crystal, weather rock không kéo terrain và ngược lại.
+
+## M1-05 — END_TURN, replacement và result
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Depends on: M1-04
+- Nguồn: `logic-src/50-v2-lifecycle.js`.
+- END_TURN: major residual → Sand → item heal → Ability heal → Meadow heal → expiry; thay đổi cùng nhóm lấy snapshot và áp dụng đối xứng.
+- Result: thắng/thua/hòa KO đồng thời, hard cap 100 lượt và receipt `${battleId}:result` duy nhất kể cả kiểm result lại.
+- Replacement: yêu cầu đúng số slot có thể lấp, chặn slot/Mon trùng, cho phép tiếp tục khi một phe còn ít Mon hơn active count.
+- Validation chung: `npm run check` đạt; `npm test` đạt 31/31 sau khi compile generated logic.
+- Remaining: engine v2 vẫn là sandbox nội bộ; chưa nối vào save/UI v1 trước gate M3.
+
 ## Việc tiếp theo
 
-- Ticket: M1-03 — battle phase machine, command validation, priority/tie, switch và target theo slot.
-- Engine v2 tiếp tục đứng sau nền kỹ thuật; game người dùng vẫn chạy v1 cho tới gate M3.
+- Ticket: M1-06 — event schema, log projector và adapter cho animator hiện tại.
+- Sau M1-06 sẽ chạy gate M1: mutation checks và 1.000 trận seeded smoke, tối đa 100 lượt.
