@@ -36,7 +36,18 @@ Roadmap nguồn: `ROADMAP.md`.
 - Runtime smoke: dev runner mở thành công trên cổng tạm 55273 và dừng được; server chính tại `127.0.0.1:3100` vẫn trả HTTP 200.
 - Thay đổi gameplay/save: không.
 
+## M0-04 — Tách client store, network và router
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Store: `public/js/store.js` quản lý player identity, room và settings; settings JSON lỗi được phục hồi an toàn.
+- Router: `public/js/router.js` là nguồn duy nhất cho chín màn hình và từ chối route không khai báo.
+- Network: `public/js/net.js` quản lý join, heartbeat, reconnect, parse frame và gửi action; `client.js` chỉ xử lý state/UI.
+- Validation tự động: `npm run check` đạt; `npm test` đạt 14/14, gồm store/router/network module tests.
+- Browser QA: room test riêng tải Home, mở Battle Arena, bắt đầu Single Battle, resolve lượt 1 sang lượt 2 có animation, rồi điều hướng Settings; console 0 error/warning.
+- Save/gameplay/UI: không đổi schema hoặc luật; room test tách riêng khỏi adventure chính.
+
 ## Việc tiếp theo
 
-- Ticket: M0-04 — tách client store/network/router theo module mà không đổi giao diện và hành vi.
-- Sau M0-04: M0-05 storage adapter và migration dry-run, chưa tự nâng save người dùng.
+- Ticket: M0-05 — storage adapter, migration pure function, fixture v1/v2 và dry-run/restore flow.
+- Migration ở M0-05 chưa được tự động áp vào save người dùng; chỉ kiểm tra trên bản copy tới khi M3 bật engine v2.

@@ -41,6 +41,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/local-server.mjs`: máy chủ HTTP/WebSocket local và lưu file.
 - `app/logic-src/`: nguồn luật có thứ tự; `app/src/logic.js` là file được sinh tự động và không sửa trực tiếp.
 - `app/server/legacy/logic-v1.js`: bản luật v1 đóng băng để kiểm tra tương thích và kết thúc trận cũ khi migration được bật.
+- `app/public/js/store.js`, `router.js`, `net.js`: trạng thái trình duyệt, điều hướng và kết nối WebSocket được tách khỏi phần render trong `client.js`.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.

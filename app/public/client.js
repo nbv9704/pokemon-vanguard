@@ -1,33 +1,23 @@
 
 import {creature} from "./art.js";
 import {BattleAnimator} from "./battle-animation.js";
-let id=localStorage.getItem("aether-player");if(!id){id=crypto.randomUUID();localStorage.setItem("aether-player",id);}
-const room=new URLSearchParams(location.search).get("room")||"aether-"+id;
-let socket,V=null,page="home",filter="All",search="",ownedOnly=false,selected=0,commands={},pending=false,modalId=null,lastNotice="",retry=0,connected=false,toastTimer;
+import {createBrowserStore} from "./js/store.js";
+import {createRouter,NAV_ITEMS} from "./js/router.js";
+import {AdventureConnection,websocketUrl} from "./js/net.js";
+const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
+const id=browserStore.playerId,room=browserStore.room,router=createRouter();
+let V=null,filter="All",search="",ownedOnly=false,selected=0,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
 let latestView=null,playback=null,playbackVersion=0;
-let settings;try{settings=JSON.parse(localStorage.getItem("aether-settings")||"{}");}catch{settings={};}
+const settings=browserStore.settings;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const art=id=>'<div class="art">'+creature(id)+'</div>';
 const btn=(label,action,cls="",disabled=false)=>'<button class="'+cls+'" data-action="'+action+'" '+(disabled?"disabled":"")+'>'+label+'</button>';
-const navs=[["home","◈","Command Center"],["battle","⚔","Battle Arena"],["collection","▦","Monster Archive"],["summon","✦","Summon Portal"],["gym","♜","Gym Challenge"],["training","⤴","Training Room"],["mail","✉","Mailbox"],["settings","⚙","Settings"],["guide","?","Field Guide"]];
+const navs=NAV_ITEMS;
 function notify(t){$("#toast").textContent=t;$("#toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").classList.remove("show"),4200);}
 function prefs(){document.body.classList.toggle("reduce",!!settings.reduce);document.body.classList.toggle("contrast",!!settings.contrast);document.documentElement.style.setProperty("--scale",settings.large?"1.12":"1");}
 prefs();
-function connect(){
- socket=new WebSocket((location.protocol==="https:"?"wss:":"ws:")+"//"+location.host+"/ws/"+encodeURIComponent(room));
- socket.onopen=()=>{retry=0;connected=true;socket.send(JSON.stringify({type:"join",playerId:id}));};
- socket.onmessage=e=>{
- if(e.data==="__pong")return;let m;try{m=JSON.parse(e.data);}catch{return;}
- if(m.type==="error"){pending=false;notify(m.error);draw();return;}
- if(m.type!=="state"||!m.view)return;
- if(m.view.spectator){$("#app").innerHTML='<div class="empty">This adventure belongs to another player. <a href="/">Open your own adventure</a></div>';return;}
- receiveView(m.view);
- };
- socket.onclose=()=>{connected=false;pending=false;if(playback)finishPlayback();else if(V)draw();else $("#connection").textContent="Connection interrupted. Reconnecting…";setTimeout(connect,Math.min(15000,700*2**retry++));};
- socket.onerror=()=>{};
-}
-setInterval(()=>{if(socket?.readyState===1)socket.send("__ping");},30000);
+const connection=new AdventureConnection({url:websocketUrl(location,room),playerId:id,WebSocketImpl:WebSocket,onState:view=>{if(view.spectator){$("#app").innerHTML='<div class="empty">This adventure belongs to another player. <a href="/">Open your own adventure</a></div>';return;}receiveView(view);},onError:error=>{pending=false;notify(error);draw();},onStatus:value=>{connected=value;if(value)return;pending=false;if(playback)finishPlayback();else if(V)draw();else $("#connection").textContent="Connection interrupted. Reconnecting…";}});
 function receiveView(next){
  const previous=latestView;latestView=next;pending=false;
  if(playback){
@@ -35,7 +25,7 @@ function receiveView(next){
   if(previous?.battle?.id===next.battle?.id&&previous?.battle?.round===next.battle?.round)return;
   finishPlayback();return;
  }
- if(previous&&page==="battle"&&previous.battle&&!previous.battle.result&&next.battle?.id===previous.battle.id&&next.battle.round===previous.battle.round+1&&next.battle.eventsRound===previous.battle.round&&next.battle.events?.length){
+ if(previous&&router.current==="battle"&&previous.battle&&!previous.battle.result&&next.battle?.id===previous.battle.id&&next.battle.round===previous.battle.round+1&&next.battle.eventsRound===previous.battle.round&&next.battle.events?.length){
   void playTurn(previous,next);return;
  }
  if(previous?.battle?.round!==next.battle?.round)commands={};
@@ -55,14 +45,14 @@ async function playTurn(previous,next){
  document.querySelector('.battlehead')?.scrollIntoView({block:'start',behavior:animator.reduced?'auto':'smooth'});
  try{
   await animator.play(next.battle.events,frame=>{
-   if(version!==playbackVersion||page!=="battle")return;
+   if(version!==playbackVersion||router.current!=="battle")return;
    V={...V,battle:{...V.battle,...frame}};draw();
   });
  }catch(error){console.error('Battle animation:',error);}
  finally{if(version===playbackVersion)finishPlayback();}
 }
-function send(a){if(pending||playback)return;if(socket?.readyState!==1){notify("Reconnecting. Please try again shortly.");return;}pending=true;socket.send(JSON.stringify({type:"action",action:a}));draw();}
-function start(mode,gym){commands={};page="battle";send({type:"battle",mode,...(gym===undefined?{}:{gym})});}
+function send(a){if(pending||playback)return;if(!connection.sendAction(a)){notify("Reconnecting. Please try again shortly.");return;}pending=true;draw();}
+function start(mode,gym){commands={};router.go("battle");send({type:"battle",mode,...(gym===undefined?{}:{gym})});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; AETHER LEAGUE · SEASON 01</span></div>';}
 function card(d,reveal=false,duplicate=false){const m=V.collection.find(m=>m.id===d.id);return '<button class="monster '+(!m?"locked ":"")+(reveal?"reveal":"")+'" style="--c:'+d.color+'" data-action="detail:'+d.id+'"><div class="serial"><span>#'+String(d.id+1).padStart(3,"0")+'</span><span class="rarity '+d.rarity+'">'+d.rarity.toUpperCase()+'</span></div>'+art(d.id)+(V.team.includes(d.id)?'<span class="check">✓ IN TEAM</span>':"")+'<h3>'+d.name+'</h3>'+types(d)+'<p style="font-size:10px">'+(duplicate?"+150 coins · duplicate":m?"Level "+m.level+" · "+d.ability.name:"Undiscovered · view details")+'</p></button>';}
@@ -116,7 +106,7 @@ function battle(){
 }
 function draw(){
  if(!V)return;
- const t=performance.now(),content={home,collection:()=>archive(false),training:()=>archive(true),summon,gym,mail,settings:settingsPage,guide,battle}[page]();
+ const page=router.current,t=performance.now(),content={home,collection:()=>archive(false),training:()=>archive(true),summon,gym,mail,settings:settingsPage,guide,battle}[page]();
  $("#app").innerHTML='<div class="shell"><aside class="sidebar"><div class="brand"><div class="brandmark">✦</div><div class="brandname">AETHER<small>CHAMPIONS</small></div></div><div class="navlabel">PLAY & DISCOVER</div><div class="navs">'+navs.map(([k,icon,label])=>'<button class="nav '+(page===k?"active":"")+'" data-action="nav:'+k+'"><span class="icon">'+icon+'</span>'+label+(k==="mail"&&!V.mail.includes(0)?'<span class="badge">1</span>':"")+'</button>').join("")+'</div><div class="sidefoot"><span class="online">● '+(connected?"ADVENTURE SAVED":"RECONNECTING")+'</span><p>Original monster battle RPG<br>Version 1.0 · Solo adventure</p></div></aside><div><header class="topbar"><div class="breadcrumb">Aether League &nbsp; / &nbsp; <b>'+navs.find(n=>n[0]===page)[2]+'</b></div><div class="resources"><div class="currency"><span>◈</span>'+V.coins.toLocaleString()+'</div><div class="currency crystal"><span>✦</span>'+V.gems.toLocaleString()+'</div><div class="avatar">C</div></div></header><main class="content">'+content+'<footer class="bottomnote"><span>✦ &nbsp; AETHER CHAMPIONS</span><span>'+V.collection.length+' / 36 DISCOVERED &nbsp; · &nbsp; '+V.badges.length+' / 6 BADGES</span></footer></main></div></div>';
  if(playback){
   document.querySelectorAll('.commands button,.commands select,.turnfooter button').forEach(el=>{el.disabled=true;});
@@ -137,7 +127,7 @@ document.addEventListener("click",e=>{
  const el=e.target.closest("[data-action]");if(!el||el.disabled)return;const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
- if(a==="nav"){page=b;search="";filter="All";closeModal();draw();window.scrollTo(0,0);}
+ if(a==="nav"&&router.go(b)){search="";filter="All";closeModal();draw();window.scrollTo(0,0);}
  if(a==="start")start(b);
  if(a==="detail")detail(+b);
  if(a==="close")closeModal();
@@ -154,18 +144,18 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("change",e=>{
  const t=e.target;
- if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;localStorage.setItem('aether-settings',JSON.stringify(settings));return;}
+ if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;browserStore.saveSettings();return;}
  if(playback)return;
  if(t.id==="filter"){filter=t.value;draw();}
  if(t.id==="owned"){ownedOnly=t.checked;draw();}
- if(t.dataset.setting){settings[t.dataset.setting]=t.checked;localStorage.setItem("aether-settings",JSON.stringify(settings));prefs();}
+ if(t.dataset.setting){settings[t.dataset.setting]=t.checked;browserStore.saveSettings();prefs();}
  if(t.id==="equip")send({type:"equip",id:+t.dataset.id,item:+t.value});
  if(t.dataset.target!==undefined)commands[+t.dataset.target].target=+t.value;
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
 document.addEventListener("input",e=>{if(e.target.id==="search"){const pos=e.target.selectionStart;search=e.target.value;draw();$("#search").focus();$("#search").setSelectionRange(pos,pos);}});
 document.addEventListener("keydown",e=>{if(e.code==="Escape")closeModal();if(e.code==="Tab"&&$("#modal").children.length){const els=[...$("#modal").querySelectorAll("button:not(:disabled),select,input")];const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
-connect();
+connection.start();
 
 // Leaving/resizing the scene commits its already-saved outcome and cancels effects.
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&playback)finishPlayback();});

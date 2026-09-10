@@ -7,8 +7,8 @@
     "dev": "node scripts/dev-local.mjs",
     "start": "node local-server.mjs",
     "check:content": "node scripts/check-content.mjs",
-    "check": "node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node --check local-server.mjs && node --check public/client.js && node --check public/battle-animation.js && node --check scripts/check-content.mjs && node --check scripts/compile-logic.mjs && node --check scripts/dev-local.mjs",
-    "test": "node --test tests/local.test.mjs tests/animation.test.mjs tests/content.test.mjs tests/logic-generator.test.mjs"
+    "check": "node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node --check local-server.mjs && node --check public/client.js && node --check public/battle-animation.js && node --check public/js/store.js && node --check public/js/router.js && node --check public/js/net.js && node --check scripts/check-content.mjs && node --check scripts/compile-logic.mjs && node --check scripts/dev-local.mjs",
+    "test": "node --test tests/local.test.mjs tests/animation.test.mjs tests/content.test.mjs tests/logic-generator.test.mjs tests/client-modules.test.mjs"
   },
   "engines": {
     "node": ">=22"
