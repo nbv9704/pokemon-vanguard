@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "catalogVersion": "2.0.0-alpha.1",
+  "types": ["Flame", "Tide", "Bloom", "Volt", "Frost", "Stone", "Gale", "Shadow", "Light", "Venom", "Steel", "Astral"],
+  "stats": ["hp", "atk", "def", "spa", "spd", "spe"],
+  "moveCategories": ["physical", "special", "status"],
+  "targetModes": ["self", "ally", "foe", "allFoes", "ownSide", "field"],
+  "effectKinds": ["applyStatus", "changeStage", "heal", "guard", "setWeather", "setTerrain", "setSideCondition", "redirect"],
+  "effectTimings": ["onUse", "afterDamage"],
+  "effectTargets": ["self", "hitTarget", "ally", "ownSide", "field"],
+  "statuses": ["burn", "poison", "slow", "sleep"],
+  "weather": ["sun", "rain", "snow", "sand"],
+  "terrain": ["meadow", "storm"],
+  "sideConditions": ["tailwind", "barrier"]
+}
+

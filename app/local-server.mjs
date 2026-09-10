@@ -1,0 +1,93 @@
+import http from 'node:http';
+import { readFile, writeFile, mkdir, rename, stat } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { WebSocketServer, WebSocket } from 'ws';
+import { meta, setup, validateAction, applyAction, viewFor } from './src/logic.js';
+
+const root = path.dirname(fileURLToPath(import.meta.url));
+const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.json':'application/json', '.woff2':'font/woff2' };
+
+export function createLocalServer({ saveDir = path.join(root, '.local-data') } = {}) {
+  const rooms = new Map();
+  const publicDir = path.join(root, 'public');
+  const server = http.createServer(async (req, res) => {
+    try {
+      if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); return res.end(); }
+      const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+      const file = path.resolve(publicDir, '.' + (pathname === '/' ? '/index.html' : pathname));
+      if (!file.startsWith(publicDir + path.sep)) { res.writeHead(403); return res.end(); }
+      if (!(await stat(file)).isFile()) { res.writeHead(404); return res.end(); }
+      res.writeHead(200, { 'Content-Type':mime[path.extname(file)] || 'application/octet-stream', 'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff' });
+      res.end(req.method === 'HEAD' ? undefined : await readFile(file));
+    } catch (error) { res.writeHead(error.code === 'ENOENT' ? 404 : 400); res.end('Not found'); }
+  });
+  const wss = new WebSocketServer({ noServer:true, maxPayload:16384 });
+  server.on('upgrade', (req, socket, head) => {
+    let match, validOrigin = false;
+    try {
+      match = /^\/ws\/([A-Za-z0-9_-]{1,64})$/.exec(new URL(req.url, 'http://localhost').pathname);
+      validOrigin = !req.headers.origin || new URL(req.headers.origin).host === req.headers.host;
+    } catch {}
+    if (!match || !validOrigin) {
+      socket.end('HTTP/1.1 403 Forbidden\r\n\r\n'); return;
+    }
+    wss.handleUpgrade(req, socket, head, ws => wss.emit('connection', ws, match[1]));
+  });
+  const send = (ws, message) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message)); };
+  const broadcast = room => {
+    for (const [ws, player] of room.clients) send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view:viewFor(room.state,player), result:null, meta });
+  };
+  async function persist(name, state) {
+    await mkdir(saveDir, { recursive:true });
+    const target = path.join(saveDir, name + '.json');
+    await writeFile(target + '.tmp', JSON.stringify(state), 'utf8');
+    await rename(target + '.tmp', target);
+  }
+  wss.on('connection', (ws, name) => {
+    if (!rooms.has(name)) rooms.set(name, { state:null, clients:new Map(), queue:Promise.resolve() });
+    const room = rooms.get(name);
+    ws.on('error', () => {});
+    ws.on('message', raw => {
+      if (raw.toString() === '__ping') { ws.send('__pong'); return; }
+      room.queue = room.queue.then(async () => {
+        const fail = error => send(ws, {type:'error', error});
+        let message;
+        try { message = JSON.parse(raw.toString()); } catch { return fail('invalid json'); }
+        if (!message || typeof message !== 'object' || Array.isArray(message)) return fail('expected a json object');
+        if (message.type === 'join') {
+          if (typeof message.playerId !== 'string' || !message.playerId.trim() || message.playerId.length > 128) return fail('playerId required');
+          if (room.clients.has(ws)) return fail('already joined');
+          if (!room.state) {
+            try { room.state = JSON.parse(await readFile(path.join(saveDir,name + '.json'),'utf8')); }
+            catch (error) { if (error.code !== 'ENOENT') throw error; room.state = setup([message.playerId]); await persist(name,room.state); }
+          }
+          room.clients.set(ws,message.playerId); broadcast(room); return;
+        }
+        const player = room.clients.get(ws);
+        if (!player) return fail('join first');
+        if (message.type !== 'action') return fail('unknown message type');
+        if (player !== room.state.owner) return fail('spectators cannot act');
+        if (JSON.stringify(message.action ?? null).length > 4096) return fail('action too large');
+        const valid = validateAction(room.state,player,message.action);
+        if (!valid.ok) return fail(valid.error);
+        const next = applyAction(room.state,player,message.action);
+        await persist(name,next);
+        room.state = next;
+        broadcast(room);
+      }).catch(error => { console.error('Local save/action error:', error.message); send(ws,{type:'error',error:'Could not save this action. Check the local server terminal.'}); });
+    });
+    ws.on('close', () => { room.queue = room.queue.then(() => {room.clients.delete(ws); if(room.state) broadcast(room);}); });
+  });
+  return {
+    server,
+    listen: (port = 3100) => new Promise((resolve,reject) => {server.once('error',reject); server.listen(port,'127.0.0.1',()=>{server.off('error',reject);resolve(server.address().port);});}),
+    close: async () => {for(const ws of wss.clients) ws.terminate(); await Promise.all([...rooms.values()].map(r=>r.queue)); await new Promise(resolve=>wss.close(resolve)); await new Promise(resolve=>server.close(resolve));}
+  };
+}
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const app = createLocalServer();
+  const port = await app.listen(Number(process.env.PORT || 3100));
+  console.log(`Aether Champions: http://localhost:${port}\nSaves: ${path.join(root,'.local-data')}\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);
+  for (const signal of ['SIGINT','SIGTERM']) process.on(signal,async()=>{await app.close();process.exit(0);});
+}

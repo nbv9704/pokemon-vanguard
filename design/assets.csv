@@ -1,0 +1,4 @@
+id,role,type,description,size/ratio,style line ref,source
+roster,36 monster portraits,SVG,original individual creature silhouettes,260x230,cel shaded,authored vector
+arena,battle environment,CSS,teal tournament platform,16:9,cel shaded,authored vector
+cover,launch image,SVG,Aether Champions fox and dragon,1600x1067,cel shaded,authored vector

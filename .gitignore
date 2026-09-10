@@ -1,0 +1,11 @@
+app/node_modules/
+app/.local-data/
+app/*.log
+backups/
+reports/
+.env
+.env.*
+!.env.example
+*.tmp
+*.zip
+

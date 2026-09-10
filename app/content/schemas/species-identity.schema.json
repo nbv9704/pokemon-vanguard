@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aether.local/schemas/species-identity.schema.json",
+  "title": "Aether Champions stable species identity",
+  "type": "array",
+  "minItems": 36,
+  "maxItems": 36,
+  "items": {
+    "type": "object",
+    "required": ["id", "legacyId", "artId", "name", "types", "coverageType"],
+    "properties": {
+      "id": {"type":"string","pattern":"^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+      "legacyId": {"type":"integer","minimum":0,"maximum":35},
+      "artId": {"type":"integer","minimum":0,"maximum":35},
+      "name": {"type":"string","minLength":1,"maxLength":40},
+      "types": {"type":"array","minItems":1,"maxItems":2,"uniqueItems":true,"items":{"type":"string"}},
+      "coverageType": {"type":"string"}
+    },
+    "additionalProperties": false
+  }
+}
