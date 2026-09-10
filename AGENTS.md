@@ -8,6 +8,14 @@ Do not deploy or modify the older Higgsfield site unless the user asks.
 in `app/.local-data/`. Never commit or delete player saves as a development step.
 Keep battle and economy rules in the pure `app/src/logic.js` module.
 
+Keep source modules small and cohesive. Split a file when it starts owning more
+than one clear responsibility (for example validation, resolution, event
+projection, and persistence must not grow together). Prefer several ordered
+`app/logic-src/` fragments with explicit names over a large catch-all file;
+generated file size does not count because `app/src/logic.js` is never edited by
+hand. Check line and byte counts during each milestone and refactor before adding
+the next concern.
+
 `app/src/logic.js` is now generated. Edit the explicitly ordered files in
 `app/logic-src/`, then run `npm run compile:logic`; never edit the generated file
 directly. `app/server/legacy/logic-v1.js` is the frozen v1 engine used only for
