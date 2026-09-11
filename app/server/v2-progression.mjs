@@ -1,3 +1,4 @@
+import {applyBlueprintImport,applyTeamSave} from './v2-team-actions.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const stats=['hp','atk','def','spa','spd','spe'];
 
@@ -6,7 +7,7 @@ function initialProgression(state,catalog){
  const builds=mons.map(mon=>{const species=catalog.speciesById[mon.speciesId];return {buildId:`build-${mon.speciesId}-1`,monId:mon.monId,...clone(species.defaultBuild),revision:1};});
  const bySpecies=new Map(builds.map(build=>[build.monId.slice(4),build.buildId]));
  const buildIds=(state.team||[]).map(id=>catalog.species.find(entry=>entry.legacyId===id)?.id).map(id=>bySpecies.get(id)).filter(Boolean);
- return {revision:1,nextBuildId:1,nextTeamId:1,mons,builds,teams:[{teamId:'team-default',name:'Đội hiện tại',buildIds,revision:1}],activeTeamId:'team-default'};
+ return {revision:1,nextBuildId:1,nextTeamId:1,nextBlueprintId:1,mons,builds,teams:[{teamId:'team-default',name:'Đội hiện tại',buildIds,revision:1}],blueprints:[],activeTeamId:'team-default'};
 }
 
 export function getV2Progression(state,catalog){return clone(state.progressionV2||initialProgression(state,catalog));}
@@ -41,17 +42,10 @@ export function applyV2ProgressionAction(state,action,catalog){
   progression.revision++;base.coins-=cost;base.progressionV2=progression;return {ok:true,state:base,cost,build:clone(saved)};
  }
  if(action?.type==='team.save'){
-  const input=action.team;if(!input||typeof input.name!=='string'||!input.name.trim()||input.name.trim().length>40||!Array.isArray(input.buildIds)||input.buildIds.length<1||input.buildIds.length>6)return {ok:false,code:'TEAM_ILLEGAL'};
-  const builds=input.buildIds.map(id=>progression.builds.find(entry=>entry.buildId===id));if(builds.some(entry=>!entry))return {ok:false,code:'TEAM_ILLEGAL'};
-  const species=builds.map(build=>progression.mons.find(mon=>mon.monId===build.monId)?.speciesId);if(new Set(species).size!==species.length)return {ok:false,code:'TEAM_ILLEGAL'};
-  const existing=input.teamId?progression.teams.find(entry=>entry.teamId===input.teamId):null;if(input.teamId&&!existing)return {ok:false,code:'TEAM_NOT_FOUND'};
-  if(existing&&action.expectedRevision!==existing.revision)return {ok:false,code:'STALE_REVISION',latest:clone(existing)};
-  const normalized={teamId:existing?.teamId||`team-${progression.nextTeamId++}`,name:input.name.trim(),buildIds:[...input.buildIds],revision:(existing?.revision||0)+1};
-  if(existing&&existing.name===normalized.name&&JSON.stringify(existing.buildIds)===JSON.stringify(normalized.buildIds))return {ok:true,state:base,cost:0,noOp:true,team:clone(existing)};
-  if(existing)progression.teams[progression.teams.findIndex(entry=>entry.teamId===existing.teamId)]=normalized;else progression.teams.push(normalized);
-  progression.revision++;base.progressionV2=progression;return {ok:true,state:base,cost:0,team:clone(normalized)};
+  return applyTeamSave(base,progression,action);
  }
+ if(action?.type==='blueprint.import')return applyBlueprintImport(base,progression,action,catalog);
  return {ok:false,code:'UNKNOWN_V2_ACTION'};
 }
 
-export function v2TrainingView(state,catalog){const progression=getV2Progression(state,catalog);return {revision:progression.revision,mons:progression.mons,builds:progression.builds,teams:progression.teams,activeTeamId:progression.activeTeamId};}
+export function v2TrainingView(state,catalog){const progression=getV2Progression(state,catalog);return {revision:progression.revision,mons:progression.mons,builds:progression.builds,teams:progression.teams,blueprints:progression.blueprints||[],activeTeamId:progression.activeTeamId};}

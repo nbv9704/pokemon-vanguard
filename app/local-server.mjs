@@ -30,7 +30,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
       res.end(req.method === 'HEAD' ? undefined : await readFile(file));
     } catch (error) { res.writeHead(error.code === 'ENOENT' ? 404 : 400); res.end('Not found'); }
   });
-  const wss = new WebSocketServer({ noServer:true, maxPayload:16384 });
+  const wss = new WebSocketServer({ noServer:true, maxPayload:70 * 1024 });
   server.on('upgrade', (req, socket, head) => {
     let match, validOrigin = false;
     try {
@@ -76,8 +76,8 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
         if (!player) return fail('join first');
         if (message.type !== 'action') return fail('unknown message type');
         if (player !== room.state.owner) return fail('spectators cannot act');
-        if (JSON.stringify(message.action ?? null).length > 4096) return fail('action too large');
-        if (['build.save','team.save'].includes(message.action?.type)) {
+        if (Buffer.byteLength(JSON.stringify(message.action ?? null)) > 64 * 1024) return fail('action too large');
+        if (['build.save','team.save','blueprint.import'].includes(message.action?.type)) {
           const result=applyV2ProgressionAction(room.state,message.action,v2Catalog);
           if (!result.ok) return fail(result.code);
           await persist(name,result.state);room.state=result.state;broadcast(room);return;

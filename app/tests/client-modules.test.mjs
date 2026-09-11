@@ -16,7 +16,7 @@ test('browser store recovers invalid settings and keeps a stable player room',()
 });
 
 test('router accepts only declared screens',()=>{
- const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,9);
+ const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,10);
  assert.equal(router.go('battle'),true);assert.equal(router.current,'battle');
  assert.equal(router.go('admin'),false);assert.equal(router.current,'battle');
 });
@@ -34,4 +34,3 @@ test('connection joins, filters protocol frames and sends authoritative actions'
  connection.stop();assert.equal(connection.sendAction({type:'claim',id:1}),false);
  assert.equal(websocketUrl({protocol:'https:',host:'game.test'},'a b'),'wss://game.test/ws/a%20b');
 });
-

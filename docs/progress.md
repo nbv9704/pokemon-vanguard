@@ -168,8 +168,34 @@ Roadmap nguồn: `ROADMAP.md`.
 - Lỗi tìm thấy/sửa: bare `window.fetch` mất binding; build mới chưa nhận server ID khiến lần lưu hai bị tính như build mới.
 - Validation chung: `npm run check` đạt; `npm test` đạt 44/44, bao gồm 1.000 trận seeded M1 và restart persistence M2.
 
+## M2-04 — Box, permanent và trial
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn: `public/js/box-view.js`, `public/box-view.css`; renderer và trạng thái bộ lọc không nằm trong `client.js`.
+- Archive: luôn hiển thị đủ 36 loài và phân biệt rõ locked, permanent, trial; thẻ owned có số build và số lần build đang được đội sử dụng.
+- Bộ lọc: tab Archive/Permanent/Trial, tìm tên, lọc type/role và sắp xếp tên/rarity.
+- Trial: chỉ đọc và bị chặn Training; fixture tự động xác nhận trạng thái trial trước khi Recruitment được bật ở M4.
+
+## M2-05 — Team Builder và blueprint
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn UI: `public/js/team-builder.js`, `team-analysis.js`, `public/team-builder.css`; nguồn server: `server/v2-team-actions.mjs`.
+- Team: sáu slot theo build, species không trùng; draft dưới sáu Mon vẫn lưu được và được giải thích là chưa hợp lệ để đấu.
+- Regulation: cả UI và server báo Species Clause; đội đủ sáu Mon còn kiểm Item Clause. Phân tích hiển thị role, coverage, điểm yếu/kháng hệ và gợi ý speed control, support, damage category.
+- Blueprint schema v1 chỉ chứa species và build spec. Import tối đa 64 KiB, kiểm ID/build points/move/Ability/item; loài chưa sở hữu được lưu là ineligible và không tạo Mon hay cấp tiền.
+- Browser QA room riêng: dựng/lưu đội sáu Mon, reload giữ đủ sáu build; export 2.753 bytes không có `monId`, `buildId`, coins, ownership hoặc session; import thiếu Cindrake vẫn giữ đúng sáu Mon permanent; console 0 lỗi/cảnh báo.
+
+## Gate M2 — Roster và team authoring
+
+- Status: PASSED
+- Physical-fast/Support: lưu được build `Vật lý tốc độ` cho Emberlyn và `Hỗ trợ sân` cho Mossprout qua cùng validator server.
+- Tương thích: lưu đội hiện tại không xóa team cũ; build mặc định của cả 36 loài có bốn chiêu hợp lệ, tên build và mô tả chiêu đầy đủ.
+- Validation: `npm run check` đạt; `npm test` đạt 50/50, gồm 1.000 trận seeded deterministic và toàn bộ test M2.
+
 ## Việc tiếp theo
 
-- Ticket: M2-04 — Box permanent/trial, archive locked/owned và search/filter theo catalog v2.
-- Ticket: M2-05 — sáu team slots, legality checks và blueprint import/export.
-- Sau hai ticket chạy Gate M2 với physical-fast/support build và team cũ không mất dữ liệu.
+- Ticket: M3-01 — Regulation validator và Team Preview pick3/pick4 trước trận.
+- Ticket: M3-02 — AI Easy/Normal/Hard, đội mẫu và đội gym cho single/double.
+- Ticket: M3-03 — UI phase/target/replacement, field chips và battle log từ event v2.

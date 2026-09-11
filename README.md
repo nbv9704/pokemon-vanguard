@@ -51,6 +51,9 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/server/legacy/logic-v1.js`: bản luật v1 đóng băng để kiểm tra tương thích và kết thúc trận cũ khi migration được bật.
 - `app/public/js/store.js`, `router.js`, `net.js`: trạng thái trình duyệt, điều hướng và kết nối WebSocket được tách khỏi phần render trong `client.js`.
 - `app/public/js/training-editor.js`: editor build v2; catalog lấy từ `/api/v2/catalog`, save được server kiểm và lưu atomic.
+- `app/public/js/box-view.js`: Archive 36 loài với ownership permanent/trial/locked và bộ lọc catalog v2.
+- `app/public/js/team-builder.js`, `team-analysis.js`: đội sáu slot, kiểm regulation, phân tích matchup và blueprint JSON.
+- `app/server/v2-team-actions.mjs`: luật team và import blueprint authoritative; blueprint không thể cấp Mon hoặc tiền.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.
@@ -59,7 +62,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 
 ## Nội dung phiên bản đầu
 
-36 loài quái, 12 hệ nguyên tố, mỗi loài có bốn kỹ năng và nội tại; sáu vật phẩm cầm, thời tiết, đấu đơn/đôi với AI, sáu gym, tập luyện, thư, gacha bằng tiền trong game, đội hình và cài đặt hiển thị.
+36 loài quái gồm 12 đơn hệ và 24 song hệ, 12 hệ nguyên tố, 48 chiêu, 24 Ability và 12 vật phẩm cầm; có thời tiết/điều kiện sân, đấu đơn/đôi với AI, sáu gym, Training build, Archive permanent/trial, Team Builder, thư, gacha bằng tiền trong game và cài đặt hiển thị.
 
 Đây là bản solo với AI; chưa có đấu PvP, âm thanh hoặc hệ thống tài khoản. Không sử dụng thanh toán tiền thật. Các hình minh họa là vector tự vẽ.
 

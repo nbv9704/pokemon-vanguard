@@ -5,9 +5,11 @@ import {createBrowserStore} from "./js/store.js";
 import {createRouter,NAV_ITEMS} from "./js/router.js";
 import {AdventureConnection,websocketUrl} from "./js/net.js";
 import {TrainingEditor} from "./js/training-editor.js";
+import {BoxView} from "./js/box-view.js";
+import {TeamBuilder} from "./js/team-builder.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
-let V=null,filter="All",search="",ownedOnly=false,selected=0,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
+let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
 let latestView=null,playback=null,playbackVersion=0;
 const settings=browserStore.settings;
 const $=s=>document.querySelector(s);
@@ -53,7 +55,10 @@ async function playTurn(previous,next){
  finally{if(version===playbackVersion)finishPlayback();}
 }
 function send(a){if(pending||playback)return;if(!connection.sendAction(a)){notify("Reconnecting. Please try again shortly.");return;}pending=true;draw();}
-const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:()=>{if(V&&router.current==='training')draw();},sendAction:send});
+const redrawWorkspace=()=>{if(V&&['training','collection','teams'].includes(router.current))draw();};
+const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
+const boxView=new BoxView({onChange:redrawWorkspace});
+const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:send});
 trainingEditor.load().catch(error=>notify(error.message));
 function start(mode,gym){commands={};router.go("battle");send({type:"battle",mode,...(gym===undefined?{}:{gym})});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
@@ -70,10 +75,9 @@ function home(){
 }
 function archive(training=false){
  if(training)return head("Training room","Tạo build chiến thuật với chỉ số, Ability, bốn chiêu và held item.")+trainingEditor.render(V,{art});
- const list=V.catalog.filter(d=>(!training&&!ownedOnly||V.collection.some(m=>m.id===d.id))&&(filter==="All"||d.types.includes(filter))&&d.name.toLowerCase().includes(search.toLowerCase()));
- return head(training?"Training room":"Monster archive",training?"Train your companions, equip held items, and prepare for the next challenge.":"Discover all 36 species. Select a monster to inspect its moves and edit your team.")+
- '<div class="filters"><input type="search" id="search" placeholder="Search monsters…" value="'+esc(search)+'"><select id="filter"><option>All</option>'+V.types.map(t=>'<option '+(filter===t?"selected":"")+'>'+t+'</option>').join("")+'</select>'+(!training?'<label style="padding:9px"><input type="checkbox" id="owned" '+(ownedOnly?"checked":"")+'> Owned only</label>':"")+'</div><div class="sectiontitle"><small>'+list.length+' MONSTERS · '+V.collection.length+'/36 COLLECTED</small>'+btn("Type effectiveness ↗","chart","small ghost")+'</div><div class="grid">'+list.map(d=>card(d)).join("")+'</div>'+(list.length?"":'<div class="empty">No monsters match your filters.</div>');
+ return head("Monster archive","Theo dõi toàn bộ 36 loài, quyền sở hữu vĩnh viễn hoặc trial, build và đội đang sử dụng.")+boxView.render(V,trainingEditor.catalog,{art});
 }
+function teamsPage(){return head("Team builder","Ghép tối đa sáu Mon, kiểm tra regulation và chia sẻ blueprint an toàn.")+teamBuilder.render(V,trainingEditor.catalog,{art});}
 function summon(){return head("Summon portal","Call a new companion from beyond the veil.","THE CELESTIAL CALL")+
  '<section class="summonhero"><div class="eyebrow" style="color:#d1b3f1">PERMANENT BANNER · ALL 36 SPECIES</div><h2>A NEW BOND.<br>A NEW BEGINNING.</h2><p>Every summon brings a new possibility. Discover rare elemental companions to complete your team.</p>'+art(35)+'<div class="actions">'+btn("✦ Summon ×1 · 100","summon:1","orange",pending||V.gems<100)+btn("✦ Summon ×10 · 1,000","summon:10","primary",pending||V.gems<1000)+'</div></section><div class="rates"><span>Common 60%</span><span>Rare 30%</span><span>Epic 8%</span><span style="color:var(--gold)">Legendary 2%</span></div><div class="panel"><div class="sectiontitle"><b>Legendary guarantee</b><small>'+V.pity+' / 50</small></div><div class="progress"><i style="width:'+V.pity*2+'%"></i></div><p style="font-size:11px">A Legendary is guaranteed by pull 50; resets on a Legendary. Every 10th total pull is Epic or better. Rates above are base rates before guarantees. Duplicates become 150 coins. Currency is earned through play; no real-money purchases.</p></div>'+
  (V.reveal.length?'<div class="sectiontitle" style="margin-top:25px"><h2>Your summons</h2></div><div class="grid">'+V.reveal.map(r=>card(V.catalog[r.id],true,r.duplicate)).join("")+'</div>':"");}
@@ -110,7 +114,7 @@ function battle(){
 }
 function draw(){
  if(!V)return;
- const page=router.current,t=performance.now(),content={home,collection:()=>archive(false),training:()=>archive(true),summon,gym,mail,settings:settingsPage,guide,battle}[page]();
+ const page=router.current,t=performance.now(),content={home,collection:()=>archive(false),teams:teamsPage,training:()=>archive(true),summon,gym,mail,settings:settingsPage,guide,battle}[page]();
  $("#app").innerHTML='<div class="shell"><aside class="sidebar"><div class="brand"><div class="brandmark">✦</div><div class="brandname">AETHER<small>CHAMPIONS</small></div></div><div class="navlabel">PLAY & DISCOVER</div><div class="navs">'+navs.map(([k,icon,label])=>'<button class="nav '+(page===k?"active":"")+'" data-action="nav:'+k+'"><span class="icon">'+icon+'</span>'+label+(k==="mail"&&!V.mail.includes(0)?'<span class="badge">1</span>':"")+'</button>').join("")+'</div><div class="sidefoot"><span class="online">● '+(connected?"ADVENTURE SAVED":"RECONNECTING")+'</span><p>Original monster battle RPG<br>Version 1.0 · Solo adventure</p></div></aside><div><header class="topbar"><div class="breadcrumb">Aether League &nbsp; / &nbsp; <b>'+navs.find(n=>n[0]===page)[2]+'</b></div><div class="resources"><div class="currency"><span>◈</span>'+V.coins.toLocaleString()+'</div><div class="currency crystal"><span>✦</span>'+V.gems.toLocaleString()+'</div><div class="avatar">C</div></div></header><main class="content">'+content+'<footer class="bottomnote"><span>✦ &nbsp; AETHER CHAMPIONS</span><span>'+V.collection.length+' / 36 DISCOVERED &nbsp; · &nbsp; '+V.badges.length+' / 6 BADGES</span></footer></main></div></div>';
  if(playback){
   document.querySelectorAll('.commands button,.commands select,.turnfooter button').forEach(el=>{el.disabled=true;});
@@ -128,10 +132,10 @@ function chart(){
  modalId=null;$("#modal").innerHTML='<div class="modalback"><section class="modal" role="dialog" aria-modal="true" aria-label="Type effectiveness">'+btn("✕","close","close small")+'<h2>Type effectiveness</h2><p style="font-size:12px">Rows attack → columns defend. Dual types multiply. 2× strong · ½× resisted · 0× immune.</p><div class="tablewrap"><table class="chart"><thead><tr><th>ATK ↓ DEF →</th>'+V.types.map(t=>'<th>'+t+'</th>').join("")+'</tr></thead><tbody>'+V.types.map((t,i)=>'<tr><th>'+t+'</th>'+V.typeChart[i].map(v=>'<td class="'+(v>1?"good":v<1?"bad":"")+'">'+(v===.5?"½":v)+'×</td>').join("")+'</tr>').join("")+'</tbody></table></div></section></div>';
 }
 document.addEventListener("click",e=>{
- const el=e.target.closest("[data-action],[data-training]");if(!el||el.disabled)return;if(el.dataset.training){trainingEditor.handleClick(el,V);return;}const [a,b,c]=el.dataset.action.split(":");
+ const el=e.target.closest("[data-action],[data-training],[data-box],[data-team]");if(!el||el.disabled)return;if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
- if(a==="nav"&&router.go(b)){search="";filter="All";closeModal();draw();window.scrollTo(0,0);}
+ if(a==="nav"&&router.go(b)){closeModal();draw();window.scrollTo(0,0);}
  if(a==="start")start(b);
  if(a==="detail")detail(+b);
  if(a==="close")closeModal();
@@ -148,17 +152,16 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("change",e=>{
  const t=e.target;
+ if(boxView.handleInput(t)||teamBuilder.handleInput(t))return;
  if(trainingEditor.handleInput(t))return;
  if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;browserStore.saveSettings();return;}
  if(playback)return;
- if(t.id==="filter"){filter=t.value;draw();}
- if(t.id==="owned"){ownedOnly=t.checked;draw();}
  if(t.dataset.setting){settings[t.dataset.setting]=t.checked;browserStore.saveSettings();prefs();}
  if(t.id==="equip")send({type:"equip",id:+t.dataset.id,item:+t.value});
  if(t.dataset.target!==undefined)commands[+t.dataset.target].target=+t.value;
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
-document.addEventListener("input",e=>{if(trainingEditor.handleInput(e.target))return;if(e.target.id==="search"){const pos=e.target.selectionStart;search=e.target.value;draw();$("#search").focus();$("#search").setSelectionRange(pos,pos);}});
+document.addEventListener("input",e=>{const t=e.target,selector=t.dataset.boxField!==undefined?`[data-box-field="${t.dataset.boxField}"]`:t.dataset.teamField!==undefined?`[data-team-field="${t.dataset.teamField}"]`:null,pos=t.selectionStart;if(boxView.handleInput(t)||teamBuilder.handleInput(t)){const next=selector&&document.querySelector(selector);next?.focus();if(next?.setSelectionRange&&pos!==null)next.setSelectionRange(pos,pos);return;}trainingEditor.handleInput(t);});
 document.addEventListener("keydown",e=>{if(e.code==="Escape")closeModal();if(e.code==="Tab"&&$("#modal").children.length){const els=[...$("#modal").querySelectorAll("button:not(:disabled),select,input")];const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 connection.start();
 
