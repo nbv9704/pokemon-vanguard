@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "targetGame": "Pokémon Vanguard",
   "initialRegulation": "m-a",
   "publishPolicy": "manual-review",
@@ -9,13 +9,15 @@
     "moves": "https://pokebase.app/pokemon-champions/moves",
     "abilities": "https://pokebase.app/pokemon-champions/abilities",
     "items": "https://pokebase.app/pokemon-champions/items",
+    "rosterRanch": "https://pokebase.app/pokemon-champions/roster-ranch-sim",
     "sprites": "https://play.pokemonshowdown.com/sprites/ani/"
   },
   "contentRules": {
     "statPointBudget": 66,
     "statPointCap": 32,
     "rarity": false,
-    "recruitmentOfferCount": 8,
+    "recruitmentOfferCount": 10,
+    "recruitmentOfferCountSource": "observed-roster-ranch-2026-09-11",
     "trialDays": 7,
     "formats": ["single", "double"],
     "spriteMode": "front-gif-flipped-for-player-side",
