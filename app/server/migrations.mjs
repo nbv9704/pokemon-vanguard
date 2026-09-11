@@ -29,12 +29,14 @@ export function migrateV1ToV2(state,identities){
  for(const identity of identities){if(selected.length>=6)break;const buildId=`build-${identity.id}-1`;if(builds.some(build=>build.buildId===buildId)&&!selected.includes(buildId))selected.push(buildId);}
  const preservedTeams=Array.isArray(source.progressionV2?.teams)&&source.progressionV2.teams.length?clone(source.progressionV2.teams):[{teamId:'team-migrated-1',name:'Đội chuyển từ bản cũ',buildIds:selected,revision:1}];
  const migrated={
-  schemaVersion:2,owner:source.owner,revision:1,rulesVersion:'1.0.0-legacy',catalogVersion:'2.0.0-alpha.1',
-  wallet:{coins:Math.max(0,Math.trunc(source.coins||0)),crystals:Math.max(0,Math.trunc(source.gems||0))},
+  ...source,schemaVersion:2,owner:source.owner,revision:1,rulesVersion:'2.0.0-alpha.1',catalogVersion:'2.0.0-alpha.1',
+  coins:Math.max(0,Math.trunc(source.coins||0)),gems:Math.max(0,Math.trunc(source.gems||0)),wallet:{coins:Math.max(0,Math.trunc(source.coins||0)),crystals:Math.max(0,Math.trunc(source.gems||0))},
   rngState:{economy:(source.seed>>>0)||1},pity:Math.max(0,Math.trunc(source.pity||0)),summons:Math.max(0,Math.trunc(source.summons||0)),wins:Math.max(0,Math.trunc(source.wins||0)),
-  mons,builds,teams:preservedTeams,activeTeamId:source.progressionV2?.activeTeamId||preservedTeams[0].teamId,
-  gymProgress:{badges:[...(source.badges||[])]},mailClaims:[...(source.mail||[])],rewardReceipts:[],battle:null,
-  migrationReceipt:{from:1,to:2,id:'v1-to-v2',legacyBattleResult:source.battle?.result||null}
+  progressionRevision:source.progressionV2?.revision||1,nextBuildId:source.progressionV2?.nextBuildId||1,nextTeamId:source.progressionV2?.nextTeamId||1,nextBlueprintId:source.progressionV2?.nextBlueprintId||1,
+  mons,builds,teams:preservedTeams,blueprints:clone(source.progressionV2?.blueprints||[]),activeTeamId:source.progressionV2?.activeTeamId||preservedTeams[0].teamId,
+  gymProgress:{badges:[...(source.badges||[])]},mailClaims:[...(source.mail||[])],rewardReceipts:clone(source.rewardReceipts||[]),battle:null,battleV2:null,
+  tutorialV2:{completed:false,steps:{team:false,battle:false,reward:false,build:false}},migrationReceipt:{from:1,to:2,id:'v1-to-v2',legacyBattleResult:source.battle?.result||null}
  };
+ delete migrated.progressionV2;
  return {status:'migrated',state:migrated,report:{from:1,to:2,changed:true,mons:mons.length,builds:builds.length,teamSize:selected.length}};
 }

@@ -1,3 +1,4 @@
+import {storeV2Progression} from './v2-progression-state.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 export const BLUEPRINT_SCHEMA_VERSION=1;
 export const BLUEPRINT_MAX_BYTES=64*1024;
@@ -21,7 +22,7 @@ export function applyTeamSave(base,progression,action){
  const normalized={teamId:existing?.teamId||`team-${progression.nextTeamId++}`,name:input.name.trim(),buildIds:[...input.buildIds],revision:(existing?.revision||0)+1};
  if(existing&&existing.name===normalized.name&&JSON.stringify(existing.buildIds)===JSON.stringify(normalized.buildIds))return {ok:true,state:base,cost:0,noOp:true,team:clone(existing)};
  if(existing)progression.teams[progression.teams.findIndex(team=>team.teamId===existing.teamId)]=normalized;else progression.teams.push(normalized);
- progression.revision++;base.progressionV2=progression;return {ok:true,state:base,cost:0,team:clone(normalized)};
+ progression.revision++;storeV2Progression(base,progression);return {ok:true,state:base,cost:0,team:clone(normalized)};
 }
 
 function validateBuildSpec(spec,catalog){
@@ -44,6 +45,6 @@ export function sanitizeBlueprint(input,progression,catalog){
 
 export function applyBlueprintImport(base,progression,action,catalog){
  const result=sanitizeBlueprint(action.blueprint,progression,catalog);if(!result.ok)return result;
- progression.nextBlueprintId=(progression.nextBlueprintId||1)+1;progression.blueprints=[result.blueprint,...(progression.blueprints||[])].slice(0,20);progression.revision++;base.progressionV2=progression;
+ progression.nextBlueprintId=(progression.nextBlueprintId||1)+1;progression.blueprints=[result.blueprint,...(progression.blueprints||[])].slice(0,20);progression.revision++;storeV2Progression(base,progression);
  return {ok:true,state:base,cost:0,blueprint:clone(result.blueprint)};
 }

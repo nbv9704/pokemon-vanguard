@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const defaultRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const normalize = source => source.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').replace(/\s+$/u, '') + '\n';
-const engineExports=['V2_createBattleMon','V2_transition','V2_monById','V2_activeEntries','V2_reserves','V2_resolveTargets','V2_validateCommands','V2_submitCommands','V2_resolveEntry','V2_resolveTurn','V2_validateReplacements','V2_applyReplacements','V2_calculateDamage','V2_effectiveness','V2_effectiveStat','V2_logPage','V2_projectEvent','V2_toAnimationEvents','V2_assertBattleInvariants'];
+const engineExports=['V2_createBattleMon','V2_transition','V2_monById','V2_activeEntries','V2_reserves','V2_resolveTargets','V2_validateCommands','V2_submitCommands','V2_resolveEntry','V2_resolveTurn','V2_validateReplacements','V2_applyReplacements','V2_calculateDamage','V2_damageModifiers','V2_effectiveness','V2_effectiveStat','V2_logPage','V2_projectEvent','V2_toAnimationEvents','V2_assertBattleInvariants'];
 
 export async function buildLogic(root = defaultRoot) {
   const sourceDir = path.join(root, 'logic-src');

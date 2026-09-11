@@ -1,16 +1,9 @@
 import {applyBlueprintImport,applyTeamSave} from './v2-team-actions.mjs';
+import {debitV2Coins,getV2ProgressionState,storeV2Progression,v2Coins} from './v2-progression-state.mjs';
+import {markV2Tutorial} from './v2-release.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const stats=['hp','atk','def','spa','spd','spe'];
-
-function initialProgression(state,catalog){
- const mons=(state.collection||[]).map(owned=>{const species=catalog.species.find(entry=>entry.legacyId===owned.id);return {monId:`mon-${species.id}`,speciesId:species.id,ownership:'permanent'};});
- const builds=mons.map(mon=>{const species=catalog.speciesById[mon.speciesId];return {buildId:`build-${mon.speciesId}-1`,monId:mon.monId,...clone(species.defaultBuild),revision:1};});
- const bySpecies=new Map(builds.map(build=>[build.monId.slice(4),build.buildId]));
- const buildIds=(state.team||[]).map(id=>catalog.species.find(entry=>entry.legacyId===id)?.id).map(id=>bySpecies.get(id)).filter(Boolean);
- return {revision:1,nextBuildId:1,nextTeamId:1,nextBlueprintId:1,mons,builds,teams:[{teamId:'team-default',name:'Đội hiện tại',buildIds,revision:1}],blueprints:[],activeTeamId:'team-default'};
-}
-
-export function getV2Progression(state,catalog){return clone(state.progressionV2||initialProgression(state,catalog));}
+export function getV2Progression(state,catalog){return getV2ProgressionState(state,catalog);}
 
 export function validateBuildInput(build,mon,catalog){
  const errors=[];const species=catalog.speciesById[mon.speciesId];
@@ -36,13 +29,13 @@ export function applyV2ProgressionAction(state,action,catalog){
   const normalized={...clone(input),name:input.name.trim()};delete normalized.revision;
   if(existing){const comparable={...existing};delete comparable.revision;if(JSON.stringify(comparable)===JSON.stringify(normalized))return {ok:true,state:base,cost:0,noOp:true,build:clone(existing)};}
   const contentChanged=!existing||battleFields(existing)!==battleFields(normalized),cost=contentChanged&&(existing||ownedBuilds.length>0)?10:0;
-  if((base.coins||0)<cost)return {ok:false,code:'INSUFFICIENT_COINS'};
+  if(v2Coins(base)<cost)return {ok:false,code:'INSUFFICIENT_COINS'};
   const saved={...normalized,buildId:existing?.buildId||`build-custom-${progression.nextBuildId++}`,revision:(existing?.revision||0)+1};
   if(existing)progression.builds[progression.builds.findIndex(entry=>entry.buildId===existing.buildId)]=saved;else progression.builds.push(saved);
-  progression.revision++;base.coins-=cost;base.progressionV2=progression;return {ok:true,state:base,cost,build:clone(saved)};
+  progression.revision++;debitV2Coins(base,cost);storeV2Progression(base,progression);markV2Tutorial(base,'build');return {ok:true,state:base,cost,build:clone(saved)};
  }
  if(action?.type==='team.save'){
-  return applyTeamSave(base,progression,action);
+  const result=applyTeamSave(base,progression,action);if(result.ok)markV2Tutorial(result.state,'team');return result;
  }
  if(action?.type==='blueprint.import')return applyBlueprintImport(base,progression,action,catalog);
  return {ok:false,code:'UNKNOWN_V2_ACTION'};

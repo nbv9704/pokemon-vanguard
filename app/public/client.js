@@ -8,6 +8,8 @@ import {TrainingEditor} from "./js/training-editor.js";
 import {BoxView} from "./js/box-view.js";
 import {TeamBuilder} from "./js/team-builder.js";
 import {V2BattleScreen} from "./js/v2-battle-screen.js";
+import {DamageInspector} from "./js/damage-inspector.js";
+import {renderV2Tutorial} from "./js/v2-tutorial.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
 let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
@@ -61,13 +63,14 @@ const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:redr
 const boxView=new BoxView({onChange:redrawWorkspace});
 const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:send});
 const v2BattleScreen=new V2BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
+const damageInspector=new DamageInspector({fetchImpl:(...args)=>fetch(...args),getDraft:()=>trainingEditor.draft});
 trainingEditor.load().catch(error=>notify(error.message));
 function start(mode,gym){commands={};router.go("battle");const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard'});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; AETHER LEAGUE · SEASON 01</span></div>';}
 function card(d,reveal=false,duplicate=false){const m=V.collection.find(m=>m.id===d.id);return '<button class="monster '+(!m?"locked ":"")+(reveal?"reveal":"")+'" style="--c:'+d.color+'" data-action="detail:'+d.id+'"><div class="serial"><span>#'+String(d.id+1).padStart(3,"0")+'</span><span class="rarity '+d.rarity+'">'+d.rarity.toUpperCase()+'</span></div>'+art(d.id)+(V.team.includes(d.id)?'<span class="check">✓ IN TEAM</span>':"")+'<h3>'+d.name+'</h3>'+types(d)+'<p style="font-size:10px">'+(duplicate?"+150 coins · duplicate":m?"Level "+m.level+" · "+d.ability.name:"Undiscovered · view details")+'</p></button>';}
 function home(){
- return head("Welcome back, Challenger.","A new legend starts with your next battle.")+
+ return head("Welcome back, Challenger.","A new legend starts with your next battle.")+renderV2Tutorial(V)+
  '<section class="hero"><div class="herocopy"><div class="eyebrow">THE AETHER LEAGUE AWAITS</div><h2>YOUR TEAM.<br>YOUR TACTICS.<br><em>YOUR LEGEND.</em></h2><p>Forge an elemental team. Outsmart your rivals. Rise through the Aether League.</p>'+btn("Enter the arena &nbsp; ↗","nav:battle","primary")+'</div><div class="heroart"><div class="ring"></div>'+art(0)+art(1)+'<span class="spark">✦</span></div><div class="herotag">36 MONSTERS. ENDLESS POSSIBILITIES.</div></section>'+
  '<div class="dashboard"><div><div class="sectiontitle"><h2>Choose your battle</h2><small>AI CHALLENGERS · TEAM OF 4</small></div><div class="modegrid"><button class="modecard" data-action="start:single"><small>CLASSIC FORMAT</small><span class="modeicon">⚔</span><h3>Single Battle</h3><p>One monster at a time.<br>Every decision counts.</p><span class="arrow">Find a challenger &nbsp; →</span></button><button class="modecard double" data-action="start:double"><small>TACTICAL FORMAT</small><span class="modeicon">✧</span><h3>Double Battle</h3><p>Two monsters. One strategy.<br>Discover powerful synergies.</p><span class="arrow">Build your synergy &nbsp; →</span></button></div><div class="sectiontitle" style="margin-top:26px"><h2>Your battle team</h2>'+btn("Manage team →","nav:collection","small ghost")+'</div><div class="teamstrip">'+V.team.map(id=>{const m=V.collection.find(x=>x.id===id);return '<button class="mini" data-action="detail:'+id+'">'+art(id)+'<b>'+V.catalog[id].name+'</b><small>Lv. '+m.level+' · '+V.catalog[id].types[0]+'</small></button>';}).join("")+'</div></div><aside><div class="panel"><div class="sectiontitle"><h2>Your journey</h2><span style="color:var(--gold)">✧</span></div>'+[
  ["Build your collection",V.collection.length,36,"36 original companions"],
@@ -76,7 +79,7 @@ function home(){
  ].map(([n,v,max,r])=>'<div class="mission"><b>'+n+'</b><small>'+v+' / '+max+' completed</small><div class="progress"><i style="width:'+100*v/max+'%"></i></div><span class="reward">'+r+'</span></div>').join("")+'</div><div class="panel" style="margin-top:15px;background:linear-gradient(120deg,#342b3e,#1c2436)"><div class="eyebrow" style="color:#ccb1eb">THE CELESTIAL CALL</div><h3 style="margin:10px 0">Meet your next champion</h3><p style="font-size:11px">Epic or better every 10 summons.</p>'+btn("Visit summon portal →","nav:summon","small ghost")+'</div></aside></div>';
 }
 function archive(training=false){
- if(training)return head("Training room","Tạo build chiến thuật với chỉ số, Ability, bốn chiêu và held item.")+trainingEditor.render(V,{art});
+ if(training)return head("Training room","Tạo build chiến thuật với chỉ số, Ability, bốn chiêu và held item.")+trainingEditor.render(V,{art})+damageInspector.render(V,trainingEditor.catalog);
  return head("Monster archive","Theo dõi toàn bộ 36 loài, quyền sở hữu vĩnh viễn hoặc trial, build và đội đang sử dụng.")+boxView.render(V,trainingEditor.catalog,{art});
 }
 function teamsPage(){return head("Team builder","Ghép tối đa sáu Mon, kiểm tra regulation và chia sẻ blueprint an toàn.")+teamBuilder.render(V,trainingEditor.catalog,{art});}
@@ -94,12 +97,12 @@ function settingsPage(){return head("Settings","Make the arena feel like home.")
  ["large","Larger text","Increase interface text size for easier reading."]
  ].map(([key,title,desc])=>'<label class="settingsrow"><div><b>'+title+'</b><p>'+desc+'</p></div><input type="checkbox" data-setting="'+key+'" '+(settings[key]?"checked":"")+'></label>').join("")+'<div class="settingsrow"><div><b>Adventure save</b><p>Saved automatically to this browser’s adventure identity. Keep browser data to return to your collection.</p></div><span class="pill">'+(connected?"Connected":"Reconnecting")+'</span></div><div class="settingsrow"><div><b>Audio</b><p>This first version is silent.</p></div><span class="rarity">NO AUDIO TRACK</span></div></div>';}
 function guide(){return head("Field guide","Everything you need to become an Aether Champion.")+'<div class="helpgrid">'+[
- ["01 · Build a team","Open Monster Archive and choose up to four owned monsters. The first one (or two in doubles) enters first. Move a monster to the lead in its detail panel. You start with six companions."],
- ["02 · Plan your turn","Choose a move and a target for each active monster, then resolve the turn. Faster monsters act first. Guard and switches act before attacks. A fainted target is replaced by another active target."],
- ["03 · Manage energy","Start at 5 energy and recover 1 each turn. Basic attacks cost 0, heavy attacks and utility cost 2, and spread attacks cost 3. Same-type moves gain 25% damage."],
- ["04 · Read the battlefield","Entry abilities and weather moves set conditions for five turns. The latest weather replaces the previous one. Dual-type effectiveness multiplies both weaknesses and resistances."],
- ["05 · Equip and train","All six held items are available from the start, with one item per monster. Training costs level × 30 coins, increasing HP and stats up to level 30. Monsters recover fully between battles."],
- ["06 · Earn your collection","Win battles for 180 coins and 80 crystals. Defeats give 60 coins and 20 crystals. Gyms grant additional first-win rewards. Summons cost 100 crystals; duplicate species become 150 coins."]
+ ["01 · Build a team","Open Team Builder and save six different species. Team Preview selects three for Single or four for Double; the first one or two choices become your leads."],
+ ["02 · Plan your turn","Choose a move, target, or switch for every active Mon. Switches, move priority, effective Speed, then a seeded tie key determine action order. Replacement happens in its own phase."],
+ ["03 · Manage PP","Each move has its own PP. Guard, misses and immunities still spend PP; when all moves are empty the Mon uses Struggle. Same-type moves gain 50% damage."],
+ ["04 · Read the battlefield","Weather, terrain and side conditions use separate layers with visible durations. Dual-type effectiveness multiplies both weaknesses and resistances; the field chips show every active layer."],
+ ["05 · Equip and train","Training assigns 32 stat points, alignment, one of two Abilities, four moves and one of 12 held items. Damage Inspector previews the exact server calculation without rewards."],
+ ["06 · Earn your collection","Alpha exhibition wins grant 180 coins and 80 crystals; losses or draws grant 60 and 20. Gym first clear adds 500 and 300. Sandbox and surrender grant nothing."]
  ].map(([h,p])=>'<div class="panel"><h3>'+h+'</h3><p>'+p+'</p></div>').join("")+'</div><div class="panel" style="margin-top:20px"><h3>Weather & passive abilities</h3>'+V.catalog.filter((_,i)=>i%3===0).map(m=>'<p style="font-size:12px"><b>'+m.ability.name+'</b> · '+m.ability.desc+'</p>').join("")+btn("Open type chart","chart","primary")+'</div>';}
 
 function live(side){return V.battle[side].map((m,i)=>({m,i})).filter(x=>x.m.hp>0&&x.m.slot>=0).sort((a,b)=>a.m.slot-b.m.slot);}
@@ -107,7 +110,8 @@ function animationBar(){return '<div class="battle-announcer" role="status" aria
 function ensureCommands(){for(const {m,i} of live("allies"))if(!commands[i])commands[i]={kind:"move",actor:i,move:0,target:live("enemies")[0]?.i};}
 function fighter(m,side,i){return '<div class="fighter" data-fighter="'+side+'-'+i+'">'+art(m.id)+'<div class="hpbox"><strong>'+V.catalog[m.id].name+'<span>Lv.'+m.level+'</span></strong><div class="progress"><i class="'+(m.hp<m.max*.3?"low":"")+'" style="width:'+m.hp/m.max*100+'%"></i></div><small>'+m.hp+'/'+m.max+' HP · '+m.energy+' EN'+(m.status?" · "+m.status.toUpperCase():"")+'</small></div></div>';}
 function battle(){
- if(!V.battle||V.battle.result)return head("Battle arena","Chọn đội hình qua Team Preview rồi chiến đấu bằng phase engine v2.")+v2BattleScreen.render(V,trainingEditor.catalog,{art});
+ if(V.battle?.result)return head("Legacy battle complete","Kết quả v1 đã được lưu an toàn trước khi nâng adventure.")+`<section class="panel v2-result"><small>LEGACY V1 · MATCH COMPLETE</small><h2>${esc(V.battle.result)}</h2><p>+${V.battle.reward?.coins||0} coins · +${V.battle.reward?.gems||0} crystals</p>${btn("Tiếp tục sang Tactical Alpha","legacy-finish","primary")}</section>`;
+ if(!V.battle)return head("Battle arena","Chọn đội hình qua Team Preview rồi chiến đấu bằng phase engine v2.")+v2BattleScreen.render(V,trainingEditor.catalog,{art});
  const b=V.battle;if(!b)return head("Battle arena","Choose your format and face an AI challenger.")+'<div class="modegrid"><div class="panel"><h2>Single Battle</h2><p>One active monster per side. Bring up to four.</p>'+btn("Start single battle","start:single","primary")+'</div><div class="panel"><h2>Double Battle</h2><p>Two active monsters per side. Combine their strengths.</p>'+btn("Start double battle","start:double","primary")+'</div></div><div class="panel" style="margin-top:20px"><h3>Ready your team</h3><p>Manage your lead monsters, held items and levels before entering.</p>'+btn("Manage battle team →","nav:collection","ghost")+'</div>';
  ensureCommands();
  return '<div class="battlehead"><div><div class="eyebrow">'+(b.gym===null?"EXHIBITION MATCH":gyms[b.gym].toUpperCase())+'</div><h1>'+ (b.mode==="double"?"Double":"Single")+' Battle <span style="color:var(--muted);font-size:18px">/ Turn '+b.round+'</span></h1></div>'+btn("Type chart","chart","small ghost")+'</div>'+animationBar()+'<div class="arena" data-playing="'+!!playback+'" data-weather="'+b.weather+'"><div class="fieldlabel">'+b.weather.toUpperCase()+' '+(b.weatherTurns?"· "+b.weatherTurns+" TURNS":"")+'</div><div class="fighters enemies">'+live("enemies").map(({m,i})=>fighter(m,"enemies",i)).join("")+'</div><div class="fighters allies">'+live("allies").map(({m,i})=>fighter(m,"allies",i)).join("")+'</div></div>'+
@@ -135,7 +139,7 @@ function chart(){
  modalId=null;$("#modal").innerHTML='<div class="modalback"><section class="modal" role="dialog" aria-modal="true" aria-label="Type effectiveness">'+btn("✕","close","close small")+'<h2>Type effectiveness</h2><p style="font-size:12px">Rows attack → columns defend. Dual types multiply. 2× strong · ½× resisted · 0× immune.</p><div class="tablewrap"><table class="chart"><thead><tr><th>ATK ↓ DEF →</th>'+V.types.map(t=>'<th>'+t+'</th>').join("")+'</tr></thead><tbody>'+V.types.map((t,i)=>'<tr><th>'+t+'</th>'+V.typeChart[i].map(v=>'<td class="'+(v>1?"good":v<1?"bad":"")+'">'+(v===.5?"½":v)+'×</td>').join("")+'</tr>').join("")+'</tbody></table></div></section></div>';
 }
 document.addEventListener("click",e=>{
- const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-v2battle]");if(!el||el.disabled)return;if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
+ const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-v2battle],[data-damage]");if(!el||el.disabled)return;if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
  if(a==="nav"&&router.go(b)){closeModal();draw();window.scrollTo(0,0);}
@@ -152,9 +156,11 @@ document.addEventListener("click",e=>{
  if(a==="move"){commands[+b]={...commands[+b],kind:"move",move:+c};draw();}
  if(a==="resolve")send({type:"turn",round:V.battle.round,commands:live("allies").map(x=>commands[x.i])});
  if(a==="surrender"){if(confirm("Surrender this battle? No rewards will be granted."))send({type:"surrender"});}
+ if(a==="legacy-finish")send({type:"legacy.finish"});
 });
 document.addEventListener("change",e=>{
  const t=e.target;
+ if(damageInspector.handleInput(t,V,trainingEditor.catalog))return;
  if(v2BattleScreen.handleInput(t))return;
  if(boxView.handleInput(t)||teamBuilder.handleInput(t))return;
  if(trainingEditor.handleInput(t))return;

@@ -25,11 +25,14 @@ Trạng thái trò chơi lưu tại `app/.local-data/*.json`, không đưa vào 
 Trình duyệt lưu mã người chơi để nhận lại đúng bản lưu. Hãy dùng cùng trình duyệt và cùng địa chỉ `localhost:3100` để tiếp tục chơi.
 Có thể sao lưu cả thư mục `.local-data`. Bản lưu trên website cũ không tự chuyển về local.
 
+Khi một save local schema v1 được mở, máy chủ tự tạo bản sao tại `app/.local-data/.migration-backups` rồi nâng lên schema v2. Trận v1 đang diễn ra được giữ nguyên; sau khi kết thúc hoặc đầu hàng, giao diện vẫn hiện kết quả cũ. Bấm **Tiếp tục sang Tactical Alpha** để backup kết quả rồi migrate. Không tạo thêm trận v1 sau khi đã nâng schema.
+
 ## Kiểm tra
 
 ```powershell
 npm run check
 npm test
+npm run simulate -- --seed 100 --matches 10000
 ```
 
 `npm run check` cũng xác nhận catalog v2 trong `app/content`: 36 loài, 48 chiêu, 24 Ability, 12 held items, ID/tham chiếu, sáu base stats tổng 480, phân bổ đơn/song hệ, coverage type và effect schema. Có thể chạy riêng bằng `npm run check:content`; `npm run generate:content` tái tạo các JSON từ nguồn authoring. Battle v1 chưa bị thay đổi.
@@ -40,7 +43,9 @@ Kiểm tra migration trên **một bản sao** của save, không ghi thay đổ
 npm run migrate:save -- --dry-run --input D:\duong-dan\ban-sao-save.json
 ```
 
-Storage adapter có backup/restore được kiểm thử tự động, nhưng migration v2 chưa được bật cho save thật. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. `src/v2-engine.mjs` là adapter server được sinh từ chính các fragment này. Battle Arena mới đã dùng v2 cho Team Preview và đấu thử; reward/adventure migration sẽ được bật ở M3-05.
+Storage adapter có backup/restore và migration v1→v2 được kiểm thử tự động. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. `src/v2-engine.mjs` là adapter server được sinh từ chính các fragment này. Battle Arena dùng v2 cho Team Preview, battle và reward có receipt chống cộng trùng.
+
+Lệnh simulation dùng bốn worker local, cùng một cấp AI cho hai phía, đổi bên theo từng matchup và ghi CSV cùng JSON summary vào `reports/`. Báo cáo không đọc hoặc ghi `app/.local-data`.
 
 Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư một lần, triệu hồi, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
 
@@ -56,7 +61,11 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/server/v2-team-actions.mjs`: luật team và import blueprint authoritative; blueprint không thể cấp Mon hoặc tiền.
 - `app/server/v2-regulations.mjs`, `v2-ai.mjs`: regulation Team Preview và AI Easy/Normal/Hard với nguồn dữ liệu đã lọc.
 - `app/server/v2-battle-actions.mjs`, `v2-battle-factory.mjs`, `v2-battle-view.mjs`: action authoritative, dựng trận và projection riêng cho client.
+- `app/server/v2-settlement.mjs`, `v2-release.mjs`: reward receipt, đồng bộ ví, tutorial và migration release.
+- `app/server/v2-damage-inspector.mjs`: calculator read-only chỉ dành cho Training sandbox.
+- `app/server/v2-simulation.mjs`, `app/scripts/simulate-v2*.mjs`: runner cân bằng Single/Double chạy song song và xuất báo cáo.
 - `app/public/js/v2-battle-*.js`: Team Preview, arena, command/replacement renderer và controller battle v2.
+- `app/public/js/damage-inspector.js`, `v2-tutorial.js`: Damage Inspector cho saved/draft build và checklist vòng chơi Tactical Alpha.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.

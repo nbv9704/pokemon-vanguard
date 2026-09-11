@@ -842,4 +842,4 @@ export function viewFor(s,p){
  return {...v,catalog:Array.from({length:36},(_,i)=>species(i)),items:ITEMS,types:TYPES,colors:COLORS,typeChart:TYPES.map(t=>TYPES.map(d=>effectiveness(t,[d])))};
 }
 
-export {V2_createBattleMon,V2_transition,V2_monById,V2_activeEntries,V2_reserves,V2_resolveTargets,V2_validateCommands,V2_submitCommands,V2_resolveEntry,V2_resolveTurn,V2_validateReplacements,V2_applyReplacements,V2_calculateDamage,V2_effectiveness,V2_effectiveStat,V2_logPage,V2_projectEvent,V2_toAnimationEvents,V2_assertBattleInvariants};
+export {V2_createBattleMon,V2_transition,V2_monById,V2_activeEntries,V2_reserves,V2_resolveTargets,V2_validateCommands,V2_submitCommands,V2_resolveEntry,V2_resolveTurn,V2_validateReplacements,V2_applyReplacements,V2_calculateDamage,V2_damageModifiers,V2_effectiveness,V2_effectiveStat,V2_logPage,V2_projectEvent,V2_toAnimationEvents,V2_assertBattleInvariants};

@@ -18,10 +18,11 @@ export function namesFor(battle,catalog){
  return names;
 }
 
-export function projectBattleForAi(battle,catalog){
+export function projectBattleForAi(battle,catalog,side='B'){
  const view=clone(battle);view.pending={};
- for(const mon of view.sides.A.roster){
-  const species=catalog.speciesById[mon.speciesId],publicMon=battleMon('A',0,species.defaultBuild,species,catalog),ratio=mon.hp/mon.stats.hp;
+ const opponent=side==='A'?'B':'A';
+ for(const mon of view.sides[opponent].roster){
+  const species=catalog.speciesById[mon.speciesId],publicMon=battleMon(opponent,0,species.defaultBuild,species,catalog),ratio=mon.hp/mon.stats.hp;
   mon.stats=publicMon.stats;mon.hp=Math.round(publicMon.stats.hp*ratio);mon.pp={};mon.buildSnapshot={moveIds:[],abilityId:null,itemId:'none'};mon.itemState={used:false};
  }
  return view;
@@ -39,7 +40,7 @@ export function enterBattle(battle,events){
  return {battle:transition.battle,events:[...events,...entered.events]};
 }
 
-export function aiReplacements(battle){
- const empty=battle.sides.B.active.map((id,slot)=>({id,slot})).filter(entry=>!entry.id||battle.sides.B.roster.find(mon=>mon.battleMonId===entry.id)?.hp<=0),active=new Set(battle.sides.B.active),reserves=battle.sides.B.roster.filter(mon=>mon.hp>0&&!active.has(mon.battleMonId));
+export function aiReplacements(battle,side='B'){
+ const empty=battle.sides[side].active.map((id,slot)=>({id,slot})).filter(entry=>!entry.id||battle.sides[side].roster.find(mon=>mon.battleMonId===entry.id)?.hp<=0),active=new Set(battle.sides[side].active),reserves=battle.sides[side].roster.filter(mon=>mon.hp>0&&!active.has(mon.battleMonId));
  return empty.slice(0,reserves.length).map((entry,index)=>({slot:entry.slot,monId:reserves[index].battleMonId}));
 }

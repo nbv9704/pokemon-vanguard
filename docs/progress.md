@@ -222,7 +222,40 @@ Roadmap nguồn: `ROADMAP.md`.
 - Validation: `npm run check` đạt; `npm test` đạt 57/57, gồm 1.000 trận seeded. Browser smoke đi qua Battle Arena → Team Preview → lead → COMMAND, xác nhận bốn move có PP/category/target.
 - Bảo trì: battle UI tách thành preview/arena/commands/controller; server tách factory/view/actions. File mới lớn nhất khoảng 6,2 KB.
 
+## M3-04 — Damage Inspector và balance simulation
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Inspector: Training có sandbox calculator cho saved build hoặc draft đang chỉnh, 36 dummy defender, Weather, Terrain và spread modifier; breakdown hiển thị base, ATK/DEF hoặc SPA/SPD, STAB, type, field, Ability/item, burn, accuracy và damage cuối.
+- Authoritative: endpoint `POST /api/v2/damage` chỉ nhận `context: sandbox`, validate build/scenario và gọi đúng calculator/modifier của engine; không ghi save và không nhận battle/gym controls.
+- Runner: `npm run simulate -- --seed 100 --matches 10000` dùng bốn worker, lịch 12 đội exhibition × Single/Double, đổi A/B, battle RNG và AI RNG seeded. CSV có seed, mode, matchup, firstSide, aiDifficulty, turns, winner, moveUsage, speciesUsage và timeout.
+- Kết quả Hard-vs-Hard seed 100: 10.000 trận, 132 matchup theo format, trung bình 11,46 lượt, timeout 0%, first-side win 50,16%; không move nào vượt 35% usage.
+- Tín hiệu balance: `league-07` 81,64% và `league-12` 78,44% vượt ngưỡng 65%; giữ nguyên catalog trong ticket này để chờ playtest người thật thay vì đổi chỉ số chỉ từ bot-vs-bot. Báo cáo local ở `reports/balance-v2-seed-100-10000.csv` và `.summary.json`, tách khỏi user saves và Git.
+- Sửa phương pháp: lượt chạy đầu dùng difficulty gắn theo team nên bị confound; báo cáo cuối chạy cùng Hard cho cả hai phía và có cột `aiDifficulty`.
+
+## M3-05 — Adventure v2, migration, reward và hướng dẫn
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Migration release: save v1 không có trận được backup tự động vào `.local-data/.migration-backups` rồi nâng schema v2. Trận v1 đang dở tiếp tục bằng frozen engine; sau kết thúc/đầu hàng, UI hiện kết quả và reward v1, rồi nút “Tiếp tục sang Tactical Alpha” mới backup và migrate. Schema v2 chặn tạo trận v1 mới.
+- Tương thích: coins, crystals, pity, summons, wins, badges, mail, collection, build/team sidecar và legacy level được giữ. Lớp release đồng bộ Mail/Summon legacy với wallet và ownership v2 trong giai đoạn chuyển tiếp.
+- Settlement: exhibition Alpha thắng +180/+80, thua/hòa +60/+20; Gym first clear thêm +500/+300 và badge dùng chung format; Sandbox/surrender 0. Result, wallet, badge và receipt được persist cùng một action, replay không cộng lại.
+- Tutorial: Home có checklist đội sáu Mon → hoàn thành battle → nhận reward → chỉnh build; Field Guide đã đổi từ Energy v1 sang PP, phase, field layers và reward v2.
+- Privacy: spectator chỉ nhận `{spectator:true}`; progression, battle view, internal RNG và reward receipts không được broadcast. Team Preview tiếp tục ẩn seed/template/build đối thủ.
+- UI QA room riêng: migration tạo đội Alpha sáu Mon; Home hiện tutorial; Training hiện mô tả Ability/item/move; Damage Inspector trả final damage/formula/replay; Alpha Preview vào COMMAND; surrender hiện +0/+0 và policy đúng.
+- Bảo trì: progression state, release adapter, settlement, inspector, simulation runner và report aggregator là các module riêng; file source mới lớn nhất khoảng 6,2 KB, không đưa các trách nhiệm này vào `client.js` hay battle dispatcher.
+
+## Gate Local Tactical Alpha
+
+- Status: PASSED
+- Functional loop: người mới có thể xem tutorial, dùng Team Builder, Team Preview Single/Double, đấu AI, nhận reward idempotent và chỉnh build; Sandbox Damage Inspector không ảnh hưởng kinh tế.
+- Content/UI: 36 Mon, 48 move, 24 Ability và 12 held item đi qua cùng catalog/validator; Training và battle hiển thị mô tả, PP, category, target và field state.
+- Compatibility: save v1 bình thường và active battle fixture đều có backup/migration/restart coverage; spectator và opponent projection có privacy tests.
+- Validation: `npm run check` đạt; `npm test` đạt 64/64, gồm 1.000 battle invariant simulation trong suite và báo cáo balance 10.000 trận riêng.
+- Balance: gate chức năng đạt; hai đội vượt ngưỡng simulation được ghi rõ để playtest/cân chỉnh trước khi tuyên bố game đã cân bằng.
+
 ## Việc tiếp theo
 
-- Ticket: M3-04 — Sandbox damage inspector dùng đúng engine và simulation 10.000 trận xuất CSV matchup/turns.
-- Ticket: M3-05 — Bật v2 cho adventure/migration, reward idempotent, hướng dẫn ngắn và nghiệm thu Local Tactical Alpha.
+- Ticket: M4-01 — Economy config và ledger receipts thống nhất reward/mail/gacha v1 trên schema v2.
+- Ticket: M4-02 — Roster Ranch lineup/refresh/recruit/trial cùng clock adapter.
+- Playtest: ưu tiên `league-07` và `league-12`, nhất là Double, rồi mới quyết định đổi team composition hoặc balance rules.
