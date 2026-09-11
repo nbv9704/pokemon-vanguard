@@ -17,6 +17,7 @@ test('phase transitions, slot targets and command validation are strict',()=>{
  const valid=[{kind:'move',actorId:'A0',moveId:'hit',target:{side:'B',slot:1}},{kind:'switch',actorId:'A1',toId:'A2'}];assert.equal(engine.V2_validateCommands(b,'A',valid,moves).ok,true);
  const duplicate=[{kind:'switch',actorId:'A0',toId:'A2'},{kind:'switch',actorId:'A1',toId:'A2'}];assert.equal(engine.V2_validateCommands(b,'A',duplicate,moves).code,'INVALID_SWITCH');
  const fallback=engine.V2_resolveTargets({...b,sides:{...b.sides,B:{...b.sides.B,active:['B0',null]}}},'A','A0',moves.hit,{side:'B',slot:1});assert.equal(fallback[0].battleMonId,'B0');
+ b.sides.B.roster[1].volatiles.redirect=true;b.sides.B.roster[1].volatiles.redirectOrder=4;assert.equal(engine.V2_resolveTargets(b,'A','A0',moves.hit,{side:'B',slot:0})[0].battleMonId,'B1');
 });
 
 test('queue uses switch, priority, speed and precomputed seeded tie keys',()=>{

@@ -4,8 +4,15 @@
     "10-v2-builds.js",
     "20-v2-damage.js",
     "30-v2-phases.js",
-    "40-v2-effects.js",
+    "40-v2-effect-catalog.js",
+    "41-v2-conditions.js",
+    "42-v2-modifiers.js",
+    "43-v2-entry-effects.js",
+    "44-v2-move-effects.js",
     "50-v2-lifecycle.js",
+    "55-v2-turn-resolution.js",
+    "60-v2-events.js",
+    "65-v2-invariants.js",
     "90-public-api.js"
   ]
 }

@@ -93,7 +93,7 @@ Roadmap nguồn: `ROADMAP.md`.
 - Status: DONE
 - Ngày: 11/09/2026
 - Depends on: M1-03
-- Nguồn: `logic-src/40-v2-effects.js`.
+- Nguồn: `logic-src/40-v2-effect-catalog.js`, `41-v2-conditions.js`, `42-v2-modifiers.js`, `43-v2-entry-effects.js`, `44-v2-move-effects.js`.
 - Conditions: Burn/Poison/Slow/Sleep, Guard chain, Sun/Rain/Snow/Sand, Meadow/Storm, Tailwind/Barrier; field layers độc lập và duration không cộng dồn.
 - Catalog hooks: đăng ký đủ 24 Ability và 12 held items bằng bảng hook tường minh, không `eval`; bao phủ entry, stat, accuracy, damage, survive, after-damage, status và end-turn.
 - Luật quan trọng: miễn status theo hệ, chỉ một major status, Cure Berry dùng một lần, sturdy-heart trước Focus Crystal, weather rock không kéo terrain và ngược lại.
@@ -110,7 +110,34 @@ Roadmap nguồn: `ROADMAP.md`.
 - Validation chung: `npm run check` đạt; `npm test` đạt 31/31 sau khi compile generated logic.
 - Remaining: engine v2 vẫn là sandbox nội bộ; chưa nối vào save/UI v1 trước gate M3.
 
+## Refactor trước M1-06 — Effects modules
+
+- Status: DONE
+- Kết quả: file effects 9,9 KB được tách thành năm fragment catalog, conditions, modifiers, entry và declared move effects; file lớn nhất trong nhóm còn 63 dòng/3,4 KB.
+- Kiểm tra kích thước: turn resolution 150 dòng/9 KB; events 122 dòng/7,8 KB; không thêm luật v2 vào `90-public-api.js`.
+
+## M1-06 — Events, log projector và animation adapter
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Depends on: M1-05
+- Nguồn: `logic-src/55-v2-turn-resolution.js`, `60-v2-events.js`, `65-v2-invariants.js`.
+- Resolution: command queue chạy trọn switch/sleep/PP/Guard/target/accuracy/damage/survival/berry/secondary/Ability/recoil/END_TURN/result mà không mutate input.
+- Events: 19 kind được allowlist, payload damage/heal được validate, ID tăng duy nhất; chặn depth >8 và quá 256 events/lượt.
+- Projector/log: phía đối thủ chỉ nhận phần trăm HP, phía mình giữ amount; log phân trang 20 lượt và fallback an toàn cho event phiên bản mới.
+- Animator adapter: chuyển switch/entry, damage, heal và field change sang frame trung gian mà `battle-animation.js` hiện tại hiểu; HP frame lấy từ event đã áp dụng.
+- Declared effects: dispatcher hỗ trợ `onUse`/`afterDamage`, chance seeded, status/stage/heal/field/side/redirect; move secondary có event riêng.
+
+## Gate M1 — Determinism và simulation
+
+- Status: PASSED
+- Invariants: HP, PP, stages, active slots, finite values và JSON roundtrip được kiểm sau từng lượt giả lập.
+- Simulation: 1.000 trận seeded kết thúc trong ≤100 lượt, không crash/hang; 25 seed đầu replay byte-for-byte cùng final state/events.
+- Validation: `npm run check` đạt; `npm test` đạt 36/36, gồm toàn bộ suite legacy và v2, thời gian khoảng 19 giây.
+- Browser QA: không áp dụng ở mốc này vì v2 chưa bật vào UI; adapter được kiểm bằng frame/event tự động.
+- Remaining: catalog 48 moves/36 species và server build/team actions thuộc M2; save/UI người chơi tiếp tục dùng v1.
+
 ## Việc tiếp theo
 
-- Ticket: M1-06 — event schema, log projector và adapter cho animator hiện tại.
-- Sau M1-06 sẽ chạy gate M1: mutation checks và 1.000 trận seeded smoke, tối đa 100 lượt.
+- Ticket: M2-01 — author catalog đầy đủ cho 36 species, 48 moves, 24 Ability và 12 items.
+- Ticket: M2-02 — server actions cho build/team, ownership, revision và chi phí.

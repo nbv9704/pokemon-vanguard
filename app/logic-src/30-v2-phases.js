@@ -14,6 +14,8 @@ function V2_resolveTargets(battle,side,actorId,move,target){
  if(move.targetMode==='allFoes')return V2_activeEntries(battle,foe).map(entry=>({side:foe,slot:entry.slot,battleMonId:entry.mon.battleMonId}));
  if(move.targetMode==='ally'){const found=target&&target.side===side?at(side,target.slot):null;return found&&found.battleMonId!==actorId?[found]:[];}
  if(move.targetMode==='foe'){
+  const redirects=V2_activeEntries(battle,foe).filter(entry=>entry.mon.volatiles.redirect).sort((a,b)=>(b.mon.volatiles.redirectOrder||0)-(a.mon.volatiles.redirectOrder||0));
+  if(redirects[0])return [{side:foe,slot:redirects[0].slot,battleMonId:redirects[0].mon.battleMonId}];
   let found=target&&target.side===foe?at(foe,target.slot):null;
   if(!found){const first=V2_activeEntries(battle,foe)[0];found=first?{side:foe,slot:first.slot,battleMonId:first.mon.battleMonId}:null;}
   return found?[found]:[];

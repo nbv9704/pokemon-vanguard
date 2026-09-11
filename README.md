@@ -40,7 +40,7 @@ Kiểm tra migration trên **một bản sao** của save, không ghi thay đổ
 npm run migrate:save -- --dry-run --input D:\duong-dan\ban-sao-save.json
 ```
 
-Storage adapter có backup/restore được kiểm thử tự động, nhưng migration v2 chưa được bật cho save thật. Các fragment `10-v2-builds.js` đến `50-v2-lifecycle.js` chứa nền battle engine v2: build, damage, phase/queue, effects và vòng đời cuối lượt. Adventure hiện vẫn dùng luật v1 cho tới khi hoàn thành event adapter và giao diện M3.
+Storage adapter có backup/restore được kiểm thử tự động, nhưng migration v2 chưa được bật cho save thật. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. Adventure hiện vẫn dùng luật v1 cho tới khi có catalog hoàn chỉnh và giao diện M3.
 
 Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư một lần, triệu hồi, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
 
