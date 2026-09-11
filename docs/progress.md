@@ -1,6 +1,27 @@
 # Pokémon Vanguard — Nhật ký triển khai
 
-Roadmap nguồn: `ROADMAP.md`.
+Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ còn là lịch sử của hướng Aether cũ.
+
+## Trạng thái hiện tại — rebaseline 12/09/2026
+
+| Chặng | Trạng thái | Kết quả hiện có | Việc còn lại để qua gate |
+| --- | --- | --- | --- |
+| R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
+| R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
+| R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
+| R3 Mechanics Coverage | IN PROGRESS | Manifest contract, ordered hook registry, coverage generator, `spend-pp`, `direct-damage`; Tackle và Aerial Ace có evidence Single/Double | 860/862 entry còn bị chặn; triển khai theo family, thêm Ability/item hooks và interaction fixtures |
+| R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
+| R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
+| R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
+| R7 Sprite/Move FX | NOT STARTED | Có animation queue cũ và audit kiến trúc Showdown | Cache sprite local, audit Mega aliases, làm FX primitives/profiles/overrides theo battle events |
+| M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
+| M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
+
+Baseline kỹ thuật tại commit `503eaf3`: `npm run check` đạt, `npm test` đạt **112/112**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **2 supported / 860 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 860 mechanic đã hỏng.
+
+### Quyết định kế tiếp
+
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Thứ tự gần nhất là: hoàn thiện direct/status damage primitives → stat stages và accuracy/evasion → major/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
