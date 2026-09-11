@@ -1,6 +1,6 @@
 # Aether Champions — archived roadmap
 
-> **Superseded on 11/09/2026.** Product direction changed to Pokémon Vanguard with Pokémon Champions M-A data, 66/32 Stat Points, canonical Mega Evolution, no rarity gacha, and eight-offer/seven-day Recruitment. Follow [`docs/pokemon-vanguard-roadmap.md`](docs/pokemon-vanguard-roadmap.md). The material below remains historical context for completed engineering only.
+> **Superseded on 11/09/2026 and rebaselined on 12/09/2026.** Product direction changed to Pokémon Vanguard with Pokémon Champions M-A data, 66/32 Stat Points, canonical Mega Evolution, no rarity gacha, banner-configured Roster Ranch recruitment and code-driven Move FX. Follow [`docs/pokemon-vanguard-roadmap.md`](docs/pokemon-vanguard-roadmap.md) in the order R0→R7→M6→M7. The material below remains historical context for completed engineering only.
 
 Phiên bản tài liệu: 1.0 · Lập ngày 11/09/2026 · Trạng thái: kế hoạch đề xuất để triển khai.
 

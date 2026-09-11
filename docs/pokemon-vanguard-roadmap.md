@@ -56,101 +56,115 @@ Regulations use IDs such as `m-a-single` and `m-a-double`, pin a catalog snapsho
 
 ## Delivery sequence
 
-### PV-00 — Direction and M4 correction
+This order is authoritative: **R0 Rebaseline → R1 M-A Data → R2 Battle Rules → R3 Mechanics Coverage → R4 Training/Team UI → R5 Roster Ranch → R6 Mega Evolution → R7 Sprite/Move FX → M6 PvP → M7 Ranked**. A later stage may be prototyped, but it cannot become the active production path before the previous gate passes.
 
-Status: implemented in the current changeset.
+### R0 — Rebaseline
 
-- Rename runtime/product metadata to Pokémon Vanguard.
-- Change build validation and Training controls to 66 total / 32 per stat.
-- Keep ledger, clock and Trial reference behavior.
-- Replace rarity summon with the initial eight-offer Recruitment prototype, seven-day Trial, uniform coin price and ticket payment. PV-05 migrates this prototype to the audited ten-pull banner contract.
-- Block legacy `summon` actions after schema v2 migration.
-- Replace rarity-pull simulation with equal-pool recruitment simulation.
-- Record sources and prevent the transition UI from claiming the old catalog is M-A.
+Status: complete.
 
-Gate: content check, targeted migration/economy/recruitment tests and the full regression suite pass; old saves are not modified during tests.
+- Lock the Pokémon Vanguard name, English runtime copy, local-first operation and no-rarity direction.
+- Preserve reusable deterministic battle, persistence, ledger, Trial reference and animation-queue work. Treat the existing 36 Mon and 12 types as compatibility fixtures.
+- Define schema 3 IDs, source precedence, snapshot/promotion rules and save migration boundaries.
+- Keep the legacy battle path only long enough to finish already-started battles and exercise migration fixtures.
 
-### PV-01 — Candidate importer for M-A
+Gate: roadmap, source audit and data contracts agree; the compatibility build passes checks without modifying player saves.
 
-Status: importer implemented; local M-A candidate `pv-ma-2026-09-11` validates with zero unresolved references and awaits manual content/mechanics review. It has not been promoted to runtime content.
+### R1 — M-A Data
 
-1. Fetch Pokémon, moves, Abilities and items into immutable raw snapshots with URL, timestamp and SHA-256.
-2. Parse page data using fixture-backed parsers. Network calls are excluded from tests.
-3. Normalize names to stable IDs and retain upstream IDs for traceability.
-4. Resolve every species-to-move/Ability reference by form slug and report missing or ambiguous forms.
-5. Filter only Regulation M-A for the first candidate. Preserve M-B/M-C tags without activating them.
-6. Emit candidate JSON plus `provenance.json`, `unresolved.json` and a human-readable diff.
-7. Promote only a candidate with zero unresolved required references and a recorded manual review.
-8. Keep usage analytics in a separate optional dataset; never merge them into legality or canonical build data.
+Status: importer complete; local candidate `pv-ma-2026-09-11` passes validation with 213 species/forms, 516 referenced moves, 180 referenced Abilities, 166 items, five banners and zero unresolved references. Manual review and promotion remain pending.
 
-Gate: a clean checkout can validate the pinned candidate offline; repeating import from the same raw snapshot is byte-identical.
+- Fetch immutable raw snapshots with exact URL, timestamp, HTTP metadata, byte length and SHA-256. Refuse same-ID replacement.
+- Parse fixture-backed Next/RSC data offline, resolve form references by source slug and retain upstream IDs.
+- Produce species, move, Ability, item and banner candidates plus provenance, unresolved and human review reports.
+- Preserve M-B/M-C membership for later snapshots without activating it. Keep usage analytics separate from legality.
+- Validate all references, the 18-type vocabulary, one/two-type shape, six base stats and byte-identical rebuilds.
+- Add a reviewed-snapshot promotion command only when the schema-3 runtime contract is ready; promotion must never be an implicit result of fetch/build.
 
-### PV-02 — Canonical mechanics foundation
+Gate: a pinned reviewed snapshot validates offline and produces byte-identical normalized JSON. Runtime still uses compatibility content until R2–R4 can consume the new contract safely.
 
-- Replace the type registry and chart with all 18 canonical types; add dual-type golden tests including immunities and 4×/¼× cases.
-- Confirm level-50 stat and damage formulas against Champions examples. Keep calculations pure and expose the same breakdown to Damage Inspector.
-- Add ordered hooks for priority, accuracy/evasion, critical hits, multi-hit, recoil, drain, Protect families, switching, redirection, spread reduction, Trick Room, weather and terrain.
-- Encode mechanics by reusable effect IDs. A move, item or Ability becomes legal only when all its required handlers pass positive and negative tests.
-- Version rules and catalog independently; battles snapshot both at preview lock.
+### R2 — Battle Rules
 
-Gate: golden mechanic fixtures pass for Single and Double, and unsupported content cannot enter a legal team.
+Status: next implementation stage.
 
-### PV-03 — Schema 3 roster reset
+- Replace the compatibility chart with all 18 canonical types and golden tests for immunity, ¼×, ½×, 1×, 2× and 4× dual-type cases.
+- Verify level-50 stat and damage formulas, 66 total Stat Points, 32 per-stat cap, nature modifiers, STAB, random roll, critical hit and burn behavior against Champions examples.
+- Specify the authoritative turn order: replacements, switching, Mega timing, move priority, speed, Trick Room, deterministic ties, action cancellation, fainting and end-of-turn groups.
+- Specify Single and Double target sets, ally targets, adjacency assumptions, spread reduction, redirection and replacement rules.
+- Version `rulesVersion` independently from `catalogVersion`; a battle snapshots both at preview lock.
+- Expose the exact pure damage breakdown to the Damage Inspector. Animation and UI never calculate battle results.
 
-- Back up schema 2 saves before migration.
-- Preserve owner, wallet balances, recruitment tickets, claimed mail, settings identity and completed tutorial markers that remain meaningful.
-- Archive old roster/build/team IDs in the migration receipt, then create the M-A starter roster and fresh legal builds/teams.
-- Drop pity/summon counters from active state while retaining them only in the backup receipt for audit.
-- Migration is idempotent and defers an active legacy battle until its result is acknowledged.
+Gate: golden Single/Double fixtures pass and the same seed plus command stream produces the same state, events and replay.
 
-Gate: fixture saves cover empty, normal, active-battle, expired-Trial and corrupted-reference cases; no original Mon is silently mapped to a Pokémon.
+### R3 — Mechanics Coverage
 
-### PV-04 — Local sprite pipeline
+- Build ordered hook registries for moves, Abilities and items instead of species-specific conditionals.
+- Implement mechanics in families: direct/status damage; stage changes; accuracy/evasion; priority; multi-hit; recoil/drain; Protect/guards; status and volatile conditions; switching/pivot/trap; redirection; weather/terrain/rooms; hazards; item consume/loss/swap; Ability suppression/copy; delayed and end-turn effects.
+- Give every imported entry a capability manifest and `implemented` state. Descriptions remain documentation, never executable logic.
+- Generate a coverage matrix for M-A showing supported Single, supported Double, blocked reason, handlers and tests.
+- Allow a move, Ability or item into a legal build only when every required handler passes positive, negative, interaction and replay tests.
 
-- Generate a sprite manifest from accepted species/form IDs and an explicit PokéBase-slug-to-Showdown-filename mapping. Seed the audited M-A aliases and produce a separate Mega coverage report.
-- Download to a staging directory, verify GIF signature, size limits, dimensions and SHA-256, then promote to `public/assets/pokemon/`.
-- Record missing/form fallback sprites. Never silently use the wrong form.
-- Render variable-size GIFs inside a fixed stage box, fit them without cropping and align their feet to a shared baseline. Render opponent front sprites normally and player sprites with CSS horizontal flip. Respect reduced motion by freezing or replacing animation.
-- Remove legacy SVG runtime dependencies only after every active M-A entry has a local asset.
+Gate: every enabled M-A entry is correct in both formats; every remaining entry is excluded with a machine-readable reason. No provisional mechanic enters competitive rules.
 
-Gate: offline browser QA displays every active form from both sides with zero network requests.
+### R4 — Training and Team UI
 
-### PV-05 — M-A team authoring and Recruitment
+- Promote the reviewed M-A catalog and make Archive, Training, Damage Inspector, Team Builder, Preview and AI read the same versioned contract.
+- Support one/two-type display, legal learnsets, legal Abilities/items, nature selection and the 66/32 Stat Point editor with server validation.
+- Show mechanic support and regulation errors before save. Import/export blueprints may reference content but never grant ownership or currency.
+- Run schema-3 migration: back up schema 2, preserve suitable wallet/settings/mail/tutorial data, archive legacy roster/build/team IDs and create fresh M-A legal records.
+- Keep migration idempotent and defer it while an old battle result still needs acknowledgement.
 
-- Archive, Training, Damage Inspector and Team Builder read the promoted M-A catalog.
-- Recruitment reads an immutable banner snapshot with active dates, pool, pull count and selection rules. The initial audited default draws ten species per Recruit. Whether duplicates are allowed and the exact shiny/mark/ball/coupon rates remain unverified and must not be invented.
-- One active seven-day Trial uses server time and a read-only sample build. Expiry blocks new preview locks but never revokes a battle snapshot.
-- Permanent recruitment accepts either the configured coin cost or one ticket and upgrades the same Mon/build/team references.
-- Remove all rarity labels, filters, prices and pity UI.
+Gate: a user can create a legal build and team, restart locally, lock Team Preview and finish Single/Double battles using only promoted M-A IDs.
 
-Gate: Trial → team → preview lock → expiry during battle → result → permanent upgrade retains exact IDs across restart.
+### R5 — Roster Ranch
 
-### PV-06 — Mega Evolution
+- Import dated banner snapshots with pool, active interval, kind and banner-configurable pull count. The current observed default is ten pulls.
+- Verify duplicate, shiny, mark, ball and coupon rules before implementing them; do not infer probabilities from descriptions or one observed pull.
+- Keep Vanguard progression rules explicit: one server-timed seven-day Trial and permanent recruitment by coin or ticket.
+- Preserve the same Pokémon/build/team IDs when Trial becomes permanent. Expiry blocks future preview locks and never mutates an already-locked battle.
+- Remove the eight-offer compatibility UI and simulation only after the banner-backed path passes migration and economy tests.
 
-- Model each Mega form as a form record tied to its base species and Mega Stone. Check legality from the Mega form's own regulation sets; the existence of a base record's `megaVariants` link is insufficient.
-- Add one Mega command flag per side per battle, validate Stone/species/regulation, and resolve transformation at the verified Champions timing.
-- Preserve current HP ratio or exact HP according to verified behavior, plus PP, status, stages and volatile rules documented by fixtures.
-- Swap type, stats, Ability and sprite from the form snapshot. Emit explicit transformation events for animation and replay.
+Gate: banner → Trial → team → preview → battle → expiry → permanent upgrade remains consistent and idempotent across restart.
 
-Gate: Single and Double tests cover legal use, duplicate attempts, switch persistence, suppression, fainting and replay projection.
+### R6 — Mega Evolution
 
-### PV-07 — Move FX and English UI
+- Normalize `{baseSpeciesId, megaSpeciesId, itemId, regulationSets}` and verify legality from the Mega form plus stone in the selected snapshot.
+- Allow the verified number of Mega uses per side; validate command timing and all item/species/regulation constraints server-side.
+- Preserve HP, PP, status, stages, volatiles and switch persistence exactly as confirmed by fixtures, then swap form stats, type, Ability and sprite.
+- Emit explicit transformation events suitable for replay and animation without exposing hidden information.
 
-- Map moves to reusable animation profiles: contact, projectile, beam, wave, ground, weather, terrain, buff, debuff, heal and transform.
-- Profiles consume authoritative events; Skip and 2× never change state.
-- Add per-move overrides only when a generic profile cannot communicate the mechanic.
-- Finish English copy for all screens, errors, descriptions and accessibility labels.
+Gate: Single/Double fixtures cover valid transformation, duplicate attempts, switch persistence, suppression, fainting, replay and save recovery.
 
-Gate: representative moves for every profile pass visual QA in Single/Double, normal/reduced motion and desktop/mobile layouts.
+### R7 — Sprite and Move FX
 
-### PV-08 — Competitive hardening
+- Cache Showdown animated front Pokémon GIFs locally using an explicit source-slug alias manifest. Flip the player-side front sprite. The Pokémon remains on its idle GIF while attacking; move presentation is rendered on independent FX layers.
+- Audit base and Mega sprite coverage, GIF signatures, dimensions, hashes and asset budgets. Never silently substitute the wrong form.
+- Build original Vanguard FX as small primitives, reusable profiles and sparse move overrides. Use the Showdown architecture as a behavior reference; do not copy its large animation tables or assume its `/sprites` and `/audio` resources are in the repository.
+- Drive FX only from authoritative battle events. Projectiles, beams, waves, contact marks, field overlays, status cues, camera/slot shake, numbers and timing may animate; they never change HP or rules.
+- Use explicit Single/Double actor/target anchors, behind/front/field layers and parallel target tracks for spread moves.
+- Split primitives, timeline runner, profiles and move overrides into cohesive modules. Avoid a monolithic per-move animation file.
+- Provide type/category fallback profiles, Skip, playback speed, preload, cancellation and reduced-motion behavior. Missing FX must degrade to a readable cue without blocking battle progress.
 
-- Complete Double-specific targeting such as ally targets, Follow Me-style redirection, spread moves and simultaneous end-of-turn groups.
-- Generate legal AI teams from the active regulation and prevent AI access to hidden opponent data.
-- Run deterministic matchup simulation, then human playtests. Bot results flag candidates but never directly change balance data.
-- Add replay fixtures, catalog semantic diffs and save recovery drills to release checks.
+Detailed reference: `docs/showdown-animation-reference-2026-09-12.md`.
 
-Gate: all M-A legal content is either implemented and usable or explicitly excluded with a reason; no provisional mechanic appears in competitive play.
+Gate: every enabled move resolves to a tested profile or override; representative moves pass visual QA in Single/Double, desktop/mobile, normal/reduced motion and offline mode.
+
+### M6 — PvP
+
+- Add private room creation/join, reconnect, spectator projection and version negotiation on top of the authoritative server action path.
+- Hide choices, unrevealed builds and private HP data through `viewFor`; never trust client timing, targets or results.
+- Snapshot regulation/catalog/rules for the room, persist command receipts and support deterministic replay plus reconnect after process restart.
+- Add disconnect grace, surrender, draw and abandoned-room rules without real-time tick dependence where avoidable.
+
+Gate: two browsers can complete Single and Double matches through disconnect/reconnect with identical state; spectators cannot act or inspect hidden information.
+
+### M7 — Ranked
+
+- Add authenticated identity, queue/matchmaking, season-pinned regulation, rating updates, result receipts and anti-duplicate settlement.
+- Require complete mechanics coverage for the ranked regulation. Reject provisional content, mismatched versions and modified clients at authoritative validation boundaries.
+- Record privacy-safe audit/replay data, moderation hooks, queue health and rollback procedures.
+- Run load, abuse, disconnect, stale-version and season-transition tests before enabling public ranking.
+
+Gate: rating and rewards settle once from an authoritative completed match; season rules are reproducible and rollback-safe.
 
 ## Required checks per ticket
 

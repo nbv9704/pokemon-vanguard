@@ -12,6 +12,13 @@
     "rosterRanch": "https://pokebase.app/pokemon-champions/roster-ranch-sim",
     "sprites": "https://play.pokemonshowdown.com/sprites/ani/"
   },
+  "references": {
+    "showdownClient": {
+      "repository": "https://github.com/smogon/pokemon-showdown-client",
+      "inspectedCommit": "1e3b209011340e7c149a2e94769183eb4351b2e9",
+      "usage": "architecture-reference-only"
+    }
+  },
   "contentRules": {
     "statPointBudget": 66,
     "statPointCap": 32,
