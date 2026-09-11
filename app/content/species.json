@@ -1,0 +1,2183 @@
+[
+  {
+    "id": "emberlyn",
+    "legacyId": 0,
+    "artId": 0,
+    "name": "Emberlyn",
+    "types": [
+      "Flame"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.emberlyn.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 105,
+      "def": 65,
+      "spa": 55,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "dawnbringer",
+      "quick-start"
+    ],
+    "moveIds": [
+      "flame-strike",
+      "flame-lance",
+      "flame-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "sun-call",
+      "rally"
+    ],
+    "role": "physical-fast",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "dawnbringer",
+      "moveIds": [
+        "flame-strike",
+        "gale-lance",
+        "guard",
+        "sun-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "cindrake",
+    "legacyId": 1,
+    "artId": 1,
+    "name": "Cindrake",
+    "types": [
+      "Flame",
+      "Stone"
+    ],
+    "coverageType": "Stone",
+    "nameKey": "species.cindrake.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 55,
+      "def": 65,
+      "spa": 105,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "dawnbringer",
+      "keen-focus"
+    ],
+    "moveIds": [
+      "flame-strike",
+      "flame-lance",
+      "flame-tempest",
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "guard",
+      "mend",
+      "sun-call",
+      "tailwind-call"
+    ],
+    "role": "special-fast",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "dawnbringer",
+      "moveIds": [
+        "flame-strike",
+        "stone-lance",
+        "guard",
+        "sun-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "volcaram",
+    "legacyId": 2,
+    "artId": 2,
+    "name": "Volcaram",
+    "types": [
+      "Flame",
+      "Steel"
+    ],
+    "coverageType": "Steel",
+    "nameKey": "species.volcaram.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "dawnbringer",
+      "sturdy-heart"
+    ],
+    "moveIds": [
+      "flame-strike",
+      "flame-lance",
+      "flame-tempest",
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "guard",
+      "mend",
+      "sun-call",
+      "rally"
+    ],
+    "role": "physical-tank",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "dawnbringer",
+      "moveIds": [
+        "flame-strike",
+        "steel-lance",
+        "guard",
+        "sun-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "tideray",
+    "legacyId": 3,
+    "artId": 3,
+    "name": "Tideray",
+    "types": [
+      "Tide"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.tideray.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 55,
+      "def": 65,
+      "spa": 105,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "raincaller",
+      "rain-swimmer"
+    ],
+    "moveIds": [
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "rain-call",
+      "tailwind-call"
+    ],
+    "role": "special-fast",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "raincaller",
+      "moveIds": [
+        "tide-strike",
+        "gale-lance",
+        "guard",
+        "rain-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "coralisk",
+    "legacyId": 4,
+    "artId": 4,
+    "name": "Coralisk",
+    "types": [
+      "Tide",
+      "Venom"
+    ],
+    "coverageType": "Venom",
+    "nameKey": "species.coralisk.name",
+    "baseStats": {
+      "hp": 80,
+      "atk": 70,
+      "def": 80,
+      "spa": 80,
+      "spd": 80,
+      "spe": 90
+    },
+    "abilityIds": [
+      "raincaller",
+      "clean-entry"
+    ],
+    "moveIds": [
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "venom-strike",
+      "venom-lance",
+      "venom-tempest",
+      "guard",
+      "mend",
+      "rain-call",
+      "barrier"
+    ],
+    "role": "disruptor",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "raincaller",
+      "moveIds": [
+        "tide-strike",
+        "venom-lance",
+        "guard",
+        "rain-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "shellure",
+    "legacyId": 5,
+    "artId": 5,
+    "name": "Shellure",
+    "types": [
+      "Tide",
+      "Steel"
+    ],
+    "coverageType": "Steel",
+    "nameKey": "species.shellure.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 45,
+      "def": 80,
+      "spa": 100,
+      "spd": 105,
+      "spe": 50
+    },
+    "abilityIds": [
+      "raincaller",
+      "water-shell"
+    ],
+    "moveIds": [
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "guard",
+      "mend",
+      "rain-call",
+      "redirect"
+    ],
+    "role": "special-tank",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "raincaller",
+      "moveIds": [
+        "tide-strike",
+        "steel-lance",
+        "guard",
+        "rain-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "mossprout",
+    "legacyId": 6,
+    "artId": 6,
+    "name": "Mossprout",
+    "types": [
+      "Bloom"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.mossprout.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "wild-growth",
+      "sun-runner"
+    ],
+    "moveIds": [
+      "bloom-strike",
+      "bloom-lance",
+      "bloom-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "meadow-call",
+      "barrier"
+    ],
+    "role": "support",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "wild-growth",
+      "moveIds": [
+        "bloom-strike",
+        "gale-lance",
+        "guard",
+        "meadow-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "thornox",
+    "legacyId": 7,
+    "artId": 7,
+    "name": "Thornox",
+    "types": [
+      "Bloom",
+      "Stone"
+    ],
+    "coverageType": "Stone",
+    "nameKey": "species.thornox.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "wild-growth",
+      "thorn-coat"
+    ],
+    "moveIds": [
+      "bloom-strike",
+      "bloom-lance",
+      "bloom-tempest",
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "guard",
+      "mend",
+      "meadow-call",
+      "rally"
+    ],
+    "role": "physical-tank",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "wild-growth",
+      "moveIds": [
+        "bloom-strike",
+        "stone-lance",
+        "guard",
+        "meadow-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "florawisp",
+    "legacyId": 8,
+    "artId": 8,
+    "name": "Florawisp",
+    "types": [
+      "Bloom",
+      "Light"
+    ],
+    "coverageType": "Light",
+    "nameKey": "species.florawisp.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "wild-growth",
+      "healer"
+    ],
+    "moveIds": [
+      "bloom-strike",
+      "bloom-lance",
+      "bloom-tempest",
+      "light-strike",
+      "light-lance",
+      "light-tempest",
+      "guard",
+      "mend",
+      "meadow-call",
+      "tailwind-call"
+    ],
+    "role": "support",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "wild-growth",
+      "moveIds": [
+        "bloom-strike",
+        "light-lance",
+        "guard",
+        "meadow-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "voltkit",
+    "legacyId": 9,
+    "artId": 9,
+    "name": "Voltkit",
+    "types": [
+      "Volt"
+    ],
+    "coverageType": "Shadow",
+    "nameKey": "species.voltkit.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 105,
+      "def": 65,
+      "spa": 55,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "static-field",
+      "quick-start"
+    ],
+    "moveIds": [
+      "volt-strike",
+      "volt-lance",
+      "volt-tempest",
+      "shadow-strike",
+      "shadow-lance",
+      "shadow-tempest",
+      "guard",
+      "mend",
+      "storm-call",
+      "rally"
+    ],
+    "role": "physical-fast",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "static-field",
+      "moveIds": [
+        "volt-strike",
+        "shadow-lance",
+        "guard",
+        "storm-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "stormaw",
+    "legacyId": 10,
+    "artId": 10,
+    "name": "Stormaw",
+    "types": [
+      "Volt",
+      "Gale"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.stormaw.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 55,
+      "def": 65,
+      "spa": 105,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "static-field",
+      "keen-focus"
+    ],
+    "moveIds": [
+      "volt-strike",
+      "volt-lance",
+      "volt-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "storm-call",
+      "tailwind-call"
+    ],
+    "role": "special-fast",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "static-field",
+      "moveIds": [
+        "volt-strike",
+        "gale-lance",
+        "guard",
+        "storm-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "ampillo",
+    "legacyId": 11,
+    "artId": 11,
+    "name": "Ampillo",
+    "types": [
+      "Volt",
+      "Steel"
+    ],
+    "coverageType": "Steel",
+    "nameKey": "species.ampillo.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "static-field",
+      "sturdy-heart"
+    ],
+    "moveIds": [
+      "volt-strike",
+      "volt-lance",
+      "volt-tempest",
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "guard",
+      "mend",
+      "storm-call",
+      "redirect"
+    ],
+    "role": "physical-tank",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "static-field",
+      "moveIds": [
+        "volt-strike",
+        "steel-lance",
+        "guard",
+        "storm-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "frostowl",
+    "legacyId": 12,
+    "artId": 12,
+    "name": "Frostowl",
+    "types": [
+      "Frost"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.frostowl.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 55,
+      "def": 65,
+      "spa": 105,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "snowglobe",
+      "keen-focus"
+    ],
+    "moveIds": [
+      "frost-strike",
+      "frost-lance",
+      "frost-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "snow-call",
+      "tailwind-call"
+    ],
+    "role": "special-fast",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "snowglobe",
+      "moveIds": [
+        "frost-strike",
+        "gale-lance",
+        "guard",
+        "snow-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "glacirn",
+    "legacyId": 13,
+    "artId": 13,
+    "name": "Glacirn",
+    "types": [
+      "Frost",
+      "Light"
+    ],
+    "coverageType": "Light",
+    "nameKey": "species.glacirn.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 45,
+      "def": 80,
+      "spa": 100,
+      "spd": 105,
+      "spe": 50
+    },
+    "abilityIds": [
+      "snowglobe",
+      "calm-mind"
+    ],
+    "moveIds": [
+      "frost-strike",
+      "frost-lance",
+      "frost-tempest",
+      "light-strike",
+      "light-lance",
+      "light-tempest",
+      "guard",
+      "mend",
+      "snow-call",
+      "barrier"
+    ],
+    "role": "special-tank",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "snowglobe",
+      "moveIds": [
+        "frost-strike",
+        "light-lance",
+        "guard",
+        "snow-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "snowmelt",
+    "legacyId": 14,
+    "artId": 14,
+    "name": "Snowmelt",
+    "types": [
+      "Frost",
+      "Tide"
+    ],
+    "coverageType": "Tide",
+    "nameKey": "species.snowmelt.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "snowglobe",
+      "healer"
+    ],
+    "moveIds": [
+      "frost-strike",
+      "frost-lance",
+      "frost-tempest",
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "guard",
+      "mend",
+      "snow-call",
+      "redirect"
+    ],
+    "role": "support",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "snowglobe",
+      "moveIds": [
+        "frost-strike",
+        "tide-lance",
+        "guard",
+        "snow-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "pebblit",
+    "legacyId": 15,
+    "artId": 15,
+    "name": "Pebblit",
+    "types": [
+      "Stone"
+    ],
+    "coverageType": "Tide",
+    "nameKey": "species.pebblit.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "sandstream",
+      "sturdy-heart"
+    ],
+    "moveIds": [
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "guard",
+      "mend",
+      "sand-call",
+      "barrier"
+    ],
+    "role": "physical-tank",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "sandstream",
+      "moveIds": [
+        "stone-strike",
+        "tide-lance",
+        "guard",
+        "sand-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "obsidon",
+    "legacyId": 16,
+    "artId": 16,
+    "name": "Obsidon",
+    "types": [
+      "Stone",
+      "Steel"
+    ],
+    "coverageType": "Steel",
+    "nameKey": "species.obsidon.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "sandstream",
+      "intimidator"
+    ],
+    "moveIds": [
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "guard",
+      "mend",
+      "sand-call",
+      "redirect"
+    ],
+    "role": "physical-tank",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "sandstream",
+      "moveIds": [
+        "stone-strike",
+        "steel-lance",
+        "guard",
+        "sand-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "dunewyrm",
+    "legacyId": 17,
+    "artId": 17,
+    "name": "Dunewyrm",
+    "types": [
+      "Stone",
+      "Shadow"
+    ],
+    "coverageType": "Shadow",
+    "nameKey": "species.dunewyrm.name",
+    "baseStats": {
+      "hp": 80,
+      "atk": 70,
+      "def": 80,
+      "spa": 80,
+      "spd": 80,
+      "spe": 90
+    },
+    "abilityIds": [
+      "sandstream",
+      "clean-entry"
+    ],
+    "moveIds": [
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "shadow-strike",
+      "shadow-lance",
+      "shadow-tempest",
+      "guard",
+      "mend",
+      "sand-call",
+      "rally"
+    ],
+    "role": "disruptor",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "sandstream",
+      "moveIds": [
+        "stone-strike",
+        "shadow-lance",
+        "guard",
+        "sand-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "zephyroo",
+    "legacyId": 18,
+    "artId": 18,
+    "name": "Zephyroo",
+    "types": [
+      "Gale"
+    ],
+    "coverageType": "Stone",
+    "nameKey": "species.zephyroo.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 105,
+      "def": 65,
+      "spa": 55,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "tailwind",
+      "quick-start"
+    ],
+    "moveIds": [
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "guard",
+      "mend",
+      "tailwind-call",
+      "rally"
+    ],
+    "role": "physical-fast",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "tailwind",
+      "moveIds": [
+        "gale-strike",
+        "stone-lance",
+        "guard",
+        "tailwind-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "galesong",
+    "legacyId": 19,
+    "artId": 19,
+    "name": "Galesong",
+    "types": [
+      "Gale",
+      "Light"
+    ],
+    "coverageType": "Light",
+    "nameKey": "species.galesong.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "tailwind",
+      "healer"
+    ],
+    "moveIds": [
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "light-strike",
+      "light-lance",
+      "light-tempest",
+      "guard",
+      "mend",
+      "tailwind-call",
+      "barrier"
+    ],
+    "role": "support",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "tailwind",
+      "moveIds": [
+        "gale-strike",
+        "light-lance",
+        "guard",
+        "tailwind-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "cyclopup",
+    "legacyId": 20,
+    "artId": 20,
+    "name": "Cyclopup",
+    "types": [
+      "Gale",
+      "Volt"
+    ],
+    "coverageType": "Volt",
+    "nameKey": "species.cyclopup.name",
+    "baseStats": {
+      "hp": 80,
+      "atk": 70,
+      "def": 80,
+      "spa": 80,
+      "spd": 80,
+      "spe": 90
+    },
+    "abilityIds": [
+      "tailwind",
+      "intimidator"
+    ],
+    "moveIds": [
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "volt-strike",
+      "volt-lance",
+      "volt-tempest",
+      "guard",
+      "mend",
+      "tailwind-call",
+      "redirect"
+    ],
+    "role": "disruptor",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "tailwind",
+      "moveIds": [
+        "gale-strike",
+        "volt-lance",
+        "guard",
+        "tailwind-call"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "gloomoth",
+    "legacyId": 21,
+    "artId": 21,
+    "name": "Gloomoth",
+    "types": [
+      "Shadow"
+    ],
+    "coverageType": "Venom",
+    "nameKey": "species.gloomoth.name",
+    "baseStats": {
+      "hp": 80,
+      "atk": 70,
+      "def": 80,
+      "spa": 80,
+      "spd": 80,
+      "spe": 90
+    },
+    "abilityIds": [
+      "night-hunter",
+      "keen-focus"
+    ],
+    "moveIds": [
+      "shadow-strike",
+      "shadow-lance",
+      "shadow-tempest",
+      "venom-strike",
+      "venom-lance",
+      "venom-tempest",
+      "guard",
+      "mend",
+      "rally",
+      "barrier"
+    ],
+    "role": "disruptor",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "night-hunter",
+      "moveIds": [
+        "shadow-strike",
+        "venom-lance",
+        "guard",
+        "rally"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "noctalon",
+    "legacyId": 22,
+    "artId": 22,
+    "name": "Noctalon",
+    "types": [
+      "Shadow",
+      "Gale"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.noctalon.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 105,
+      "def": 65,
+      "spa": 55,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "night-hunter",
+      "quick-start"
+    ],
+    "moveIds": [
+      "shadow-strike",
+      "shadow-lance",
+      "shadow-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "rally",
+      "tailwind-call"
+    ],
+    "role": "physical-fast",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "night-hunter",
+      "moveIds": [
+        "shadow-strike",
+        "gale-lance",
+        "guard",
+        "rally"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "umbrawolf",
+    "legacyId": 23,
+    "artId": 23,
+    "name": "Umbrawolf",
+    "types": [
+      "Shadow",
+      "Astral"
+    ],
+    "coverageType": "Astral",
+    "nameKey": "species.umbrawolf.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "night-hunter",
+      "intimidator"
+    ],
+    "moveIds": [
+      "shadow-strike",
+      "shadow-lance",
+      "shadow-tempest",
+      "astral-strike",
+      "astral-lance",
+      "astral-tempest",
+      "guard",
+      "mend",
+      "rally"
+    ],
+    "role": "physical-tank",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "night-hunter",
+      "moveIds": [
+        "shadow-strike",
+        "astral-lance",
+        "guard",
+        "rally"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "solmane",
+    "legacyId": 24,
+    "artId": 24,
+    "name": "Solmane",
+    "types": [
+      "Light"
+    ],
+    "coverageType": "Flame",
+    "nameKey": "species.solmane.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "radiance",
+      "sun-runner"
+    ],
+    "moveIds": [
+      "light-strike",
+      "light-lance",
+      "light-tempest",
+      "flame-strike",
+      "flame-lance",
+      "flame-tempest",
+      "guard",
+      "mend",
+      "barrier",
+      "rally"
+    ],
+    "role": "physical-tank",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "radiance",
+      "moveIds": [
+        "light-strike",
+        "flame-lance",
+        "guard",
+        "barrier"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "aurorix",
+    "legacyId": 25,
+    "artId": 25,
+    "name": "Aurorix",
+    "types": [
+      "Light",
+      "Astral"
+    ],
+    "coverageType": "Astral",
+    "nameKey": "species.aurorix.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 45,
+      "def": 80,
+      "spa": 100,
+      "spd": 105,
+      "spe": 50
+    },
+    "abilityIds": [
+      "radiance",
+      "calm-mind"
+    ],
+    "moveIds": [
+      "light-strike",
+      "light-lance",
+      "light-tempest",
+      "astral-strike",
+      "astral-lance",
+      "astral-tempest",
+      "guard",
+      "mend",
+      "barrier"
+    ],
+    "role": "special-tank",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "radiance",
+      "moveIds": [
+        "light-strike",
+        "astral-lance",
+        "guard",
+        "barrier"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "lumifin",
+    "legacyId": 26,
+    "artId": 26,
+    "name": "Lumifin",
+    "types": [
+      "Light",
+      "Tide"
+    ],
+    "coverageType": "Tide",
+    "nameKey": "species.lumifin.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "radiance",
+      "water-shell"
+    ],
+    "moveIds": [
+      "light-strike",
+      "light-lance",
+      "light-tempest",
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "guard",
+      "mend",
+      "barrier",
+      "redirect"
+    ],
+    "role": "support",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "radiance",
+      "moveIds": [
+        "light-strike",
+        "tide-lance",
+        "guard",
+        "barrier"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "venomble",
+    "legacyId": 27,
+    "artId": 27,
+    "name": "Venomble",
+    "types": [
+      "Venom"
+    ],
+    "coverageType": "Tide",
+    "nameKey": "species.venomble.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "venom-touch",
+      "clean-entry"
+    ],
+    "moveIds": [
+      "venom-strike",
+      "venom-lance",
+      "venom-tempest",
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "guard",
+      "mend",
+      "redirect",
+      "barrier"
+    ],
+    "role": "support",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "venom-touch",
+      "moveIds": [
+        "venom-strike",
+        "tide-lance",
+        "guard",
+        "redirect"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "toxipede",
+    "legacyId": 28,
+    "artId": 28,
+    "name": "Toxipede",
+    "types": [
+      "Venom",
+      "Stone"
+    ],
+    "coverageType": "Stone",
+    "nameKey": "species.toxipede.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 105,
+      "def": 65,
+      "spa": 55,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "venom-touch",
+      "thorn-coat"
+    ],
+    "moveIds": [
+      "venom-strike",
+      "venom-lance",
+      "venom-tempest",
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "guard",
+      "mend",
+      "redirect",
+      "rally"
+    ],
+    "role": "physical-fast",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "venom-touch",
+      "moveIds": [
+        "venom-strike",
+        "stone-lance",
+        "guard",
+        "redirect"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "mirecap",
+    "legacyId": 29,
+    "artId": 29,
+    "name": "Mirecap",
+    "types": [
+      "Venom",
+      "Bloom"
+    ],
+    "coverageType": "Bloom",
+    "nameKey": "species.mirecap.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 45,
+      "def": 80,
+      "spa": 100,
+      "spd": 105,
+      "spe": 50
+    },
+    "abilityIds": [
+      "venom-touch",
+      "healer"
+    ],
+    "moveIds": [
+      "venom-strike",
+      "venom-lance",
+      "venom-tempest",
+      "bloom-strike",
+      "bloom-lance",
+      "bloom-tempest",
+      "guard",
+      "mend",
+      "redirect"
+    ],
+    "role": "special-tank",
+    "rarity": "epic",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "venom-touch",
+      "moveIds": [
+        "venom-strike",
+        "bloom-lance",
+        "guard",
+        "redirect"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "ironcub",
+    "legacyId": 30,
+    "artId": 30,
+    "name": "Ironcub",
+    "types": [
+      "Steel"
+    ],
+    "coverageType": "Stone",
+    "nameKey": "species.ironcub.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 100,
+      "def": 105,
+      "spa": 45,
+      "spd": 80,
+      "spe": 50
+    },
+    "abilityIds": [
+      "ironhide",
+      "sturdy-heart"
+    ],
+    "moveIds": [
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "guard",
+      "mend",
+      "barrier",
+      "redirect"
+    ],
+    "role": "physical-tank",
+    "rarity": "common",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "ironhide",
+      "moveIds": [
+        "steel-strike",
+        "stone-lance",
+        "guard",
+        "barrier"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "gearaptor",
+    "legacyId": 31,
+    "artId": 31,
+    "name": "Gearaptor",
+    "types": [
+      "Steel",
+      "Gale"
+    ],
+    "coverageType": "Gale",
+    "nameKey": "species.gearaptor.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 105,
+      "def": 65,
+      "spa": 55,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "ironhide",
+      "quick-start"
+    ],
+    "moveIds": [
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "gale-strike",
+      "gale-lance",
+      "gale-tempest",
+      "guard",
+      "mend",
+      "barrier",
+      "rally"
+    ],
+    "role": "physical-fast",
+    "rarity": "rare",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "ironhide",
+      "moveIds": [
+        "steel-strike",
+        "gale-lance",
+        "guard",
+        "barrier"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "chromantis",
+    "legacyId": 32,
+    "artId": 32,
+    "name": "Chromantis",
+    "types": [
+      "Steel",
+      "Bloom"
+    ],
+    "coverageType": "Bloom",
+    "nameKey": "species.chromantis.name",
+    "baseStats": {
+      "hp": 80,
+      "atk": 70,
+      "def": 80,
+      "spa": 80,
+      "spd": 80,
+      "spe": 90
+    },
+    "abilityIds": [
+      "ironhide",
+      "thorn-coat"
+    ],
+    "moveIds": [
+      "steel-strike",
+      "steel-lance",
+      "steel-tempest",
+      "bloom-strike",
+      "bloom-lance",
+      "bloom-tempest",
+      "guard",
+      "mend",
+      "barrier",
+      "tailwind-call"
+    ],
+    "role": "disruptor",
+    "rarity": "legendary",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "ironhide",
+      "moveIds": [
+        "steel-strike",
+        "bloom-lance",
+        "guard",
+        "barrier"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "astralyn",
+    "legacyId": 33,
+    "artId": 33,
+    "name": "Astralyn",
+    "types": [
+      "Astral"
+    ],
+    "coverageType": "Shadow",
+    "nameKey": "species.astralyn.name",
+    "baseStats": {
+      "hp": 70,
+      "atk": 55,
+      "def": 65,
+      "spa": 105,
+      "spd": 70,
+      "spe": 115
+    },
+    "abilityIds": [
+      "mind-link",
+      "keen-focus"
+    ],
+    "moveIds": [
+      "astral-strike",
+      "astral-lance",
+      "astral-tempest",
+      "shadow-strike",
+      "shadow-lance",
+      "shadow-tempest",
+      "guard",
+      "mend",
+      "rally",
+      "barrier"
+    ],
+    "role": "special-fast",
+    "rarity": "legendary",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "mind-link",
+      "moveIds": [
+        "astral-strike",
+        "shadow-lance",
+        "guard",
+        "rally"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "runelisk",
+    "legacyId": 34,
+    "artId": 34,
+    "name": "Runelisk",
+    "types": [
+      "Astral",
+      "Stone"
+    ],
+    "coverageType": "Stone",
+    "nameKey": "species.runelisk.name",
+    "baseStats": {
+      "hp": 100,
+      "atk": 45,
+      "def": 80,
+      "spa": 100,
+      "spd": 105,
+      "spe": 50
+    },
+    "abilityIds": [
+      "mind-link",
+      "calm-mind"
+    ],
+    "moveIds": [
+      "astral-strike",
+      "astral-lance",
+      "astral-tempest",
+      "stone-strike",
+      "stone-lance",
+      "stone-tempest",
+      "guard",
+      "mend",
+      "rally",
+      "redirect"
+    ],
+    "role": "special-tank",
+    "rarity": "legendary",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "mind-link",
+      "moveIds": [
+        "astral-strike",
+        "stone-lance",
+        "guard",
+        "rally"
+      ],
+      "itemId": "none"
+    }
+  },
+  {
+    "id": "orbitail",
+    "legacyId": 35,
+    "artId": 35,
+    "name": "Orbitail",
+    "types": [
+      "Astral",
+      "Tide"
+    ],
+    "coverageType": "Tide",
+    "nameKey": "species.orbitail.name",
+    "baseStats": {
+      "hp": 95,
+      "atk": 45,
+      "def": 90,
+      "spa": 70,
+      "spd": 100,
+      "spe": 80
+    },
+    "abilityIds": [
+      "mind-link",
+      "healer"
+    ],
+    "moveIds": [
+      "astral-strike",
+      "astral-lance",
+      "astral-tempest",
+      "tide-strike",
+      "tide-lance",
+      "tide-tempest",
+      "guard",
+      "mend",
+      "rally",
+      "tailwind-call"
+    ],
+    "role": "support",
+    "rarity": "legendary",
+    "defaultBuild": {
+      "name": "Build mặc định",
+      "points": {
+        "hp": 0,
+        "atk": 0,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      },
+      "alignment": {
+        "up": null,
+        "down": null
+      },
+      "abilityId": "mind-link",
+      "moveIds": [
+        "astral-strike",
+        "tide-lance",
+        "guard",
+        "rally"
+      ],
+      "itemId": "none"
+    }
+  }
+]

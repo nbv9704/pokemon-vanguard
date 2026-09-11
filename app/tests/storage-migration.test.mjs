@@ -32,3 +32,7 @@ test('migration defers an active v1 battle and rejects newer saves',()=>{
  assert.throws(()=>migrateV1ToV2({schemaVersion:3},identities),/newer/);
 });
 
+test('migration preserves builds created by the v2 training sidecar',()=>{
+ const v1=setup(['trained-owner']);v1.progressionV2={activeTeamId:'team-custom',builds:[{buildId:'build-custom-1',monId:'mon-emberlyn',name:'Tốc độ',points:{hp:0,atk:16,def:0,spa:0,spd:0,spe:16},alignment:{up:'spe',down:'spa'},abilityId:'quick-start',moveIds:['flame-strike','gale-lance','guard','rally'],itemId:'swift-feather',revision:2}],teams:[{teamId:'team-custom',name:'Đội custom',buildIds:['build-custom-1'],revision:2}]};
+ const migrated=migrateV1ToV2(v1,identities).state;assert.equal(migrated.builds[0].name,'Tốc độ');assert.equal(migrated.teams[0].teamId,'team-custom');assert.equal(migrated.activeTeamId,'team-custom');
+});

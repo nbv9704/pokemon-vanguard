@@ -1,6 +1,7 @@
 import { readFile, access } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateV2Catalog } from './validate-v2-catalog.mjs';
 
 const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const slug = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -84,9 +85,14 @@ export async function checkContent(root = appRoot) {
   const contentDir = path.join(root, 'content');
   const contract = await loadJson(path.join(contentDir, 'catalog-contract.json'));
   const species = await loadJson(path.join(contentDir, 'species-identities.json'));
+  const authoredSpecies = await loadJson(path.join(contentDir, 'species.json'));
+  const moves = await loadJson(path.join(contentDir, 'moves.json'));
+  const abilities = await loadJson(path.join(contentDir, 'abilities.json'));
+  const items = await loadJson(path.join(contentDir, 'items.json'));
   await loadJson(path.join(contentDir, 'schemas', 'catalog.schema.json'));
   await loadJson(path.join(contentDir, 'schemas', 'species-identity.schema.json'));
   const problems = validateContent(contract, species);
+  problems.push(...validateV2Catalog({contract,identities:species,species:authoredSpecies,moves,abilities,items}));
   for (const mon of species) {
     try { await access(path.join(root, 'public', 'monsters', `${mon.artId}.svg`)); }
     catch { problems.push(`missing monster art for ${mon.id}: public/monsters/${mon.artId}.svg`); }
@@ -104,4 +110,3 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     process.exitCode = 1;
   }
 }
-

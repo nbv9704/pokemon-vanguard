@@ -137,7 +137,39 @@ Roadmap nguồn: `ROADMAP.md`.
 - Browser QA: không áp dụng ở mốc này vì v2 chưa bật vào UI; adapter được kiểm bằng frame/event tự động.
 - Remaining: catalog 48 moves/36 species và server build/team actions thuộc M2; save/UI người chơi tiếp tục dùng v1.
 
+## M2-01 — Catalog gameplay hoàn chỉnh
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Dữ liệu runtime: `content/species.json`, `moves.json`, `abilities.json`, `items.json`; authoring chia trong `content-src/battle-catalog.mjs` và `species-catalog.mjs`.
+- Kết quả: 36 species, 48 moves học được, 24 Ability, 12 held items + `none`; 12 Mon đơn hệ/24 song hệ.
+- Mỗi species có sáu base stats tổng 480, role tường minh, ≥8 move IDs, hai Ability và default build bốn chiêu có tên/mô tả tiếng Việt.
+- Validator mới chặn count/ID/reference/stat budget/effect schema/default build sai; `npm run generate:content` tái tạo JSON deterministic.
+
+## M2-02 — Server build/team actions
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn: `server/v2-catalog.mjs`, `server/v2-progression.mjs`; route catalog read-only tại `/api/v2/catalog`.
+- Build: kiểm ownership/trial, 32 points/16 cap, alignment, bốn move, Ability/item, tối đa ba build và optimistic revision.
+- Economy: đổi nội dung battle tốn 10 coins; đổi tên/no-op miễn phí; stale revision và invalid draft không trừ tiền.
+- Team: 1–6 build, chặn build lạ và species trùng; đổi tên/thứ tự miễn phí.
+- Tương thích: progression v2 là sidecar trong save v1 và chỉ được tạo khi lưu; migration v1→v2 giữ custom build/team này.
+- Integration test xác nhận catalog HTTP, WebSocket build.save, atomic persistence và reload sau restart.
+
+## M2-03 — Training editor
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn: `public/js/training-editor.js`, `public/training-editor.css`; `client.js` chỉ thêm wiring và không nhận phần render editor.
+- UI: roster Mon sở hữu, tối đa ba build, tên, sáu sliders, điểm còn lại, stat before/after, alignment, hai Ability, bốn move selectors có PP/mô tả, 12 items và reset draft.
+- Save: draft invalid bị khóa; phí hiển thị theo thay đổi; build mới reconcile với ID/revision server để lần lưu no-op kế tiếp không bị tính phí.
+- Browser QA room riêng: tạo `Emberlyn tốc độ` và `Emberlyn hỗ trợ`, phí đúng 10 coins mỗi build; no-op giữ nguyên tiền và reload vẫn đủ hai build.
+- Lỗi tìm thấy/sửa: bare `window.fetch` mất binding; build mới chưa nhận server ID khiến lần lưu hai bị tính như build mới.
+- Validation chung: `npm run check` đạt; `npm test` đạt 44/44, bao gồm 1.000 trận seeded M1 và restart persistence M2.
+
 ## Việc tiếp theo
 
-- Ticket: M2-01 — author catalog đầy đủ cho 36 species, 48 moves, 24 Ability và 12 items.
-- Ticket: M2-02 — server actions cho build/team, ownership, revision và chi phí.
+- Ticket: M2-04 — Box permanent/trial, archive locked/owned và search/filter theo catalog v2.
+- Ticket: M2-05 — sáu team slots, legality checks và blueprint import/export.
+- Sau hai ticket chạy Gate M2 với physical-fast/support build và team cũ không mất dữ liệu.

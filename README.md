@@ -32,7 +32,7 @@ npm run check
 npm test
 ```
 
-`npm run check` cũng xác nhận hợp đồng catalog v2 trong `app/content`: ID ổn định của 36 loài, 12 hệ, phân bổ đơn/song hệ, coverage type, asset tương ứng và các enum hiệu ứng. Có thể chạy riêng bằng `npm run check:content`. Catalog v2 hiện là dữ liệu chuẩn bị cho roadmap và chưa thay đổi gameplay v1.
+`npm run check` cũng xác nhận catalog v2 trong `app/content`: 36 loài, 48 chiêu, 24 Ability, 12 held items, ID/tham chiếu, sáu base stats tổng 480, phân bổ đơn/song hệ, coverage type và effect schema. Có thể chạy riêng bằng `npm run check:content`; `npm run generate:content` tái tạo các JSON từ nguồn authoring. Battle v1 chưa bị thay đổi.
 
 Kiểm tra migration trên **một bản sao** của save, không ghi thay đổi:
 
@@ -50,6 +50,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/logic-src/`: nguồn luật có thứ tự; `app/src/logic.js` là file được sinh tự động và không sửa trực tiếp.
 - `app/server/legacy/logic-v1.js`: bản luật v1 đóng băng để kiểm tra tương thích và kết thúc trận cũ khi migration được bật.
 - `app/public/js/store.js`, `router.js`, `net.js`: trạng thái trình duyệt, điều hướng và kết nối WebSocket được tách khỏi phần render trong `client.js`.
+- `app/public/js/training-editor.js`: editor build v2; catalog lấy từ `/api/v2/catalog`, save được server kiểm và lưu atomic.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.

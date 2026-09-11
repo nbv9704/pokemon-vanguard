@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { meta, setup, validateAction, applyAction, viewFor } from './src/logic.js';
 import { JsonAdventureStorage } from './server/storage-json.mjs';
+import { publicV2Catalog, v2Catalog } from './server/v2-catalog.mjs';
+import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.json':'application/json', '.woff2':'font/woff2' };
@@ -17,6 +19,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
     try {
       if (!['GET', 'HEAD'].includes(req.method)) { res.writeHead(405); return res.end(); }
       const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+      if (pathname === '/api/v2/catalog') {
+        res.writeHead(200, { 'Content-Type':'application/json; charset=utf-8', 'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff' });
+        return res.end(req.method === 'HEAD' ? undefined : JSON.stringify(publicV2Catalog));
+      }
       const file = path.resolve(publicDir, '.' + (pathname === '/' ? '/index.html' : pathname));
       if (!file.startsWith(publicDir + path.sep)) { res.writeHead(403); return res.end(); }
       if (!(await stat(file)).isFile()) { res.writeHead(404); return res.end(); }
@@ -38,7 +44,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
   });
   const send = (ws, message) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message)); };
   const broadcast = room => {
-    for (const [ws, player] of room.clients) send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view:viewFor(room.state,player), result:null, meta });
+    for (const [ws, player] of room.clients) {
+      const legacyView=viewFor(room.state,player);
+      send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view:{...legacyView,trainingV2:v2TrainingView(room.state,v2Catalog)}, result:null, meta });
+    }
   };
   async function persist(name, state) {
     await storage.save(name,state);
@@ -68,6 +77,11 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
         if (message.type !== 'action') return fail('unknown message type');
         if (player !== room.state.owner) return fail('spectators cannot act');
         if (JSON.stringify(message.action ?? null).length > 4096) return fail('action too large');
+        if (['build.save','team.save'].includes(message.action?.type)) {
+          const result=applyV2ProgressionAction(room.state,message.action,v2Catalog);
+          if (!result.ok) return fail(result.code);
+          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+        }
         const valid = validateAction(room.state,player,message.action);
         if (!valid.ok) return fail(valid.error);
         const next = applyAction(room.state,player,message.action);

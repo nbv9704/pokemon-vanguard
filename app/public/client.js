@@ -4,6 +4,7 @@ import {BattleAnimator} from "./battle-animation.js";
 import {createBrowserStore} from "./js/store.js";
 import {createRouter,NAV_ITEMS} from "./js/router.js";
 import {AdventureConnection,websocketUrl} from "./js/net.js";
+import {TrainingEditor} from "./js/training-editor.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
 let V=null,filter="All",search="",ownedOnly=false,selected=0,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
@@ -52,6 +53,8 @@ async function playTurn(previous,next){
  finally{if(version===playbackVersion)finishPlayback();}
 }
 function send(a){if(pending||playback)return;if(!connection.sendAction(a)){notify("Reconnecting. Please try again shortly.");return;}pending=true;draw();}
+const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:()=>{if(V&&router.current==='training')draw();},sendAction:send});
+trainingEditor.load().catch(error=>notify(error.message));
 function start(mode,gym){commands={};router.go("battle");send({type:"battle",mode,...(gym===undefined?{}:{gym})});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; AETHER LEAGUE · SEASON 01</span></div>';}
@@ -66,6 +69,7 @@ function home(){
  ].map(([n,v,max,r])=>'<div class="mission"><b>'+n+'</b><small>'+v+' / '+max+' completed</small><div class="progress"><i style="width:'+100*v/max+'%"></i></div><span class="reward">'+r+'</span></div>').join("")+'</div><div class="panel" style="margin-top:15px;background:linear-gradient(120deg,#342b3e,#1c2436)"><div class="eyebrow" style="color:#ccb1eb">THE CELESTIAL CALL</div><h3 style="margin:10px 0">Meet your next champion</h3><p style="font-size:11px">Epic or better every 10 summons.</p>'+btn("Visit summon portal →","nav:summon","small ghost")+'</div></aside></div>';
 }
 function archive(training=false){
+ if(training)return head("Training room","Tạo build chiến thuật với chỉ số, Ability, bốn chiêu và held item.")+trainingEditor.render(V,{art});
  const list=V.catalog.filter(d=>(!training&&!ownedOnly||V.collection.some(m=>m.id===d.id))&&(filter==="All"||d.types.includes(filter))&&d.name.toLowerCase().includes(search.toLowerCase()));
  return head(training?"Training room":"Monster archive",training?"Train your companions, equip held items, and prepare for the next challenge.":"Discover all 36 species. Select a monster to inspect its moves and edit your team.")+
  '<div class="filters"><input type="search" id="search" placeholder="Search monsters…" value="'+esc(search)+'"><select id="filter"><option>All</option>'+V.types.map(t=>'<option '+(filter===t?"selected":"")+'>'+t+'</option>').join("")+'</select>'+(!training?'<label style="padding:9px"><input type="checkbox" id="owned" '+(ownedOnly?"checked":"")+'> Owned only</label>':"")+'</div><div class="sectiontitle"><small>'+list.length+' MONSTERS · '+V.collection.length+'/36 COLLECTED</small>'+btn("Type effectiveness ↗","chart","small ghost")+'</div><div class="grid">'+list.map(d=>card(d)).join("")+'</div>'+(list.length?"":'<div class="empty">No monsters match your filters.</div>');
@@ -124,7 +128,7 @@ function chart(){
  modalId=null;$("#modal").innerHTML='<div class="modalback"><section class="modal" role="dialog" aria-modal="true" aria-label="Type effectiveness">'+btn("✕","close","close small")+'<h2>Type effectiveness</h2><p style="font-size:12px">Rows attack → columns defend. Dual types multiply. 2× strong · ½× resisted · 0× immune.</p><div class="tablewrap"><table class="chart"><thead><tr><th>ATK ↓ DEF →</th>'+V.types.map(t=>'<th>'+t+'</th>').join("")+'</tr></thead><tbody>'+V.types.map((t,i)=>'<tr><th>'+t+'</th>'+V.typeChart[i].map(v=>'<td class="'+(v>1?"good":v<1?"bad":"")+'">'+(v===.5?"½":v)+'×</td>').join("")+'</tr>').join("")+'</tbody></table></div></section></div>';
 }
 document.addEventListener("click",e=>{
- const el=e.target.closest("[data-action]");if(!el||el.disabled)return;const [a,b,c]=el.dataset.action.split(":");
+ const el=e.target.closest("[data-action],[data-training]");if(!el||el.disabled)return;if(el.dataset.training){trainingEditor.handleClick(el,V);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
  if(a==="nav"&&router.go(b)){search="";filter="All";closeModal();draw();window.scrollTo(0,0);}
@@ -144,6 +148,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("change",e=>{
  const t=e.target;
+ if(trainingEditor.handleInput(t))return;
  if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;browserStore.saveSettings();return;}
  if(playback)return;
  if(t.id==="filter"){filter=t.value;draw();}
@@ -153,7 +158,7 @@ document.addEventListener("change",e=>{
  if(t.dataset.target!==undefined)commands[+t.dataset.target].target=+t.value;
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
-document.addEventListener("input",e=>{if(e.target.id==="search"){const pos=e.target.selectionStart;search=e.target.value;draw();$("#search").focus();$("#search").setSelectionRange(pos,pos);}});
+document.addEventListener("input",e=>{if(trainingEditor.handleInput(e.target))return;if(e.target.id==="search"){const pos=e.target.selectionStart;search=e.target.value;draw();$("#search").focus();$("#search").setSelectionRange(pos,pos);}});
 document.addEventListener("keydown",e=>{if(e.code==="Escape")closeModal();if(e.code==="Tab"&&$("#modal").children.length){const els=[...$("#modal").querySelectorAll("button:not(:disabled),select,input")];const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 connection.start();
 

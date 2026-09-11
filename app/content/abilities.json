@@ -1,0 +1,122 @@
+[
+  {
+    "id": "dawnbringer",
+    "name": "Dawnbringer",
+    "description": "Khi vào sân, đặt Sun 5 lượt."
+  },
+  {
+    "id": "raincaller",
+    "name": "Raincaller",
+    "description": "Khi vào sân, đặt Rain 5 lượt."
+  },
+  {
+    "id": "wild-growth",
+    "name": "Wild Growth",
+    "description": "Khi vào sân, đặt Meadow 5 lượt."
+  },
+  {
+    "id": "static-field",
+    "name": "Static Field",
+    "description": "Khi vào sân, đặt Storm 5 lượt."
+  },
+  {
+    "id": "snowglobe",
+    "name": "Snowglobe",
+    "description": "Khi vào sân, đặt Snow 5 lượt."
+  },
+  {
+    "id": "sandstream",
+    "name": "Sandstream",
+    "description": "Khi vào sân, đặt Sand 5 lượt."
+  },
+  {
+    "id": "tailwind",
+    "name": "Tailwind",
+    "description": "Speed bản thân ×1,3."
+  },
+  {
+    "id": "night-hunter",
+    "name": "Night Hunter",
+    "description": "Gây sát thương ×1,25 khi mục tiêu dưới nửa HP."
+  },
+  {
+    "id": "radiance",
+    "name": "Radiance",
+    "description": "Cuối lượt hồi 5% HP tối đa."
+  },
+  {
+    "id": "venom-touch",
+    "name": "Venom Touch",
+    "description": "Sau khi gây sát thương, có 30% gây Poison."
+  },
+  {
+    "id": "ironhide",
+    "name": "Ironhide",
+    "description": "Sát thương nhận ×0,8."
+  },
+  {
+    "id": "mind-link",
+    "name": "Mind Link",
+    "description": "Đồng đội đang hoạt động gây sát thương ×1,15."
+  },
+  {
+    "id": "quick-start",
+    "name": "Quick Start",
+    "description": "Speed ×1,2 khi đầy HP."
+  },
+  {
+    "id": "keen-focus",
+    "name": "Keen Focus",
+    "description": "Accuracy tăng 5 điểm phần trăm."
+  },
+  {
+    "id": "sturdy-heart",
+    "name": "Sturdy Heart",
+    "description": "Một lần mỗi trận, sống ở 1 HP từ đầy HP."
+  },
+  {
+    "id": "rain-swimmer",
+    "name": "Rain Swimmer",
+    "description": "Speed ×1,5 trong Rain."
+  },
+  {
+    "id": "clean-entry",
+    "name": "Clean Entry",
+    "description": "Khi vào sân, chữa major status của bản thân."
+  },
+  {
+    "id": "water-shell",
+    "name": "Water Shell",
+    "description": "Sát thương Flame nhận ×0,5."
+  },
+  {
+    "id": "sun-runner",
+    "name": "Sun Runner",
+    "description": "Speed ×1,5 trong Sun."
+  },
+  {
+    "id": "thorn-coat",
+    "name": "Thorn Coat",
+    "description": "Sau đòn contact, gây phản sát thương 1/16 HP tối đa."
+  },
+  {
+    "id": "healer",
+    "name": "Healer",
+    "description": "Cuối lượt hồi 5% HP cho đồng đội yếu nhất."
+  },
+  {
+    "id": "calm-mind",
+    "name": "Calm Mind",
+    "description": "Special Defense ×1,2."
+  },
+  {
+    "id": "intimidator",
+    "name": "Intimidator",
+    "description": "Khi vào sân, giảm ATK mọi đối thủ một bậc."
+  },
+  {
+    "id": "steady-body",
+    "name": "Steady Body",
+    "description": "Chặn giảm chỉ số do đối thủ."
+  }
+]

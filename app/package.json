@@ -4,12 +4,13 @@
   "type": "module",
   "scripts": {
     "compile:logic": "node scripts/compile-logic.mjs",
+    "generate:content": "node scripts/generate-v2-content.mjs",
     "migrate:save": "node scripts/migrate-save.mjs",
     "dev": "node scripts/dev-local.mjs",
     "start": "node local-server.mjs",
     "check:content": "node scripts/check-content.mjs",
-    "check": "node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node --check local-server.mjs && node --check server/storage-json.mjs && node --check server/migrations.mjs && node --check scripts/migrate-save.mjs && node --check public/client.js && node --check public/battle-animation.js && node --check public/js/store.js && node --check public/js/router.js && node --check public/js/net.js && node --check scripts/check-content.mjs && node --check scripts/compile-logic.mjs && node --check scripts/dev-local.mjs",
-    "test": "node --test tests/local.test.mjs tests/animation.test.mjs tests/content.test.mjs tests/logic-generator.test.mjs tests/client-modules.test.mjs tests/storage-migration.test.mjs tests/v2-foundation.test.mjs tests/v2-engine.test.mjs tests/v2-events.test.mjs tests/v2-smoke.test.mjs"
+    "check": "node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node --check local-server.mjs && node --check server/storage-json.mjs && node --check server/migrations.mjs && node --check server/v2-catalog.mjs && node --check server/v2-progression.mjs && node --check content-src/battle-catalog.mjs && node --check content-src/species-catalog.mjs && node --check scripts/migrate-save.mjs && node --check scripts/generate-v2-content.mjs && node --check scripts/validate-v2-catalog.mjs && node --check public/client.js && node --check public/battle-animation.js && node --check public/js/store.js && node --check public/js/router.js && node --check public/js/net.js && node --check public/js/training-editor.js && node --check scripts/check-content.mjs && node --check scripts/compile-logic.mjs && node --check scripts/dev-local.mjs",
+    "test": "node --test tests/local.test.mjs tests/animation.test.mjs tests/content.test.mjs tests/content-v2.test.mjs tests/logic-generator.test.mjs tests/client-modules.test.mjs tests/storage-migration.test.mjs tests/v2-foundation.test.mjs tests/v2-engine.test.mjs tests/v2-events.test.mjs tests/v2-smoke.test.mjs tests/v2-progression.test.mjs tests/training-editor.test.mjs"
   },
   "engines": {
     "node": ">=22"

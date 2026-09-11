@@ -1,0 +1,80 @@
+[
+  {
+    "id": "none",
+    "name": "None",
+    "description": "Không mang vật phẩm.",
+    "consumable": false
+  },
+  {
+    "id": "vital-seed",
+    "name": "Vital Seed",
+    "description": "Cuối lượt hồi 8% HP tối đa.",
+    "consumable": false
+  },
+  {
+    "id": "power-lens",
+    "name": "Power Lens",
+    "description": "Sát thương gây ra ×1,2.",
+    "consumable": false
+  },
+  {
+    "id": "aegis-plate",
+    "name": "Aegis Plate",
+    "description": "Sát thương nhận ×0,8.",
+    "consumable": false
+  },
+  {
+    "id": "swift-feather",
+    "name": "Swift Feather",
+    "description": "Speed ×1,25.",
+    "consumable": false
+  },
+  {
+    "id": "cure-berry",
+    "name": "Cure Berry",
+    "description": "Một lần, chữa major status đầu tiên nhận.",
+    "consumable": true
+  },
+  {
+    "id": "focus-crystal",
+    "name": "Focus Crystal",
+    "description": "Một lần, sống ở 1 HP từ đầy HP.",
+    "consumable": true
+  },
+  {
+    "id": "healing-berry",
+    "name": "Healing Berry",
+    "description": "Một lần, dưới hoặc bằng 25% HP thì hồi 25%.",
+    "consumable": true
+  },
+  {
+    "id": "clear-charm",
+    "name": "Clear Charm",
+    "description": "Chặn giảm chỉ số do đối thủ.",
+    "consumable": false
+  },
+  {
+    "id": "weather-rock",
+    "name": "Weather Rock",
+    "description": "Weather do người mang tạo kéo dài 7 lượt.",
+    "consumable": false
+  },
+  {
+    "id": "terrain-root",
+    "name": "Terrain Root",
+    "description": "Terrain do người mang tạo kéo dài 7 lượt.",
+    "consumable": false
+  },
+  {
+    "id": "special-lens",
+    "name": "Special Lens",
+    "description": "Special Attack ×1,15.",
+    "consumable": false
+  },
+  {
+    "id": "physical-band",
+    "name": "Physical Band",
+    "description": "Attack ×1,15.",
+    "consumable": false
+  }
+]

@@ -1,0 +1,1032 @@
+[
+  {
+    "id": "flame-strike",
+    "name": "Nanh Lửa",
+    "description": "Đòn Flame ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Flame",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "applyStatus",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "status": "burn"
+        }
+      }
+    ],
+    "animationId": "flame-strike",
+    "soundId": null
+  },
+  {
+    "id": "flame-lance",
+    "name": "Thương Hỏa",
+    "description": "Đòn Flame uy lực cao lên một mục tiêu.",
+    "type": "Flame",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "flame-lance",
+    "soundId": null
+  },
+  {
+    "id": "flame-tempest",
+    "name": "Bão Dung Nham",
+    "description": "Đòn Flame đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Flame",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "flame-tempest",
+    "soundId": null
+  },
+  {
+    "id": "tide-strike",
+    "name": "Xung Thủy",
+    "description": "Đòn Tide ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Tide",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "stat": "spe",
+          "amount": -1
+        }
+      }
+    ],
+    "animationId": "tide-strike",
+    "soundId": null
+  },
+  {
+    "id": "tide-lance",
+    "name": "Thương Triều",
+    "description": "Đòn Tide uy lực cao lên một mục tiêu.",
+    "type": "Tide",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "tide-lance",
+    "soundId": null
+  },
+  {
+    "id": "tide-tempest",
+    "name": "Bão Hải Lưu",
+    "description": "Đòn Tide đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Tide",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "tide-tempest",
+    "soundId": null
+  },
+  {
+    "id": "bloom-strike",
+    "name": "Roi Mầm",
+    "description": "Đòn Bloom ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Bloom",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "stat": "def",
+          "amount": -1
+        }
+      }
+    ],
+    "animationId": "bloom-strike",
+    "soundId": null
+  },
+  {
+    "id": "bloom-lance",
+    "name": "Thương Gai",
+    "description": "Đòn Bloom uy lực cao lên một mục tiêu.",
+    "type": "Bloom",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "bloom-lance",
+    "soundId": null
+  },
+  {
+    "id": "bloom-tempest",
+    "name": "Bão Phấn Hoa",
+    "description": "Đòn Bloom đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Bloom",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "bloom-tempest",
+    "soundId": null
+  },
+  {
+    "id": "volt-strike",
+    "name": "Tia Hồ Quang",
+    "description": "Đòn Volt ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Volt",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "applyStatus",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "status": "slow"
+        }
+      }
+    ],
+    "animationId": "volt-strike",
+    "soundId": null
+  },
+  {
+    "id": "volt-lance",
+    "name": "Thương Sét",
+    "description": "Đòn Volt uy lực cao lên một mục tiêu.",
+    "type": "Volt",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "volt-lance",
+    "soundId": null
+  },
+  {
+    "id": "volt-tempest",
+    "name": "Bão Điện",
+    "description": "Đòn Volt đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Volt",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "volt-tempest",
+    "soundId": null
+  },
+  {
+    "id": "frost-strike",
+    "name": "Mảnh Băng",
+    "description": "Đòn Frost ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Frost",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "applyStatus",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "status": "slow"
+        }
+      }
+    ],
+    "animationId": "frost-strike",
+    "soundId": null
+  },
+  {
+    "id": "frost-lance",
+    "name": "Thương Giá",
+    "description": "Đòn Frost uy lực cao lên một mục tiêu.",
+    "type": "Frost",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "frost-lance",
+    "soundId": null
+  },
+  {
+    "id": "frost-tempest",
+    "name": "Bão Tuyết",
+    "description": "Đòn Frost đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Frost",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "frost-tempest",
+    "soundId": null
+  },
+  {
+    "id": "stone-strike",
+    "name": "Búa Đá",
+    "description": "Đòn Stone ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Stone",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "stat": "def",
+          "amount": -1
+        }
+      }
+    ],
+    "animationId": "stone-strike",
+    "soundId": null
+  },
+  {
+    "id": "stone-lance",
+    "name": "Thương Nham",
+    "description": "Đòn Stone uy lực cao lên một mục tiêu.",
+    "type": "Stone",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "stone-lance",
+    "soundId": null
+  },
+  {
+    "id": "stone-tempest",
+    "name": "Bão Địa Chấn",
+    "description": "Đòn Stone đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Stone",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "stone-tempest",
+    "soundId": null
+  },
+  {
+    "id": "gale-strike",
+    "name": "Lưỡi Gió",
+    "description": "Đòn Gale ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Gale",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "stat": "atk",
+          "amount": -1
+        }
+      }
+    ],
+    "animationId": "gale-strike",
+    "soundId": null
+  },
+  {
+    "id": "gale-lance",
+    "name": "Thương Không",
+    "description": "Đòn Gale uy lực cao lên một mục tiêu.",
+    "type": "Gale",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "gale-lance",
+    "soundId": null
+  },
+  {
+    "id": "gale-tempest",
+    "name": "Bão Cuồng Phong",
+    "description": "Đòn Gale đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Gale",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "gale-tempest",
+    "soundId": null
+  },
+  {
+    "id": "shadow-strike",
+    "name": "Trảm Đêm",
+    "description": "Đòn Shadow ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Shadow",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "stat": "spd",
+          "amount": -1
+        }
+      }
+    ],
+    "animationId": "shadow-strike",
+    "soundId": null
+  },
+  {
+    "id": "shadow-lance",
+    "name": "Thương Bóng",
+    "description": "Đòn Shadow uy lực cao lên một mục tiêu.",
+    "type": "Shadow",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "shadow-lance",
+    "soundId": null
+  },
+  {
+    "id": "shadow-tempest",
+    "name": "Bão Hắc Ám",
+    "description": "Đòn Shadow đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Shadow",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "shadow-tempest",
+    "soundId": null
+  },
+  {
+    "id": "light-strike",
+    "name": "Quang Kích",
+    "description": "Đòn Light ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Light",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.2,
+        "params": {
+          "stat": "spa",
+          "amount": -1
+        }
+      }
+    ],
+    "animationId": "light-strike",
+    "soundId": null
+  },
+  {
+    "id": "light-lance",
+    "name": "Thương Sáng",
+    "description": "Đòn Light uy lực cao lên một mục tiêu.",
+    "type": "Light",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "light-lance",
+    "soundId": null
+  },
+  {
+    "id": "light-tempest",
+    "name": "Bão Nhật Quang",
+    "description": "Đòn Light đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Light",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "light-tempest",
+    "soundId": null
+  },
+  {
+    "id": "venom-strike",
+    "name": "Nọc Độc",
+    "description": "Đòn Venom ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Venom",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "applyStatus",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.3,
+        "params": {
+          "status": "poison"
+        }
+      }
+    ],
+    "animationId": "venom-strike",
+    "soundId": null
+  },
+  {
+    "id": "venom-lance",
+    "name": "Thương Độc",
+    "description": "Đòn Venom uy lực cao lên một mục tiêu.",
+    "type": "Venom",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "venom-lance",
+    "soundId": null
+  },
+  {
+    "id": "venom-tempest",
+    "name": "Bão Chướng Khí",
+    "description": "Đòn Venom đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Venom",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "venom-tempest",
+    "soundId": null
+  },
+  {
+    "id": "steel-strike",
+    "name": "Vuốt Thép",
+    "description": "Đòn Steel ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Steel",
+    "category": "physical",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": true,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "afterDamage",
+        "target": "self",
+        "chance": 0.2,
+        "params": {
+          "stat": "def",
+          "amount": 1
+        }
+      }
+    ],
+    "animationId": "steel-strike",
+    "soundId": null
+  },
+  {
+    "id": "steel-lance",
+    "name": "Thương Hợp Kim",
+    "description": "Đòn Steel uy lực cao lên một mục tiêu.",
+    "type": "Steel",
+    "category": "special",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "steel-lance",
+    "soundId": null
+  },
+  {
+    "id": "steel-tempest",
+    "name": "Bão Kim Loại",
+    "description": "Đòn Steel đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Steel",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "steel-tempest",
+    "soundId": null
+  },
+  {
+    "id": "astral-strike",
+    "name": "Tâm Bạo",
+    "description": "Đòn Astral ổn định; có thể tạo hiệu ứng phụ.",
+    "type": "Astral",
+    "category": "special",
+    "power": 60,
+    "accuracy": 100,
+    "maxPP": 20,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "applyStatus",
+        "timing": "afterDamage",
+        "target": "hitTarget",
+        "chance": 0.1,
+        "params": {
+          "status": "sleep"
+        }
+      }
+    ],
+    "animationId": "astral-strike",
+    "soundId": null
+  },
+  {
+    "id": "astral-lance",
+    "name": "Thương Tinh Tú",
+    "description": "Đòn Astral uy lực cao lên một mục tiêu.",
+    "type": "Astral",
+    "category": "physical",
+    "power": 85,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "foe",
+    "contact": false,
+    "effects": [],
+    "animationId": "astral-lance",
+    "soundId": null
+  },
+  {
+    "id": "astral-tempest",
+    "name": "Bão Thiên Hà",
+    "description": "Đòn Astral đánh toàn bộ đối thủ đang hoạt động.",
+    "type": "Astral",
+    "category": "special",
+    "power": 65,
+    "accuracy": 95,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "allFoes",
+    "contact": false,
+    "effects": [],
+    "animationId": "astral-tempest",
+    "soundId": null
+  },
+  {
+    "id": "sun-call",
+    "name": "Gọi Mặt Trời",
+    "description": "Đặt Sun trong 5 lượt.",
+    "type": "Flame",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 5,
+    "priority": 0,
+    "targetMode": "field",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setWeather",
+        "timing": "onUse",
+        "target": "field",
+        "chance": 1,
+        "params": {
+          "id": "sun",
+          "remaining": 5
+        }
+      }
+    ],
+    "animationId": "sun-call",
+    "soundId": null
+  },
+  {
+    "id": "rain-call",
+    "name": "Gọi Mưa",
+    "description": "Đặt Rain trong 5 lượt.",
+    "type": "Tide",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 5,
+    "priority": 0,
+    "targetMode": "field",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setWeather",
+        "timing": "onUse",
+        "target": "field",
+        "chance": 1,
+        "params": {
+          "id": "rain",
+          "remaining": 5
+        }
+      }
+    ],
+    "animationId": "rain-call",
+    "soundId": null
+  },
+  {
+    "id": "meadow-call",
+    "name": "Gọi Đồng Cỏ",
+    "description": "Đặt Meadow trong 5 lượt.",
+    "type": "Bloom",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 5,
+    "priority": 0,
+    "targetMode": "field",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setTerrain",
+        "timing": "onUse",
+        "target": "field",
+        "chance": 1,
+        "params": {
+          "id": "meadow",
+          "remaining": 5
+        }
+      }
+    ],
+    "animationId": "meadow-call",
+    "soundId": null
+  },
+  {
+    "id": "storm-call",
+    "name": "Gọi Bão Điện",
+    "description": "Đặt Storm trong 5 lượt.",
+    "type": "Volt",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 5,
+    "priority": 0,
+    "targetMode": "field",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setTerrain",
+        "timing": "onUse",
+        "target": "field",
+        "chance": 1,
+        "params": {
+          "id": "storm",
+          "remaining": 5
+        }
+      }
+    ],
+    "animationId": "storm-call",
+    "soundId": null
+  },
+  {
+    "id": "snow-call",
+    "name": "Gọi Tuyết",
+    "description": "Đặt Snow trong 5 lượt.",
+    "type": "Frost",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 5,
+    "priority": 0,
+    "targetMode": "field",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setWeather",
+        "timing": "onUse",
+        "target": "field",
+        "chance": 1,
+        "params": {
+          "id": "snow",
+          "remaining": 5
+        }
+      }
+    ],
+    "animationId": "snow-call",
+    "soundId": null
+  },
+  {
+    "id": "sand-call",
+    "name": "Gọi Bão Cát",
+    "description": "Đặt Sand trong 5 lượt.",
+    "type": "Stone",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 5,
+    "priority": 0,
+    "targetMode": "field",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setWeather",
+        "timing": "onUse",
+        "target": "field",
+        "chance": 1,
+        "params": {
+          "id": "sand",
+          "remaining": 5
+        }
+      }
+    ],
+    "animationId": "sand-call",
+    "soundId": null
+  },
+  {
+    "id": "guard",
+    "name": "Phòng Thủ",
+    "description": "Chặn sát thương và trạng thái từ đối thủ trong lượt.",
+    "type": "Steel",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 10,
+    "priority": 4,
+    "targetMode": "self",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "guard",
+        "timing": "onUse",
+        "target": "self",
+        "chance": 1,
+        "params": {}
+      }
+    ],
+    "animationId": "guard",
+    "soundId": null
+  },
+  {
+    "id": "mend",
+    "name": "Hồi Phục",
+    "description": "Hồi 35% HP tối đa.",
+    "type": "Light",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "self",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "heal",
+        "timing": "onUse",
+        "target": "self",
+        "chance": 1,
+        "params": {
+          "fraction": 0.35
+        }
+      }
+    ],
+    "animationId": "mend",
+    "soundId": null
+  },
+  {
+    "id": "rally",
+    "name": "Hiệu Triệu",
+    "description": "Tăng ATK và SPA một bậc.",
+    "type": "Astral",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "self",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "changeStage",
+        "timing": "onUse",
+        "target": "self",
+        "chance": 1,
+        "params": {
+          "stat": "atk",
+          "amount": 1
+        }
+      },
+      {
+        "kind": "changeStage",
+        "timing": "onUse",
+        "target": "self",
+        "chance": 1,
+        "params": {
+          "stat": "spa",
+          "amount": 1
+        }
+      }
+    ],
+    "animationId": "rally",
+    "soundId": null
+  },
+  {
+    "id": "tailwind-call",
+    "name": "Thuận Gió",
+    "description": "Tăng gấp đôi Speed cho phe mình trong 4 lượt.",
+    "type": "Gale",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "ownSide",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setSideCondition",
+        "timing": "onUse",
+        "target": "ownSide",
+        "chance": 1,
+        "params": {
+          "id": "tailwind",
+          "remaining": 4
+        }
+      }
+    ],
+    "animationId": "tailwind-call",
+    "soundId": null
+  },
+  {
+    "id": "barrier",
+    "name": "Kết Giới",
+    "description": "Giảm 25% sát thương phe mình nhận trong 3 lượt.",
+    "type": "Light",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 10,
+    "priority": 0,
+    "targetMode": "ownSide",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "setSideCondition",
+        "timing": "onUse",
+        "target": "ownSide",
+        "chance": 1,
+        "params": {
+          "id": "barrier",
+          "remaining": 3
+        }
+      }
+    ],
+    "animationId": "barrier",
+    "soundId": null
+  },
+  {
+    "id": "redirect",
+    "name": "Dẫn Hướng",
+    "description": "Chuyển đòn đơn mục tiêu của đối thủ sang người dùng.",
+    "type": "Shadow",
+    "category": "status",
+    "power": 0,
+    "accuracy": 100,
+    "maxPP": 10,
+    "priority": 2,
+    "targetMode": "self",
+    "contact": false,
+    "effects": [
+      {
+        "kind": "redirect",
+        "timing": "onUse",
+        "target": "self",
+        "chance": 1,
+        "params": {}
+      }
+    ],
+    "animationId": "redirect",
+    "soundId": null
+  }
+]
