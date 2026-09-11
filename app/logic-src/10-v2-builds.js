@@ -3,8 +3,8 @@ function V2_validateBuild(build,species,catalog){
  const errors=[];
  if(!build||typeof build!=='object')return ['build must be an object'];
  const points=build.points||{};let total=0;
- for(const key of V2_STAT_KEYS){const value=points[key];if(!Number.isInteger(value)||value<0||value>16)errors.push(`${key} points must be an integer from 0 to 16`);else total+=value;}
- if(total>32)errors.push('stat points total cannot exceed 32');
+ for(const key of V2_STAT_KEYS){const value=points[key];if(!Number.isInteger(value)||value<0||value>32)errors.push(`${key} points must be an integer from 0 to 32`);else total+=value;}
+ if(total>66)errors.push('stat points total cannot exceed 66');
  const up=build.alignment?.up??null,down=build.alignment?.down??null,aligned=V2_STAT_KEYS.filter(key=>key!=='hp');
  if((up===null)!==(down===null)||up===down&&up!==null||up!==null&&!aligned.includes(up)||down!==null&&!aligned.includes(down))errors.push('alignment must be neutral or use two different non-HP stats');
  if(!Array.isArray(build.moveIds)||build.moveIds.length!==4||new Set(build.moveIds).size!==4)errors.push('build must contain four different moves');
@@ -23,4 +23,3 @@ function V2_createBattleMon({battleMonId,ownerSide,build,species,moves,catalog})
  const stats=V2_calculateStats(species.baseStats,build.points,build.alignment);
  return {battleMonId,ownerSide,speciesId:species.id,types:[...species.types],buildSnapshot:JSON.parse(JSON.stringify(build)),stats,hp:stats.hp,pp:Object.fromEntries(build.moveIds.map(id=>[id,moves[id].maxPP])),status:null,stages:{atk:0,def:0,spa:0,spd:0,spe:0},volatiles:{},itemState:{used:false},formId:null};
 }
-

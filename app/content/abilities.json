@@ -2,121 +2,121 @@
   {
     "id": "dawnbringer",
     "name": "Dawnbringer",
-    "description": "Khi vào sân, đặt Sun 5 lượt."
+    "description": "Sets Sun for 5 turns on entry."
   },
   {
     "id": "raincaller",
     "name": "Raincaller",
-    "description": "Khi vào sân, đặt Rain 5 lượt."
+    "description": "Sets Rain for 5 turns on entry."
   },
   {
     "id": "wild-growth",
     "name": "Wild Growth",
-    "description": "Khi vào sân, đặt Meadow 5 lượt."
+    "description": "Sets Meadow terrain for 5 turns on entry."
   },
   {
     "id": "static-field",
     "name": "Static Field",
-    "description": "Khi vào sân, đặt Storm 5 lượt."
+    "description": "Sets Storm terrain for 5 turns on entry."
   },
   {
     "id": "snowglobe",
     "name": "Snowglobe",
-    "description": "Khi vào sân, đặt Snow 5 lượt."
+    "description": "Sets Snow for 5 turns on entry."
   },
   {
     "id": "sandstream",
     "name": "Sandstream",
-    "description": "Khi vào sân, đặt Sand 5 lượt."
+    "description": "Sets Sand for 5 turns on entry."
   },
   {
     "id": "tailwind",
     "name": "Tailwind",
-    "description": "Speed bản thân ×1,3."
+    "description": "Multiplies the user’s Speed by 1.3."
   },
   {
     "id": "night-hunter",
     "name": "Night Hunter",
-    "description": "Gây sát thương ×1,25 khi mục tiêu dưới nửa HP."
+    "description": "Deals 1.25× damage to targets below half HP."
   },
   {
     "id": "radiance",
     "name": "Radiance",
-    "description": "Cuối lượt hồi 5% HP tối đa."
+    "description": "Restores 5% maximum HP at the end of each turn."
   },
   {
     "id": "venom-touch",
     "name": "Venom Touch",
-    "description": "Sau khi gây sát thương, có 30% gây Poison."
+    "description": "Has a 30% chance to poison after dealing damage."
   },
   {
     "id": "ironhide",
     "name": "Ironhide",
-    "description": "Sát thương nhận ×0,8."
+    "description": "Reduces damage received to 0.8×."
   },
   {
     "id": "mind-link",
     "name": "Mind Link",
-    "description": "Đồng đội đang hoạt động gây sát thương ×1,15."
+    "description": "Active allies deal 1.15× damage."
   },
   {
     "id": "quick-start",
     "name": "Quick Start",
-    "description": "Speed ×1,2 khi đầy HP."
+    "description": "Multiplies Speed by 1.2 while at full HP."
   },
   {
     "id": "keen-focus",
     "name": "Keen Focus",
-    "description": "Accuracy tăng 5 điểm phần trăm."
+    "description": "Adds 5 percentage points to accuracy."
   },
   {
     "id": "sturdy-heart",
     "name": "Sturdy Heart",
-    "description": "Một lần mỗi trận, sống ở 1 HP từ đầy HP."
+    "description": "Once per battle, survives at 1 HP when struck from full HP."
   },
   {
     "id": "rain-swimmer",
     "name": "Rain Swimmer",
-    "description": "Speed ×1,5 trong Rain."
+    "description": "Multiplies Speed by 1.5 during Rain."
   },
   {
     "id": "clean-entry",
     "name": "Clean Entry",
-    "description": "Khi vào sân, chữa major status của bản thân."
+    "description": "Cures the user’s major status condition on entry."
   },
   {
     "id": "water-shell",
     "name": "Water Shell",
-    "description": "Sát thương Flame nhận ×0,5."
+    "description": "Reduces incoming Flame damage to 0.5×."
   },
   {
     "id": "sun-runner",
     "name": "Sun Runner",
-    "description": "Speed ×1,5 trong Sun."
+    "description": "Multiplies Speed by 1.5 during Sun."
   },
   {
     "id": "thorn-coat",
     "name": "Thorn Coat",
-    "description": "Sau đòn contact, gây phản sát thương 1/16 HP tối đa."
+    "description": "After a contact move, damages the attacker for 1/16 maximum HP."
   },
   {
     "id": "healer",
     "name": "Healer",
-    "description": "Cuối lượt hồi 5% HP cho đồng đội yếu nhất."
+    "description": "Restores 5% HP to the weakest ally at the end of each turn."
   },
   {
     "id": "calm-mind",
     "name": "Calm Mind",
-    "description": "Special Defense ×1,2."
+    "description": "Multiplies Special Defense by 1.2."
   },
   {
     "id": "intimidator",
     "name": "Intimidator",
-    "description": "Khi vào sân, giảm ATK mọi đối thủ một bậc."
+    "description": "Lowers every opponent’s Attack by one stage on entry."
   },
   {
     "id": "steady-body",
     "name": "Steady Body",
-    "description": "Chặn giảm chỉ số do đối thủ."
+    "description": "Prevents stat reductions caused by opponents."
   }
 ]

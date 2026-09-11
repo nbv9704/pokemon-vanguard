@@ -1,4 +1,4 @@
-export const NAV_ITEMS=[['home','◈','Command Center'],['battle','⚔','Battle Arena'],['collection','▦','Monster Archive'],['teams','⬡','Team Builder'],['summon','✦','Summon Portal'],['gym','♜','Gym Challenge'],['training','⤴','Training Room'],['mail','✉','Mailbox'],['settings','⚙','Settings'],['guide','?','Field Guide']];
+export const NAV_ITEMS=[['home','◈','Command Center'],['battle','⚔','Battle Arena'],['collection','▦','Pokémon Archive'],['teams','⬡','Team Builder'],['recruitment','⌁','Recruitment'],['gym','♜','Gym Challenge'],['training','⤴','Training Room'],['mail','✉','Mailbox'],['settings','⚙','Settings'],['guide','?','Field Guide']];
 
 const routes=new Set(NAV_ITEMS.map(([route])=>route));
 export function createRouter(initial='home'){

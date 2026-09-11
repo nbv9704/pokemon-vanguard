@@ -1,5 +1,5 @@
 
-export const meta={game:"Aether Champions",minPlayers:1,maxPlayers:1};
+export const meta={game:"Pokémon Vanguard",minPlayers:1,maxPlayers:1};
 const TYPES=["Flame","Tide","Bloom","Volt","Frost","Stone","Gale","Shadow","Light","Venom","Steel","Astral"];
 const COLORS=["#ff9361","#5bd9ef","#9ee59c","#f3d76c","#b3e8ff","#d2b49a","#94dccf","#ac9fee","#ffe2a1","#d398e6","#a7bfd5","#faadda"];
 const NAMES=["Emberlyn","Cindrake","Volcaram","Tideray","Coralisk","Shellure","Mossprout","Thornox","Florawisp","Voltkit","Stormaw","Ampillo","Frostowl","Glacirn","Snowmelt","Pebblit","Obsidon","Dunewyrm","Zephyroo","Galesong","Cyclopup","Gloomoth","Noctalon","Umbrawolf","Solmane","Aurorix","Lumifin","Venomble","Toxipede","Mirecap","Ironcub","Gearaptor","Chromantis","Astralyn","Runelisk","Orbitail"];

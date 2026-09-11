@@ -1,4 +1,4 @@
-# Aether Champions — Nhật ký triển khai
+# Pokémon Vanguard — Nhật ký triển khai
 
 Roadmap nguồn: `ROADMAP.md`.
 
@@ -254,8 +254,38 @@ Roadmap nguồn: `ROADMAP.md`.
 - Validation: `npm run check` đạt; `npm test` đạt 64/64, gồm 1.000 battle invariant simulation trong suite và báo cáo balance 10.000 trận riêng.
 - Balance: gate chức năng đạt; hai đội vượt ngưỡng simulation được ghi rõ để playtest/cân chỉnh trước khi tuyên bố game đã cân bằng.
 
+## Review changeset M4 và reset hướng sản phẩm
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Nguồn: changeset 45 file trong `D:\Mon\AetherChampions_M4_modified_files`; toàn bộ SHA-256 khớp manifest và baseline nguyên bản đạt `npm run check` + 85/85 test.
+- Giữ lại: economy ledger/action receipt idempotent, Mail/Battle settlement dùng chung ledger, server clock chống quay ngược, Recruitment state, Trial giữ nguyên Mon/build/team reference, privacy projection và restart coverage.
+- Phát hiện lệch hướng: changeset dùng rarity gacha, lineup sáu loài, Trial 24 giờ, giá theo rarity và Ascension Stone. Các giả định này mâu thuẫn với `info.txt` nên không được tích hợp nguyên trạng.
+
+## PV-00 — Pokémon Vanguard foundation correction
+
+- Status: DONE
+- Product metadata đổi thành **Pokémon Vanguard**; roadmap Aether cũ được đánh dấu archived và trỏ sang `docs/pokemon-vanguard-roadmap.md`.
+- Build contract đổi sang tổng 66 Stat Points, tối đa 32 mỗi stat ở engine, server validator, blueprint validator và Training UI.
+- Economy schema v2 bổ sung `recruitmentTickets`; migration từ economy v1 cấp một ticket chuyển tiếp mà không thay coins/crystals.
+- Rarity summon bị gỡ khỏi route/UI/dispatcher v2. Action `summon` từ schema v2 trả `LEGACY_SUMMON_DISABLED`; frozen v1 vẫn được giữ để hoàn thành trận/save cũ.
+- Recruitment có tám offer duy nhất, Trial bảy ngày, giá permanent đồng nhất 1.200 coins hoặc một ticket. Coin/ticket được trừ bằng cùng ledger và receipt chống gửi lặp.
+- Archive và Recruitment không hiển thị hoặc sắp xếp theo rarity. Catalog 36 Mon cũ còn trường rarity chỉ như fixture tương thích và sẽ bị loại khỏi schema 3.
+- Economy simulation đổi từ 100.000 rarity pull sang 100.000 Recruitment cycle, kiểm tám offer duy nhất và độ phủ equal-pool; không đọc/ghi user save.
+- Source manifest: `app/content-src/pokemon-sources.json` khóa M-A trước, 66/32, English UI, front GIF + flip, move-FX-only và runtime offline.
+- Toàn bộ text mới của catalog chuyển tiếp, Recruitment, Training, Team Builder và Battle v2 đã được chuẩn hóa sang tiếng Anh; màn chi tiết legacy không còn hiển thị rarity.
+- Validation cuối: `npm run check` đạt; `npm test` đạt 82/82; browser QA xác nhận 8 offer, Trial 7 ngày, ticket, không rarity, Training 66/32 và không có console error.
+- Recruitment simulation seed `424242` đạt 100.000 cycle, 0 lineup lỗi; tần suất xuất hiện mỗi species nằm trong khoảng 21.894–22.549.
+
+## Trạng thái chuyển tiếp
+
+- M4 ledger/clock/Trial là nền tái sử dụng được và đã được sửa theo quyết định mới.
+- Catalog chiến đấu hiện hành vẫn là fixture Aether 36 loài/12 hệ. Nó chưa phải dữ liệu Pokémon Champions M-A và các regulation `alpha-*` chưa được đổi tên giả thành `m-a-*`.
+- Bước tiếp theo bắt buộc: PV-01 candidate importer và snapshot M-A; sau đó PV-02 engine 18 hệ/mechanics, PV-03 schema-3 roster reset, PV-04 sprite local, PV-05 M-A Recruitment/UI và PV-06 Mega Evolution.
+- Save schema 3 sẽ reset roster/build/team theo lựa chọn của chủ dự án, nhưng giữ wallet/settings phù hợp và luôn backup trước migration.
+
 ## Việc tiếp theo
 
-- Ticket: M4-01 — Economy config và ledger receipts thống nhất reward/mail/gacha v1 trên schema v2.
-- Ticket: M4-02 — Roster Ranch lineup/refresh/recruit/trial cùng clock adapter.
-- Playtest: ưu tiên `league-07` và `league-12`, nhất là Double, rồi mới quyết định đổi team composition hoặc balance rules.
+- Ticket: PV-01 — raw snapshot, parser fixture-backed, normalize ID/reference và candidate diff cho Regulation M-A.
+- Ticket: PV-02 — canonical 18-type chart, formula/mechanic gates và `implemented/legal` cho move/Ability/item.
+- Không tiếp tục M5 Ascension của roadmap cũ; Mega Evolution thay thế tại PV-06.

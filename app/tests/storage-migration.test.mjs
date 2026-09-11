@@ -22,7 +22,7 @@ test('JSON storage saves atomically, backs up and restores validated state',asyn
 test('v1 migration preserves progression and is idempotent',()=>{
  const v1=setup(['migration-owner']);v1.coins=3210;v1.gems=777;v1.pity=12;v1.summons=18;v1.wins=4;v1.badges=[0,1];v1.mail=[0];v1.collection[0].level=9;v1.collection[0].item=4;
  const result=migrateV1ToV2(v1,identities);assert.equal(result.status,'migrated');assert.equal(result.state.schemaVersion,2);
- assert.deepEqual(result.state.wallet,{coins:3210,crystals:777});assert.equal(result.state.pity,12);assert.equal(result.state.mons[0].legacyLevel,9);assert.equal(result.state.builds[0].itemId,'swift-feather');assert.equal(result.state.teams[0].buildIds.length,6);
+ assert.deepEqual(result.state.wallet,{coins:3210,crystals:777,recruitmentTickets:1});assert.equal(result.state.pity,12);assert.equal(result.state.summons,18);assert.deepEqual(result.state.mailClaims,[0]);assert.equal(result.state.economyVersion,2);assert.deepEqual(result.state.economyLedger,[]);assert.deepEqual(result.state.actionReceipts,[]);assert.equal(result.state.mons[0].legacyLevel,9);assert.equal(result.state.builds[0].itemId,'swift-feather');assert.equal(result.state.teams[0].buildIds.length,6);
  const again=migrateV1ToV2(result.state,identities);assert.equal(again.status,'current');assert.deepEqual(again.state,result.state);
 });
 

@@ -13,7 +13,7 @@ test('damage inspector uses the v2 engine breakdown and rejects non-sandbox call
  const state=setup(['inspector']),progression=getV2Progression(state,v2Catalog),build=progression.builds[0],species=v2Catalog.speciesById[progression.mons.find(mon=>mon.monId===build.monId).speciesId],defender=v2Catalog.species[3],move=v2Catalog.movesById[build.moveIds.find(id=>v2Catalog.movesById[id].power>0)];
  const result=inspectV2Damage({context:'sandbox',attacker:{speciesId:species.id,build},defender:{speciesId:defender.id,build:defender.defaultBuild},moveId:move.id,weather:'sun',terrain:null,spread:false},v2Catalog);assert.equal(result.ok,true);assert.ok(result.breakdown.damage>0);assert.equal(result.breakdown.moveId,move.id);assert.equal(result.breakdown.stab,1.5);assert.equal(result.breakdown.targetHp,100+defender.baseStats.hp);
  assert.equal(inspectV2Damage({...result,context:'gym'},v2Catalog).code,'SANDBOX_ONLY');
- const screen=new DamageInspector({fetchImpl:()=>{}}),html=screen.render({trainingV2:progression},publicV2Catalog);assert.match(html,/AUTHORITATIVE CALCULATOR/);assert.match(html,/Đòn spread/);assert.match(html,/Tính sát thương/);
+ const screen=new DamageInspector({fetchImpl:()=>{}}),html=screen.render({trainingV2:progression},publicV2Catalog);assert.match(html,/AUTHORITATIVE CALCULATOR/);assert.match(html,/Spread move in Double Battle/);assert.match(html,/Calculate damage/);
 });
 
 test('local damage endpoint is read-only and returns a validated breakdown',async()=>{

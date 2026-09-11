@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {createBrowserStore} from '../public/js/store.js';
 import {createRouter,NAV_ITEMS} from '../public/js/router.js';
 import {AdventureConnection,websocketUrl} from '../public/js/net.js';
+import {RecruitmentView} from '../public/js/recruitment-view.js';
 
 function memoryStorage(entries={}){const values=new Map(Object.entries(entries));return {getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,String(value)),values};}
 
@@ -16,9 +17,19 @@ test('browser store recovers invalid settings and keeps a stable player room',()
 });
 
 test('router accepts only declared screens',()=>{
- const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,10);
+ const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,10);assert.equal(router.has('recruitment'),true);assert.equal(router.has('summon'),false);
  assert.equal(router.go('battle'),true);assert.equal(router.current,'battle');
  assert.equal(router.go('admin'),false);assert.equal(router.current,'battle');
+});
+
+test('Recruitment UI projects config data and emits revision-safe server actions',()=>{
+ const sent=[],view=new RecruitmentView({onChange:()=>{},sendAction:action=>sent.push(action),createActionId:kind=>`${kind}:1`,monotonicNow:()=>1000});view.startTicker=()=>{};
+ const state={coins:2400,recruitmentTickets:1,recruitmentV2:{revision:4,cycleId:77,effectiveNow:100000,cycleEndsAt:200000,refresh:{costCoins:100,count:1,limit:3},activeTrial:null,trialOffer:null,offers:[{speciesId:'emberlyn',name:'Emberlyn',types:['Flame'],priceCoins:1200,priceTickets:1,abilityIds:['blazing-heart','flash-step'],sampleBuild:{moveIds:['flame-pulse','quick-claw','guard','tailwind']},ownership:'locked',monId:null,trialExpiresAt:null,trialUsedThisCycle:false}]}};
+ const catalog={species:[{id:'emberlyn',legacyId:0,artId:0,name:'Emberlyn',types:['Flame'],rarity:'common',role:'fast attacker'}],abilities:[{id:'blazing-heart',name:'Blazing Heart'},{id:'flash-step',name:'Flash Step'}],moves:[{id:'flame-pulse',name:'Flame Pulse'},{id:'quick-claw',name:'Quick Claw'},{id:'guard',name:'Guard'},{id:'tailwind',name:'Tailwind'}]};
+ const html=view.render(state,catalog,{art:id=>`<i>${id}</i>`});assert.match(html,/Recruitment/);assert.match(html,/Blazing Heart/);assert.match(html,/Flame Pulse/);assert.match(html,/Recruit · 1200/);assert.match(html,/Use ticket/);assert.doesNotMatch(html,/Common/);
+ view.handleClick({dataset:{recruit:'trial',speciesId:'emberlyn'}},state);assert.deepEqual(sent[0],{type:'recruit.trial',actionId:'recruit.trial:1',expectedRevision:4,cycleId:77,speciesId:'emberlyn'});
+ view.handleClick({dataset:{recruit:'refresh'}},state);assert.deepEqual(sent[1],{type:'recruit.refresh',actionId:'recruit.refresh:1',expectedRevision:4,cycleId:77});
+ view.handleClick({dataset:{recruit:'permanent',speciesId:'emberlyn',payment:'ticket'}},state);assert.deepEqual(sent[2],{type:'recruit.permanent',actionId:'recruit.permanent:1',expectedRevision:4,cycleId:77,speciesId:'emberlyn',payment:'ticket'});
 });
 
 test('connection joins, filters protocol frames and sends authoritative actions',()=>{

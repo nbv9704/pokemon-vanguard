@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
 import * as generated from '../src/logic.js';
 import * as legacy from '../server/legacy/logic-v1.js';
 import { buildLogic, compileLogic } from '../scripts/compile-logic.mjs';
@@ -33,7 +34,7 @@ test('generated v1 logic has exactly the public contract and matches frozen lega
   const turn = {type:'turn',round:current.battle.round,commands};
   assert.deepEqual(generated.applyAction(current, player, turn), legacy.applyAction(previous, player, turn));
   assert.equal((await buildLogic()).includes('Source hash:'), true);
-  assert.deepEqual(await compileLogic({verify:true}), {changed:false,target:path.resolve(new URL('../src/logic.js', import.meta.url).pathname.slice(1))});
+  assert.deepEqual(await compileLogic({verify:true}), {changed:false,target:path.resolve(fileURLToPath(new URL('../src/logic.js', import.meta.url)))});
 });
 
 test('a broken generated file never replaces the last valid logic build', async () => {

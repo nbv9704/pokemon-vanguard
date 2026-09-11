@@ -2,79 +2,79 @@
   {
     "id": "none",
     "name": "None",
-    "description": "Không mang vật phẩm.",
+    "description": "No held item.",
     "consumable": false
   },
   {
     "id": "vital-seed",
     "name": "Vital Seed",
-    "description": "Cuối lượt hồi 8% HP tối đa.",
+    "description": "Restores 8% maximum HP at the end of each turn.",
     "consumable": false
   },
   {
     "id": "power-lens",
     "name": "Power Lens",
-    "description": "Sát thương gây ra ×1,2.",
+    "description": "Multiplies damage dealt by 1.2.",
     "consumable": false
   },
   {
     "id": "aegis-plate",
     "name": "Aegis Plate",
-    "description": "Sát thương nhận ×0,8.",
+    "description": "Reduces damage received to 0.8×.",
     "consumable": false
   },
   {
     "id": "swift-feather",
     "name": "Swift Feather",
-    "description": "Speed ×1,25.",
+    "description": "Multiplies Speed by 1.25.",
     "consumable": false
   },
   {
     "id": "cure-berry",
     "name": "Cure Berry",
-    "description": "Một lần, chữa major status đầu tiên nhận.",
+    "description": "Once, cures the first major status condition received.",
     "consumable": true
   },
   {
     "id": "focus-crystal",
     "name": "Focus Crystal",
-    "description": "Một lần, sống ở 1 HP từ đầy HP.",
+    "description": "Once, survives at 1 HP when struck from full HP.",
     "consumable": true
   },
   {
     "id": "healing-berry",
     "name": "Healing Berry",
-    "description": "Một lần, dưới hoặc bằng 25% HP thì hồi 25%.",
+    "description": "Once at or below 25% HP, restores 25% maximum HP.",
     "consumable": true
   },
   {
     "id": "clear-charm",
     "name": "Clear Charm",
-    "description": "Chặn giảm chỉ số do đối thủ.",
+    "description": "Prevents stat reductions caused by opponents.",
     "consumable": false
   },
   {
     "id": "weather-rock",
     "name": "Weather Rock",
-    "description": "Weather do người mang tạo kéo dài 7 lượt.",
+    "description": "Weather created by the holder lasts 7 turns.",
     "consumable": false
   },
   {
     "id": "terrain-root",
     "name": "Terrain Root",
-    "description": "Terrain do người mang tạo kéo dài 7 lượt.",
+    "description": "Terrain created by the holder lasts 7 turns.",
     "consumable": false
   },
   {
     "id": "special-lens",
     "name": "Special Lens",
-    "description": "Special Attack ×1,15.",
+    "description": "Multiplies Special Attack by 1.15.",
     "consumable": false
   },
   {
     "id": "physical-band",
     "name": "Physical Band",
-    "description": "Attack ×1,15.",
+    "description": "Multiplies Attack by 1.15.",
     "consumable": false
   }
 ]

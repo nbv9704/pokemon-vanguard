@@ -27,7 +27,7 @@ export function applyTeamSave(base,progression,action){
 
 function validateBuildSpec(spec,catalog){
  const species=catalog.speciesById[spec?.speciesId];if(!species||typeof spec.name!=='string'||!spec.name.trim()||spec.name.length>40)return false;
- const pointKeys=Object.keys(spec.points||{}).sort(),total=Object.values(spec.points||{});if(JSON.stringify(pointKeys)!==JSON.stringify(['atk','def','hp','spa','spd','spe'])||total.some(value=>!Number.isInteger(value)||value<0||value>16)||total.reduce((sum,value)=>sum+value,0)>32)return false;
+ const pointKeys=Object.keys(spec.points||{}).sort(),total=Object.values(spec.points||{});if(JSON.stringify(pointKeys)!==JSON.stringify(['atk','def','hp','spa','spd','spe'])||total.some(value=>!Number.isInteger(value)||value<0||value>32)||total.reduce((sum,value)=>sum+value,0)>66)return false;
  if(!species.abilityIds.includes(spec.abilityId)||!Array.isArray(spec.moveIds)||spec.moveIds.length!==4||new Set(spec.moveIds).size!==4||spec.moveIds.some(id=>!species.moveIds.includes(id))||!catalog.itemsById[spec.itemId])return false;
  const {up=null,down=null}=spec.alignment||{};return (up===null&&down===null)||(up!==down&&['atk','def','spa','spd','spe'].includes(up)&&['atk','def','spa','spd','spe'].includes(down));
 }

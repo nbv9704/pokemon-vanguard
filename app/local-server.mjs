@@ -8,14 +8,18 @@ import { JsonAdventureStorage } from './server/storage-json.mjs';
 import { publicV2Catalog, v2Catalog } from './server/v2-catalog.mjs';
 import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
 import { applyV2BattleAction, v2BattleView } from './server/v2-battle-actions.mjs';
+import { applyV2EconomyAction, isV2EconomyAction } from './server/v2-economy.mjs';
 import { inspectV2Damage } from './server/v2-damage-inspector.mjs';
 import {synchronizeLegacyState,upgradeAdventure} from './server/v2-release.mjs';
+import {createServerClock} from './server/clock.mjs';
+import {applyV2RecruitmentAction,isV2RecruitmentAction,v2RecruitmentView} from './server/v2-recruitment.mjs';
+import {prepareRecruitmentState} from './server/v2-recruitment-state.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.json':'application/json', '.woff2':'font/woff2' };
 async function readJsonBody(req,maxBytes=32*1024){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>maxBytes)throw Object.assign(new Error('Request too large'),{statusCode:413});chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString('utf8'));}
 
-export function createLocalServer({ saveDir = path.join(root, '.local-data') } = {}) {
+export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock() } = {}) {
   const rooms = new Map();
   const storage = new JsonAdventureStorage(saveDir);
   const migrationBackups=path.join(path.resolve(saveDir),'.migration-backups');
@@ -53,10 +57,12 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
   });
   const send = (ws, message) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message)); };
   const broadcast = room => {
+    const serverNow=clock.now();
     for (const [ws, player] of room.clients) {
       const legacyView=viewFor(room.state,player);
-      const {rngState,rewardReceipts,mons,builds,teams,blueprints,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
-      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,trainingV2:v2TrainingView(room.state,v2Catalog),battleV2:v2BattleView(room.state,v2Catalog)};
+      const {rngState,rewardReceipts,economyLedger,actionReceipts,recruitmentV2:_privateRecruitmentV2,clockV2,mons,builds,teams,blueprints,nextMonId,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
+      const recruitmentV2=v2RecruitmentView(room.state,v2Catalog,{serverNow}),viewNow=recruitmentV2?.effectiveNow??serverNow;
+      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),recruitmentV2,battleV2:v2BattleView(room.state,v2Catalog)};
       send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view, result:null, meta });
     }
   };
@@ -80,9 +86,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
           if (!room.state) {
             const loaded=await storage.load(name);
             if(!loaded){const created=upgradeAdventure(setup([message.playerId]),v2Catalog);room.state=created.state;await persist(name,room.state);}
-            else if(!loaded.battle){const upgraded=upgradeAdventure(loaded,v2Catalog);if(upgraded.status==='migrated'){await storage.backup(name,migrationBackups,'pre-v2-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=loaded;}
+            else if(!loaded.battle){const upgraded=upgradeAdventure(loaded,v2Catalog);if(upgraded.status==='migrated'){await storage.backup(name,migrationBackups,'pre-v2-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=upgraded.state;}
             else room.state=loaded;
           }
+          if((room.state.schemaVersion||1)>=2){prepareRecruitmentState(room.state,v2Catalog,clock.now());await persist(name,room.state);}
           room.clients.set(ws,message.playerId); broadcast(room); return;
         }
         const player = room.clients.get(ws);
@@ -94,14 +101,25 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
           if((room.state.schemaVersion||1)>=2||!room.state.battle?.result)return fail('NO_LEGACY_RESULT');
           await storage.backup(name,migrationBackups,'pre-v2-schema');const upgraded=upgradeAdventure(room.state,v2Catalog);await persist(name,upgraded.state);room.state=upgraded.state;broadcast(room);return;
         }
-        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import'].includes(message.action?.type)||message.action?.type?.startsWith('battleV2.')))return fail('LEGACY_BATTLE_ACTIVE');
+        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')))return fail('LEGACY_BATTLE_ACTIVE');
         if (['build.save','team.save','blueprint.import'].includes(message.action?.type)) {
           const result=applyV2ProgressionAction(room.state,message.action,v2Catalog);
           if (!result.ok) return fail(result.code);
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
+        if (room.state.schemaVersion>=2&&isV2RecruitmentAction(message.action)) {
+          const result=applyV2RecruitmentAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});
+          if (!result.ok) return fail(result.code);
+          synchronizeLegacyState(result.state,v2Catalog);await persist(name,result.state);room.state=result.state;broadcast(room);return;
+        }
+        if (room.state.schemaVersion>=2&&isV2EconomyAction(message.action)) {
+          const result=applyV2EconomyAction(room.state,message.action,v2Catalog);
+          if (!result.ok) return fail(result.code);
+          synchronizeLegacyState(result.state,v2Catalog);await persist(name,result.state);room.state=result.state;broadcast(room);return;
+        }
+        if(room.state.schemaVersion>=2&&message.action?.type==='summon')return fail('LEGACY_SUMMON_DISABLED');
         if (typeof message.action?.type === 'string' && message.action.type.startsWith('battleV2.')) {
-          const result=applyV2BattleAction(room.state,message.action,v2Catalog);
+          const result=applyV2BattleAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});
           if (!result.ok) return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
@@ -125,6 +143,6 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const app = createLocalServer();
   const port = await app.listen(Number(process.env.PORT || 3100));
-  console.log(`Aether Champions: http://localhost:${port}\nSaves: ${path.join(root,'.local-data')}\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);
+  console.log(`Pokémon Vanguard: http://localhost:${port}\nSaves: ${path.join(root,'.local-data')}\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);
   for (const signal of ['SIGINT','SIGTERM']) process.on(signal,async()=>{await app.close();process.exit(0);});
 }

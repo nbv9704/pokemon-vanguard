@@ -1,6 +1,6 @@
-# Aether Champions — phát triển local
+# Pokémon Vanguard — local development
 
-Dự án hiện chạy trực tiếp bằng Node.js trên máy, không cần Higgsfield, tài khoản Cloudflare hoặc Bun.
+The project runs directly with Node.js on the local machine. The current 36-Mon catalog is a compatibility fixture while the reviewed Pokémon Champions Regulation M-A snapshot and local sprite pipeline are implemented. See [the authoritative migration roadmap](docs/pokemon-vanguard-roadmap.md).
 
 ## Chạy game
 
@@ -25,7 +25,7 @@ Trạng thái trò chơi lưu tại `app/.local-data/*.json`, không đưa vào 
 Trình duyệt lưu mã người chơi để nhận lại đúng bản lưu. Hãy dùng cùng trình duyệt và cùng địa chỉ `localhost:3100` để tiếp tục chơi.
 Có thể sao lưu cả thư mục `.local-data`. Bản lưu trên website cũ không tự chuyển về local.
 
-Khi một save local schema v1 được mở, máy chủ tự tạo bản sao tại `app/.local-data/.migration-backups` rồi nâng lên schema v2. Trận v1 đang diễn ra được giữ nguyên; sau khi kết thúc hoặc đầu hàng, giao diện vẫn hiện kết quả cũ. Bấm **Tiếp tục sang Tactical Alpha** để backup kết quả rồi migrate. Không tạo thêm trận v1 sau khi đã nâng schema.
+Khi một save local schema v1 được mở, máy chủ tự tạo bản sao tại `app/.local-data/.migration-backups` rồi nâng lên schema v2. Trận v1 đang diễn ra được giữ nguyên; sau khi kết thúc hoặc đầu hàng, giao diện vẫn hiện kết quả cũ. Bấm **Continue to Vanguard battles** để backup kết quả rồi migrate. Không tạo thêm trận v1 sau khi đã nâng schema.
 
 ## Kiểm tra
 
@@ -33,9 +33,10 @@ Khi một save local schema v1 được mở, máy chủ tự tạo bản sao t�
 npm run check
 npm test
 npm run simulate -- --seed 100 --matches 10000
+npm run simulate:economy -- --seed 424242 --cycles 100000
 ```
 
-`npm run check` cũng xác nhận catalog v2 trong `app/content`: 36 loài, 48 chiêu, 24 Ability, 12 held items, ID/tham chiếu, sáu base stats tổng 480, phân bổ đơn/song hệ, coverage type và effect schema. Có thể chạy riêng bằng `npm run check:content`; `npm run generate:content` tái tạo các JSON từ nguồn authoring. Battle v1 chưa bị thay đổi.
+`npm run check` currently validates the compatibility catalog in `app/content`. It is not the M-A production catalog. `app/content-src/pokemon-sources.json` records the target sources and locked import rules; a reviewed candidate will replace the fixture in a later gate.
 
 Kiểm tra migration trên **một bản sao** của save, không ghi thay đổi:
 
@@ -45,9 +46,9 @@ npm run migrate:save -- --dry-run --input D:\duong-dan\ban-sao-save.json
 
 Storage adapter có backup/restore và migration v1→v2 được kiểm thử tự động. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. `src/v2-engine.mjs` là adapter server được sinh từ chính các fragment này. Battle Arena dùng v2 cho Team Preview, battle và reward có receipt chống cộng trùng.
 
-Lệnh simulation dùng bốn worker local, cùng một cấp AI cho hai phía, đổi bên theo từng matchup và ghi CSV cùng JSON summary vào `reports/`. Báo cáo không đọc hoặc ghi `app/.local-data`.
+The battle simulation uses four local workers and writes CSV/JSON reports. `simulate:economy` now tests 100,000 equal-pool Recruitment cycles, eight unique offers and uniform permanent affordability. Neither simulation reads or writes `app/.local-data`.
 
-Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư một lần, triệu hồi, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
+Bộ kiểm tra local xác nhận phục vụ trang, catalog chuyển tiếp 36 loài, nhận thư một lần, Recruitment/Trial, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
 
 ## Cấu trúc
 
@@ -58,6 +59,9 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/public/js/training-editor.js`: editor build v2; catalog lấy từ `/api/v2/catalog`, save được server kiểm và lưu atomic.
 - `app/public/js/box-view.js`: Archive 36 loài với ownership permanent/trial/locked và bộ lọc catalog v2.
 - `app/public/js/team-builder.js`, `team-analysis.js`: đội sáu slot, kiểm regulation, phân tích matchup và blueprint JSON.
+- `app/public/js/recruitment-view.js`: eight equal-pool offers, seven-day Trial and permanent coin/ticket actions.
+- `app/server/v2-recruitment*.mjs`, `clock.mjs`: UTC offer cycle, Trial expiry/permanent upgrade and server-owned monotonic clock.
+- `app/server/v2-economy*.mjs`, `v2-mail.mjs`: economy config, ledger, action receipts, Mail and Recruitment simulation.
 - `app/server/v2-team-actions.mjs`: luật team và import blueprint authoritative; blueprint không thể cấp Mon hoặc tiền.
 - `app/server/v2-regulations.mjs`, `v2-ai.mjs`: regulation Team Preview và AI Easy/Normal/Hard với nguồn dữ liệu đã lọc.
 - `app/server/v2-battle-actions.mjs`, `v2-battle-factory.mjs`, `v2-battle-view.mjs`: action authoritative, dựng trận và projection riêng cho client.
@@ -65,7 +69,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/server/v2-damage-inspector.mjs`: calculator read-only chỉ dành cho Training sandbox.
 - `app/server/v2-simulation.mjs`, `app/scripts/simulate-v2*.mjs`: runner cân bằng Single/Double chạy song song và xuất báo cáo.
 - `app/public/js/v2-battle-*.js`: Team Preview, arena, command/replacement renderer và controller battle v2.
-- `app/public/js/damage-inspector.js`, `v2-tutorial.js`: Damage Inspector cho saved/draft build và checklist vòng chơi Tactical Alpha.
+- `app/public/js/damage-inspector.js`, `v2-tutorial.js`: Damage Inspector cho saved/draft build và checklist vòng chơi Vanguard.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.
@@ -74,9 +78,9 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 
 ## Nội dung phiên bản đầu
 
-36 loài quái gồm 12 đơn hệ và 24 song hệ, 12 hệ nguyên tố, 48 chiêu, 24 Ability và 12 vật phẩm cầm; có thời tiết/điều kiện sân, closed Team Preview, đấu đơn/đôi với AI Easy/Normal/Hard, 12 đội mẫu, sáu đội gym mỗi format, Training build, Archive permanent/trial, Team Builder, thư, gacha bằng tiền trong game và cài đặt hiển thị.
+The transition build still contains 36 original fixture species, 48 moves, 24 Abilities and 13 held items so completed engine work remains testable. Production content will use the reviewed M-A Pokémon roster, the canonical type chart and locally cached Showdown sprites. Recruitment already uses eight offers, a seven-day Trial, a uniform permanent coin price and recruitment tickets; rarity summoning is disabled for schema-v2 saves.
 
-Đây là bản solo với AI; chưa có đấu PvP, âm thanh hoặc hệ thống tài khoản. Không sử dụng thanh toán tiền thật. Các hình minh họa là vector tự vẽ.
+This is a local solo AI build. PvP, audio and accounts are not implemented. Runtime gameplay makes no Internet requests.
 
 ## Hoạt ảnh chiến đấu
 

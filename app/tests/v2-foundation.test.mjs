@@ -21,7 +21,7 @@ test('v2 validates builds, calculates six stats and snapshots battle units',()=>
 });
 
 test('v2 rejects point overflow, invalid alignment and illegal loadout',()=>{
- const build=JSON.parse(JSON.stringify(validBuild));build.points={hp:17,atk:16,def:1,spa:0,spd:0,spe:16};build.alignment={up:'hp',down:'hp'};build.moveIds=['flame-strike','flame-strike','unknown','guard'];build.abilityId='unknown';build.itemId='unknown';
+ const build=JSON.parse(JSON.stringify(validBuild));build.points={hp:33,atk:32,def:32,spa:3,spd:0,spe:0};build.alignment={up:'hp',down:'hp'};build.moveIds=['flame-strike','flame-strike','unknown','guard'];build.abilityId='unknown';build.itemId='unknown';
  const errors=engine.V2_validateBuild(build,species,catalog).join('\n');
  assert.match(errors,/hp points/);assert.match(errors,/total/);assert.match(errors,/alignment/);assert.match(errors,/four different moves/);assert.match(errors,/ability/);assert.match(errors,/item/);
 });

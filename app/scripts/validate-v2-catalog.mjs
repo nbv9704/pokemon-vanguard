@@ -44,3 +44,22 @@ export function validateV2Catalog({contract,identities,species,moves,abilities,i
  if(speciesIds.size!==36)problems.push('authored species IDs are incomplete');
  return problems;
 }
+
+export function validateEconomyConfig(economy,species){
+ const problems=[],nonNegativeInt=(value,label)=>{if(!Number.isInteger(value)||value<0)problems.push(`${label} must be a non-negative integer`);};
+ if(!economy||economy.schemaVersion!==2)return ['economy.json must use schemaVersion 2'];
+ nonNegativeInt(economy.starterWallet?.coins,'starterWallet.coins');nonNegativeInt(economy.starterWallet?.crystals,'starterWallet.crystals');nonNegativeInt(economy.starterWallet?.recruitmentTickets,'starterWallet.recruitmentTickets');
+ for(const [label,reward] of Object.entries({
+  'battle.exhibition.win':economy.battle?.exhibition?.win,'battle.exhibition.loss':economy.battle?.exhibition?.loss,'battle.exhibition.draw':economy.battle?.exhibition?.draw,
+  'battle.gymFirstClear':economy.battle?.gymFirstClear,'battle.surrender':economy.battle?.surrender,'battle.sandbox':economy.battle?.sandbox
+ })){nonNegativeInt(reward?.coins,`${label}.coins`);nonNegativeInt(reward?.crystals,`${label}.crystals`);}
+ nonNegativeInt(economy.build?.saveCostCoins,'build.saveCostCoins');
+ nonNegativeInt(economy.recruitment?.permanentCostCoins,'recruitment.permanentCostCoins');nonNegativeInt(economy.recruitment?.permanentCostTickets,'recruitment.permanentCostTickets');
+ nonNegativeInt(economy.recruitment?.trialCostCoins,'recruitment.trialCostCoins');nonNegativeInt(economy.recruitment?.refreshCostCoins,'recruitment.refreshCostCoins');nonNegativeInt(economy.recruitment?.paidRefreshLimitPerCycle,'recruitment.paidRefreshLimitPerCycle');nonNegativeInt(economy.recruitment?.lineupSize,'recruitment.lineupSize');nonNegativeInt(economy.recruitment?.cycleDurationMs,'recruitment.cycleDurationMs');nonNegativeInt(economy.recruitment?.trialDurationMs,'recruitment.trialDurationMs');
+ if(economy.recruitment?.lineupSize!==8)problems.push('recruitment.lineupSize must be 8');if(!economy.recruitment?.cycleDurationMs)problems.push('recruitment.cycleDurationMs must be positive');if(economy.recruitment?.trialDurationMs!==7*24*60*60*1000)problems.push('recruitment.trialDurationMs must be seven days');
+ if('summon' in economy)problems.push('rarity summon configuration is no longer supported');
+ nonNegativeInt(economy.mega?.stoneCostCoins,'mega.stoneCostCoins');
+ if(!Array.isArray(economy.mail)||economy.mail.length!==3)problems.push('economy mail must preserve the three milestone rewards');
+ const mailIds=new Set();for(const mail of economy.mail||[]){if(!Number.isInteger(mail.mailId)||mailIds.has(mail.mailId))problems.push(`invalid or duplicate mailId: ${mail.mailId}`);else mailIds.add(mail.mailId);if(typeof mail.key!=='string'||!mail.key)problems.push(`mail ${mail.mailId} needs a key`);nonNegativeInt(mail.reward?.coins,`mail ${mail.mailId} reward.coins`);nonNegativeInt(mail.reward?.crystals,`mail ${mail.mailId} reward.crystals`);if(!['always','winsAtLeast','badgesAtLeast'].includes(mail.eligibility?.kind))problems.push(`mail ${mail.mailId} has invalid eligibility`);}
+ return problems;
+}

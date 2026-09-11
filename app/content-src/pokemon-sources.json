@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "targetGame": "Pokémon Vanguard",
+  "initialRegulation": "m-a",
+  "publishPolicy": "manual-review",
+  "runtimeNetworkAccess": false,
+  "sources": {
+    "pokemon": "https://pokebase.app/pokemon-champions/pokemon?filter=regulationSets=[%22m-a%22%252C%22m-b%22%252C%22m-c%22],hasMega=false&statView=base",
+    "moves": "https://pokebase.app/pokemon-champions/moves",
+    "abilities": "https://pokebase.app/pokemon-champions/abilities",
+    "items": "https://pokebase.app/pokemon-champions/items",
+    "sprites": "https://play.pokemonshowdown.com/sprites/ani/"
+  },
+  "contentRules": {
+    "statPointBudget": 66,
+    "statPointCap": 32,
+    "rarity": false,
+    "recruitmentOfferCount": 8,
+    "trialDays": 7,
+    "formats": ["single", "double"],
+    "spriteMode": "front-gif-flipped-for-player-side",
+    "moveAnimationMode": "effect-only",
+    "language": "en"
+  }
+}

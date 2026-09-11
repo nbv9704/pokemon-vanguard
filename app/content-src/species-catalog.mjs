@@ -28,6 +28,6 @@ export function createSpecies(identities) {
     const [role,secondAbility,extraUtility]=rows[index],primary=identity.types[0],coverage=identity.coverageType;
     const attacks=[`${primary.toLowerCase()}-strike`,`${primary.toLowerCase()}-lance`,`${primary.toLowerCase()}-tempest`,`${coverage.toLowerCase()}-strike`,`${coverage.toLowerCase()}-lance`,`${coverage.toLowerCase()}-tempest`];
     const moveIds=[...new Set([...attacks,'guard','mend',primaryUtility[primary],extraUtility])];
-    return {...identity,nameKey:`species.${identity.id}.name`,baseStats:{...ROLE_STATS[role]},abilityIds:[primaryAbility[primary],secondAbility],moveIds,role,rarity:index>=32?'legendary':index%3===2?'epic':index%3===1?'rare':'common',defaultBuild:{name:'Build mặc định',points:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0},alignment:{up:null,down:null},abilityId:primaryAbility[primary],moveIds:[`${primary.toLowerCase()}-strike`,`${coverage.toLowerCase()}-lance`,'guard',primaryUtility[primary]],itemId:'none'}};
+    return {...identity,nameKey:`species.${identity.id}.name`,baseStats:{...ROLE_STATS[role]},abilityIds:[primaryAbility[primary],secondAbility],moveIds,role,rarity:index>=32?'legendary':index%3===2?'epic':index%3===1?'rare':'common',defaultBuild:{name:'Default Build',points:{hp:0,atk:0,def:0,spa:0,spd:0,spe:0},alignment:{up:null,down:null},abilityId:primaryAbility[primary],moveIds:[`${primary.toLowerCase()}-strike`,`${coverage.toLowerCase()}-lance`,'guard',primaryUtility[primary]],itemId:'none'}};
   });
 }

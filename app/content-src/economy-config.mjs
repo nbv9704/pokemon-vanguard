@@ -1,0 +1,27 @@
+export const economy={
+  schemaVersion:2,
+  starterWallet:{coins:2400,crystals:1800,recruitmentTickets:1},
+  battle:{
+    exhibition:{win:{coins:180,crystals:80},loss:{coins:60,crystals:20},draw:{coins:60,crystals:20}},
+    gymFirstClear:{coins:500,crystals:300},
+    surrender:{coins:0,crystals:0},
+    sandbox:{coins:0,crystals:0}
+  },
+  build:{saveCostCoins:10},
+  recruitment:{
+    permanentCostCoins:1200,
+    permanentCostTickets:1,
+    trialCostCoins:0,
+    refreshCostCoins:100,
+    paidRefreshLimitPerCycle:3,
+    lineupSize:8,
+    cycleDurationMs:24*60*60*1000,
+    trialDurationMs:7*24*60*60*1000
+  },
+  mega:{stoneCostCoins:1200},
+  mail:[
+    {mailId:0,key:'starter-ready',reward:{coins:500,crystals:500},eligibility:{kind:'always'}},
+    {mailId:1,key:'first-win',reward:{coins:400,crystals:300},eligibility:{kind:'winsAtLeast',value:1}},
+    {mailId:2,key:'first-badge',reward:{coins:800,crystals:500},eligibility:{kind:'badgesAtLeast',value:1}}
+  ]
+};

@@ -36,7 +36,7 @@
     "role": "physical-fast",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -97,7 +97,7 @@
     "role": "special-fast",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -158,7 +158,7 @@
     "role": "physical-tank",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -218,7 +218,7 @@
     "role": "special-fast",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -279,7 +279,7 @@
     "role": "disruptor",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -340,7 +340,7 @@
     "role": "special-tank",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -400,7 +400,7 @@
     "role": "support",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -461,7 +461,7 @@
     "role": "physical-tank",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -522,7 +522,7 @@
     "role": "support",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -582,7 +582,7 @@
     "role": "physical-fast",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -643,7 +643,7 @@
     "role": "special-fast",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -704,7 +704,7 @@
     "role": "physical-tank",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -764,7 +764,7 @@
     "role": "special-fast",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -825,7 +825,7 @@
     "role": "special-tank",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -886,7 +886,7 @@
     "role": "support",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -946,7 +946,7 @@
     "role": "physical-tank",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1007,7 +1007,7 @@
     "role": "physical-tank",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1068,7 +1068,7 @@
     "role": "disruptor",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1128,7 +1128,7 @@
     "role": "physical-fast",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1189,7 +1189,7 @@
     "role": "support",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1250,7 +1250,7 @@
     "role": "disruptor",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1310,7 +1310,7 @@
     "role": "disruptor",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1371,7 +1371,7 @@
     "role": "physical-fast",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1431,7 +1431,7 @@
     "role": "physical-tank",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1491,7 +1491,7 @@
     "role": "physical-tank",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1551,7 +1551,7 @@
     "role": "special-tank",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1612,7 +1612,7 @@
     "role": "support",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1672,7 +1672,7 @@
     "role": "support",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1733,7 +1733,7 @@
     "role": "physical-fast",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1793,7 +1793,7 @@
     "role": "special-tank",
     "rarity": "epic",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1853,7 +1853,7 @@
     "role": "physical-tank",
     "rarity": "common",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1914,7 +1914,7 @@
     "role": "physical-fast",
     "rarity": "rare",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -1975,7 +1975,7 @@
     "role": "disruptor",
     "rarity": "legendary",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -2035,7 +2035,7 @@
     "role": "special-fast",
     "rarity": "legendary",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -2096,7 +2096,7 @@
     "role": "special-tank",
     "rarity": "legendary",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,
@@ -2157,7 +2157,7 @@
     "role": "support",
     "rarity": "legendary",
     "defaultBuild": {
-      "name": "Build mặc định",
+      "name": "Default Build",
       "points": {
         "hp": 0,
         "atk": 0,

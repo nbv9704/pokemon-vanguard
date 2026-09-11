@@ -44,6 +44,6 @@ test('Gate M2 saves physical-fast and support builds while preserving another te
  const team=state.progressionV2.teams.find(entry=>entry.teamId==='team-default'),saved=applyV2ProgressionAction(state,{type:'team.save',team:{...team,name:'Đội sáu Mon'},expectedRevision:team.revision},v2Catalog);assert.equal(saved.ok,true);assert.equal(saved.state.progressionV2.teams.some(entry=>entry.teamId==='team-archive'&&entry.name==='Đội cũ'),true);
 });
 
-test('all default builds have four valid moves with localized labels and descriptions',()=>{
- for(const species of v2Catalog.species){assert.match(species.defaultBuild.name,/Build mặc định/);assert.equal(species.defaultBuild.moveIds.length,4);for(const id of species.defaultBuild.moveIds){const move=v2Catalog.movesById[id];assert.ok(move.name.trim());assert.ok(move.description.trim().length>=8);}}
+test('all default builds have four valid moves with English labels and descriptions',()=>{
+ for(const species of v2Catalog.species){assert.match(species.defaultBuild.name,/Default Build/);assert.equal(species.defaultBuild.moveIds.length,4);for(const id of species.defaultBuild.moveIds){const move=v2Catalog.movesById[id];assert.ok(move.name.trim());assert.ok(move.description.trim().length>=8);}}
 });

@@ -4,7 +4,7 @@ import {renderBattleLanding,renderBattlePreview,syncPreviewSelection} from './v2
 
 export class V2BattleScreen{
  constructor({onChange,sendAction}){this.onChange=onChange;this.send=sendAction;this.previewId=null;this.selection=[];this.commands={};this.replacements={};this.difficulty='normal';}
- render(state,catalog,helpers){if(!catalog)return '<div class="empty">Đang tải battle catalog…</div>';const view=state.battleV2;if(!view||this.dismissedId===view.id)return renderBattleLanding(this,state);if(view.phase==='PREVIEW')return renderBattlePreview(this,view,catalog,helpers);return renderBattleArena(this,view,catalog,helpers);}
+ render(state,catalog,helpers){if(!catalog)return '<div class="empty">Loading battle catalog…</div>';const view=state.battleV2;if(!view||this.dismissedId===view.id)return renderBattleLanding(this,state);if(view.phase==='PREVIEW')return renderBattlePreview(this,view,catalog,helpers);return renderBattleArena(this,view,catalog,helpers);}
  handleClick(element,state,catalog){
   const action=element.dataset.v2battle;if(!action)return false;const view=state.battleV2;
   if(action==='start'){this.dismissedId=null;this.send({type:'battleV2.preview.start',mode:element.dataset.mode,regulationId:element.dataset.regulation,difficulty:this.difficulty});}

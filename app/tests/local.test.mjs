@@ -21,16 +21,17 @@ test('local HTTP, saved rewards, reload after server restart, spectator protecti
   let app=createLocalServer({saveDir});
   try {
     let port=await app.listen(0);
-    const response=await fetch(`http://127.0.0.1:${port}/`);assert.equal(response.status,200);assert.match(await response.text(),/Aether Champions/);
+    const response=await fetch(`http://127.0.0.1:${port}/`);assert.equal(response.status,200);assert.match(await response.text(),/Pokémon Vanguard/);
     assert.equal((await fetch(`http://127.0.0.1:${port}/src/logic.js`)).status,404);
     const a=await client(port);assert.equal(a.initial.view.catalog.length,36);
-    a.action({type:'claim',id:0});assert.equal((await a.next(m=>m.view?.gems===2300)).view.coins,2900);
-    a.action({type:'claim',id:0});assert.match((await a.next(m=>m.type==='error')).error,/already claimed/);
+    a.action({type:'mail.claim',mailId:0,actionId:'mail:starter'});assert.equal((await a.next(m=>m.view?.gems===2300)).view.coins,2900);
+    a.action({type:'mail.claim',mailId:0,actionId:'mail:starter-2'});assert.equal((await a.next(m=>m.type==='error')).error,'MAIL_ALREADY_CLAIMED');
     const spectator=await client(port,'spectator');assert.equal(spectator.initial.view.spectator,true);assert.equal(spectator.initial.view.trainingV2,undefined);assert.equal(spectator.initial.view.battleV2,undefined);
     spectator.action({type:'summon',count:1});assert.match((await spectator.next(m=>m.type==='error')).error,/spectator/);
     await app.close();app=createLocalServer({saveDir});port=await app.listen(0);
     const b=await client(port);assert.equal(b.initial.view.gems,2300);
-    b.action({type:'summon',count:10});const pulled=await b.next(m=>m.view?.summons===10);assert.equal(pulled.view.reveal.length,10);assert.equal(pulled.view.gems,1300);
+    b.action({type:'summon',count:10,actionId:'summon:disabled'});assert.equal((await b.next(m=>m.type==='error')).error,'LEGACY_SUMMON_DISABLED');
+    const recruitment=b.initial.view.recruitmentV2,offer=recruitment.offers.find(entry=>entry.ownership==='locked');b.action({type:'recruit.permanent',speciesId:offer.speciesId,payment:'ticket',actionId:'recruit:local-ticket',expectedRevision:recruitment.revision,cycleId:recruitment.cycleId});const recruited=(await b.next(m=>m.view?.recruitmentTickets===0&&m.view?.collection?.length===7)).view;assert.equal(recruited.gems,2300);
     for(const mode of ['single','double']) {
       b.action({type:'battleV2.preview.start',mode,regulationId:'sandbox-v2',difficulty:'normal'});let v=(await b.next(m=>m.view?.battleV2?.phase==='PREVIEW'&&m.view.battleV2.mode===mode)).view;
       b.action({type:'battleV2.preview.lock',buildIds:v.battleV2.playerRoster.slice(0,mode==='double'?4:3).map(mon=>mon.buildId)});v=(await b.next(m=>m.view?.battleV2?.phase==='COMMAND')).view;
