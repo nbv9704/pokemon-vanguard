@@ -1,8 +1,9 @@
 import {readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
 import {sha256} from './snapshot.mjs';
+import {CANONICAL_TYPES} from '../rules-v3/type-chart.mjs';
 
-const TYPES=new Set(['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy']);
+const TYPES=new Set(CANONICAL_TYPES);
 const CATEGORIES=new Set(['physical','special','status']);
 const STATS=['hp','atk','def','spa','spd','spe'];
 const duplicateIds=entries=>entries.map(entry=>entry.id).filter((id,index,ids)=>ids.indexOf(id)!==index);
@@ -13,7 +14,7 @@ export function validateNormalizedCandidate({species,moves,abilities,items,roste
  for(const [label,entries] of Object.entries({species,moves,abilities,items}))for(const id of duplicateIds(entries))problems.push(`${label} has duplicate id ${id}`);
  for(const entry of species){
   if(entry.id!==entry.sourceSlug)problems.push(`${entry.id} does not preserve sourceSlug as candidate id`);
-  if(entry.types.length<1||entry.types.length>2||entry.types.some(type=>!TYPES.has(type)))problems.push(`${entry.id} has invalid types`);
+  if(entry.types.length<1||entry.types.length>2||new Set(entry.types).size!==entry.types.length||entry.types.some(type=>!TYPES.has(type)))problems.push(`${entry.id} has invalid types`);
   if(STATS.some(stat=>!Number.isInteger(entry.baseStats?.[stat])||entry.baseStats[stat]<1))problems.push(`${entry.id} has invalid base stats`);
   if(!entry.regulationSets.includes(regulation))problems.push(`${entry.id} is outside ${regulation}`);
   for(const id of entry.moveIds)if(!moveIds.has(id))problems.push(`${entry.id} references missing move ${id}`);

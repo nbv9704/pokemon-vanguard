@@ -84,7 +84,7 @@ Gate: a pinned reviewed snapshot validates offline and produces byte-identical n
 
 ### R2 — Battle Rules
 
-Status: next implementation stage.
+Status: in progress. The isolated `app/rules-v3/` shadow contract now covers 18 types, level-50 stats, 66/32 Stat Points, all natures, the common damage core, deterministic action ordering and Single/Double target discovery. Golden module tests pass; active-engine integration, faint/replacement windows, redirection, end-turn ordering and replay equality remain.
 
 - Replace the compatibility chart with all 18 canonical types and golden tests for immunity, ¼×, ½×, 1×, 2× and 4× dual-type cases.
 - Verify level-50 stat and damage formulas, 66 total Stat Points, 32 per-stat cap, nature modifiers, STAB, random roll, critical hit and burn behavior against Champions examples.
@@ -94,6 +94,8 @@ Status: next implementation stage.
 - Expose the exact pure damage breakdown to the Damage Inspector. Animation and UI never calculate battle results.
 
 Gate: golden Single/Double fixtures pass and the same seed plus command stream produces the same state, events and replay.
+
+Implementation reference: `docs/r2-battle-rules-reference-2026-09-12.md`.
 
 ### R3 — Mechanics Coverage
 
