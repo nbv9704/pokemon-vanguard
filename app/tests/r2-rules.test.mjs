@@ -14,6 +14,9 @@ test('R2 contract pins the level 50 formats and stat limits',async()=>{
  assert.equal(contract.statPointBudget,STAT_POINT_BUDGET);
  assert.equal(contract.statPointCap,STAT_POINT_CAP);
  assert.deepEqual(contract.formats,['single','double']);
+ assert.deepEqual(contract.turnOrder,['switch','mega','move']);
+ assert.equal(contract.dynamicSpeed,true);
+ assert.equal(contract.deterministicTieSeed,true);
  assert.deepEqual(contract.randomDamageRolls,[85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100]);
 });
 
@@ -66,10 +69,11 @@ test('turn order resolves action class, priority, speed, Trick Room and ties',()
 });
 
 test('target rules distinguish selectable and spread targets in single and double battles',()=>{
- const single={sides:{A:{active:['a1']},B:{active:['b1']}}};
+ const alive=actorId=>({actorId,hp:100,maxHp:100});
+ const single={sides:{A:{active:['a1'],roster:[alive('a1')]},B:{active:['b1'],roster:[alive('b1')]}}};
  assert.deepEqual(legalTargets(single,{side:'A',actorId:'a1',targetMode:'adjacentFoe'}).map(target=>target.actorId),['b1']);
  assert.deepEqual(legalTargets(single,{side:'A',actorId:'a1',targetMode:'adjacentAlly'}),[]);
- const double={sides:{A:{active:['a1','a2']},B:{active:['b1','b2']}}};
+ const double={sides:{A:{active:['a1','a2'],roster:[alive('a1'),alive('a2')]},B:{active:['b1','b2'],roster:[alive('b1'),alive('b2')]}}};
  assert.deepEqual(legalTargets(double,{side:'A',actorId:'a1',targetMode:'anyAdjacent'}).map(target=>target.actorId),['a2','b1','b2']);
  assert.deepEqual(resolveTargets(double,{side:'A',actorId:'a1',targetMode:'adjacentFoe',target:{side:'B',slot:1}}).map(target=>target.actorId),['b2']);
  assert.deepEqual(resolveTargets(double,{side:'A',actorId:'a1',targetMode:'allAdjacentFoes'}).map(target=>target.actorId),['b1','b2']);

@@ -84,7 +84,7 @@ Gate: a pinned reviewed snapshot validates offline and produces byte-identical n
 
 ### R2 — Battle Rules
 
-Status: in progress. The isolated `app/rules-v3/` shadow contract now covers 18 types, level-50 stats, 66/32 Stat Points, all natures, the common damage core, deterministic action ordering and Single/Double target discovery. Golden module tests pass; active-engine integration, faint/replacement windows, redirection, end-turn ordering and replay equality remain.
+Status: complete as an isolated shadow contract. It covers 18 types, level-50 stats, 66/32 Stat Points, all natures, the common damage core, Single/Double targets, redirection, switch → Mega → move timing, dynamic speed, faint cancellation, replacement, end-turn groups and seeded replay equality. Schema-2 remains the playable compatibility path; R3 supplies mechanic handlers and R4 performs catalog/runtime promotion.
 
 - Replace the compatibility chart with all 18 canonical types and golden tests for immunity, ¼×, ½×, 1×, 2× and 4× dual-type cases.
 - Verify level-50 stat and damage formulas, 66 total Stat Points, 32 per-stat cap, nature modifiers, STAB, random roll, critical hit and burn behavior against Champions examples.

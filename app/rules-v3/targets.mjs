@@ -1,10 +1,12 @@
+import {activeUnits,otherSide} from './battle-state.mjs';
+import {selectRedirection} from './redirection.mjs';
+
 export const TARGET_MODES=['self','adjacentAlly','adjacentFoe','anyAdjacent','allAdjacentFoes','allAdjacent','userSide','foeSide','field'];
-const otherSide=side=>side==='A'?'B':'A';
-const active=(battle,side)=>(battle.sides?.[side]?.active||[]).map((actorId,slot)=>({side,slot,actorId})).filter(entry=>entry.actorId!==null&&entry.actorId!==undefined);
+const targetRefs=(battle,side)=>activeUnits(battle,side).map(({unit,...target})=>target);
 
 export function legalTargets(battle,{side,actorId,targetMode}){
  if(!TARGET_MODES.includes(targetMode))throw new Error(`unknown target mode: ${targetMode}`);
- const allies=active(battle,side),foes=active(battle,otherSide(side)),self=allies.find(entry=>entry.actorId===actorId);
+ const allies=targetRefs(battle,side),foes=targetRefs(battle,otherSide(side)),self=allies.find(entry=>entry.actorId===actorId);
  if(!self)throw new Error('actor is not active');
  if(targetMode==='self')return [self];
  if(targetMode==='adjacentAlly')return allies.filter(entry=>entry.actorId!==actorId);
@@ -17,9 +19,11 @@ export function legalTargets(battle,{side,actorId,targetMode}){
  return [{scope:'field'}];
 }
 
-export function resolveTargets(battle,request){
+export function resolveTargets(battle,request,{redirectable=true}={}){
  const targets=legalTargets(battle,request);
  if(['self','allAdjacentFoes','allAdjacent','userSide','foeSide','field'].includes(request.targetMode))return targets;
  const selected=targets.find(entry=>entry.side===request.target?.side&&entry.slot===request.target?.slot);
- return selected?[selected]:[];
+ if(!selected)return [];
+ const redirected=redirectable?selectRedirection(battle,{...request,selected}):null;
+ return [redirected||selected];
 }

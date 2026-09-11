@@ -1,3 +1,5 @@
+import {nextRandom} from './rng.mjs';
+
 const ACTION_RANK={replace:3,switch:2,move:1};
 
 export function compareTurnActions(left,right,{trickRoom=false}={}){
@@ -9,3 +11,15 @@ export function compareTurnActions(left,right,{trickRoom=false}={}){
 }
 
 export function orderTurnActions(actions,options){return [...actions].sort((left,right)=>compareTurnActions(left,right,options));}
+
+export function prepareTurnActions(actions,rngState){
+ const stable=[...actions].sort((left,right)=>String(left.actorId).localeCompare(String(right.actorId)));
+ const prepared=[];let state=rngState;
+ for(const action of stable){const roll=nextRandom(state);state=roll.rngState;prepared.push({...action,tieKey:roll.value});}
+ return {actions:prepared,rngState:state};
+}
+
+export function buildTurnQueue(actions,rngState,options){
+ const prepared=prepareTurnActions(actions,rngState);
+ return {actions:orderTurnActions(prepared.actions,options),rngState:prepared.rngState};
+}

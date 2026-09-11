@@ -6,6 +6,10 @@
   "statPointCap": 32,
   "typeCount": 18,
   "formats": ["single", "double"],
+  "battlePhases": ["ENTRY", "COMMAND", "RESOLVE", "END_TURN", "REPLACE", "FINISHED"],
+  "turnOrder": ["switch", "mega", "move"],
+  "dynamicSpeed": true,
+  "deterministicTieSeed": true,
   "spreadModifier": 0.75,
   "randomDamageRolls": [85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100],
   "implementationStatus": "shadow-contract"
