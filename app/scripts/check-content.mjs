@@ -76,6 +76,17 @@ export function validateContent(contract, species) {
   return problems;
 }
 
+export function validateTacticalContent(regulations,aiTeams,species){
+ const problems=[],ids=new Set(species.map(mon=>mon.id)),required=['sandbox-v2','alpha-single','alpha-double'];
+ if(!Array.isArray(regulations)||regulations.length!==3||required.some(id=>!regulations.some(rule=>rule.id===id)))problems.push('regulations.json must define sandbox-v2, alpha-single and alpha-double exactly once');
+ for(const rule of regulations||[])if(!rule.name||typeof rule.speciesClause!=='boolean'||typeof rule.itemClause!=='boolean'||!rule.roster||!rule.pick||!rule.lead)problems.push(`invalid regulation: ${rule?.id||'unknown'}`);
+ if(aiTeams?.schemaVersion!==1||!Array.isArray(aiTeams?.exhibition)||aiTeams.exhibition.length!==12)problems.push('ai-teams.json must define 12 exhibition teams');
+ for(const format of ['single','double'])if(!Array.isArray(aiTeams?.gyms?.[format])||aiTeams.gyms[format].length!==6)problems.push(`ai-teams.json must define six ${format} gym teams`);
+ const teams=[...(aiTeams?.exhibition||[]),...(aiTeams?.gyms?.single||[]),...(aiTeams?.gyms?.double||[])];
+ for(const team of teams)if(!team.id||!['easy','normal','hard'].includes(team.difficulty)||!Array.isArray(team.speciesIds)||team.speciesIds.length!==6||new Set(team.speciesIds).size!==6||team.speciesIds.some(id=>!ids.has(id)))problems.push(`invalid AI team: ${team?.id||'unknown'}`);
+ return problems;
+}
+
 async function loadJson(file) {
   try { return JSON.parse(await readFile(file, 'utf8')); }
   catch (error) { throw new Error(`${path.basename(file)} is not valid JSON: ${error.message}`); }
@@ -89,10 +100,13 @@ export async function checkContent(root = appRoot) {
   const moves = await loadJson(path.join(contentDir, 'moves.json'));
   const abilities = await loadJson(path.join(contentDir, 'abilities.json'));
   const items = await loadJson(path.join(contentDir, 'items.json'));
+  const regulations=await loadJson(path.join(contentDir,'regulations.json'));
+  const aiTeams=await loadJson(path.join(contentDir,'ai-teams.json'));
   await loadJson(path.join(contentDir, 'schemas', 'catalog.schema.json'));
   await loadJson(path.join(contentDir, 'schemas', 'species-identity.schema.json'));
   const problems = validateContent(contract, species);
   problems.push(...validateV2Catalog({contract,identities:species,species:authoredSpecies,moves,abilities,items}));
+  problems.push(...validateTacticalContent(regulations,aiTeams,species));
   for (const mon of species) {
     try { await access(path.join(root, 'public', 'monsters', `${mon.artId}.svg`)); }
     catch { problems.push(`missing monster art for ${mon.id}: public/monsters/${mon.artId}.svg`); }

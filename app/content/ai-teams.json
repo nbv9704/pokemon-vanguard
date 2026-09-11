@@ -1,0 +1,324 @@
+{
+  "schemaVersion": 1,
+  "version": "alpha.1",
+  "exhibition": [
+    {
+      "id": "league-01",
+      "name": "League Team 1",
+      "difficulty": "easy",
+      "speciesIds": [
+        "emberlyn",
+        "shellure",
+        "stormaw",
+        "pebblit",
+        "cyclopup",
+        "aurorix"
+      ]
+    },
+    {
+      "id": "league-02",
+      "name": "League Team 2",
+      "difficulty": "normal",
+      "speciesIds": [
+        "tideray",
+        "florawisp",
+        "glacirn",
+        "zephyroo",
+        "umbrawolf",
+        "toxipede"
+      ]
+    },
+    {
+      "id": "league-03",
+      "name": "League Team 3",
+      "difficulty": "hard",
+      "speciesIds": [
+        "mossprout",
+        "ampillo",
+        "obsidon",
+        "gloomoth",
+        "lumifin",
+        "gearaptor"
+      ]
+    },
+    {
+      "id": "league-04",
+      "name": "League Team 4",
+      "difficulty": "easy",
+      "speciesIds": [
+        "voltkit",
+        "snowmelt",
+        "galesong",
+        "solmane",
+        "mirecap",
+        "runelisk"
+      ]
+    },
+    {
+      "id": "league-05",
+      "name": "League Team 5",
+      "difficulty": "normal",
+      "speciesIds": [
+        "frostowl",
+        "dunewyrm",
+        "noctalon",
+        "venomble",
+        "chromantis",
+        "cindrake"
+      ]
+    },
+    {
+      "id": "league-06",
+      "name": "League Team 6",
+      "difficulty": "hard",
+      "speciesIds": [
+        "pebblit",
+        "cyclopup",
+        "aurorix",
+        "ironcub",
+        "orbitail",
+        "coralisk"
+      ]
+    },
+    {
+      "id": "league-07",
+      "name": "League Team 7",
+      "difficulty": "easy",
+      "speciesIds": [
+        "zephyroo",
+        "umbrawolf",
+        "toxipede",
+        "astralyn",
+        "volcaram",
+        "thornox"
+      ]
+    },
+    {
+      "id": "league-08",
+      "name": "League Team 8",
+      "difficulty": "normal",
+      "speciesIds": [
+        "gloomoth",
+        "lumifin",
+        "gearaptor",
+        "emberlyn",
+        "shellure",
+        "stormaw"
+      ]
+    },
+    {
+      "id": "league-09",
+      "name": "League Team 9",
+      "difficulty": "hard",
+      "speciesIds": [
+        "solmane",
+        "mirecap",
+        "runelisk",
+        "tideray",
+        "florawisp",
+        "glacirn"
+      ]
+    },
+    {
+      "id": "league-10",
+      "name": "League Team 10",
+      "difficulty": "easy",
+      "speciesIds": [
+        "venomble",
+        "chromantis",
+        "cindrake",
+        "mossprout",
+        "ampillo",
+        "obsidon"
+      ]
+    },
+    {
+      "id": "league-11",
+      "name": "League Team 11",
+      "difficulty": "normal",
+      "speciesIds": [
+        "ironcub",
+        "orbitail",
+        "coralisk",
+        "voltkit",
+        "snowmelt",
+        "galesong"
+      ]
+    },
+    {
+      "id": "league-12",
+      "name": "League Team 12",
+      "difficulty": "hard",
+      "speciesIds": [
+        "astralyn",
+        "volcaram",
+        "thornox",
+        "frostowl",
+        "dunewyrm",
+        "noctalon"
+      ]
+    }
+  ],
+  "gyms": {
+    "single": [
+      {
+        "id": "gym-single-1",
+        "name": "Ember Coast",
+        "difficulty": "hard",
+        "speciesIds": [
+          "emberlyn",
+          "cindrake",
+          "volcaram",
+          "tideray",
+          "coralisk",
+          "shellure"
+        ]
+      },
+      {
+        "id": "gym-single-2",
+        "name": "Wild Current",
+        "difficulty": "hard",
+        "speciesIds": [
+          "mossprout",
+          "thornox",
+          "florawisp",
+          "voltkit",
+          "stormaw",
+          "ampillo"
+        ]
+      },
+      {
+        "id": "gym-single-3",
+        "name": "Frozen Quarry",
+        "difficulty": "hard",
+        "speciesIds": [
+          "frostowl",
+          "glacirn",
+          "snowmelt",
+          "pebblit",
+          "obsidon",
+          "dunewyrm"
+        ]
+      },
+      {
+        "id": "gym-single-4",
+        "name": "Skyfall Spire",
+        "difficulty": "hard",
+        "speciesIds": [
+          "zephyroo",
+          "galesong",
+          "cyclopup",
+          "gloomoth",
+          "noctalon",
+          "umbrawolf"
+        ]
+      },
+      {
+        "id": "gym-single-5",
+        "name": "Eclipse Garden",
+        "difficulty": "hard",
+        "speciesIds": [
+          "solmane",
+          "aurorix",
+          "lumifin",
+          "venomble",
+          "toxipede",
+          "mirecap"
+        ]
+      },
+      {
+        "id": "gym-single-6",
+        "name": "Astral Citadel",
+        "difficulty": "hard",
+        "speciesIds": [
+          "ironcub",
+          "gearaptor",
+          "chromantis",
+          "astralyn",
+          "runelisk",
+          "orbitail"
+        ]
+      }
+    ],
+    "double": [
+      {
+        "id": "gym-double-1",
+        "name": "Ember Coast",
+        "difficulty": "hard",
+        "speciesIds": [
+          "volcaram",
+          "tideray",
+          "coralisk",
+          "shellure",
+          "mossprout",
+          "thornox"
+        ]
+      },
+      {
+        "id": "gym-double-2",
+        "name": "Wild Current",
+        "difficulty": "hard",
+        "speciesIds": [
+          "florawisp",
+          "voltkit",
+          "stormaw",
+          "ampillo",
+          "frostowl",
+          "glacirn"
+        ]
+      },
+      {
+        "id": "gym-double-3",
+        "name": "Frozen Quarry",
+        "difficulty": "hard",
+        "speciesIds": [
+          "snowmelt",
+          "pebblit",
+          "obsidon",
+          "dunewyrm",
+          "zephyroo",
+          "galesong"
+        ]
+      },
+      {
+        "id": "gym-double-4",
+        "name": "Skyfall Spire",
+        "difficulty": "hard",
+        "speciesIds": [
+          "cyclopup",
+          "gloomoth",
+          "noctalon",
+          "umbrawolf",
+          "solmane",
+          "aurorix"
+        ]
+      },
+      {
+        "id": "gym-double-5",
+        "name": "Eclipse Garden",
+        "difficulty": "hard",
+        "speciesIds": [
+          "lumifin",
+          "venomble",
+          "toxipede",
+          "mirecap",
+          "ironcub",
+          "gearaptor"
+        ]
+      },
+      {
+        "id": "gym-double-6",
+        "name": "Astral Citadel",
+        "difficulty": "hard",
+        "speciesIds": [
+          "chromantis",
+          "astralyn",
+          "runelisk",
+          "orbitail",
+          "emberlyn",
+          "cindrake"
+        ]
+      }
+    ]
+  }
+}

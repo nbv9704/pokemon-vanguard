@@ -7,6 +7,7 @@ import { meta, setup, validateAction, applyAction, viewFor } from './src/logic.j
 import { JsonAdventureStorage } from './server/storage-json.mjs';
 import { publicV2Catalog, v2Catalog } from './server/v2-catalog.mjs';
 import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
+import { applyV2BattleAction, v2BattleView } from './server/v2-battle-actions.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.json':'application/json', '.woff2':'font/woff2' };
@@ -46,7 +47,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
   const broadcast = room => {
     for (const [ws, player] of room.clients) {
       const legacyView=viewFor(room.state,player);
-      send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view:{...legacyView,trainingV2:v2TrainingView(room.state,v2Catalog)}, result:null, meta });
+      send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view:{...legacyView,trainingV2:v2TrainingView(room.state,v2Catalog),battleV2:v2BattleView(room.state,v2Catalog)}, result:null, meta });
     }
   };
   async function persist(name, state) {
@@ -80,6 +81,11 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data') } =
         if (['build.save','team.save','blueprint.import'].includes(message.action?.type)) {
           const result=applyV2ProgressionAction(room.state,message.action,v2Catalog);
           if (!result.ok) return fail(result.code);
+          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+        }
+        if (typeof message.action?.type === 'string' && message.action.type.startsWith('battleV2.')) {
+          const result=applyV2BattleAction(room.state,message.action,v2Catalog);
+          if (!result.ok) return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         const valid = validateAction(room.state,player,message.action);

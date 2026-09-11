@@ -14,7 +14,7 @@ npm run dev
 Mở http://localhost:3100. Hoặc nhấp đúp `start-local.cmd` ở thư mục dự án.
 
 - Sửa HTML/CSS/JS trong `app/public`, rồi tải lại trình duyệt để xem thay đổi.
-- Sửa luật trong `app/logic-src`, rồi chạy `npm run compile:logic`. Khi dùng `npm run dev`, trình biên dịch theo dõi fragment/catalog và chỉ khởi động lại máy chủ sau khi tạo được `app/src/logic.js` hợp lệ.
+- Sửa luật trong `app/logic-src`, rồi chạy `npm run compile:logic`. Khi dùng `npm run dev`, trình biên dịch theo dõi fragment/catalog và chỉ khởi động lại máy chủ sau khi tạo được `app/src/logic.js` và `app/src/v2-engine.mjs` hợp lệ.
 - Dừng bằng Ctrl+C trong terminal đang chạy máy chủ.
 - Chạy `npm run start` nếu không cần tự khởi động lại.
 - Máy chủ chỉ lắng nghe trên máy này, không mở truy cập từ mạng LAN.
@@ -40,7 +40,7 @@ Kiểm tra migration trên **một bản sao** của save, không ghi thay đổ
 npm run migrate:save -- --dry-run --input D:\duong-dan\ban-sao-save.json
 ```
 
-Storage adapter có backup/restore được kiểm thử tự động, nhưng migration v2 chưa được bật cho save thật. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. Adventure hiện vẫn dùng luật v1 cho tới khi có catalog hoàn chỉnh và giao diện M3.
+Storage adapter có backup/restore được kiểm thử tự động, nhưng migration v2 chưa được bật cho save thật. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. `src/v2-engine.mjs` là adapter server được sinh từ chính các fragment này. Battle Arena mới đã dùng v2 cho Team Preview và đấu thử; reward/adventure migration sẽ được bật ở M3-05.
 
 Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư một lần, triệu hồi, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
 
@@ -54,6 +54,9 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 - `app/public/js/box-view.js`: Archive 36 loài với ownership permanent/trial/locked và bộ lọc catalog v2.
 - `app/public/js/team-builder.js`, `team-analysis.js`: đội sáu slot, kiểm regulation, phân tích matchup và blueprint JSON.
 - `app/server/v2-team-actions.mjs`: luật team và import blueprint authoritative; blueprint không thể cấp Mon hoặc tiền.
+- `app/server/v2-regulations.mjs`, `v2-ai.mjs`: regulation Team Preview và AI Easy/Normal/Hard với nguồn dữ liệu đã lọc.
+- `app/server/v2-battle-actions.mjs`, `v2-battle-factory.mjs`, `v2-battle-view.mjs`: action authoritative, dựng trận và projection riêng cho client.
+- `app/public/js/v2-battle-*.js`: Team Preview, arena, command/replacement renderer và controller battle v2.
 - `app/public/client.js`: giao diện và điều khiển.
 - `app/public/art.js`: 36 hình minh họa SVG gốc.
 - `app/public/style.css`: giao diện responsive.
@@ -62,7 +65,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, 36 loài quái, nhận thư
 
 ## Nội dung phiên bản đầu
 
-36 loài quái gồm 12 đơn hệ và 24 song hệ, 12 hệ nguyên tố, 48 chiêu, 24 Ability và 12 vật phẩm cầm; có thời tiết/điều kiện sân, đấu đơn/đôi với AI, sáu gym, Training build, Archive permanent/trial, Team Builder, thư, gacha bằng tiền trong game và cài đặt hiển thị.
+36 loài quái gồm 12 đơn hệ và 24 song hệ, 12 hệ nguyên tố, 48 chiêu, 24 Ability và 12 vật phẩm cầm; có thời tiết/điều kiện sân, closed Team Preview, đấu đơn/đôi với AI Easy/Normal/Hard, 12 đội mẫu, sáu đội gym mỗi format, Training build, Archive permanent/trial, Team Builder, thư, gacha bằng tiền trong game và cài đặt hiển thị.
 
 Đây là bản solo với AI; chưa có đấu PvP, âm thanh hoặc hệ thống tài khoản. Không sử dụng thanh toán tiền thật. Các hình minh họa là vector tự vẽ.
 

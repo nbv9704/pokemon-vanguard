@@ -144,7 +144,7 @@ function V2_resolveTurn(battle, moves) {
     current.phase = 'END_TURN'; current.phaseRevision = (current.phaseRevision || 0) + 1;
     const ended = V2_endTurn(current); current = ended.battle; rawEvents.push(...ended.events);
   }
-  const committed = V2_commitEvents(current, rawEvents);
+  const committed = V2_commitEvents(current, rawEvents.map(event => ({...event, turn: event.turn ?? battle.turn})));
   if (JSON.stringify(battle) !== input) throw new Error('V2_resolveTurn mutated its input');
   return {ok: true, battle: committed.battle, events: committed.events};
 }

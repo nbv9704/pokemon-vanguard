@@ -6,6 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const defaultRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const normalize = source => source.replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n').replace(/\s+$/u, '') + '\n';
+const engineExports=['V2_createBattleMon','V2_transition','V2_monById','V2_activeEntries','V2_reserves','V2_resolveTargets','V2_validateCommands','V2_submitCommands','V2_resolveEntry','V2_resolveTurn','V2_validateReplacements','V2_applyReplacements','V2_calculateDamage','V2_effectiveness','V2_effectiveStat','V2_logPage','V2_projectEvent','V2_toAnimationEvents','V2_assertBattleInvariants'];
 
 export async function buildLogic(root = defaultRoot) {
   const sourceDir = path.join(root, 'logic-src');
@@ -34,27 +35,28 @@ export async function buildLogic(root = defaultRoot) {
 export async function compileLogic({ root = defaultRoot, verify = false } = {}) {
   const expected = await buildLogic(root);
   const target = path.join(root, 'src', 'logic.js');
+  const engineTarget=path.join(root,'src','v2-engine.mjs');
+  const expectedEngine=`${expected}\nexport {${engineExports.join(',')}};\n`;
   if (verify) {
-    let actual;
+    let actual,actualEngine;
     try { actual = await readFile(target, 'utf8'); }
     catch (error) { throw new Error(`Cannot verify src/logic.js: ${error.message}`); }
+    try { actualEngine=await readFile(engineTarget,'utf8'); }
+    catch(error){throw new Error(`Cannot verify src/v2-engine.mjs: ${error.message}`);}
     if (normalize(actual) !== normalize(expected)) throw new Error('src/logic.js is stale; run npm run compile:logic');
+    if(normalize(actualEngine)!==normalize(expectedEngine))throw new Error('src/v2-engine.mjs is stale; run npm run compile:logic');
     return { changed:false, target };
   }
 
-  let current = '';
+  let current = '',currentEngine='';
   try { current = await readFile(target, 'utf8'); } catch (error) { if (error.code !== 'ENOENT') throw error; }
-  if (normalize(current) === normalize(expected)) return { changed:false, target };
+  try{currentEngine=await readFile(engineTarget,'utf8');}catch(error){if(error.code!=='ENOENT')throw error;}
+  if (normalize(current) === normalize(expected)&&normalize(currentEngine)===normalize(expectedEngine)) return { changed:false, target };
 
   await mkdir(path.dirname(target), { recursive:true });
-  const temporary = path.join(path.dirname(target), '.logic.generated.mjs');
-  await writeFile(temporary, expected, 'utf8');
-  const checked = spawnSync(process.execPath, ['--check', temporary], { encoding:'utf8' });
-  if (checked.status !== 0) {
-    await unlink(temporary).catch(() => {});
-    throw new Error(`Generated logic failed syntax validation:\n${(checked.stderr || checked.stdout).trim()}`);
-  }
-  await rename(temporary, target);
+  const outputs=[[path.join(path.dirname(target),'.logic.generated.mjs'),target,expected],[path.join(path.dirname(target),'.v2-engine.generated.mjs'),engineTarget,expectedEngine]];
+  for(const [temporary,,source] of outputs){await writeFile(temporary,source,'utf8');const checked=spawnSync(process.execPath,['--check',temporary],{encoding:'utf8'});if(checked.status!==0){await Promise.all(outputs.map(([file])=>unlink(file).catch(()=>{})));throw new Error(`Generated logic failed syntax validation:\n${(checked.stderr||checked.stdout).trim()}`);}}
+  for(const [temporary,destination] of outputs)await rename(temporary,destination);
   return { changed:true, target };
 }
 
@@ -67,4 +69,3 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
     process.exitCode = 1;
   }
 }
-

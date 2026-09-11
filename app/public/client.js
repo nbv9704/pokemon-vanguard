@@ -7,6 +7,7 @@ import {AdventureConnection,websocketUrl} from "./js/net.js";
 import {TrainingEditor} from "./js/training-editor.js";
 import {BoxView} from "./js/box-view.js";
 import {TeamBuilder} from "./js/team-builder.js";
+import {V2BattleScreen} from "./js/v2-battle-screen.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
 let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
@@ -59,8 +60,9 @@ const redrawWorkspace=()=>{if(V&&['training','collection','teams'].includes(rout
 const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
 const boxView=new BoxView({onChange:redrawWorkspace});
 const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:send});
+const v2BattleScreen=new V2BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
 trainingEditor.load().catch(error=>notify(error.message));
-function start(mode,gym){commands={};router.go("battle");send({type:"battle",mode,...(gym===undefined?{}:{gym})});}
+function start(mode,gym){commands={};router.go("battle");const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard'});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; AETHER LEAGUE · SEASON 01</span></div>';}
 function card(d,reveal=false,duplicate=false){const m=V.collection.find(m=>m.id===d.id);return '<button class="monster '+(!m?"locked ":"")+(reveal?"reveal":"")+'" style="--c:'+d.color+'" data-action="detail:'+d.id+'"><div class="serial"><span>#'+String(d.id+1).padStart(3,"0")+'</span><span class="rarity '+d.rarity+'">'+d.rarity.toUpperCase()+'</span></div>'+art(d.id)+(V.team.includes(d.id)?'<span class="check">✓ IN TEAM</span>':"")+'<h3>'+d.name+'</h3>'+types(d)+'<p style="font-size:10px">'+(duplicate?"+150 coins · duplicate":m?"Level "+m.level+" · "+d.ability.name:"Undiscovered · view details")+'</p></button>';}
@@ -105,6 +107,7 @@ function animationBar(){return '<div class="battle-announcer" role="status" aria
 function ensureCommands(){for(const {m,i} of live("allies"))if(!commands[i])commands[i]={kind:"move",actor:i,move:0,target:live("enemies")[0]?.i};}
 function fighter(m,side,i){return '<div class="fighter" data-fighter="'+side+'-'+i+'">'+art(m.id)+'<div class="hpbox"><strong>'+V.catalog[m.id].name+'<span>Lv.'+m.level+'</span></strong><div class="progress"><i class="'+(m.hp<m.max*.3?"low":"")+'" style="width:'+m.hp/m.max*100+'%"></i></div><small>'+m.hp+'/'+m.max+' HP · '+m.energy+' EN'+(m.status?" · "+m.status.toUpperCase():"")+'</small></div></div>';}
 function battle(){
+ if(!V.battle||V.battle.result)return head("Battle arena","Chọn đội hình qua Team Preview rồi chiến đấu bằng phase engine v2.")+v2BattleScreen.render(V,trainingEditor.catalog,{art});
  const b=V.battle;if(!b)return head("Battle arena","Choose your format and face an AI challenger.")+'<div class="modegrid"><div class="panel"><h2>Single Battle</h2><p>One active monster per side. Bring up to four.</p>'+btn("Start single battle","start:single","primary")+'</div><div class="panel"><h2>Double Battle</h2><p>Two active monsters per side. Combine their strengths.</p>'+btn("Start double battle","start:double","primary")+'</div></div><div class="panel" style="margin-top:20px"><h3>Ready your team</h3><p>Manage your lead monsters, held items and levels before entering.</p>'+btn("Manage battle team →","nav:collection","ghost")+'</div>';
  ensureCommands();
  return '<div class="battlehead"><div><div class="eyebrow">'+(b.gym===null?"EXHIBITION MATCH":gyms[b.gym].toUpperCase())+'</div><h1>'+ (b.mode==="double"?"Double":"Single")+' Battle <span style="color:var(--muted);font-size:18px">/ Turn '+b.round+'</span></h1></div>'+btn("Type chart","chart","small ghost")+'</div>'+animationBar()+'<div class="arena" data-playing="'+!!playback+'" data-weather="'+b.weather+'"><div class="fieldlabel">'+b.weather.toUpperCase()+' '+(b.weatherTurns?"· "+b.weatherTurns+" TURNS":"")+'</div><div class="fighters enemies">'+live("enemies").map(({m,i})=>fighter(m,"enemies",i)).join("")+'</div><div class="fighters allies">'+live("allies").map(({m,i})=>fighter(m,"allies",i)).join("")+'</div></div>'+
@@ -132,7 +135,7 @@ function chart(){
  modalId=null;$("#modal").innerHTML='<div class="modalback"><section class="modal" role="dialog" aria-modal="true" aria-label="Type effectiveness">'+btn("✕","close","close small")+'<h2>Type effectiveness</h2><p style="font-size:12px">Rows attack → columns defend. Dual types multiply. 2× strong · ½× resisted · 0× immune.</p><div class="tablewrap"><table class="chart"><thead><tr><th>ATK ↓ DEF →</th>'+V.types.map(t=>'<th>'+t+'</th>').join("")+'</tr></thead><tbody>'+V.types.map((t,i)=>'<tr><th>'+t+'</th>'+V.typeChart[i].map(v=>'<td class="'+(v>1?"good":v<1?"bad":"")+'">'+(v===.5?"½":v)+'×</td>').join("")+'</tr>').join("")+'</tbody></table></div></section></div>';
 }
 document.addEventListener("click",e=>{
- const el=e.target.closest("[data-action],[data-training],[data-box],[data-team]");if(!el||el.disabled)return;if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
+ const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-v2battle]");if(!el||el.disabled)return;if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
  if(a==="nav"&&router.go(b)){closeModal();draw();window.scrollTo(0,0);}
@@ -152,6 +155,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("change",e=>{
  const t=e.target;
+ if(v2BattleScreen.handleInput(t))return;
  if(boxView.handleInput(t)||teamBuilder.handleInput(t))return;
  if(trainingEditor.handleInput(t))return;
  if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;browserStore.saveSettings();return;}

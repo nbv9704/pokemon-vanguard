@@ -194,8 +194,35 @@ Roadmap nguồn: `ROADMAP.md`.
 - Tương thích: lưu đội hiện tại không xóa team cũ; build mặc định của cả 36 loài có bốn chiêu hợp lệ, tên build và mô tả chiêu đầy đủ.
 - Validation: `npm run check` đạt; `npm test` đạt 50/50, gồm 1.000 trận seeded deterministic và toàn bộ test M2.
 
+## M3-01 — Regulation và Team Preview
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Regulation: có `sandbox-v2`, `alpha-single` và `alpha-double`; server kiểm roster, số Mon được chọn, Species Clause và Item Clause trước khi tạo BattleMon.
+- Preview: Single chọn ba, Double chọn bốn; thứ tự chọn xác định lead một/hai slot. Closed team sheet của đối thủ chỉ công khai species, type và art, không lộ build, moves, Ability, item hoặc stats.
+- Giao diện: đội chưa đủ sáu Mon được thử qua Sandbox; đội đủ sáu dùng Alpha regulation.
+
+## M3-02 — AI và đội hình mẫu
+
+- Status: DONE
+- Ngày: 11/09/2026
+- AI: Easy chọn hành động hợp lệ bằng RNG riêng; Normal chấm điểm một lượt; Hard xét tối đa 36 tổ hợp Double cùng synergy và tránh xung đột switch/field action.
+- Privacy: AI chỉ nhận bản chiếu public của đội người chơi; pending command, moves, PP, Ability, held item và stats tùy chỉnh đều bị gỡ trước khi chấm điểm.
+- Content: 12 đội exhibition và sáu đội gym cho mỗi format Single/Double; validator kiểm difficulty, sáu species hợp lệ và không trùng.
+- Determinism: AI RNG tách khỏi battle RNG; cùng public state và seed cho cùng lựa chọn.
+
+## M3-03 — Tactical battle UI và server flow
+
+- Status: DONE
+- Ngày: 11/09/2026
+- Server: preview, command, replacement và surrender đều được xử lý authoritative, lưu atomic và phục hồi sau restart. Battle engine server dùng `src/v2-engine.mjs` sinh từ cùng fragments với public logic.
+- UI: hiển thị phase, turn, PP, category, power, accuracy, target, switch, replacement, weather/terrain/side conditions, event delta và battle log. Single/Double dùng cùng controller và các renderer nhỏ theo trách nhiệm.
+- Privacy: opponent HP chỉ được chiếu theo phần trăm; snapshots trước/sau lượt và events gửi client đều đã project. Trận v1 đang dang dở vẫn dùng UI cũ để có thể kết thúc an toàn.
+- Event: event không khai báo turn được đóng dấu theo lượt vừa resolve; log damage/heal đối thủ dùng phần trăm khi absolute amount đã bị ẩn.
+- Validation: `npm run check` đạt; `npm test` đạt 57/57, gồm 1.000 trận seeded. Browser smoke đi qua Battle Arena → Team Preview → lead → COMMAND, xác nhận bốn move có PP/category/target.
+- Bảo trì: battle UI tách thành preview/arena/commands/controller; server tách factory/view/actions. File mới lớn nhất khoảng 6,2 KB.
+
 ## Việc tiếp theo
 
-- Ticket: M3-01 — Regulation validator và Team Preview pick3/pick4 trước trận.
-- Ticket: M3-02 — AI Easy/Normal/Hard, đội mẫu và đội gym cho single/double.
-- Ticket: M3-03 — UI phase/target/replacement, field chips và battle log từ event v2.
+- Ticket: M3-04 — Sandbox damage inspector dùng đúng engine và simulation 10.000 trận xuất CSV matchup/turns.
+- Ticket: M3-05 — Bật v2 cho adventure/migration, reward idempotent, hướng dẫn ngắn và nghiệm thu Local Tactical Alpha.
