@@ -16,3 +16,7 @@ dist
 .DS_Store
 
 .local-data/
+
+# Downloaded source snapshots and generated review candidates stay local until
+# an explicitly reviewed snapshot is promoted into versioned content.
+content-candidates/

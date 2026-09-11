@@ -72,6 +72,8 @@ Gate: content check, targeted migration/economy/recruitment tests and the full r
 
 ### PV-01 — Candidate importer for M-A
 
+Status: importer implemented; local M-A candidate `pv-ma-2026-09-11` validates with zero unresolved references and awaits manual content/mechanics review. It has not been promoted to runtime content.
+
 1. Fetch Pokémon, moves, Abilities and items into immutable raw snapshots with URL, timestamp and SHA-256.
 2. Parse page data using fixture-backed parsers. Network calls are excluded from tests.
 3. Normalize names to stable IDs and retain upstream IDs for traceability.

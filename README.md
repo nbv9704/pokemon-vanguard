@@ -38,6 +38,16 @@ npm run simulate:economy -- --seed 424242 --cycles 100000
 
 `npm run check` currently validates the compatibility catalog in `app/content`. It is not the M-A production catalog. `app/content-src/pokemon-sources.json` records the target sources and locked import rules; a reviewed candidate will replace the fixture in a later gate.
 
+Tạo và kiểm tra một candidate Pokémon Champions mới trong `app`:
+
+```powershell
+npm run pokemon:fetch -- pv-ma-YYYY-MM-DD
+npm run pokemon:candidate -- pv-ma-YYYY-MM-DD m-a
+npm run pokemon:validate -- pv-ma-YYYY-MM-DD
+```
+
+`pokemon:fetch` tạo snapshot bất biến kèm byte length, HTTP metadata và SHA-256. Lệnh sẽ từ chối ghi đè snapshot cùng ID. `pokemon:candidate` chỉ đọc snapshot local, chuẩn hóa form/learnset/Ability/item/banner và tạo báo cáo unresolved. `pokemon:validate` kiểm lại hash nguồn, quan hệ catalog, 18 hệ, base stats và ghi `normalized/candidate-report.md`. Candidate nằm trong `app/content-candidates`, không thay `app/content` và không được Git theo dõi trước khi review/promotion.
+
 Kiểm tra migration trên **một bản sao** của save, không ghi thay đổi:
 
 ```powershell
@@ -54,6 +64,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, catalog chuyển tiếp 36 
 
 - `app/local-server.mjs`: máy chủ HTTP/WebSocket local và lưu file.
 - `app/logic-src/`: nguồn luật có thứ tự; `app/src/logic.js` là file được sinh tự động và không sửa trực tiếp.
+- `app/content-import/`: snapshot, Next/RSC parser, normalizer và validator cho candidate Pokémon Champions.
 - `app/server/legacy/logic-v1.js`: bản luật v1 đóng băng để kiểm tra tương thích và kết thúc trận cũ khi migration được bật.
 - `app/public/js/store.js`, `router.js`, `net.js`: trạng thái trình duyệt, điều hướng và kết nối WebSocket được tách khỏi phần render trong `client.js`.
 - `app/public/js/training-editor.js`: editor build v2; catalog lấy từ `/api/v2/catalog`, save được server kiểm và lưu atomic.
