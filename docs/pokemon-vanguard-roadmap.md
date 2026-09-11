@@ -99,6 +99,8 @@ Implementation reference: `docs/r2-battle-rules-reference-2026-09-12.md`.
 
 ### R3 — Mechanics Coverage
 
+Status: in progress. Manifest schema, deterministic ordered hook registry and the M-A coverage generator are implemented. The initial audited direct-damage slice enables Tackle and Aerial Ace in Single/Double; 860 remaining entries stay blocked with machine-readable reasons.
+
 - Build ordered hook registries for moves, Abilities and items instead of species-specific conditionals.
 - Implement mechanics in families: direct/status damage; stage changes; accuracy/evasion; priority; multi-hit; recoil/drain; Protect/guards; status and volatile conditions; switching/pivot/trap; redirection; weather/terrain/rooms; hazards; item consume/loss/swap; Ability suppression/copy; delayed and end-turn effects.
 - Give every imported entry a capability manifest and `implemented` state. Descriptions remain documentation, never executable logic.
@@ -106,6 +108,8 @@ Implementation reference: `docs/r2-battle-rules-reference-2026-09-12.md`.
 - Allow a move, Ability or item into a legal build only when every required handler passes positive, negative, interaction and replay tests.
 
 Gate: every enabled M-A entry is correct in both formats; every remaining entry is excluded with a machine-readable reason. No provisional mechanic enters competitive rules.
+
+Implementation reference: `docs/r3-mechanics-coverage-2026-09-12.md`.
 
 ### R4 — Training and Team UI
 

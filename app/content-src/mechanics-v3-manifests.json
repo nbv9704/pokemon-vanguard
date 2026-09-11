@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "moves": {
+    "aerial-ace": {
+      "id": "aerial-ace",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "deal-direct-damage", "hook": "onMove", "order": 100}
+      ],
+      "testEvidence": {
+        "single": ["r3-direct-damage:aerial-ace-single"],
+        "double": ["r3-direct-damage:aerial-ace-double-ally"]
+      }
+    },
+    "tackle": {
+      "id": "tackle",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "deal-direct-damage", "hook": "onMove", "order": 100}
+      ],
+      "testEvidence": {
+        "single": ["r3-direct-damage:tackle-single-immunity"],
+        "double": ["r3-direct-damage:tackle-double-redirection"]
+      }
+    }
+  },
+  "abilities": {},
+  "items": {}
+}
