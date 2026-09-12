@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Manifest/registry/coverage, inventory, shared accuracy/evasion và stat-stage handlers; 23 move có evidence Single/Double | 839/862 entry còn bị chặn; tiếp tục major/volatile status, damage variants, Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Manifest/registry/coverage, inventory, accuracy/stages và burn/poison/paralysis lifecycle; 28 move có evidence Single/Double | 834/862 entry còn bị chặn; tiếp tục sleep/freeze/volatile status, damage variants, Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **127/127**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **23 supported / 839 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 839 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **133/133**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **28 supported / 834 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 834 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Accuracy/evasion, self/ally boost và target debuff cơ bản đã có; thứ tự gần nhất là major/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Accuracy/evasion, stat changes và burn/poison/paralysis cơ bản đã có; thứ tự gần nhất là sleep/freeze/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -335,3 +335,15 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Accuracy/e
 - Minimize cố ý chưa bật vì còn volatile riêng làm một số move gây damage gấp đôi/always-hit; stage evasion đơn lẻ chưa đủ mechanic.
 - Coverage: 862 entries; Single 23 supported/839 blocked; Double 23 supported/839 blocked. Inventory còn 493 move chờ manual review.
 - Validation: `npm run check` đạt; `npm test` đạt 127/127.
+
+## R3-04 — Major status foundation
+
+- Status: DONE cho burn/poison/paralysis; sleep/freeze/bad poison còn blocked.
+- Ngày: 12/09/2026
+- Contract: major status là state độc quyền; target đã có status không bị overwrite. Fire miễn burn, Electric miễn paralysis, Poison/Steel miễn poison; powder moves bổ sung Grass immunity và Thunder Wave bổ sung Ground immunity.
+- Lifecycle: burn gây `1/16 max HP`, poison `1/8 max HP` ở end turn; paralysis giảm Speed còn một nửa và có 25% seeded action prevention. Switch giữ major status nhưng reset đủ bảy stat stages.
+- Move được mở: Glare, Poison Powder, Stun Spore, Thunder Wave và Will-O-Wisp. Accuracy, redirection, type immunity, existing-status failure và PP đều đi qua shared handlers.
+- Integration: move action chạy paralysis gate trước `moveStarted`/PP; full paralysis không tiêu PP. `majorStatusTurnOptions` cung cấp dynamic Speed cho R2 queue và `resolveMajorStatusEndTurn` nối residual group vào lifecycle.
+- Nguồn cross-check: Pokémon Showdown server commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/moves.ts` và `data/conditions.ts`; giá trị Champions display/PP vẫn lấy từ candidate PokéBase.
+- Coverage: 862 entries; Single 28 supported/834 blocked; Double 28 supported/834 blocked. Inventory còn 488 move chờ review.
+- Validation: `npm run check` đạt; `npm test` đạt 133/133.

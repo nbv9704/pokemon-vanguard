@@ -1,8 +1,10 @@
 import {TARGET_MODES} from '../rules-v3/targets.mjs';
+import {CANONICAL_TYPES} from '../rules-v3/type-chart.mjs';
 
 export const CONTENT_KINDS=['moves','abilities','items'];
 export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
+export const MAJOR_STATUS_IDS=['burn','paralysis','poison'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -25,6 +27,11 @@ export function validateMechanicManifest(manifest,kind){
     if(!BATTLE_STAGES.includes(stat))problems.push(`unknown battle stage: ${stat}`);
     if(!Number.isInteger(delta)||delta===0||delta<-6||delta>6)problems.push(`invalid stage delta for ${stat}`);
    }
+  }
+  if(entry?.id==='apply-major-status'){
+   if(!MAJOR_STATUS_IDS.includes(entry.params?.status))problems.push(`unsupported major status: ${entry.params?.status}`);
+   const blocked=entry.params?.blockedTargetTypes;
+   if(blocked!==undefined&&(!Array.isArray(blocked)||new Set(blocked).size!==blocked.length||blocked.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('blockedTargetTypes must contain distinct canonical types');
   }
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }

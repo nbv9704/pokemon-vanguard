@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after accuracy/evasion and target-debuff support is:
+The current coverage after the first major-status batch is:
 
-- Single: 23 supported, 839 blocked.
-- Double: 23 supported, 839 blocked.
-- Supported moves: Tackle, Aerial Ace, Acid Armor, Agility, Amnesia, Aromatic Mist, Baby-Doll Eyes, Bulk Up, Calm Mind, Charm, Coaching, Coil, Confide, Cosmic Power, Cotton Guard, Double Team, Fake Tears, Feather Dance, Noble Roar, Scary Face, Screech, String Shot and Sweet Scent.
+- Single: 28 supported, 834 blocked.
+- Double: 28 supported, 834 blocked.
+- Supported moves: the previous 23 plus Glare, Poison Powder, Stun Spore, Thunder Wave and Will-O-Wisp.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -26,6 +26,8 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 `app/mechanics-v3/capability-inventory.mjs` creates a complete research queue for the 516 M-A moves. Description-derived signals are explicitly untrusted and cannot change implementation or legality. Generate it with `npm run mechanics:inventory -- pv-ma-2026-09-11`.
 
+`app/mechanics-v3/major-status.mjs` owns the first status lifecycle slice. Burn and regular poison create deterministic end-turn HP changes; paralysis changes dynamic Speed and gates actions before PP is spent. `app/mechanics-v3/handlers/apply-major-status.mjs` enforces one major status, intrinsic type immunities and move-specific powder/Ground immunities.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -39,6 +41,8 @@ The local manifests explicitly record:
 The stat-stage target, priority, boost payloads and three-based accuracy multiplier were cross-checked against Pokémon Showdown server commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`. PokéBase remains the Champions candidate source for the displayed move values; Showdown does not override Champions-specific differences such as PP.
 
 Minimize remains blocked even though the generic evasion stage exists. Its named volatile changes accuracy/damage interactions for a separate set of moves, so an evasion-only manifest would be incomplete.
+
+Sleep, freeze and badly poisoned remain blocked. They require verified duration, wake/thaw or escalating residual state and cannot reuse the simpler burn/poison/paralysis representation without those contracts.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 

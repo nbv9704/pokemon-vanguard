@@ -194,6 +194,51 @@
       ],
       "testEvidence": {"single": ["r3-accuracy-stages:spread-single"], "double": ["r3-accuracy-stages:spread-double"]}
     },
+    "glare": {
+      "id": "glare", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "paralysis"}}
+      ],
+      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+    },
+    "poison-powder": {
+      "id": "poison-powder", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "poison", "blockedTargetTypes": ["grass"]}}
+      ],
+      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+    },
+    "stun-spore": {
+      "id": "stun-spore", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "paralysis", "blockedTargetTypes": ["grass"]}}
+      ],
+      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+    },
+    "thunder-wave": {
+      "id": "thunder-wave", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "paralysis", "blockedTargetTypes": ["ground"]}}
+      ],
+      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+    },
+    "will-o-wisp": {
+      "id": "will-o-wisp", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "burn"}}
+      ],
+      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
