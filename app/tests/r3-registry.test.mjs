@@ -29,6 +29,8 @@ test('manifest validation requires move targeting, handler order and format evid
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-stat-stages',hook:'onMove',order:10,params:{boosts:{atk:0}}}]},'moves').join('\n'),/invalid stage delta for atk/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-major-status',hook:'onMove',order:10,params:{status:'fear'}}]},'moves').join('\n'),/unsupported major status: fear/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-major-status',hook:'onMove',order:10,params:{status:'burn',blockedTargetTypes:['fire','fire']}}]},'moves').join('\n'),/blockedTargetTypes/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'deal-multi-hit-damage',hook:'onMove',order:10,params:{hits:[3,5]}}]},'moves').join('\n'),/multi-hit/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-recoil',hook:'onMove',order:10,params:{numerator:2,denominator:1}}]},'moves').join('\n'),/positive fraction/);
 });
 
 test('coverage derives support and machine-readable block reasons',()=>{

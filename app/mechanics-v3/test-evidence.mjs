@@ -22,5 +22,9 @@ export const TEST_EVIDENCE=[
  'r3-move-lock:single',
  'r3-move-lock:double',
  'r3-linked-residual:single',
- 'r3-linked-residual:double'
+ 'r3-linked-residual:double',
+ 'r3-multi-hit:single',
+ 'r3-multi-hit:double',
+ 'r3-recoil-drain:single',
+ 'r3-recoil-drain:double'
 ];

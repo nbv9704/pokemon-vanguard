@@ -26,7 +26,7 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Major/volatile status core và Leech Seed linked residual hoàn tất; 39/862 entry supported trong mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | Status core, linked residual và multi-hit/recoil/drain hoàn tất; 51/862 entry supported trong mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
@@ -172,13 +172,15 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Volatile: flinch, confusion, taunt, encore, disable, leech/seed-like effects và duration counters.
 - Capture duration, immunity, overwrite, switch cleanup/persistence và end-turn order; điều chưa xác minh giữ blocked.
 
-**Tiến độ:** đủ sáu major status, confusion/flinch, Taunt/Encore/Disable và Leech Seed cho playable foundation. Linked residual giữ source slot qua source switch, dùng actual damage để heal và chạy trước poison/burn. Rest, Yawn, damaging secondary status, Fire-hit thaw, defrost move cùng các named volatile khác tiếp tục blocked theo capability riêng. Bước kế tiếp chuyển sang R3.4 multi-hit/recoil/drain.
+**Tiến độ:** đủ sáu major status, confusion/flinch, Taunt/Encore/Disable và Leech Seed cho playable foundation. Linked residual giữ source slot qua source switch, dùng actual damage để heal và chạy trước poison/burn. Rest, Yawn, damaging secondary status, Fire-hit thaw, defrost move cùng các named volatile khác tiếp tục blocked theo capability riêng. R3.4 đã có primitive per-hit, multi-hit 2–5, recoil và drain theo actual damage.
 
 ### R3.4 Damage variants
 
 - Multi-hit phải dùng đúng hit-count distribution và dừng khi faint.
 - Recoil/drain dựa trên actual damage; fixed/level/HP/weight/speed/condition power có capability riêng.
 - Secondary chance dùng battle RNG và có replay evidence.
+
+**Tiến độ:** hoàn tất multi-hit hiện đại 35/35/15/15, fixed two-hit, dừng khi faint, recoil và drain có rounding/HP cap. Đã mở 12 move sạch; Scale Shot và các tương tác Ability/item liên quan vẫn blocked. Bước kế tiếp là fixed/level/HP/weight/speed/condition damage, mỗi nhóm có handler và evidence riêng.
 
 ### R3.5 Protection, redirection và target control
 
@@ -381,7 +383,7 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Bắt đầu R3.4: multi-hit distribution, recoil và drain dựa trên actual damage.
+1. Tiếp tục R3.4: fixed/level/HP/weight/speed/condition damage theo từng capability độc lập.
 2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.
