@@ -14,5 +14,7 @@ export const TEST_EVIDENCE=[
  'r3-accuracy-stages:spread-single',
  'r3-accuracy-stages:spread-double',
  'r3-major-status:single',
- 'r3-major-status:double'
+ 'r3-major-status:double',
+ 'r3-advanced-status:single',
+ 'r3-advanced-status:double'
 ];

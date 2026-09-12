@@ -6,7 +6,7 @@ export {spendPpHandler} from './handlers/spend-pp.mjs';
 export {applyStatStagesHandler} from './handlers/apply-stat-stages.mjs';
 export {checkAccuracyHandler,effectiveAccuracy} from './handlers/check-accuracy.mjs';
 export {applyMajorStatusHandler} from './handlers/apply-major-status.mjs';
-export {MAJOR_STATUSES,applyMajorStatus,majorStatusBlockReason,majorStatusEndTurnGroup,majorStatusTurnOptions,resolveMajorStatusEndTurn,speedWithMajorStatus,tryMajorStatusAction} from './major-status.mjs';
+export {MAJOR_STATUSES,applyMajorStatus,majorStatusBlockReason,majorStatusEndTurnGroup,majorStatusTurnOptions,prepareMajorStatusEndTurn,resolveMajorStatusEndTurn,speedWithMajorStatus,tryMajorStatusAction} from './major-status.mjs';
 export {HANDLER_DEFINITIONS} from './handlers/index.mjs';
 export {createMoveActionHandler} from './move-action.mjs';
 export {TEST_EVIDENCE} from './test-evidence.mjs';

@@ -47,6 +47,7 @@ export function applySwitch(battle,side,actorId,toId){
  const slot=battle.sides?.[side]?.active?.indexOf(actorId),reserve=reserveUnits(battle,side).find(unit=>unit.actorId===toId);
  if(slot<0||!reserve)return {ok:false,code:'INVALID_SWITCH'};
  const next=clone(battle),outgoing=unitById(next,actorId);
+ if(outgoing.status?.id==='bad-poison')outgoing.status.toxicCounter=0;
  outgoing.stages={atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0};outgoing.volatiles={};next.sides[side].active[slot]=toId;
  return {ok:true,battle:next,events:[{kind:'switchOut',actorId,side,slot},{kind:'switchIn',actorId:toId,side,slot}]};
 }

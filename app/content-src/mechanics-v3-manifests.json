@@ -239,6 +239,42 @@
       ],
       "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
     },
+    "hypnosis": {
+      "id": "hypnosis", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "sleep"}}
+      ],
+      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+    },
+    "sing": {
+      "id": "sing", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "sleep"}}
+      ],
+      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+    },
+    "sleep-powder": {
+      "id": "sleep-powder", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "sleep", "blockedTargetTypes": ["grass"]}}
+      ],
+      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+    },
+    "toxic": {
+      "id": "toxic", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90, "params": {"alwaysHitsForUserTypes": ["poison"]}},
+        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "bad-poison"}}
+      ],
+      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",

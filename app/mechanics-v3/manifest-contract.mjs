@@ -4,7 +4,7 @@ import {CANONICAL_TYPES} from '../rules-v3/type-chart.mjs';
 export const CONTENT_KINDS=['moves','abilities','items'];
 export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
-export const MAJOR_STATUS_IDS=['burn','paralysis','poison'];
+export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -32,6 +32,10 @@ export function validateMechanicManifest(manifest,kind){
    if(!MAJOR_STATUS_IDS.includes(entry.params?.status))problems.push(`unsupported major status: ${entry.params?.status}`);
    const blocked=entry.params?.blockedTargetTypes;
    if(blocked!==undefined&&(!Array.isArray(blocked)||new Set(blocked).size!==blocked.length||blocked.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('blockedTargetTypes must contain distinct canonical types');
+  }
+  if(entry?.id==='check-accuracy'){
+   const alwaysHits=entry.params?.alwaysHitsForUserTypes;
+   if(alwaysHits!==undefined&&(!Array.isArray(alwaysHits)||new Set(alwaysHits).size!==alwaysHits.length||alwaysHits.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('alwaysHitsForUserTypes must contain distinct canonical types');
   }
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }

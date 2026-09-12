@@ -26,11 +26,11 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Registry/manifest/coverage, inventory, accuracy/stages và burn/poison/paralysis lifecycle hoàn tất; 28/862 entry supported trong mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | Registry/manifest/coverage, inventory, accuracy/stages và sáu major status cơ bản hoàn tất; 32/862 entry supported trong mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline hiện tại: `npm run check` đạt, `npm test` đạt 133/133. Trạng thái 834 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline hiện tại: `npm run check` đạt, `npm test` đạt 141/141. Trạng thái 830 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -172,7 +172,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Volatile: flinch, confusion, taunt, encore, disable, leech/seed-like effects và duration counters.
 - Capture duration, immunity, overwrite, switch cleanup/persistence và end-turn order; điều chưa xác minh giữ blocked.
 
-**Tiến độ:** burn, regular poison và paralysis đã có immunity, accuracy/redirection, residual damage, Speed modifier, full-paralysis action gate và switch persistence. Sleep, freeze, badly poisoned cùng volatile statuses vẫn fail-closed cho đến khi duration/wake/thaw/escalation được fixture hóa.
+**Tiến độ:** đủ sáu major status đã có state/lifecycle cơ bản. Sleep có seeded duration 1–3 lượt; freeze có Ice immunity và natural thaw 20%; bad poison tăng residual đến bước 15 rồi reset counter khi switch. Hypnosis, Sing, Sleep Powder và Toxic đã có evidence Single/Double. Rest, Yawn, damaging secondary status, Fire-hit thaw và defrost move tiếp tục blocked cho đến khi capability tương ứng có handler. Bước kế tiếp là volatile duration/action gates: flinch trước, sau đó confusion/taunt/encore/disable và seed-like residual.
 
 ### R3.4 Damage variants
 
@@ -381,7 +381,7 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Tiếp tục R3.3: sleep, freeze, badly poisoned và volatile-duration foundation.
+1. Tiếp tục R3.3: volatile-duration/action-gate foundation, bắt đầu từ flinch rồi confusion/taunt/encore/disable.
 2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.

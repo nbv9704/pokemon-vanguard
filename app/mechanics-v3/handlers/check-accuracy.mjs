@@ -12,7 +12,7 @@ export function effectiveAccuracy(baseAccuracy,accuracyStage=0,evasionStage=0){
 
 export const checkAccuracyHandler={
  id:'check-accuracy',hooks:['onMove'],
- run({battle,payload,runtime}){
+ run({battle,payload,params={},runtime}){
   const next=clone(battle),{action,move,mechanics}=payload,actor=unitById(next,action.actorId);
   if(!actor||actor.hp<=0)return {battle:next,payload:{...payload,accuracyResolved:true,resolvedTargetIds:[],hitTargetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'actorUnavailable'}]};
   const targets=resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false});
@@ -20,7 +20,8 @@ export const checkAccuracyHandler={
   const hitTargetIds=[],events=[];
   for(const targetRef of targets){
    const target=unitById(next,targetRef.actorId);if(!target||target.hp<=0)continue;
-   const chance=effectiveAccuracy(move.accuracy,actor.stages?.accuracy||0,target.stages?.evasion||0);
+   const alwaysHits=(params.alwaysHitsForUserTypes||[]).some(type=>(actor.types||[]).includes(type));
+   const chance=alwaysHits?null:effectiveAccuracy(move.accuracy,actor.stages?.accuracy||0,target.stages?.evasion||0);
    const hit=chance===null||chance>=100||(typeof runtime.nextRandom==='function'&&runtime.nextRandom()<chance/100);
    if(chance!==null&&chance<100&&typeof runtime.nextRandom!=='function')throw new Error('check-accuracy requires seeded nextRandom');
    if(hit)hitTargetIds.push(target.actorId);

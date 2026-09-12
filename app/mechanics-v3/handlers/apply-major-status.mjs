@@ -4,7 +4,7 @@ import {applyMajorStatus} from '../major-status.mjs';
 
 export const applyMajorStatusHandler={
  id:'apply-major-status',hooks:['onMove'],
- run({battle,payload,params}){
+ run({battle,payload,params,runtime}){
   let next=clone(battle);const {action,move,mechanics}=payload,actor=unitById(next,action.actorId),events=[];
   if(!actor||actor.hp<=0)return {battle:next,payload:{...payload,targetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'actorUnavailable'}]};
   const targets=payload.accuracyResolved
@@ -14,7 +14,7 @@ export const applyMajorStatusHandler={
   if(payload.accuracyResolved&&!targets.length)return {battle:next,payload:{...payload,targetIds:[]},events:[]};
   if(!targets.length)return {battle:next,payload:{...payload,targetIds:[]},events:[{kind:'moveFailed',actorId:actor.actorId,moveId:move.id,reason:'noTarget'}]};
   for(const target of targets){
-   const applied=applyMajorStatus(next,{actorId:actor.actorId,targetId:target.actorId,moveId:move.id,status:params.status,blockedTargetTypes:params.blockedTargetTypes||[]});
+   const applied=applyMajorStatus(next,{actorId:actor.actorId,targetId:target.actorId,moveId:move.id,status:params.status,blockedTargetTypes:params.blockedTargetTypes||[]},runtime);
    next=applied.battle;events.push(...applied.events);
   }
   return {battle:next,payload:{...payload,targetIds:targets.map(target=>target.actorId)},events};

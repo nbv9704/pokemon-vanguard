@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the first major-status batch is:
+The current coverage after the advanced major-status batch is:
 
-- Single: 28 supported, 834 blocked.
-- Double: 28 supported, 834 blocked.
-- Supported moves: the previous 23 plus Glare, Poison Powder, Stun Spore, Thunder Wave and Will-O-Wisp.
+- Single: 32 supported, 830 blocked.
+- Double: 32 supported, 830 blocked.
+- Supported moves: the previous 28 plus Hypnosis, Sing, Sleep Powder and Toxic.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -26,7 +26,7 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 `app/mechanics-v3/capability-inventory.mjs` creates a complete research queue for the 516 M-A moves. Description-derived signals are explicitly untrusted and cannot change implementation or legality. Generate it with `npm run mechanics:inventory -- pv-ma-2026-09-11`.
 
-`app/mechanics-v3/major-status.mjs` owns the first status lifecycle slice. Burn and regular poison create deterministic end-turn HP changes; paralysis changes dynamic Speed and gates actions before PP is spent. `app/mechanics-v3/handlers/apply-major-status.mjs` enforces one major status, intrinsic type immunities and move-specific powder/Ground immunities.
+`app/mechanics-v3/major-status.mjs` is a small public facade. State/application, before-action gates and residual processing live in `major-status-state.mjs`, `major-status-action.mjs` and `major-status-residual.mjs`. The handler enforces one major status plus intrinsic and move-specific immunities. Sleep uses a seeded 1–3-turn action block; freeze uses a seeded 20% natural thaw; bad poison escalates from 1/16 to 15/16 max HP and resets its counter on switch-out.
 
 ## Initial move evidence
 
@@ -42,7 +42,7 @@ The stat-stage target, priority, boost payloads and three-based accuracy multipl
 
 Minimize remains blocked even though the generic evasion stage exists. Its named volatile changes accuracy/damage interactions for a separate set of moves, so an evasion-only manifest would be incomplete.
 
-Sleep, freeze and badly poisoned remain blocked. They require verified duration, wake/thaw or escalating residual state and cannot reuse the simpler burn/poison/paralysis representation without those contracts.
+Hypnosis, Sing and Sleep Powder apply sleep; Sleep Powder additionally rejects Grass targets. Toxic applies bad poison, rejects Poison/Steel targets and bypasses its accuracy roll for a Poison-type user. These behaviors were cross-checked at the pinned Showdown server commit in `data/conditions.ts`, `data/moves.ts` and `sim/battle-actions.ts`. Rest, Yawn, secondary status chances, Fire-hit thaw and defrost moves remain blocked because they require heal, delayed-status, secondary-effect or damage-interaction handlers.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 
