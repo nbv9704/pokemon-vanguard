@@ -11,5 +11,7 @@ import {fixedDamageHandler} from './fixed-damage.mjs';
 import {variablePowerDamageHandler} from './variable-power-damage.mjs';
 import {applyProtectionHandler} from './apply-protection.mjs';
 import {applySideProtectionHandler} from './apply-side-protection.mjs';
+import {breakProtectionHandler} from './break-protection.mjs';
+import {applyRedirectionHandler} from './apply-redirection.mjs';
 
-export const HANDLER_DEFINITIONS=[spendPpHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyProtectionHandler,applySideProtectionHandler,applyRecoilHandler,applyDrainHandler];
+export const HANDLER_DEFINITIONS=[spendPpHandler,breakProtectionHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyProtectionHandler,applySideProtectionHandler,applyRedirectionHandler,applyRecoilHandler,applyDrainHandler];

@@ -35,6 +35,9 @@ test('manifest validation requires move targeting, handler order and format evid
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'deal-variable-power-damage',hook:'onMove',order:10,params:{formula:'unknown'}}]},'moves').join('\n'),/variable-power/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-stat-stages',hook:'onMove',order:10,params:{boosts:{spe:1},target:'foe'}}]},'moves').join('\n'),/target override/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-side-protection',hook:'onMove',order:10,params:{guard:'all'}}]},'moves').join('\n'),/supported guard/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-protection',hook:'onMove',order:10,params:{retaliation:'unknown'}}]},'moves').join('\n'),/supported retaliation/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-protection',hook:'onMove',order:10,params:{blocksStatus:'no'}}]},'moves').join('\n'),/blocksStatus must be boolean/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-redirection',hook:'onMove',order:10,params:{kind:'spotlight'}}]},'moves').join('\n'),/supported kind/);
 });
 
 test('coverage derives support and machine-readable block reasons',()=>{

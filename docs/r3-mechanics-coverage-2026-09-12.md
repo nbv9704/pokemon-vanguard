@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after completing the protection-core R3.5 batch is:
+The current coverage after completing the protection and redirection R3.5 batch is:
 
-- Single: 73 supported, 789 blocked.
-- Double: 73 supported, 789 blocked.
-- Supported moves: the previous 69 plus Protect, Detect, Wide Guard and Quick Guard.
+- Single: 79 supported, 783 blocked.
+- Double: 79 supported, 783 blocked.
+- Supported moves: the previous 73 plus Spiky Shield, King's Shield, Baneful Bunker, Feint, Follow Me and Rage Powder.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -40,7 +40,9 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 Conditional callbacks reuse the variable-power pipeline for user/target status, poison-only status, target current HP and seeded random doubling. Facade tells the shared hit to ignore burn reduction only while its status boost is active. `apply-stat-stages` can now explicitly target self after a successful damaging handler, allowing Scale Shot to compose multi-hit damage with one post-move Defense drop and Speed boost.
 
-`protection.mjs` owns the shared consecutive-use gate and protection lookup. Protect and Detect create a personal one-turn volatile; Wide Guard and Quick Guard create one-turn side conditions. The shared accuracy handler checks protection before consuming accuracy RNG, filters protected targets independently and records whether personal, spread or positive-priority protection blocked the move. An explicit manifest `bypassesProtect` flag keeps future Feint-like behavior reviewable instead of relying on move IDs.
+`protection.mjs` owns the shared consecutive-use gate, block resolution and contact retaliation. Protect and Detect create a personal one-turn volatile; Wide Guard and Quick Guard create one-turn side conditions. The shared accuracy handler checks protection before consuming accuracy RNG, filters targets independently, and applies reviewed contact damage, stat or status responses. The `break-protection` handler plus manifest `bypassesProtect` flag let Feint remove personal and side protection before damage without relying on move IDs.
+
+`redirection-state.mjs` applies one-turn redirect state and rejects it when a format has only one active Mon. `rules-v3/redirection.mjs` selects the latest valid redirect for opposing single-target moves and lets Grass attackers bypass Rage Powder. Follow Me and Rage Powder therefore reuse the same target resolution path as damage, status and stage handlers.
 
 ## Initial move evidence
 
@@ -70,7 +72,7 @@ Night Shade and Seismic Toss deal level damage; Super Fang removes half current 
 
 Facade, Hex, Venoshock, Hard Press and Fickle Beam cover the condition-power formulas available from current battle state. Scale Shot joins the multi-hit group with a damage-gated self stage change. Turn-history moves, secondary-effect combinations and weight-based formulas remain fail-closed with their dependencies documented.
 
-Protect and Detect block external moves for one turn. The first protection attempt succeeds, then uninterrupted attempts use the shared `1/3`, `1/9` sequence with denominator capped at 729; skipping a turn resets the chain. Wide Guard blocks spread moves for the whole side and Quick Guard blocks positive-priority moves for the whole side. Single/Double fixtures cover expiry, target filtering, PP/RNG order, both allies, one target of a spread move and explicit bypass. Contact retaliation variants and protection removal remain blocked until their own handlers and evidence exist.
+Protect and Detect block external moves for one turn. The first protection attempt succeeds, then uninterrupted attempts use the shared `1/3`, `1/9` sequence with denominator capped at 729; skipping a turn resets the chain. Wide Guard blocks spread moves for the whole side and Quick Guard blocks positive-priority moves for the whole side. Spiky Shield, King's Shield and Baneful Bunker add contact-only damage, Attack reduction and poison; Feint removes these states and side guards before dealing damage. Follow Me and Rage Powder redirect opposing single-target moves only in Double, with latest-use ordering and Grass immunity for Rage Powder. Fixtures cover expiry, PP/RNG order, contact/non-contact, status/type immunity, shield breaking, both allies and redirect selection.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 

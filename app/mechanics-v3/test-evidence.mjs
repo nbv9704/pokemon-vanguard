@@ -38,5 +38,11 @@ export const TEST_EVIDENCE=[
  'r3-protection:single',
  'r3-protection:double',
  'r3-side-protection:single',
- 'r3-side-protection:double'
+ 'r3-side-protection:double',
+ 'r3-protection-retaliation:single',
+ 'r3-protection-retaliation:double',
+ 'r3-break-protection:single',
+ 'r3-break-protection:double',
+ 'r3-redirection:single',
+ 'r3-redirection:double'
 ];

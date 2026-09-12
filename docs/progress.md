@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Status/volatile/linked residual, R3.4 damage variants và R3.5 protection core; 73 move có evidence Single/Double | 789/862 entry còn bị chặn; hoàn thiện protection retaliation/target control rồi field/Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Status/volatile/linked residual, R3.4 damage variants và R3.5 protection/redirection; 79 move có evidence Single/Double | 783/862 entry còn bị chặn; chuyển sang switching/position rồi field/Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **200/200**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **73 supported / 789 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 789 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **211/211**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **79 supported / 783 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 783 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.4 đã hoàn tất trong phạm vi dữ liệu runtime hiện có và R3.5 đã có Protect/Detect/Wide Guard/Quick Guard. Bước kế tiếp là contact retaliation của protection và redirection/target control → field conditions → Ability hooks → item hooks. Weight-based power chờ R1 bổ sung weight vào species và battle snapshot; các damage exception cần turn history được xử lý cùng contract lịch sử tương ứng.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.4 đã hoàn tất trong phạm vi dữ liệu runtime hiện có; R3.5 đã có personal/side protection, contact retaliation, Feint removal và Follow Me/Rage Powder redirection. Bước kế tiếp là R3.6 switching/position → field conditions → Ability hooks → item hooks. Weight-based power chờ R1 bổ sung weight vào species và battle snapshot; các damage exception cần turn history được xử lý cùng contract lịch sử tương ứng.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -444,3 +444,15 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.4 đã 
 - Nguồn cross-check: candidate PokéBase cho Champions description/max PP; Pokémon Showdown server commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` cho priority, shared stall counter, duration, spread và positive-priority predicates.
 - Coverage: Single 73/862; Double 73/862; inventory còn 443 move chờ review.
 - Validation: `npm run check` đạt; `npm test` đạt 200/200; candidate validate 0 lỗi.
+
+## R3-13 — Protection retaliation, removal và redirection
+
+- Status: DONE cho phạm vi R3.5 có trong candidate hiện tại; Ability/item powder immunity và các protection/redirect move khác vẫn fail-closed theo entry riêng.
+- Ngày: 12/09/2026
+- Contact retaliation: Spiky Shield gây `floor(max HP / 8)` lên đúng contact attacker; King’s Shield hạ Attack một stage và chỉ chặn damaging move; Baneful Bunker áp regular poison qua shared major-status immunity. Non-contact move không kích hoạt phản đòn.
+- Removal: Feint có priority 2, bypass protection và chạy `break-protection` trước accuracy/damage. Nó xóa personal protection cùng Wide/Quick Guard của target side, phát `protectionBroken`, không nhận phản đòn từ shield vừa phá.
+- Redirection: Follow Me và Rage Powder yêu cầu ít nhất hai active Mon nên tiêu PP rồi fail trong Single. Trong Double, single-target opposing move dùng shared target resolver; redirect được resolve sau cùng thắng, hết hiệu lực cuối lượt và Grass attacker bỏ qua Rage Powder.
+- Kiến trúc: retaliation nằm trong `protection.mjs`, phá protection và apply redirection là handler riêng; `rules-v3/redirection.mjs` chỉ chọn target và xử lý immunity cần biết attacker. Không có switch theo move ID.
+- Nguồn cross-check: candidate PokéBase cho Champions values/description; Pokémon Showdown server pin `data/moves.ts` và `sim/battle-actions.ts` cho priority, contact outcome, Feint removal set, Double-only gate và Rage Powder immunity.
+- Coverage: Single 79/862; Double 79/862; inventory còn 437 move chờ review.
+- Validation: `npm run check` đạt; `npm test` đạt 211/211; candidate validate 0 lỗi.

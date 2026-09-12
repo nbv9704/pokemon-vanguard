@@ -26,11 +26,11 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | R3.3 status/volatile, R3.4 damage variants và R3.5 protection core; 73/862 entry supported mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | R3.3 status/volatile, R3.4 damage variants và R3.5 protection/redirection; 79/862 entry supported mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline hiện tại: `npm run check` đạt, `npm test` đạt 200/200. Trạng thái 789 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline hiện tại: `npm run check` đạt, `npm test` đạt 211/211. Trạng thái 783 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -147,7 +147,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 ## 10. R3 — Mechanics Coverage
 
-**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants và protection core đã có. Tổng cộng 73 entry hiện supported trong cả hai format.
+**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants và protection/redirection core đã có. Tổng cộng 79 entry hiện supported trong cả hai format.
 
 ### R3.1 Direct/status damage core
 
@@ -188,7 +188,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Follow Me/Rage Powder-like redirection, immunity và priority.
 - Double tests phải bao phủ ally, both foes, all adjacent, field, side và invalid slot sau faint/switch.
 
-**Tiến độ:** Protect/Detect đã có volatile một lượt, bypass flag và shared stall chain với xác suất liên tiếp `1`, `1/3`, `1/9` đến denominator 729. Wide Guard chặn spread move cho cả side; Quick Guard chặn positive-priority move cho cả side. Protection chạy trước accuracy RNG, target bị chặn vẫn bảo toàn action order và PP đã tiêu; lifecycle dọn personal/side protection và reset chuỗi khi bỏ một lượt. Bước tiếp theo là Spiky Shield/King's Shield/Baneful Bunker với contact retaliation, Feint-like removal, rồi Follow Me/Rage Powder redirection.
+**Tiến độ:** hoàn tất core cho Protect/Detect, Wide/Quick Guard, shared stall chain, Spiky Shield/King's Shield/Baneful Bunker contact retaliation và Feint removal. Follow Me/Rage Powder đã nối vào shared target resolver, gồm Double-only gate, latest redirect và Grass immunity của Rage Powder. Ability/item powder immunity chờ hook tương ứng. Chuyển sang R3.6 switching/position effects.
 
 ### R3.6 Switching và position effects
 
@@ -385,7 +385,7 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Tiếp tục R3.5 với contact retaliation của Spiky Shield/King's Shield/Baneful Bunker, Feint-like removal và redirection/target-control evidence cho Single/Double.
+1. Bắt đầu R3.6 bằng pivot-after-hit và forced-switch primitives, xác minh thứ tự switch/entry, replacement window và queued-action cancellation ở Single/Double.
 2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.
