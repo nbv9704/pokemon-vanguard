@@ -2,6 +2,7 @@ import {TARGET_MODES} from '../rules-v3/targets.mjs';
 
 export const CONTENT_KINDS=['moves','abilities','items'];
 export const BATTLE_FORMATS=['single','double'];
+export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -16,6 +17,15 @@ export function validateMechanicManifest(manifest,kind){
   if(typeof entry?.id!=='string'||!entry.id)problems.push('handler id is required');
   if(!HOOKS.includes(entry?.hook))problems.push(`unknown hook: ${entry?.hook}`);
   if(!Number.isInteger(entry?.order))problems.push(`handler ${entry?.id||'?'} requires an integer order`);
+  if(entry?.params!==undefined&&(!entry.params||typeof entry.params!=='object'||Array.isArray(entry.params)))problems.push(`handler ${entry?.id||'?'} params must be an object`);
+  if(entry?.id==='apply-stat-stages'){
+   const boosts=entry.params?.boosts,values=boosts&&typeof boosts==='object'&&!Array.isArray(boosts)?Object.entries(boosts):[];
+   if(!values.length)problems.push('apply-stat-stages requires boosts');
+   for(const [stat,delta] of values){
+    if(!BATTLE_STAGES.includes(stat))problems.push(`unknown battle stage: ${stat}`);
+    if(!Number.isInteger(delta)||delta===0||delta<-6||delta>6)problems.push(`invalid stage delta for ${stat}`);
+   }
+  }
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);

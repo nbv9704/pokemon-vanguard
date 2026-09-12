@@ -17,6 +17,11 @@
       "repository": "https://github.com/smogon/pokemon-showdown-client",
       "inspectedCommit": "1e3b209011340e7c149a2e94769183eb4351b2e9",
       "usage": "architecture-reference-only"
+    },
+    "showdownServer": {
+      "repository": "https://github.com/smogon/pokemon-showdown",
+      "inspectedCommit": "aa17ca0fac8bc5605df673bd8774c2d0e91efa43",
+      "usage": "mechanics-cross-check-only"
     }
   },
   "contentRules": {

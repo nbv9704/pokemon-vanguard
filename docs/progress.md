@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Manifest contract, ordered hook registry, coverage generator, `spend-pp`, `direct-damage`; Tackle và Aerial Ace có evidence Single/Double | 860/862 entry còn bị chặn; triển khai theo family, thêm Ability/item hooks và interaction fixtures |
+| R3 Mechanics Coverage | IN PROGRESS | Manifest/registry/coverage, direct damage, stat-stage handler và inventory 516 move; 11 move có evidence Single/Double | 851/862 entry còn bị chặn; tiếp tục accuracy/evasion, target debuff, status, Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline kỹ thuật tại commit `503eaf3`: `npm run check` đạt, `npm test` đạt **112/112**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **2 supported / 860 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 860 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **120/120**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **11 supported / 851 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 851 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Thứ tự gần nhất là: hoàn thiện direct/status damage primitives → stat stages và accuracy/evasion → major/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Self/ally stat boosts cơ bản đã có; thứ tự gần nhất là accuracy/evasion và target debuff → major/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -310,3 +310,15 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Thứ tự
 - Ticket: PV-01 — raw snapshot, parser fixture-backed, normalize ID/reference và candidate diff cho Regulation M-A.
 - Ticket: PV-02 — canonical 18-type chart, formula/mechanic gates và `implemented/legal` cho move/Ability/item.
 - Không tiếp tục M5 Ascension của roadmap cũ; Mega Evolution thay thế tại PV-06.
+
+## R3-02 — Stat-stage primitives và move capability inventory
+
+- Status: DONE
+- Ngày: 12/09/2026
+- Nguồn: PokéBase M-A candidate cung cấp type/category/PP/description; Pokémon Showdown server commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` chỉ được dùng để cross-check priority, target và boost payload cho batch đã review.
+- Handler: thêm `apply-stat-stages` thuần, hỗ trợ bảy stage `atk/def/spa/spd/spe/accuracy/evasion`, clamp −6…+6, self/adjacent ally, explicit event gồm requested/applied delta và `stageLimit`.
+- Move được mở: Acid Armor, Agility, Amnesia, Aromatic Mist, Bulk Up, Calm Mind, Coaching, Cosmic Power và Cotton Guard; cộng Tackle/Aerial Ace thành 11 move supported ở cả hai format.
+- Single/Double: ally-only moves tiêu PP rồi fail `noTarget` ở Single; Double chỉ tác động ally đã chọn. Self moves được chạy ma trận ở cả hai format; input immutable và kết quả lặp byte-identical.
+- Inventory: `npm run mechanics:inventory -- pv-ma-2026-09-11` phân loại đủ 516 move thành review queues. Description signals chỉ hỗ trợ nghiên cứu, có cờ `trustedMechanics:false`, không thay implementation hoặc legality.
+- Coverage: 862 entries; Single 11 supported/851 blocked; Double 11 supported/851 blocked.
+- Validation: `npm run check` đạt; `npm test` đạt 120/120.

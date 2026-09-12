@@ -26,11 +26,11 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Registry/manifest/coverage hoàn tất; Tackle và Aerial Ace supported; 860/862 entry bị chặn trong mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | Registry/manifest/coverage, capability inventory và stat-stage primitives hoàn tất; 11/862 entry supported trong mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline tại commit `503eaf3`: `npm run check` đạt, `npm test` đạt 112/112. Trạng thái 860 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline hiện tại: `npm run check` đạt, `npm test` đạt 120/120. Trạng thái 851 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -147,7 +147,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 ## 10. R3 — Mechanics Coverage
 
-**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, `spend-pp` và `direct-damage` đã có. Tackle/Aerial Ace là hai entry supported đầu tiên.
+**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, `spend-pp`, `direct-damage` và `apply-stat-stages` đã có. Tackle/Aerial Ace cùng chín self/ally stat moves tạo thành 11 entry supported đầu tiên.
 
 ### R3.1 Direct/status damage core
 
@@ -350,6 +350,7 @@ Chạy trong `D:\Mon\AetherChampions\app`:
 npm run check
 npm test
 npm run pokemon:validate -- pv-ma-2026-09-11
+npm run mechanics:inventory -- pv-ma-2026-09-11
 npm run mechanics:coverage -- pv-ma-2026-09-11
 ```
 
@@ -376,8 +377,8 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Tiếp tục R3.1: mở rộng direct damage manifest theo batch nhỏ và thêm status-move no-damage path.
-2. Xây capability inventory từ 516 M-A moves để xếp batch R3.2–R3.7 theo mức tái sử dụng và dependency.
+1. Tiếp tục R3.2: accuracy/evasion modifiers và target debuff có accuracy check.
+2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.
 5. Không bắt đầu R5/R6/R7 production integration trước khi schema 3 battle loop của R4 chạy xong cả Single và Double.

@@ -25,6 +25,8 @@ test('manifest validation requires move targeting, handler order and format evid
  assert.deepEqual(validateMechanicManifest(manifest,'moves'),[]);
  assert.match(validateMechanicManifest({...manifest,targetMode:null},'moves').join('\n'),/targetMode/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'x',hook:'unknown'}]},'moves').join('\n'),/unknown hook/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-stat-stages',hook:'onMove',order:10,params:{boosts:{luck:2}}}]},'moves').join('\n'),/unknown battle stage: luck/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-stat-stages',hook:'onMove',order:10,params:{boosts:{atk:0}}}]},'moves').join('\n'),/invalid stage delta for atk/);
 });
 
 test('coverage derives support and machine-readable block reasons',()=>{

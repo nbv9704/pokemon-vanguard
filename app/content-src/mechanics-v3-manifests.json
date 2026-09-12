@@ -15,6 +15,78 @@
         "double": ["r3-direct-damage:aerial-ace-double-ally"]
       }
     },
+    "acid-armor": {
+      "id": "acid-armor", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": 2}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
+    "agility": {
+      "id": "agility", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spe": 2}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
+    "amnesia": {
+      "id": "amnesia", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spd": 2}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
+    "aromatic-mist": {
+      "id": "aromatic-mist", "targetMode": "adjacentAlly", "priority": 0, "contact": false, "redirectable": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spd": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:ally-single-failure"], "double": ["r3-stat-stages:ally-double"]}
+    },
+    "bulk-up": {
+      "id": "bulk-up", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 1, "def": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
+    "calm-mind": {
+      "id": "calm-mind", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spa": 1, "spd": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
+    "coaching": {
+      "id": "coaching", "targetMode": "adjacentAlly", "priority": 0, "contact": false, "redirectable": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 1, "def": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:ally-single-failure"], "double": ["r3-stat-stages:ally-double"]}
+    },
+    "cosmic-power": {
+      "id": "cosmic-power", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": 1, "spd": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
+    "cotton-guard": {
+      "id": "cotton-guard", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": 3}}}
+      ],
+      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
