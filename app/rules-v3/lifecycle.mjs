@@ -75,7 +75,10 @@ export function resolveEndTurn(battle,groups){
   if(!group?.id||groupIds.has(group.id)||!Array.isArray(group.changes))throw new Error('end-turn groups require unique ids and change arrays');groupIds.add(group.id);
   const applied=applyHpGroup(next,group.changes,group.id);next=applied.battle;events.push(...applied.events);
  }
- for(const side of ['A','B'])for(const entry of activeUnits(next,side,{includeFainted:true}))if(entry.unit.volatiles?.redirection)delete entry.unit.volatiles.redirection;
+ for(const side of ['A','B'])for(const entry of activeUnits(next,side,{includeFainted:true})){
+  if(entry.unit.volatiles?.redirection)delete entry.unit.volatiles.redirection;
+  if(entry.unit.volatiles?.flinch)delete entry.unit.volatiles.flinch;
+ }
  events.push({kind:'turnEnded',turn:next.turn});
  const result=checkBattleResult(next);next=result.battle;events.push(...result.events);
  if(next.phase!=='FINISHED'){

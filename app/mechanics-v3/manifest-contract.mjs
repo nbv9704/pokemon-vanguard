@@ -5,6 +5,7 @@ export const CONTENT_KINDS=['moves','abilities','items'];
 export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
+export const VOLATILE_STATUS_IDS=['confusion','flinch'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -33,6 +34,7 @@ export function validateMechanicManifest(manifest,kind){
    const blocked=entry.params?.blockedTargetTypes;
    if(blocked!==undefined&&(!Array.isArray(blocked)||new Set(blocked).size!==blocked.length||blocked.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('blockedTargetTypes must contain distinct canonical types');
   }
+  if(entry?.id==='apply-volatile-status'&&!VOLATILE_STATUS_IDS.includes(entry.params?.volatile))problems.push(`unsupported volatile status: ${entry.params?.volatile}`);
   if(entry?.id==='check-accuracy'){
    const alwaysHits=entry.params?.alwaysHitsForUserTypes;
    if(alwaysHits!==undefined&&(!Array.isArray(alwaysHits)||new Set(alwaysHits).size!==alwaysHits.length||alwaysHits.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('alwaysHitsForUserTypes must contain distinct canonical types');

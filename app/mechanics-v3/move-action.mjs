@@ -1,9 +1,9 @@
 import {dispatchHook} from './registry.mjs';
-import {tryMajorStatusAction} from './major-status.mjs';
+import {tryBeforeMoveConditions} from './before-action.mjs';
 
 const byId=(catalog,id)=>Array.isArray(catalog)?catalog.find(entry=>entry.id===id):catalog?.[id];
 
-export function createMoveActionHandler({moves,manifests,registry,beforeAction=tryMajorStatusAction}){
+export function createMoveActionHandler({moves,manifests,registry,beforeAction=tryBeforeMoveConditions}){
  return function resolveMove(battle,action,runtime){
   const move=byId(moves,action.moveId),mechanics=manifests?.[action.moveId];
   if(!move||!mechanics)throw new Error(`unsupported move: ${action.moveId}`);

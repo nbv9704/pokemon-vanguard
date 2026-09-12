@@ -275,6 +275,35 @@
       ],
       "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
     },
+    "confuse-ray": {
+      "id": "confuse-ray", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "confusion"}}
+      ],
+      "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
+    },
+    "flatter": {
+      "id": "flatter", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spa": 1}}},
+        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "confusion"}}
+      ],
+      "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
+    },
+    "swagger": {
+      "id": "swagger", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 2}}},
+        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "confusion"}}
+      ],
+      "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
