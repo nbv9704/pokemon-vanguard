@@ -556,3 +556,9 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Arena schema 3 có stylesheet riêng: enemy ở xa phía trên/phải, player ở gần phía dưới/trái, mỗi fighter có platform và HUD tách khỏi sprite. Single và Double có layout riêng cùng responsive rules.
 - Browser QA xác nhận Single hiển thị Feraligatr front đối diện Venusaur back; Double hiển thị hai front sprite ở hàng xa và hai back sprite ở hàng gần, đúng góc nhìn game Pokémon tham khảo.
 - Artwork ngoài battle chưa đổi; front GIF hiện tại chỉ là placeholder cho tới khi có nguồn key art/menu artwork riêng.
+
+## R7-02 — Official artwork outside battle
+
+- Verified the large official-artwork links on Pokémon Database for all six beta Pokémon and recorded their direct sources in `docs/pokemon-artwork-sources.md`.
+- Added local transparent PNG copies for Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye and Feraligatr. Only the edge-connected white JPEG canvas was removed.
+- Home, Collection, Recruitment, Gym and Team Preview now use static official artwork. The active battle arena keeps the animated front/back GIF pair through a separate `battleArt` renderer.
