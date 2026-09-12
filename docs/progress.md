@@ -10,7 +10,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move, 4 Ability và 6 item có evidence Single/Double; đội beta 6 Pokémon đã qua legality/coverage gate | Mở rộng mechanics theo batch sau khi beta loop chạy; 765/862 entry vẫn fail-closed |
-| R4 Training/Team UI | IN PROGRESS | Beta catalog schema 3 đã promote; build/team state và validator thuần đã có 66/32, learnset, Ability/item, Species/Item Clause | Nối action vào save/server, migration schema 3, Archive/Training/Team/Preview/AI |
+| R4 Training/Team UI | IN PROGRESS | Beta catalog schema 3 đã promote; migration/save và Training/Team UI đã dùng build/team validator 66/32, learnset, Ability/item, Species/Item Clause | Nối Preview/AI/Battle schema 3, sau đó browser QA Single/Double |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
 | R7 Sprite/Move FX | NOT STARTED | Có animation queue cũ và audit kiến trúc Showdown | Cache sprite local, audit Mega aliases, làm FX primitives/profiles/overrides theo battle events |
@@ -21,7 +21,7 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. Scoped source review, promote command và catalog service schema 3 đã hoàn tất cho `beta-slice-v1`. Kế tiếp nối build/team validator và migration schema 3, rồi Preview → Battle cho cả hai format. R3 vẫn mở rộng theo batch sau khi loop đầu tiên test được; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. Scoped source review, promote command, migration/save và Training/Team schema 3 đã hoàn tất cho `beta-slice-v1`. Kế tiếp nối Preview → Battle cho cả hai format. R3 vẫn mở rộng theo batch sau khi loop đầu tiên test được; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -503,3 +503,13 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Actions: `buildV3.save` và `teamV3.save` dùng optimistic revision, trả lỗi machine-readable và không mutate input; beta editing không gắn phí economy trong domain này.
 - Projection: Training view clone dữ liệu và trả một/song hệ từ catalog để UI không tự suy luận.
 - Validation: targeted tests đạt 5/5; `npm run check` và full suite đạt 241/241.
+
+## R4-03 — Schema-3 migration, save và Training/Team UI
+
+- Status: DONE cho luồng build/team; Preview/Battle là checkpoint kế tiếp.
+- Migration: save schema 2 không có trận đang diễn ra được nâng atomic lên schema 3, giữ wallet/account và lưu roster cũ trong `legacyV2Archive`; trận chưa kết thúc buộc migration chờ để không làm mất phiên đấu.
+- Catalog safety: save schema 3 phải khớp đúng promoted `catalogVersion`; phiên bản save mới hơn ứng dụng hoặc catalog lệch đều fail-closed.
+- Server: `buildV3.save` và `teamV3.save` chạy validator authoritative, optimistic revision, persist qua restart và chỉ broadcast projection `trainingV3`; archive thô không rời server.
+- UI: Training hiển thị sáu Mon beta, một/song hệ, đúng 66 Stat Points, nature, Ability, item và bốn move hợp lệ. Team Builder có sáu slot và báo legality trước khi gửi; server vẫn quyết định Species/Item Clause.
+- Compatibility: màn legacy và battle schema 2 vẫn tồn tại tạm thời để save cũ kết thúc an toàn; dữ liệu beta mới đã đọc/ghi qua schema 3.
+- Validation: `npm run check`, `npm run beta:validate`, targeted tests đạt 6/6 và full suite đạt 247/247.

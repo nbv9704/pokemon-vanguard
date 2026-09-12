@@ -11,6 +11,8 @@ import {V2BattleScreen} from "./js/v2-battle-screen.js";
 import {DamageInspector} from "./js/damage-inspector.js";
 import {renderV2Tutorial} from "./js/v2-tutorial.js";
 import {RecruitmentView} from "./js/recruitment-view.js";
+import {V3TrainingEditor} from "./js/v3-training-editor.js";
+import {V3TeamBuilder} from "./js/v3-team-builder.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
 let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
@@ -67,7 +69,10 @@ const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:send});
 const v2BattleScreen=new V2BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
 const damageInspector=new DamageInspector({fetchImpl:(...args)=>fetch(...args),getDraft:()=>trainingEditor.draft});
 const recruitmentView=new RecruitmentView({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
+const v3TrainingEditor=new V3TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
+const v3TeamBuilder=new V3TeamBuilder({onChange:redrawWorkspace,sendAction:send});
 trainingEditor.load().catch(error=>notify(error.message));
+v3TrainingEditor.load().catch(error=>notify(error.message));
 function start(mode,gym){commands={};router.go("battle");const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard'});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; VANGUARD LEAGUE · LOCAL PREVIEW</span></div>';}
@@ -81,10 +86,11 @@ function home(){
  ].map(([n,v,max,r])=>'<div class="mission"><b>'+n+'</b><small>'+v+' / '+max+' completed</small><div class="progress"><i style="width:'+100*v/max+'%"></i></div><span class="reward">'+r+'</span></div>').join("")+'</div><div class="panel" style="margin-top:15px;background:linear-gradient(120deg,#342b3e,#1c2436)"><div class="eyebrow" style="color:#ccb1eb">RECRUITMENT</div><h3 style="margin:10px 0">Choose your next partner</h3><p style="font-size:11px">Eight equal-chance offers. Trial one for seven days.</p>'+btn("Open Recruitment →","nav:recruitment","small ghost")+'</div></aside></div>';
 }
 function archive(training=false){
+ if(training&&V.trainingV3)return head("Training room","Create Regulation M-A beta builds with 66 Stat Points, an Ability, four moves and one held item.")+v3TrainingEditor.render(V);
  if(training)return head("Training room","Create competitive builds with stats, an Ability, four moves and one held item.")+trainingEditor.render(V,{art})+damageInspector.render(V,trainingEditor.catalog);
  return head("Pokémon archive","Browse permanent, trial and locked Pokémon, their builds and team usage.")+boxView.render(V,trainingEditor.catalog,{art});
 }
-function teamsPage(){return head("Team builder","Build a six-Pokémon team, validate its regulation and share safe blueprints.")+teamBuilder.render(V,trainingEditor.catalog,{art});}
+function teamsPage(){return head("Team builder","Build a six-Pokémon Regulation M-A beta team.")+(V.trainingV3?v3TeamBuilder.render(V,v3TrainingEditor.catalog):teamBuilder.render(V,trainingEditor.catalog,{art}));}
 function recruitment(){return head("Recruitment","Choose one of eight Pokémon, start a seven-day trial, or recruit it permanently.","RECRUITMENT · SERVER UTC")+recruitmentView.render(V,trainingEditor.catalog,{art});}
 const gyms=["Ember Coast","Wild Current","Frozen Quarry","Skyfall Spire","Eclipse Garden","Astral Citadel"];
 function gym(){return head("The road to champion","Six leaders. Six badges. One place at the top.")+'<div class="filters"><label>Battle format &nbsp; <select id="gymmode"><option value="single">Single battle</option><option value="double">Double battle</option></select></label></div><div class="gymgrid">'+gyms.map((n,i)=>'<div class="panel gym '+(i>V.badges.length?"locked":"")+'">'+art(i*6+1)+'<div class="eyebrow">GYM 0'+(i+1)+' · LEVEL '+(5+i*3)+'</div><h2>'+n+'</h2><p>'+V.catalog[i*6].types[0]+' / '+V.catalog[i*6+3].types[0]+' specialists</p><span class="reward">'+(V.badges.includes(i)?"✦ Badge earned":"First victory: +380 crystals · +680 coins")+'</span><br>'+btn(i>V.badges.length?"Locked":V.badges.includes(i)?"Challenge again →":"Challenge leader →","gym:"+i,i===V.badges.length?"primary":"",i>V.badges.length)+'</div>').join("")+'</div>';}
@@ -139,7 +145,7 @@ function chart(){
  modalId=null;$("#modal").innerHTML='<div class="modalback"><section class="modal" role="dialog" aria-modal="true" aria-label="Type effectiveness">'+btn("✕","close","close small")+'<h2>Type effectiveness</h2><p style="font-size:12px">Rows attack → columns defend. Dual types multiply. 2× strong · ½× resisted · 0× immune.</p><div class="tablewrap"><table class="chart"><thead><tr><th>ATK ↓ DEF →</th>'+V.types.map(t=>'<th>'+t+'</th>').join("")+'</tr></thead><tbody>'+V.types.map((t,i)=>'<tr><th>'+t+'</th>'+V.typeChart[i].map(v=>'<td class="'+(v>1?"good":v<1?"bad":"")+'">'+(v===.5?"½":v)+'×</td>').join("")+'</tr>').join("")+'</tbody></table></div></section></div>';
 }
 document.addEventListener("click",e=>{
- const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-recruit],[data-v2battle],[data-damage]");if(!el||el.disabled)return;if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.recruit){recruitmentView.handleClick(el,V);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
+ const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-recruit],[data-v2battle],[data-damage],[data-v3-training],[data-v3-team]");if(!el||el.disabled)return;if(el.dataset.v3Training){v3TrainingEditor.handleClick(el,V);return;}if(el.dataset.v3Team){v3TeamBuilder.handleClick(el);return;}if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.recruit){recruitmentView.handleClick(el,V);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
  if(a==="nav"&&router.go(b)){closeModal();draw();window.scrollTo(0,0);}
@@ -161,6 +167,7 @@ document.addEventListener("change",e=>{
  const t=e.target;
  if(damageInspector.handleInput(t,V,trainingEditor.catalog))return;
  if(v2BattleScreen.handleInput(t))return;
+ if(v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t))return;
  if(boxView.handleInput(t)||teamBuilder.handleInput(t))return;
  if(trainingEditor.handleInput(t))return;
  if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;browserStore.saveSettings();return;}
@@ -170,7 +177,7 @@ document.addEventListener("change",e=>{
  if(t.dataset.target!==undefined)commands[+t.dataset.target].target=+t.value;
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
-document.addEventListener("input",e=>{const t=e.target,selector=t.dataset.boxField!==undefined?`[data-box-field="${t.dataset.boxField}"]`:t.dataset.teamField!==undefined?`[data-team-field="${t.dataset.teamField}"]`:null,pos=t.selectionStart;if(boxView.handleInput(t)||teamBuilder.handleInput(t)){const next=selector&&document.querySelector(selector);next?.focus();if(next?.setSelectionRange&&pos!==null)next.setSelectionRange(pos,pos);return;}trainingEditor.handleInput(t);});
+document.addEventListener("input",e=>{const t=e.target,selector=t.dataset.boxField!==undefined?`[data-box-field="${t.dataset.boxField}"]`:t.dataset.teamField!==undefined?`[data-team-field="${t.dataset.teamField}"]`:null,pos=t.selectionStart;if(v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t))return;if(boxView.handleInput(t)||teamBuilder.handleInput(t)){const next=selector&&document.querySelector(selector);next?.focus();if(next?.setSelectionRange&&pos!==null)next.setSelectionRange(pos,pos);return;}trainingEditor.handleInput(t);});
 document.addEventListener("keydown",e=>{if(e.code==="Escape")closeModal();if(e.code==="Tab"&&$("#modal").children.length){const els=[...$("#modal").querySelectorAll("button:not(:disabled),select,input")];const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 connection.start();
 

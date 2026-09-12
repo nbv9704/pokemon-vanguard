@@ -27,7 +27,7 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R1 M-A Data | BETA SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-11`: scoped hash-bound approval cho 6 species/15 moves/3 Abilities/6 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move + 4 Ability + 6 item; 97/862 entry supported mỗi format; đội beta 6 Pokémon qua automated gate |
-| R4 | IN PROGRESS — BETA LOOP | Catalog schema 3 đã promote và có read-only API; build/team/migration/battle integration còn lại |
+| R4 | IN PROGRESS — BETA LOOP | Catalog, migration/save và Training/Team schema 3 đã xong; Preview/Battle và browser QA còn lại |
 | R5–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
@@ -240,7 +240,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Không để UI import JSON trực tiếp hoặc tự tính legality.
 - Response trả stable ID, display fields, support status và lỗi regulation có mã.
 
-**Tiến độ:** DONE cho beta catalog. `/api/v3/catalog` đọc active pointer, xác minh SHA-256 trước khi load và chỉ expose nội dung đã promote; mechanic manifests chỉ tồn tại trong server catalog. Archive/Training/Team/Preview sẽ chuyển sang service này ở các ticket tiếp theo.
+**Tiến độ:** DONE cho beta catalog. `/api/v3/catalog` đọc active pointer, xác minh SHA-256 trước khi load và chỉ expose nội dung đã promote; mechanic manifests chỉ tồn tại trong server catalog. Training/Team đã chuyển sang service này; Preview/Battle là consumer kế tiếp.
 
 ### R4.2 Build validator
 
@@ -248,7 +248,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Hiển thị một/song hệ rõ ràng; Mega form không được chọn như base build nếu flow yêu cầu stone + transform.
 - Damage Inspector gọi cùng pure calculator/handlers của battle và ghi catalog/rules version.
 
-**Tiến độ:** pure schema-3 domain đã tạo sáu owned Mon/default builds/đội beta từ catalog. Build validator khóa exact 66/32, nature, bốn learnset moves, Ability và enabled item; team validator khóa sáu slot cùng Species/Item Clause. Save/server actions và UI binding là bước kế tiếp.
+**Tiến độ:** DONE cho beta build/team. Pure domain tạo sáu owned Mon/default builds/đội beta từ catalog. Build validator khóa exact 66/32, nature, bốn learnset moves, Ability và enabled item; save/server action dùng optimistic revision, persist qua restart và UI hiển thị type đơn/song hệ cùng legality.
 
 ### R4.3 Team/Preview/AI
 
@@ -256,17 +256,23 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Preview khóa immutable battle snapshot; chỉnh build sau đó không đổi trận đang diễn ra.
 - AI chỉ nhận public projection và chỉ chọn command server xác nhận hợp lệ.
 
+**Tiến độ:** Team Builder schema 3 DONE với sáu slot, Species Clause và Item Clause authoritative. Preview snapshot, projected AI và battle action đang thực hiện.
+
 ### R4.4 Migration schema 3
 
 - Backup atomic trước migration; preserve wallet/settings/mail phù hợp; archive legacy roster/build/team rồi tạo trạng thái M-A mới.
 - Migration thuần, idempotent, có dry-run report và không chạy khi legacy battle/result chưa xử lý xong.
 - Rollback restore được test trên temporary save; không test bằng save thật.
 
+**Tiến độ:** DONE cho beta runtime. Schema 2 được archive rồi nâng atomic; account/wallet được giữ, active legacy battle làm migration chờ, schema mới hơn hoặc catalog mismatch đều fail-closed.
+
 ### R4.5 UI QA
 
 - Desktop/mobile: Archive → Training → Team → Preview → battle → result → restart.
 - Kiểm empty/loading/error/unsupported states, keyboard focus, reduced motion và console/network errors.
 - Test cả single-type/dual-type, invalid Stat Points, unsupported mechanic, expired Trial và snapshot mismatch.
+
+**Tiến độ:** Training/Team đã có automated UI coverage. Browser QA end-to-end chờ Preview/Battle schema 3; đây là gate cuối trước khi báo beta sẵn sàng.
 
 **Gate:** tạo team hợp lệ từ promoted M-A slice, restart, chơi xong Single và Double bằng schema 3; schema 2 chỉ còn compatibility/migration path.
 
