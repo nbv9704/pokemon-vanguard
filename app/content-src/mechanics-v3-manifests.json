@@ -404,6 +404,18 @@
       }
     }
   },
-  "abilities": {},
-  "items": {}
+  "abilities": {
+    "overgrow": {"id":"overgrow","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"grass","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "blaze": {"id":"blaze","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"fire","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "torrent": {"id":"torrent","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"water","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "swarm": {"id":"swarm","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"bug","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}}
+  },
+  "items": {
+    "miracle-seed": {"id":"miracle-seed","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"grass","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "mystic-water": {"id":"mystic-water","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"water","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "silver-powder": {"id":"silver-powder","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"bug","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "dragon-fang": {"id":"dragon-fang","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"dragon","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "muscle-band": {"id":"muscle-band","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"physical","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "wise-glasses": {"id":"wise-glasses","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"special","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}}
+  }
 }

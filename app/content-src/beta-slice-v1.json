@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "beta-slice-v1",
+  "snapshotId": "pv-ma-2026-09-11",
+  "regulationSet": "m-a",
+  "formats": ["single", "double"],
+  "team": [
+    {"speciesId":"venusaur","abilityId":"overgrow","itemId":"miracle-seed","moveIds":["bullet-seed","giga-drain","leech-seed","protect"]},
+    {"speciesId":"blastoise","abilityId":"torrent","itemId":"mystic-water","moveIds":["flip-turn","water-spout","gyro-ball","protect"]},
+    {"speciesId":"beedrill","abilityId":"swarm","itemId":"silver-powder","moveIds":["u-turn","dual-wingbeat","giga-drain","protect"]},
+    {"speciesId":"chesnaught","abilityId":"overgrow","itemId":"muscle-band","moveIds":["bullet-seed","drain-punch","leech-seed","spiky-shield"]},
+    {"speciesId":"decidueye","abilityId":"overgrow","itemId":"wise-glasses","moveIds":["bullet-seed","brave-bird","hex","u-turn"]},
+    {"speciesId":"feraligatr","abilityId":"torrent","itemId":"dragon-fang","moveIds":["flip-turn","dragon-tail","scale-shot","protect"]}
+  ]
+}

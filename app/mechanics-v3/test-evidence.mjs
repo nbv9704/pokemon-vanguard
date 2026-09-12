@@ -50,5 +50,9 @@ export const TEST_EVIDENCE=[
  'r3-forced-switch:single',
  'r3-forced-switch:double',
  'r3-position-swap:single',
- 'r3-position-swap:double'
+ 'r3-position-swap:double',
+ 'r3-passive-damage:single',
+ 'r3-passive-damage:double',
+ 'beta-slice-v1:single',
+ 'beta-slice-v1:double'
 ];

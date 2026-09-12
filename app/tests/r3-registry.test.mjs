@@ -39,6 +39,8 @@ test('manifest validation requires move targeting, handler order and format evid
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-protection',hook:'onMove',order:10,params:{blocksStatus:'no'}}]},'moves').join('\n'),/blocksStatus must be boolean/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-redirection',hook:'onMove',order:10,params:{kind:'spotlight'}}]},'moves').join('\n'),/supported kind/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-forced-switch',hook:'onMove',order:10,params:{requireDamage:'yes'}}]},'moves').join('\n'),/requireDamage must be boolean/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'low-hp-type-boost',hook:'modifyDamage',order:10,params:{type:'light',hpDenominator:1,multiplier:1}}]},'abilities').join('\n'),/canonical type/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'held-damage-boost',hook:'modifyDamage',order:10,params:{type:'grass',category:'physical',multiplier:1.2}}]},'items').join('\n'),/exactly one supported selector/);
 });
 
 test('coverage derives support and machine-readable block reasons',()=>{

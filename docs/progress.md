@@ -9,19 +9,19 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Status/damage, R3.5 protection/redirection và R3.6 switching/position core; 87 move có evidence Single/Double | 775/862 entry còn bị chặn; hoàn thiện trap/transfer dependency rồi chuyển field/Ability/item hooks |
-| R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
+| R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move, 4 Ability và 6 item có evidence Single/Double; đội beta 6 Pokémon đã qua legality/coverage gate | Mở rộng mechanics theo batch sau khi beta loop chạy; 765/862 entry vẫn fail-closed |
+| R4 Training/Team UI | NEXT — BETA LOOP | Có UI/validator schema 2 để tái sử dụng và `beta-slice-v1` làm phạm vi tích hợp | Review đúng 6 species, catalog service schema 3, promote M-A slice, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
 | R7 Sprite/Move FX | NOT STARTED | Có animation queue cũ và audit kiến trúc Showdown | Cache sprite local, audit Mega aliases, làm FX primitives/profiles/overrides theo battle events |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **223/223**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **87 supported / 775 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 775 mechanic đã hỏng.
+Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **97 supported / 765 blocked** cho từng format, gồm 87 move, 4 Ability và 6 item; đây là trạng thái cố ý fail-closed, không phải 765 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.6 hiện có damage pivot, forced switch, queued-action cancellation và Ally Switch position swap. Bước kế tiếp là trap/switch-legality và transfer state nếu đủ contract; sau đó chuyển field conditions → Ability hooks → item hooks. Baton Pass, Chilly Reception và Shed Tail giữ blocked cho đến khi volatile transfer, weather hoặc Substitute được triển khai đúng.
+Ưu tiên **beta loop trước full coverage**. `beta-slice-v1` khóa Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye và Feraligatr với bốn move hợp lệ mỗi Mon, sáu held item không trùng và Ability đã hỗ trợ cho cả Single/Double. Kế tiếp review semantic đúng slice này, tạo catalog service/promote dry-run rồi nối schema-3 Training → Team → Preview → Battle. R3 vẫn mở rộng theo batch sau khi loop đầu tiên test được; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -469,3 +469,15 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.6 hiệ
 - Nguồn cross-check: candidate PokéBase cho Champions values/description; Pokémon Showdown server pin `data/moves.ts` cho priority, contact, `selfSwitch`, `forceSwitch`, protect flags và Ally Switch counter.
 - Coverage: Single 87/862; Double 87/862; inventory còn 429 move chờ review.
 - Validation: `npm run check` đạt; `npm test` đạt 223/223; candidate validate 0 lỗi.
+
+## R3-15 — Beta Slice v1 và passive damage
+
+- Status: DONE cho content gate của beta đầu tiên; chưa promote vào schema-3 runtime trước R1 review/R4 integration.
+- Ngày: 12/09/2026
+- Slice: khóa sáu Pokémon M-A gồm Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye và Feraligatr. Mỗi thành viên có đúng bốn move thuộc learnset và supported ở Single/Double; sáu held item tuân Item Clause.
+- Ability: Overgrow, Blaze, Torrent và Swarm dùng chung `low-hp-type-boost`, kích hoạt khi HP ≤ 1/3 và chỉ tăng damage của hệ tương ứng 1.5×. Compiler tạo effect snapshot tách khỏi manifest để R4 gắn vào BattleMon khi khóa preview.
+- Item: Miracle Seed, Mystic Water, Silver Powder và Dragon Fang tăng damage theo hệ 1.2×; Muscle Band/Wise Glasses tăng physical/special 1.1×. Ability và item compose theo thứ tự manifest, được ghi trong damage breakdown phục vụ replay/inspector.
+- Gate: `npm run beta:validate` kiểm schema/snapshot/format, M-A legality, Species Clause, Item Clause, learnset/Ability relation và machine-readable coverage cho từng move/Ability/item ở cả hai format.
+- Phạm vi: slice có 6 Pokémon, 6 hệ cơ thể, 15 move khác nhau, 3 Ability đang được dùng và 6 item; Blaze được mở sẵn cho batch Fire kế tiếp. Nội dung ngoài slice không được bật ngầm.
+- Coverage: Single 97/862; Double 97/862; move inventory vẫn 87 reviewed và 429 pending vì Ability/item không làm tăng số move.
+- Validation: `npm run check`, candidate validation, `npm run beta:validate` và `npm test` đạt 233/233.

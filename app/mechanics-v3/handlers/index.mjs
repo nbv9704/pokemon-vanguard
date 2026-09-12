@@ -16,5 +16,6 @@ import {applyRedirectionHandler} from './apply-redirection.mjs';
 import {applyPivotSwitchHandler} from './apply-pivot-switch.mjs';
 import {applyForcedSwitchHandler} from './apply-forced-switch.mjs';
 import {applyPositionSwapHandler} from './apply-position-swap.mjs';
+import {heldDamageBoostHandler,lowHpTypeBoostHandler} from './passive-damage-modifiers.mjs';
 
-export const HANDLER_DEFINITIONS=[spendPpHandler,breakProtectionHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyProtectionHandler,applySideProtectionHandler,applyRedirectionHandler,applyPivotSwitchHandler,applyForcedSwitchHandler,applyPositionSwapHandler,applyRecoilHandler,applyDrainHandler];
+export const HANDLER_DEFINITIONS=[spendPpHandler,breakProtectionHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyProtectionHandler,applySideProtectionHandler,applyRedirectionHandler,applyPivotSwitchHandler,applyForcedSwitchHandler,applyPositionSwapHandler,lowHpTypeBoostHandler,heldDamageBoostHandler,applyRecoilHandler,applyDrainHandler];

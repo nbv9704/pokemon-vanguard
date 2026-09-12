@@ -26,11 +26,12 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | R3.3–R3.5 foundation và R3.6 switching/position core; 87/862 entry supported mỗi format |
-| R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
+| R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move + 4 Ability + 6 item; 97/862 entry supported mỗi format; đội beta 6 Pokémon qua automated gate |
+| R4 | NEXT — BETA LOOP | Tích hợp đúng `beta-slice-v1` vào catalog/training/team/battle schema 3 trước khi mở rộng content |
+| R5–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline hiện tại: `npm run check` đạt, `npm test` đạt 223/223. Trạng thái 775 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline logic hiện tại có 97/862 entry supported ở cả hai format. Trạng thái 765 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -93,7 +94,7 @@ Không tạo `switch (moveId)` dài. Logic dùng capability chung như `direct-d
 
 `R0 Rebaseline → R1 M-A Data → R2 Battle Rules → R3 Mechanics Coverage → R4 Training/Team UI → R5 Roster Ranch → R6 Mega Evolution → R7 Sprite/Move FX → M6 PvP → M7 Ranked`
 
-Có thể làm prototype của chặng sau để kiểm kiến trúc, nhưng không nối vào production path trước gate. R3 không bắt buộc hỗ trợ cả 862 entry trước R4; R4 chỉ được promote một **playable slice** mà tất cả move/Ability/item trong slice đều supported cho cả hai format. Sau đó R3 tiếp tục mở rộng coverage theo batch.
+Có thể làm prototype của chặng sau để kiểm kiến trúc, nhưng không nối vào production path trước gate. R3 không bắt buộc hỗ trợ cả 862 entry trước R4. **Beta Slice v1 đã được khóa** ở `app/content-src/beta-slice-v1.json`: sáu Pokémon, 15 move, 3 Ability được dùng và 6 held item, tất cả supported cho Single/Double. R1 chỉ review đúng các relation trong slice trước; R4 chỉ promote slice sau khi review đạt. Sau khi beta loop chạy end-to-end, R3 tiếp tục mở rộng theo batch có tác động rõ đến đội hình.
 
 ## 7. R0 — Rebaseline
 
@@ -147,7 +148,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 ## 10. R3 — Mechanics Coverage
 
-**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants, protection/redirection và switching core đã có. Tổng cộng 87 entry hiện supported trong cả hai format.
+**Trạng thái:** IN PROGRESS / BETA SLICE LOCKED. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants, protection/redirection, switching core và passive damage đã có. Tổng cộng 97 entry hiện supported trong cả hai format: 87 move, 4 Ability và 6 item.
 
 ### R3.1 Direct/status damage core
 
@@ -209,11 +210,15 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Sau đó mới làm suppression, copy, swap/replace và ability-changing effects.
 - Resolve đồng thời theo explicit priority/order; không dựa vào object insertion order.
 
+**Tiến độ beta:** `low-hp-type-boost` đã mở Overgrow, Blaze, Torrent và Swarm với ngưỡng HP ≤ 1/3, hệ tương ứng và modifier 1.5×. Compiler tạo effect snapshot tách khỏi manifest; R4 sẽ gắn snapshot đó vào BattleMon khi khóa preview. Damage breakdown ghi source để replay và inspector không phải suy luận lại.
+
 ### R3.9 Item hooks
 
 - Nhóm passive modifier, consumable berry, survival, choice/lock, recovery, status cure và Mega Stone.
 - Tách `availableInChampions`, `legalByRegulation`, `implemented`, `enabledForBattle`.
 - Consume/loss/swap phải có owner, reveal policy, idempotent event và restart/replay tests.
+
+**Tiến độ beta:** `held-damage-boost` đã mở bốn item tăng hệ 1.2× và Muscle Band/Wise Glasses tăng category 1.1×. Item Clause được kiểm ở beta gate. Consumable, item loss/swap và suppression vẫn blocked cho đến khi có state/event contract riêng.
 
 ### R3.10 M-A closure
 
@@ -387,11 +392,11 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Hoàn thiện R3.6 bằng switch-legality/trap source links và partial-trap residual; chỉ mở Baton Pass sau khi whitelist state transfer được khóa bằng fixture.
-2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
-3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
-4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.
-5. Không bắt đầu R5/R6/R7 production integration trước khi schema 3 battle loop của R4 chạy xong cả Single và Double.
+1. Review semantic đúng sáu species cùng 15 move, ba Ability được dùng và sáu item trong `beta-slice-v1`; lưu exact/missing/mismatch và provenance thay vì review toàn bộ 862 entry trước beta.
+2. Làm R4.1 catalog service + promote dry-run chỉ xuất nội dung trong slice và coverage artifact cùng snapshot/hash.
+3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
+4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
+5. Sau phản hồi beta, tiếp tục R3 theo capability có tác động lớn đến team diversity: field conditions, entry/immunity abilities, consumable/recovery items, rồi trap/transfer dependencies. Không bắt đầu R5/R6/R7 production integration trước khi schema-3 battle loop chạy xong cả hai format.
 
 Tài liệu tham chiếu trong repo:
 

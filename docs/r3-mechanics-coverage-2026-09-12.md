@@ -4,13 +4,13 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the switching and position R3.6 core batch is:
+The current coverage after the first beta-slice passive batch is:
 
-- Single: 87 supported, 775 blocked.
-- Double: 87 supported, 775 blocked.
-- Supported moves: the previous 79 plus U-turn, Volt Switch, Flip Turn, Circle Throw, Dragon Tail, Roar, Whirlwind and Ally Switch.
-- Supported Abilities: none yet.
-- Supported items: none yet.
+- Single: 97 supported, 765 blocked.
+- Double: 97 supported, 765 blocked.
+- Supported moves: 87, ending with the R3.6 pivot/phazing/position batch.
+- Supported Abilities: Overgrow, Blaze, Torrent and Swarm.
+- Supported items: Miracle Seed, Mystic Water, Silver Powder, Dragon Fang, Muscle Band and Wise Glasses.
 
 Every unsupported entry currently resolves to `missing-manifest`. As implementation expands, more precise reasons such as `missing-handler:<id>`, `missing-test-evidence` and `invalid-manifest:<problem>` prevent incomplete mechanics from entering a legal build.
 
@@ -46,6 +46,10 @@ Conditional callbacks reuse the variable-power pipeline for user/target status, 
 
 `switching.mjs` composes the shared R2 `applySwitch` primitive into post-damage pivots, seeded forced switches and Double position swaps. Pivot destinations are validated before queue lock and checked again during resolution. Forced switches choose only reserves, preserve prior damage when no reserve exists and make the turn engine cancel queued actions for actors no longer active. Ally Switch has a separate consecutive-use counter and changes slot identity before later target resolution.
 
+`passive-effects.mjs` compiles reviewed Ability/item manifests into detached effect snapshots for R4 to attach when a BattleMon is locked. `damage-hit.mjs` queries those snapshots at damage time, composes low-HP/type and held type/category multipliers in manifest order, and records every applied source in the authoritative damage breakdown. The first batch covers Overgrow/Blaze/Torrent/Swarm and six non-consumable damage items without adding move-ID branches.
+
+`beta-slice.mjs` is a fail-closed content gate rather than a second legality engine. It requires exactly six unique M-A species, four distinct learnset moves per member, supported Ability/item/move coverage in both formats and unique held items. `npm run beta:validate` currently locks Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye and Feraligatr: 15 unique moves, three used Abilities and six items. Blaze is supported for the next Fire roster batch but is not silently added to v1.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -79,6 +83,8 @@ Protect and Detect block external moves for one turn. The first protection attem
 U-turn, Volt Switch and Flip Turn pivot only after actual damage and require an eligible chosen reserve. Circle Throw and Dragon Tail damage before phazing; Roar and Whirlwind are non-damaging priority −6 phazing moves that bypass Protect. Forced replacement uses battle RNG, emits explicit switch events and cancels the removed actor's queued action. Ally Switch fails in Single, swaps Double slots before later actions and follows its reviewed `1/3^n` consecutive-use rule. Baton Pass, weather/substitute pivots and trapping remain fail-closed until their state-transfer or lifecycle dependencies are implemented.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
+
+Low-HP Ability fixtures cover the exact one-third boundary, healthy HP, wrong move type, Ability plus item stacking and deterministic immutability. Held-item fixtures cover type and physical/special selectors. Double evidence verifies spread damage retains the same passive source trace. Beta-slice fixtures also reject unsupported format coverage, illegal learnsets, duplicate species/items and an Ability outside the species relation.
 
 ## Rebuild coverage
 
