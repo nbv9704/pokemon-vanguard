@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Status/volatile/linked residual, R3.4 damage variants và R3.5 protection/redirection; 79 move có evidence Single/Double | 783/862 entry còn bị chặn; chuyển sang switching/position rồi field/Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Status/damage, R3.5 protection/redirection và R3.6 switching/position core; 87 move có evidence Single/Double | 775/862 entry còn bị chặn; hoàn thiện trap/transfer dependency rồi chuyển field/Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **211/211**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **79 supported / 783 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 783 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **223/223**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **87 supported / 775 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 775 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.4 đã hoàn tất trong phạm vi dữ liệu runtime hiện có; R3.5 đã có personal/side protection, contact retaliation, Feint removal và Follow Me/Rage Powder redirection. Bước kế tiếp là R3.6 switching/position → field conditions → Ability hooks → item hooks. Weight-based power chờ R1 bổ sung weight vào species và battle snapshot; các damage exception cần turn history được xử lý cùng contract lịch sử tương ứng.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.6 hiện có damage pivot, forced switch, queued-action cancellation và Ally Switch position swap. Bước kế tiếp là trap/switch-legality và transfer state nếu đủ contract; sau đó chuyển field conditions → Ability hooks → item hooks. Baton Pass, Chilly Reception và Shed Tail giữ blocked cho đến khi volatile transfer, weather hoặc Substitute được triển khai đúng.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -456,3 +456,16 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.4 đã 
 - Nguồn cross-check: candidate PokéBase cho Champions values/description; Pokémon Showdown server pin `data/moves.ts` và `sim/battle-actions.ts` cho priority, contact outcome, Feint removal set, Double-only gate và Rage Powder immunity.
 - Coverage: Single 79/862; Double 79/862; inventory còn 437 move chờ review.
 - Validation: `npm run check` đạt; `npm test` đạt 211/211; candidate validate 0 lỗi.
+
+## R3-14 — Pivot, forced switch và position swap
+
+- Status: DONE cho switching/position core không phụ thuộc trap, weather, Substitute hoặc volatile transfer.
+- Ngày: 12/09/2026
+- Damage pivot: U-turn, Volt Switch và Flip Turn chỉ đổi sang reserve đã chọn sau actual damage. Miss/immunity/zero damage, actor faint hoặc reserve không còn hợp lệ giữ nguyên active slot; choice validator chặn thiếu/sai `switchToId` trước queue lock và resolver vẫn có fail-safe.
+- Forced switch: Circle Throw và Dragon Tail gây damage rồi chọn reserve bằng seeded battle RNG; Roar và Whirlwind phaze không damage, priority −6 và bypass Protect theo flags đã review. Không còn reserve tạo failure event nhưng không hoàn tác damage.
+- Queue/lifecycle: forced-out actor không còn active nên turn resolver phát `actionCancelled`; outgoing Mon dùng shared `applySwitch`, vì vậy reset stages/volatiles và toxic counter đúng contract. Event order là damage → switchOut → switchIn → forcedSwitch.
+- Position: Ally Switch chỉ chạy trong Double với ally sống, đổi hai active slot trước các action target theo slot. Chuỗi riêng dùng `1`, `1/3`, `1/9` đến denominator 729 và hết hạn nếu bỏ một lượt; Single tiêu PP rồi fail rõ ràng.
+- Deferred: Baton Pass cần whitelist state được transfer; Chilly Reception cần Snow lifecycle; Shed Tail cần Substitute/HP cost; Mean Look/Block/Spirit Shackle và partial-trap moves cần switch legality cùng source-link/residual contract.
+- Nguồn cross-check: candidate PokéBase cho Champions values/description; Pokémon Showdown server pin `data/moves.ts` cho priority, contact, `selfSwitch`, `forceSwitch`, protect flags và Ally Switch counter.
+- Coverage: Single 87/862; Double 87/862; inventory còn 429 move chờ review.
+- Validation: `npm run check` đạt; `npm test` đạt 223/223; candidate validate 0 lỗi.

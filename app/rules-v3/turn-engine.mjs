@@ -12,6 +12,7 @@ export function validateTurnActions(battle,actions,{validateAction}={}){
   if(!expected.includes(key)||received.has(key))return {ok:false,code:'INVALID_ACTOR'};
   if(!['move','switch'].includes(action.kind)||!Number.isFinite(action.speed)||!Number.isInteger(action.priority??0)||action.kind==='switch'&&action.mega)return {ok:false,code:'INVALID_ACTION'};
   if(action.kind==='move'&&(typeof action.moveId!=='string'||!action.moveId))return {ok:false,code:'INVALID_MOVE'};
+  if(action.kind==='move'&&action.switchToId!==undefined){if(typeof action.switchToId!=='string'||!action.switchToId||switchTargets[action.side].has(action.switchToId))return {ok:false,code:'INVALID_SWITCH'};switchTargets[action.side].add(action.switchToId);}
   if(action.kind==='switch'){
    const reserves=new Set(reserveUnits(battle,action.side).map(unit=>unit.actorId));
    if(!reserves.has(action.toId)||switchTargets[action.side].has(action.toId))return {ok:false,code:'INVALID_SWITCH'};

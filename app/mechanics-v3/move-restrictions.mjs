@@ -1,4 +1,5 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
+import {validateSwitchingChoice} from './switching.mjs';
 
 const byId=(catalog,id)=>Array.isArray(catalog)?catalog.find(entry=>entry.id===id):catalog?.[id];
 
@@ -17,11 +18,12 @@ export function tryVolatileMoveRestriction(battle,action,move){
  return {cancelled:true,battle:next,events:[{kind:'actionPrevented',actorId:action.actorId,moveId:move.id,status:result.volatile,reason:result.code}]};
 }
 
-export function createMoveChoiceValidator({moves}){
+export function createMoveChoiceValidator({moves,manifests={}}){
  return (battle,action)=>{
   if(action.kind!=='move')return {ok:true};
   const move=byId(moves,action.moveId);
   if(!move)return {ok:false,code:'UNKNOWN_MOVE'};
-  return validateVolatileMoveChoice(battle,action,move);
+  const volatile=validateVolatileMoveChoice(battle,action,move);if(!volatile.ok)return volatile;
+  return validateSwitchingChoice(battle,action,manifests?.[action.moveId]);
  };
 }

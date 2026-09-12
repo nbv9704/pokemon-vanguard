@@ -26,11 +26,11 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | R3.3 status/volatile, R3.4 damage variants và R3.5 protection/redirection; 79/862 entry supported mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | R3.3–R3.5 foundation và R3.6 switching/position core; 87/862 entry supported mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline hiện tại: `npm run check` đạt, `npm test` đạt 211/211. Trạng thái 783 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline hiện tại: `npm run check` đạt, `npm test` đạt 223/223. Trạng thái 775 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -147,7 +147,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 ## 10. R3 — Mechanics Coverage
 
-**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants và protection/redirection core đã có. Tổng cộng 79 entry hiện supported trong cả hai format.
+**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants, protection/redirection và switching core đã có. Tổng cộng 87 entry hiện supported trong cả hai format.
 
 ### R3.1 Direct/status damage core
 
@@ -194,6 +194,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 - Voluntary switch, pivot after hit, forced switch, trap, Baton Pass-like transfer và position swap.
 - Chốt on-exit/on-entry order, hazards, replacement window, queued action cancellation và interaction với Mega.
+
+**Tiến độ:** U-turn/Volt Switch/Flip Turn đã có post-damage pivot và pre-lock reserve validation. Circle Throw/Dragon Tail/Roar/Whirlwind dùng seeded forced switch, đúng priority/protect behavior và tự hủy queued action của actor bị đưa khỏi sân. Ally Switch đổi slot trong Double và có chuỗi thất bại độc lập. Baton Pass, Chilly Reception, Shed Tail, trapping cùng partial trapping tiếp tục blocked theo dependency được ghi trong progress.
 
 ### R3.7 Battlefield conditions
 
@@ -385,7 +387,7 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Bắt đầu R3.6 bằng pivot-after-hit và forced-switch primitives, xác minh thứ tự switch/entry, replacement window và queued-action cancellation ở Single/Double.
+1. Hoàn thiện R3.6 bằng switch-legality/trap source links và partial-trap residual; chỉ mở Baton Pass sau khi whitelist state transfer được khóa bằng fixture.
 2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.

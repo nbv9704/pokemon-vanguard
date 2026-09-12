@@ -62,6 +62,7 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='apply-protection'&&entry.params?.retaliation&&!['spiky-damage','lower-attack','poison'].includes(entry.params.retaliation))problems.push('apply-protection requires a supported retaliation');
   if(entry?.id==='apply-protection'&&entry.params?.blocksStatus!==undefined&&typeof entry.params.blocksStatus!=='boolean')problems.push('apply-protection blocksStatus must be boolean');
   if(entry?.id==='apply-redirection'&&!['follow-me','rage-powder'].includes(entry.params?.kind))problems.push('apply-redirection requires a supported kind');
+  if(entry?.id==='apply-forced-switch'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-forced-switch requireDamage must be boolean');
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);

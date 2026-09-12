@@ -44,5 +44,11 @@ export const TEST_EVIDENCE=[
  'r3-break-protection:single',
  'r3-break-protection:double',
  'r3-redirection:single',
- 'r3-redirection:double'
+ 'r3-redirection:double',
+ 'r3-pivot-switch:single',
+ 'r3-pivot-switch:double',
+ 'r3-forced-switch:single',
+ 'r3-forced-switch:double',
+ 'r3-position-swap:single',
+ 'r3-position-swap:double'
 ];

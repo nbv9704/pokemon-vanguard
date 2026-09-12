@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after completing the protection and redirection R3.5 batch is:
+The current coverage after the switching and position R3.6 core batch is:
 
-- Single: 79 supported, 783 blocked.
-- Double: 79 supported, 783 blocked.
-- Supported moves: the previous 73 plus Spiky Shield, King's Shield, Baneful Bunker, Feint, Follow Me and Rage Powder.
+- Single: 87 supported, 775 blocked.
+- Double: 87 supported, 775 blocked.
+- Supported moves: the previous 79 plus U-turn, Volt Switch, Flip Turn, Circle Throw, Dragon Tail, Roar, Whirlwind and Ally Switch.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -44,6 +44,8 @@ Conditional callbacks reuse the variable-power pipeline for user/target status, 
 
 `redirection-state.mjs` applies one-turn redirect state and rejects it when a format has only one active Mon. `rules-v3/redirection.mjs` selects the latest valid redirect for opposing single-target moves and lets Grass attackers bypass Rage Powder. Follow Me and Rage Powder therefore reuse the same target resolution path as damage, status and stage handlers.
 
+`switching.mjs` composes the shared R2 `applySwitch` primitive into post-damage pivots, seeded forced switches and Double position swaps. Pivot destinations are validated before queue lock and checked again during resolution. Forced switches choose only reserves, preserve prior damage when no reserve exists and make the turn engine cancel queued actions for actors no longer active. Ally Switch has a separate consecutive-use counter and changes slot identity before later target resolution.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -73,6 +75,8 @@ Night Shade and Seismic Toss deal level damage; Super Fang removes half current 
 Facade, Hex, Venoshock, Hard Press and Fickle Beam cover the condition-power formulas available from current battle state. Scale Shot joins the multi-hit group with a damage-gated self stage change. Turn-history moves, secondary-effect combinations and weight-based formulas remain fail-closed with their dependencies documented.
 
 Protect and Detect block external moves for one turn. The first protection attempt succeeds, then uninterrupted attempts use the shared `1/3`, `1/9` sequence with denominator capped at 729; skipping a turn resets the chain. Wide Guard blocks spread moves for the whole side and Quick Guard blocks positive-priority moves for the whole side. Spiky Shield, King's Shield and Baneful Bunker add contact-only damage, Attack reduction and poison; Feint removes these states and side guards before dealing damage. Follow Me and Rage Powder redirect opposing single-target moves only in Double, with latest-use ordering and Grass immunity for Rage Powder. Fixtures cover expiry, PP/RNG order, contact/non-contact, status/type immunity, shield breaking, both allies and redirect selection.
+
+U-turn, Volt Switch and Flip Turn pivot only after actual damage and require an eligible chosen reserve. Circle Throw and Dragon Tail damage before phazing; Roar and Whirlwind are non-damaging priority −6 phazing moves that bypass Protect. Forced replacement uses battle RNG, emits explicit switch events and cancels the removed actor's queued action. Ally Switch fails in Single, swaps Double slots before later actions and follows its reviewed `1/3^n` consecutive-use rule. Baton Pass, weather/substitute pivots and trapping remain fail-closed until their state-transfer or lifecycle dependencies are implemented.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 
