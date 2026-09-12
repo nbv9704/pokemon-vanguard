@@ -29,7 +29,7 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R3 Mechanics Coverage | IN PROGRESS / BETA 2 SLICE LOCKED | 87 move + 4 Ability và nhóm item damage boost đã kiểm thử; catalog Beta 2 gồm 29 move/4 Ability/11 item dùng được ở cả hai format |
 | R4 | BETA GATE PASSED | Schema 3 chạy Home/Archive/Training/Team/Recruitment status/Guide → Preview → Battle Single/Double; Inspector migration theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 |
-| R6–R7 | R6 NOT STARTED; R7 FOUNDATION EXPANDED | 12 cặp front/back idle sprite, 12 official artwork local và nền move-FX theo ordered event timeline |
+| R6–R7 | R6 BETA SLICE PASSED; R7 FOUNDATION EXPANDED | Mega Venusaur chạy end-to-end với Venusaurite/Thick Fat; 12 cặp front/back idle + Mega sprite và ordered move/Mega FX timeline |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
 Baseline logic hiện tại có 97/862 entry supported ở cả hai format. Trạng thái 765 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
@@ -321,6 +321,8 @@ Phải capture thêm trước khi mô phỏng Champions fidelity: exact lineup c
 
 **Gate:** Mega state và replay giống nhau qua live resolve/restart; mọi illegal attempt có error code ổn định.
 
+**Tiến độ R6-01:** Mega Venusaur là vertical slice đầu tiên. Relation, Mega Stone, form stats/type/Ability và sprite có provenance riêng trong `mega-beta-v1`. Server validate command ở submit/resolve, khóa một Mega mỗi side, transform trước move, giữ HP damage/PP/status/stages/volatiles, compile lại Thick Fat và dùng Speed form mới cho queue còn lại. UI, ordered timeline, Battle Log, Single/Double tests và browser QA đã đạt. Batch kế tiếp thêm relation/form mà không cần đổi turn engine; on-entry và suppression chỉ mở khi form được chọn thực sự cần hook đó.
+
 ## 14. R7 — Sprite và move FX
 
 ### R7.1 Asset pipeline
@@ -412,10 +414,10 @@ Ticket chỉ DONE khi có:
 ## 19. Việc làm ngay sau tài liệu này
 
 1. Review semantic đúng sáu species cùng 15 move, ba Ability được dùng và sáu item trong `beta-slice-v1`; lưu exact/missing/mismatch và provenance thay vì review toàn bộ 862 entry trước beta.
-2. Làm R4.1 catalog service + promote dry-run chỉ xuất nội dung trong slice và coverage artifact cùng snapshot/hash.
+2. R4.1 catalog service và promote dry-run đã hoàn tất; mọi batch mới tiếp tục phải xuất đúng slice cùng coverage/provenance.
 3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
 4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
-5. Beta 2 hiện cần browser QA từ Recruitment → Trial/permanent → Team → Single/Double → reward. Sau phản hồi, tiếp tục R3 theo capability có tác động lớn rồi bắt đầu R6 Mega Evolution.
+5. Beta 2 và Mega Venusaur đã qua browser QA. Kế tiếp mở rộng R7 move FX theo nhóm event/type, đồng thời tiếp tục R3 và thêm Mega relation theo capability có tác động lớn.
 
 Tài liệu tham chiếu trong repo:
 

@@ -9,11 +9,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move, 4 Ability và 6 item có evidence Single/Double; đội beta 6 Pokémon đã qua legality/coverage gate | Mở rộng mechanics theo batch sau khi beta loop chạy; 765/862 entry vẫn fail-closed |
-| R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector sau beta feedback; tiếp tục R5 theo slice |
-| R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
-| R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
-| R7 Sprite/Move FX | FOUNDATION STARTED | Sáu front idle GIF đã cache local; battle dùng animation queue code-based và đã có audit Showdown | Audit Mega aliases, mở rộng FX primitives/profiles/overrides theo battle events |
+| R3 Mechanics Coverage | IN PROGRESS / BETA 2 SLICE LOCKED | Baseline có 87 move, 4 Ability, 6 item; R6 thêm Thick Fat và Venusaurite với evidence Single/Double | Mở rộng mechanics theo batch có tác động rõ; phần chưa hỗ trợ tiếp tục fail-closed |
+| R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector theo beta feedback |
+| R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 | Mở rộng banner/coupon sau khi có source evidence mới |
+| R6 Mega Evolution | BETA SLICE PASSED | Mega Venusaur + Venusaurite chạy Single/Double; form/stat/type/Ability/sprite, one-per-side, dynamic Speed, persistence và replay event đã nối schema 3 | Mở rộng relation/form theo batch; thêm suppression/on-entry hook khi có Mega cần chúng |
+| R7 Sprite/Move FX | FOUNDATION EXPANDED | 12 cặp front/back idle, Mega Venusaur front/back và ordered move/Mega FX timeline đã cache local | Mở rộng FX profiles/overrides theo move events và audit thêm Mega aliases |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
@@ -21,7 +21,7 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. `beta-slice-v1` hiện chạy end-to-end bằng schema 3 từ Training → Team → Preview → Battle cho cả Single/Double và đã qua restart QA. Kế tiếp nhận beta feedback rồi mở R5 Roster Ranch song song với các batch R3 có tác động rõ đến roster; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. Beta 2 hiện chạy end-to-end bằng schema 3 từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch và Mega Venusaur đã qua browser QA. Kế tiếp mở rộng R7 move FX theo event profile, đồng thời thêm các batch R3/Mega form có tác động rõ đến roster; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -584,3 +584,13 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Fixed Battle Arena retaining a Team Preview or finished-session roster created before the latest `teamV3.save`.
 - Saving a team now discards only unlocked Preview and finished battle sessions. A battle already in Command/Replacement keeps its immutable lineup; Team Builder explains that saved changes apply to the next battle.
 - Integration QA changed slot one from Primarina to Venusaur while an older Preview existed. Battle Arena returned to format selection, and the next Single Preview showed the exact six saved members with no console warnings/errors.
+
+## Beta 2-03 / R6-01 — Mega Venusaur vertical slice
+
+- Status: DONE cho Mega đầu tiên trong schema 3; các Mega form khác tiếp tục được mở theo relation batch.
+- Data: `mega-beta-v1` ghi riêng relation Venusaur → Mega Venusaur → Venusaurite, form stats/type, Thick Fat và provenance PokéBase/PokeAPI. Catalog runtime có 12 Pokémon thường + 1 Mega form, 5 Ability và 12 item; Regulation M-A Beta cho phép một Mega mỗi side.
+- Rules: command phải là move của active Venusaur đang giữ Venusaurite. Server kiểm lại lúc submit và resolve; lần Mega thứ hai, sai stone, form thiếu và actor không còn active trả mã lỗi ổn định. Switch không thể mang cờ Mega.
+- Transition: Mega chạy sau switch và trước move. Form mới tính lại stats level 50, giữ lượng HP đã mất, PP, major status, stages và volatiles; Ability đổi sang Thick Fat và passive snapshot được compile lại. Move order còn lại đọc Speed mới từ battle state.
+- Mechanics: Thick Fat dùng defender-side damage modifier 0.5 cho Fire/Ice và ghi source vào authoritative damage breakdown.
+- Presentation: command card có checkbox Mega chỉ khi stone/form hợp lệ; timeline chiếu transformation FX trước move cast, đổi front/back idle sprite đúng frame và Battle Log ghi form + Ability mới.
+- Evidence: `npm run check` pass; full suite 272/272; browser QA local đi qua Training → Venusaurite → Single Preview → Mega command và xác nhận Mega sprite, log, Thick Fat cùng command turn kế tiếp.

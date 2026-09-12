@@ -64,7 +64,7 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='apply-protection'&&entry.params?.blocksStatus!==undefined&&typeof entry.params.blocksStatus!=='boolean')problems.push('apply-protection blocksStatus must be boolean');
   if(entry?.id==='apply-redirection'&&!['follow-me','rage-powder'].includes(entry.params?.kind))problems.push('apply-redirection requires a supported kind');
   if(entry?.id==='apply-forced-switch'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-forced-switch requireDamage must be boolean');
-  if(['low-hp-type-boost','held-damage-boost'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
+  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);

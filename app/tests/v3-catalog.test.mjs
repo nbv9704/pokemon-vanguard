@@ -16,9 +16,10 @@ test('scoped beta review is hash-bound and rejects stale source evidence',()=>{
 });
 
 test('promoted schema-3 catalog exposes only the reviewed beta slice',()=>{
- assert.equal(v3Catalog.metadata.schemaVersion,3);assert.equal(v3Catalog.metadata.catalogVersion,'pv-ma-2026-09-12-beta2-beta-slice-v2');assert.equal(v3Catalog.species.length,12);assert.equal(v3Catalog.moves.length,29);assert.equal(v3Catalog.abilities.length,4);assert.equal(v3Catalog.items.length,11);assert.equal(v3Catalog.starterTeamSpeciesIds.length,6);
+ assert.equal(v3Catalog.metadata.schemaVersion,3);assert.equal(v3Catalog.metadata.catalogVersion,'pv-ma-2026-09-12-beta2-beta-slice-v2-mega-beta-v1');assert.equal(v3Catalog.species.length,12);assert.equal(v3Catalog.megaForms.length,1);assert.equal(v3Catalog.moves.length,29);assert.equal(v3Catalog.abilities.length,5);assert.equal(v3Catalog.items.length,12);assert.equal(v3Catalog.starterTeamSpeciesIds.length,6);assert.equal(v3Catalog.regulations[0].megaCount,1);
  assert.equal(v3Catalog.coverage.singleSupported,true);assert.equal(v3Catalog.coverage.doubleSupported,true);assert.ok(v3Catalog.species.every(species=>Object.values(species.defaultBuild.statPoints).reduce((sum,value)=>sum+value,0)===66));
  assert.ok(v3Catalog.moves.every(move=>move.mechanics));assert.ok(publicV3Catalog.moves.every(move=>move.mechanics===undefined));assert.ok(publicV3Catalog.species.every(species=>species.regulationSets.includes('m-a')));
+ assert.equal(v3Catalog.speciesById['venusaur-mega'].baseStats.def,123);assert.equal(v3Catalog.abilitiesById['thick-fat'].mechanics.handlers[0].id,'received-type-damage-reduction');assert.equal(publicV3Catalog.abilities.find(entry=>entry.id==='thick-fat').mechanics,undefined);
 });
 
 test('local server serves the active schema-3 catalog as read-only data',async()=>{

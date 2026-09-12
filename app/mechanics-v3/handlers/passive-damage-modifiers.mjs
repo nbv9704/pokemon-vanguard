@@ -4,3 +4,4 @@ const create=id=>({id,hooks:['modifyDamage'],run({battle,payload,params}){return
 
 export const lowHpTypeBoostHandler=create('low-hp-type-boost');
 export const heldDamageBoostHandler=create('held-damage-boost');
+export const receivedTypeDamageReductionHandler=create('received-type-damage-reduction');

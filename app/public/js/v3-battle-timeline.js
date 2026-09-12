@@ -21,6 +21,7 @@ export function applyBattleEvent(snapshot,event){
  if(event.kind==='statusCured'&&target)target.status=null;
  if(event.kind==='switchOut'&&target)target.activeSlot=-1;
  if(event.kind==='switchIn'&&target)target.activeSlot=event.slot;
+ if(event.kind==='megaEvolved'&&target){target.speciesId=event.toSpeciesId;target.name=event.name;target.spriteKey=event.spriteKey;target.types=[...event.types];target.hp=event.hpAfter;target.maxHp=event.maxHpAfter;target.megaEvolved=true;}
  if(event.kind==='positionsSwapped'){
   const actor=findMon(next,event.actorId),ally=findMon(next,event.allyId);
   if(actor)actor.activeSlot=event.toSlot;if(ally)ally.activeSlot=event.fromSlot;
@@ -34,6 +35,7 @@ export function groupTurnEvents(events=[]){
  for(const event of events){
   if(event.kind==='turnStarted')continue;
   if(event.kind==='moveStarted'){flush();current={kind:'move',actorId:event.actorId,moveId:event.moveId,events:[event]};continue;}
+  if(event.kind==='megaEvolved'){flush();groups.push({kind:'mega',actorId:event.actorId,events:[event]});continue;}
   if(event.kind==='endTurnStarted'){flush();current={kind:'endTurn',events:[event]};continue;}
   if(event.kind==='actionCancelled'){flush();groups.push({kind:'cancelled',actorId:event.actorId,events:[event]});continue;}
   if(event.kind==='switchOut'&&!current){current={kind:'switch',actorId:event.actorId,events:[event]};continue;}
@@ -48,6 +50,8 @@ export function battleEventText(event,snapshot,catalog){
  switch(event.kind){
    case 'turnStarted':return `Turn ${event.turn} began.`;
    case 'moveStarted':return `${actor} used ${move}!${Number.isFinite(event.speed)?` (Speed ${event.speed}${event.priority?`, priority ${event.priority}`:''})`:''}`;
+   case 'megaEvolved':return `${actor} Mega Evolved into ${event.name}! Its Ability became ${label(event.abilityId)}.`;
+   case 'megaFailed':return `${actor} could not Mega Evolve: ${label(event.reason)}.`;
    case 'ppSpent':return `${move}: ${event.ppAfter}/${event.ppBefore} PP remaining.`;
    case 'damage':return `${target} lost ${hpChange(event)}.${effectiveness(event.effectiveness)}`;
    case 'heal':return `${target} recovered ${hpChange(event)}.`;
@@ -92,7 +96,7 @@ export function createTurnFrames(initialSnapshot,events,{reduced=false}={}){
    const [started,...effects]=group.events;visible=[...visible,started];frames.push({snapshot:clone(snapshot),events:[started],visibleEvents:[...visible],stage:'cast',action,total,duration:reduced?0:1050});
    for(const event of effects)snapshot=applyBattleEvent(snapshot,event);visible.push(...effects);frames.push({snapshot:clone(snapshot),events:effects,visibleEvents:[...visible],stage:'impact',action,total,duration:reduced?0:420});
   }else{
-   for(const event of group.events)snapshot=applyBattleEvent(snapshot,event);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:reduced?0:500});
+   for(const event of group.events)snapshot=applyBattleEvent(snapshot,event);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:reduced?0:group.kind==='mega'?1000:500});
   }
  }
  return frames;

@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "id": "mega-beta-v1",
+  "reviewedAt": "2026-09-13T00:00:00.000Z",
+  "regulationSets": ["m-a"],
+  "sources": {
+    "form": "https://pokebase.app/pokemon-champions/pokemon/venusaur-mega",
+    "stone": "https://pokebase.app/pokemon-champions/items/venusaurite?regulation=m-a",
+    "sprites": "https://github.com/PokeAPI/sprites"
+  },
+  "relations": [
+    {
+      "baseSpeciesId": "venusaur",
+      "megaSpeciesId": "venusaur-mega",
+      "itemId": "venusaurite",
+      "regulationSets": ["m-a"]
+    }
+  ],
+  "forms": [
+    {
+      "id": "venusaur-mega",
+      "formId": "venusaur-mega",
+      "name": "Mega Venusaur",
+      "types": ["grass", "poison"],
+      "baseStats": {"hp": 80, "atk": 100, "def": 123, "spa": 122, "spd": 120, "spe": 80},
+      "abilityId": "thick-fat",
+      "spriteKey": "venusaur-mega"
+    }
+  ],
+  "abilities": [
+    {
+      "id": "thick-fat",
+      "name": "Thick Fat",
+      "description": "Halves damage taken from Fire- and Ice-type moves.",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "thick-fat",
+        "handlers": [{"id": "received-type-damage-reduction", "hook": "modifyDamage", "order": 40, "params": {"types": ["fire", "ice"], "multiplier": 0.5}}],
+        "testEvidence": {"single": ["r6-mega:single-thick-fat"], "double": ["r6-mega:double-thick-fat"]}
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "venusaurite",
+      "name": "Venusaurite",
+      "description": "Allows Venusaur to Mega Evolve once per battle.",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "venusaurite",
+        "handlers": [{"id": "mega-stone", "hook": "beforeAction", "order": 1, "params": {"baseSpeciesId": "venusaur", "megaSpeciesId": "venusaur-mega"}}],
+        "testEvidence": {"single": ["r6-mega:single"], "double": ["r6-mega:double"]}
+      }
+    }
+  ]
+}
