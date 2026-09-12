@@ -22,15 +22,18 @@ export function validateV3Team(team,progression,catalog){
  if(!Array.isArray(team?.buildIds)||team.buildIds.length!==rule.rosterSize||new Set(team.buildIds).size!==team.buildIds.length)problems.push('TEAM_SIZE_INVALID');
  const builds=(team?.buildIds||[]).map(id=>progression.builds.find(build=>build.buildId===id));if(builds.some(build=>!build))problems.push('BUILD_NOT_FOUND');
  const mons=builds.map(build=>progression.mons.find(mon=>mon.monId===build?.monId));if(new Set(mons.filter(Boolean).map(mon=>mon.speciesId)).size!==mons.filter(Boolean).length)problems.push('SPECIES_CLAUSE');
+ if(mons.some(mon=>mon?.ownership==='trial'&&mon.trialExpired))problems.push('TRIAL_EXPIRED');
  const items=builds.filter(Boolean).map(build=>build.itemId).filter(id=>id!=='none');if(rule.itemClause&&new Set(items).size!==items.length)problems.push('ITEM_CLAUSE');
  for(const build of builds.filter(Boolean))if(validateV3Build(build,progression,catalog).length)problems.push('BUILD_ILLEGAL');
  return [...new Set(problems)];
 }
 
 export function createV3BetaProgression(catalog){
- const mons=catalog.species.map(species=>({monId:`v3-mon-${species.id}`,speciesId:species.id,ownership:'beta'}));
- const builds=catalog.species.map(species=>{const defaults=species.defaultBuild;return {buildId:`v3-build-${species.id}`,monId:`v3-mon-${species.id}`,name:defaults.name,natureId:defaults.natureId,statPoints:clone(defaults.statPoints),moveIds:[...defaults.moveIds],abilityId:defaults.abilityId,itemId:defaults.itemId,revision:1};});
+ const starterIds=catalog.starterTeamSpeciesIds||catalog.species.slice(0,6).map(species=>species.id),starters=starterIds.map(id=>catalog.speciesById[id]||catalog.species.find(species=>species.id===id));
+ const mons=starters.map(species=>({monId:`v3-mon-${species.id}`,speciesId:species.id,ownership:'permanent'}));
+ const builds=starters.map(species=>{const defaults=species.defaultBuild;return {buildId:`v3-build-${species.id}`,monId:`v3-mon-${species.id}`,name:defaults.name,natureId:defaults.natureId,statPoints:clone(defaults.statPoints),moveIds:[...defaults.moveIds],abilityId:defaults.abilityId,itemId:defaults.itemId,revision:1};});
  const team={teamId:'v3-team-beta',name:'Beta Squad',buildIds:builds.map(build=>build.buildId),revision:1},progression={schemaVersion:1,catalogVersion:catalog.metadata.catalogVersion,revision:1,mons,builds,teams:[team]};
+ progression.nextMonSerial=1;progression.nextBuildSerial=1;
  const invalidBuilds=builds.flatMap(build=>validateV3Build(build,progression,catalog));if(invalidBuilds.length)throw new Error(`invalid promoted default build: ${invalidBuilds.join(', ')}`);
  const teamProblems=validateV3Team(team,progression,catalog);if(teamProblems.length)throw new Error(`invalid promoted default team: ${teamProblems.join(', ')}`);
  return progression;
@@ -40,6 +43,7 @@ export function applyV3ProgressionAction(progression,action,catalog){
  if(progression?.catalogVersion!==catalog.metadata.catalogVersion)return {ok:false,code:'CATALOG_VERSION_MISMATCH'};
  if(action?.type==='buildV3.save'){
   const current=progression.builds.find(build=>build.buildId===action.build?.buildId);if(!current)return {ok:false,code:'BUILD_NOT_FOUND'};
+  const currentMon=progression.mons.find(mon=>mon.monId===current.monId);if(currentMon?.ownership==='trial')return {ok:false,code:currentMon.trialExpired?'TRIAL_EXPIRED':'TRIAL_READ_ONLY'};
   if(action.expectedRevision!==current.revision)return {ok:false,code:'STALE_REVISION'};
   const candidate={...clone(action.build),buildId:current.buildId,monId:current.monId,revision:current.revision};const problems=validateV3Build(candidate,progression,catalog);if(problems.length)return {ok:false,code:'BUILD_ILLEGAL',details:problems};
   const next=clone(progression),index=next.builds.findIndex(build=>build.buildId===current.buildId);candidate.revision++;next.builds[index]=candidate;next.revision++;return {ok:true,progression:next,build:clone(candidate)};

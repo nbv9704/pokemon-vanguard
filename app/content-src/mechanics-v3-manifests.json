@@ -416,6 +416,11 @@
     "silver-powder": {"id":"silver-powder","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"bug","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "dragon-fang": {"id":"dragon-fang","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"dragon","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "muscle-band": {"id":"muscle-band","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"physical","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "wise-glasses": {"id":"wise-glasses","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"special","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}}
+    "wise-glasses": {"id":"wise-glasses","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"special","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "black-belt": {"id":"black-belt","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fighting","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "charcoal": {"id":"charcoal","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fire","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "fairy-feather": {"id":"fairy-feather","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fairy","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "metal-coat": {"id":"metal-coat","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"steel","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "sharp-beak": {"id":"sharp-beak","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"flying","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}}
   }
 }

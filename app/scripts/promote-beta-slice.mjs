@@ -9,11 +9,12 @@ import {buildPromotedBetaCatalog} from '../content-import/promote-beta.mjs';
 import {sha256} from '../content-import/snapshot.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),snapshotId=process.argv[2];
-if(!snapshotId)throw new Error('usage: npm run content:promote -- <snapshot-id> [--apply]');
-const apply=process.argv.includes('--apply'),candidateRoot=path.join(root,'content-candidates',snapshotId),normalized=path.join(candidateRoot,'normalized');
+if(!snapshotId)throw new Error('usage: npm run content:promote -- <snapshot-id> [--slice <file>] [--apply]');
+const apply=process.argv.includes('--apply')||process.argv.includes('apply')||process.env.npm_config_apply==='true',candidateRoot=path.join(root,'content-candidates',snapshotId),normalized=path.join(candidateRoot,'normalized');
+const sliceArg=process.argv.indexOf('--slice'),sliceFile=sliceArg>=0?process.argv[sliceArg+1]:'beta-slice-v2.json',reviewFile=sliceFile.replace(/\.json$/, '-review.json');
 const readJson=file=>readFile(file,'utf8').then(JSON.parse);
 const [slice,review,fetchManifest,rules,manifests,species,moves,abilities,items]=await Promise.all([
- readJson(path.join(root,'content-src','beta-slice-v1.json')),readJson(path.join(root,'content-src','beta-slice-v1-review.json')),readJson(path.join(candidateRoot,'fetch-manifest.json')),readJson(path.join(root,'rules-v3','rules-contract.json')),readJson(path.join(root,'content-src','mechanics-v3-manifests.json')),
+ readJson(path.join(root,'content-src',sliceFile)),readJson(path.join(root,'content-src',reviewFile)),readJson(path.join(candidateRoot,'fetch-manifest.json')),readJson(path.join(root,'rules-v3','rules-contract.json')),readJson(path.join(root,'content-src','mechanics-v3-manifests.json')),
  ...['species','moves','abilities','items'].map(name=>readJson(path.join(normalized,`${name}.json`)))
 ]);
 if(slice.snapshotId!==snapshotId)throw new Error(`slice expects snapshot ${slice.snapshotId}`);

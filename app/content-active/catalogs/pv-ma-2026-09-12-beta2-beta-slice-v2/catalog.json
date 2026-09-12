@@ -1,0 +1,4433 @@
+{
+  "metadata": {
+    "schemaVersion": 3,
+    "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v2",
+    "rulesVersion": "champions-r2.0.0",
+    "snapshotId": "pv-ma-2026-09-12-beta2",
+    "sliceId": "beta-slice-v2",
+    "regulationSet": "m-a",
+    "reviewedAt": "2026-09-12T15:20:00.000Z",
+    "reviewStatus": "approved-for-beta"
+  },
+  "starterTeamSpeciesIds": [
+    "venusaur",
+    "blastoise",
+    "beedrill",
+    "chesnaught",
+    "decidueye",
+    "feraligatr"
+  ],
+  "economy": {
+    "recruitment": {
+      "sourceBannerId": "regular-roster-m-a",
+      "sourcePullCount": 10,
+      "lineupSize": 10,
+      "cycleDurationMs": 79200000,
+      "trialDurationMs": 604800000,
+      "permanentCostCoins": 1600,
+      "permanentCostTickets": 1,
+      "refreshCostCoins": 350,
+      "paidRefreshLimitPerCycle": 3
+    }
+  },
+  "regulations": [
+    {
+      "id": "m-a-beta",
+      "name": "Regulation M-A Beta",
+      "formats": [
+        "single",
+        "double"
+      ],
+      "rosterSize": 6,
+      "pick": {
+        "single": 3,
+        "double": 4
+      },
+      "lead": {
+        "single": 1,
+        "double": 2
+      },
+      "level": 50,
+      "statPointBudget": 66,
+      "statPointCap": 32,
+      "speciesClause": true,
+      "itemClause": true,
+      "megaCount": 0
+    }
+  ],
+  "species": [
+    {
+      "id": "venusaur",
+      "sourceSlug": "venusaur",
+      "sourceId": "69c72d28f556071a643f731e",
+      "dexNumber": 3,
+      "formId": "venusaur",
+      "name": "Venusaur",
+      "types": [
+        "grass",
+        "poison"
+      ],
+      "baseStats": {
+        "hp": 80,
+        "atk": 82,
+        "def": 83,
+        "spa": 100,
+        "spd": 100,
+        "spe": 80
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acid-spray",
+        "amnesia",
+        "body-slam",
+        "bulldoze",
+        "bullet-seed",
+        "charm",
+        "curse",
+        "double-edge",
+        "earth-power",
+        "earthquake",
+        "endure",
+        "energy-ball",
+        "facade",
+        "frenzy-plant",
+        "giga-drain",
+        "giga-impact",
+        "grass-knot",
+        "grassy-glide",
+        "grassy-terrain",
+        "growth",
+        "helping-hand",
+        "hyper-beam",
+        "ingrain",
+        "knock-off",
+        "leaf-storm",
+        "leech-seed",
+        "light-screen",
+        "outrage",
+        "petal-blizzard",
+        "petal-dance",
+        "poison-jab",
+        "poison-powder",
+        "power-whip",
+        "protect",
+        "rest",
+        "roar",
+        "round",
+        "scary-face",
+        "seed-bomb",
+        "sleep-powder",
+        "sleep-talk",
+        "sludge-bomb",
+        "sludge-wave",
+        "snore",
+        "solar-beam",
+        "stomping-tantrum",
+        "substitute",
+        "sunny-day",
+        "sweet-scent",
+        "swords-dance",
+        "synthesis",
+        "terrain-pulse",
+        "toxic",
+        "trailblaze",
+        "venoshock",
+        "weather-ball",
+        "worry-seed"
+      ],
+      "abilityIds": [
+        "overgrow",
+        "chlorophyll"
+      ],
+      "spriteKey": "venusaur",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Venusaur Beta",
+        "natureId": "modest",
+        "statPoints": {
+          "hp": 2,
+          "atk": 0,
+          "def": 0,
+          "spa": 32,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "bullet-seed",
+          "giga-drain",
+          "leech-seed",
+          "protect"
+        ],
+        "abilityId": "overgrow",
+        "itemId": "miracle-seed"
+      }
+    },
+    {
+      "id": "blastoise",
+      "sourceSlug": "blastoise",
+      "sourceId": "69c72d32f556071a643f74bc",
+      "dexNumber": 9,
+      "formId": "blastoise",
+      "name": "Blastoise",
+      "types": [
+        "water"
+      ],
+      "baseStats": {
+        "hp": 79,
+        "atk": 83,
+        "def": 100,
+        "spa": 85,
+        "spd": 105,
+        "spe": 78
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "aqua-jet",
+        "aqua-ring",
+        "aqua-tail",
+        "aura-sphere",
+        "avalanche",
+        "bite",
+        "blizzard",
+        "body-press",
+        "bulldoze",
+        "brick-break",
+        "body-slam",
+        "chilling-water",
+        "crunch",
+        "dark-pulse",
+        "dig",
+        "dive",
+        "double-edge",
+        "dragon-pulse",
+        "earthquake",
+        "endure",
+        "facade",
+        "fake-out",
+        "flail",
+        "flash-cannon",
+        "fling",
+        "flip-turn",
+        "focus-blast",
+        "focus-punch",
+        "giga-impact",
+        "gyro-ball",
+        "haze",
+        "helping-hand",
+        "hydro-cannon",
+        "hydro-pump",
+        "hyper-beam",
+        "ice-beam",
+        "ice-punch",
+        "ice-spinner",
+        "icy-wind",
+        "iron-defense",
+        "iron-head",
+        "iron-tail",
+        "life-dew",
+        "liquidation",
+        "mega-kick",
+        "mirror-coat",
+        "mud-shot",
+        "muddy-water",
+        "outrage",
+        "protect",
+        "rain-dance",
+        "rapid-spin",
+        "rest",
+        "roar",
+        "rock-slide",
+        "rock-tomb",
+        "round",
+        "scary-face",
+        "shell-smash",
+        "sleep-talk",
+        "smack-down",
+        "snore",
+        "substitute",
+        "surf",
+        "terrain-pulse",
+        "water-pulse",
+        "water-spout",
+        "waterfall",
+        "wave-crash",
+        "weather-ball",
+        "whirlpool",
+        "yawn",
+        "zen-headbutt"
+      ],
+      "abilityIds": [
+        "torrent",
+        "rain-dish"
+      ],
+      "spriteKey": "blastoise",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Blastoise Beta",
+        "natureId": "modest",
+        "statPoints": {
+          "hp": 2,
+          "atk": 0,
+          "def": 0,
+          "spa": 32,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "flip-turn",
+          "water-spout",
+          "gyro-ball",
+          "protect"
+        ],
+        "abilityId": "torrent",
+        "itemId": "mystic-water"
+      }
+    },
+    {
+      "id": "beedrill",
+      "sourceSlug": "beedrill",
+      "sourceId": "69c72d3af556071a643f75c8",
+      "dexNumber": 15,
+      "formId": "beedrill",
+      "name": "Beedrill",
+      "types": [
+        "bug",
+        "poison"
+      ],
+      "baseStats": {
+        "hp": 65,
+        "atk": 90,
+        "def": 40,
+        "spa": 45,
+        "spd": 80,
+        "spe": 75
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acrobatics",
+        "aerial-ace",
+        "agility",
+        "air-cutter",
+        "assurance",
+        "attract",
+        "baton-pass",
+        "brick-break",
+        "brutal-swing",
+        "bug-bite",
+        "bug-buzz",
+        "cross-poison",
+        "double-hit",
+        "double-edge",
+        "drill-run",
+        "dual-wingbeat",
+        "electroweb",
+        "endeavor",
+        "endure",
+        "facade",
+        "fell-stinger",
+        "focus-energy",
+        "giga-drain",
+        "giga-impact",
+        "hyper-beam",
+        "iron-defense",
+        "knock-off",
+        "lunge",
+        "payback",
+        "pin-missile",
+        "poison-jab",
+        "pollen-puff",
+        "pounce",
+        "protect",
+        "rest",
+        "round",
+        "screech",
+        "skitter-smack",
+        "sleep-talk",
+        "sludge-bomb",
+        "snore",
+        "solar-beam",
+        "string-shot",
+        "substitute",
+        "sunny-day",
+        "swords-dance",
+        "thief",
+        "throat-chop",
+        "toxic",
+        "toxic-spikes",
+        "u-turn",
+        "venoshock",
+        "x-scissor"
+      ],
+      "abilityIds": [
+        "swarm",
+        "sniper"
+      ],
+      "spriteKey": "beedrill",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Beedrill Beta",
+        "natureId": "jolly",
+        "statPoints": {
+          "hp": 2,
+          "atk": 32,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "u-turn",
+          "dual-wingbeat",
+          "giga-drain",
+          "protect"
+        ],
+        "abilityId": "swarm",
+        "itemId": "silver-powder"
+      }
+    },
+    {
+      "id": "chesnaught",
+      "sourceSlug": "chesnaught",
+      "sourceId": "69c72f0ef556071a643fa334",
+      "dexNumber": 652,
+      "formId": "chesnaught",
+      "name": "Chesnaught",
+      "types": [
+        "grass",
+        "fighting"
+      ],
+      "baseStats": {
+        "hp": 88,
+        "atk": 107,
+        "def": 122,
+        "spa": 74,
+        "spd": 75,
+        "spe": 64
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "aerial-ace",
+        "belly-drum",
+        "bite",
+        "body-press",
+        "body-slam",
+        "brick-break",
+        "bulk-up",
+        "bulldoze",
+        "bullet-seed",
+        "close-combat",
+        "coaching",
+        "crunch",
+        "curse",
+        "dig",
+        "double-edge",
+        "dragon-claw",
+        "drain-punch",
+        "earthquake",
+        "endeavor",
+        "endure",
+        "energy-ball",
+        "facade",
+        "feint",
+        "fling",
+        "focus-blast",
+        "focus-punch",
+        "frenzy-plant",
+        "giga-drain",
+        "giga-impact",
+        "grass-knot",
+        "grassy-glide",
+        "grassy-terrain",
+        "growth",
+        "gyro-ball",
+        "hammer-arm",
+        "helping-hand",
+        "high-horsepower",
+        "hyper-beam",
+        "iron-defense",
+        "iron-head",
+        "iron-tail",
+        "knock-off",
+        "leaf-storm",
+        "leech-seed",
+        "low-kick",
+        "low-sweep",
+        "mud-shot",
+        "mud-slap",
+        "pain-split",
+        "payback",
+        "pin-missile",
+        "poison-jab",
+        "protect",
+        "quick-guard",
+        "rain-dance",
+        "reflect",
+        "rest",
+        "reversal",
+        "roar",
+        "rock-slide",
+        "rock-tomb",
+        "round",
+        "scary-face",
+        "seed-bomb",
+        "shadow-claw",
+        "sleep-talk",
+        "sludge-bomb",
+        "smack-down",
+        "snore",
+        "solar-beam",
+        "spikes",
+        "spiky-shield",
+        "steel-roller",
+        "stomping-tantrum",
+        "stone-edge",
+        "substitute",
+        "sunny-day",
+        "super-fang",
+        "superpower",
+        "swords-dance",
+        "synthesis",
+        "taunt",
+        "thunder-punch",
+        "trailblaze",
+        "wide-guard",
+        "wood-hammer",
+        "zen-headbutt"
+      ],
+      "abilityIds": [
+        "overgrow",
+        "bulletproof"
+      ],
+      "spriteKey": "chesnaught",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Chesnaught Beta",
+        "natureId": "adamant",
+        "statPoints": {
+          "hp": 32,
+          "atk": 32,
+          "def": 2,
+          "spa": 0,
+          "spd": 0,
+          "spe": 0
+        },
+        "moveIds": [
+          "bullet-seed",
+          "drain-punch",
+          "leech-seed",
+          "spiky-shield"
+        ],
+        "abilityId": "overgrow",
+        "itemId": "muscle-band"
+      }
+    },
+    {
+      "id": "decidueye",
+      "sourceSlug": "decidueye",
+      "sourceId": "69c72f42f556071a643fa7fb",
+      "dexNumber": 724,
+      "formId": "decidueye",
+      "name": "Decidueye",
+      "types": [
+        "grass",
+        "ghost"
+      ],
+      "baseStats": {
+        "hp": 78,
+        "atk": 107,
+        "def": 75,
+        "spa": 100,
+        "spd": 100,
+        "spe": 70
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acrobatics",
+        "aerial-ace",
+        "air-cutter",
+        "air-slash",
+        "baton-pass",
+        "brave-bird",
+        "bullet-seed",
+        "confuse-ray",
+        "curse",
+        "defog",
+        "double-team",
+        "dual-wingbeat",
+        "endure",
+        "energy-ball",
+        "facade",
+        "feather-dance",
+        "frenzy-plant",
+        "giga-drain",
+        "giga-impact",
+        "grass-knot",
+        "grassy-glide",
+        "grassy-terrain",
+        "haze",
+        "helping-hand",
+        "hex",
+        "hurricane",
+        "hyper-beam",
+        "imprison",
+        "knock-off",
+        "leaf-blade",
+        "leaf-storm",
+        "light-screen",
+        "low-kick",
+        "low-sweep",
+        "nasty-plot",
+        "night-shade",
+        "phantom-force",
+        "pluck",
+        "poltergeist",
+        "protect",
+        "psycho-cut",
+        "rain-dance",
+        "rest",
+        "roost",
+        "round",
+        "seed-bomb",
+        "shadow-ball",
+        "shadow-claw",
+        "shadow-sneak",
+        "skitter-smack",
+        "sleep-talk",
+        "smack-down",
+        "snore",
+        "solar-beam",
+        "solar-blade",
+        "spirit-shackle",
+        "spite",
+        "steel-wing",
+        "substitute",
+        "sucker-punch",
+        "sunny-day",
+        "swords-dance",
+        "synthesis",
+        "tailwind",
+        "trailblaze",
+        "u-turn",
+        "aura-sphere",
+        "brick-break",
+        "bulk-up",
+        "close-combat",
+        "coaching",
+        "focus-blast",
+        "focus-punch",
+        "reversal",
+        "rock-tomb",
+        "scary-face",
+        "taunt",
+        "triple-arrows",
+        "upper-hand"
+      ],
+      "abilityIds": [
+        "overgrow",
+        "long-reach"
+      ],
+      "spriteKey": "decidueye",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Decidueye Beta",
+        "natureId": "jolly",
+        "statPoints": {
+          "hp": 2,
+          "atk": 32,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "bullet-seed",
+          "brave-bird",
+          "hex",
+          "u-turn"
+        ],
+        "abilityId": "overgrow",
+        "itemId": "wise-glasses"
+      }
+    },
+    {
+      "id": "feraligatr",
+      "sourceSlug": "feraligatr",
+      "sourceId": "69c72db1f556071a643f832e",
+      "dexNumber": 160,
+      "formId": "feraligatr",
+      "name": "Feraligatr",
+      "types": [
+        "water"
+      ],
+      "baseStats": {
+        "hp": 85,
+        "atk": 105,
+        "def": 100,
+        "spa": 79,
+        "spd": 83,
+        "spe": 78
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "aerial-ace",
+        "agility",
+        "ancient-power",
+        "aqua-jet",
+        "aqua-tail",
+        "avalanche",
+        "bite",
+        "blizzard",
+        "block",
+        "body-slam",
+        "breaking-swipe",
+        "brick-break",
+        "brutal-swing",
+        "bulldoze",
+        "chilling-water",
+        "counter",
+        "crunch",
+        "curse",
+        "dig",
+        "dive",
+        "double-edge",
+        "dragon-claw",
+        "dragon-dance",
+        "dragon-pulse",
+        "dragon-tail",
+        "earthquake",
+        "endeavor",
+        "endure",
+        "facade",
+        "fake-tears",
+        "flail",
+        "flatter",
+        "fling",
+        "flip-turn",
+        "focus-blast",
+        "focus-punch",
+        "giga-impact",
+        "helping-hand",
+        "hydro-cannon",
+        "hydro-pump",
+        "hyper-beam",
+        "ice-beam",
+        "ice-fang",
+        "ice-punch",
+        "icy-wind",
+        "iron-tail",
+        "lash-out",
+        "liquidation",
+        "low-kick",
+        "mega-kick",
+        "mud-shot",
+        "mud-slap",
+        "muddy-water",
+        "outrage",
+        "protect",
+        "psychic-fangs",
+        "rain-dance",
+        "rest",
+        "roar",
+        "rock-slide",
+        "rock-tomb",
+        "round",
+        "scale-shot",
+        "scary-face",
+        "screech",
+        "shadow-claw",
+        "sleep-talk",
+        "snarl",
+        "snore",
+        "spite",
+        "stomping-tantrum",
+        "substitute",
+        "superpower",
+        "surf",
+        "swords-dance",
+        "thief",
+        "thrash",
+        "trailblaze",
+        "uproar",
+        "water-pulse",
+        "waterfall",
+        "whirlpool",
+        "slash"
+      ],
+      "abilityIds": [
+        "torrent",
+        "sheer-force"
+      ],
+      "spriteKey": "feraligatr",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Feraligatr Beta",
+        "natureId": "jolly",
+        "statPoints": {
+          "hp": 2,
+          "atk": 32,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "flip-turn",
+          "dragon-tail",
+          "scale-shot",
+          "protect"
+        ],
+        "abilityId": "torrent",
+        "itemId": "dragon-fang"
+      }
+    },
+    {
+      "id": "charizard",
+      "sourceSlug": "charizard",
+      "sourceId": "69c72d2ef556071a643f741c",
+      "dexNumber": 6,
+      "formId": "charizard",
+      "name": "Charizard",
+      "types": [
+        "fire",
+        "flying"
+      ],
+      "baseStats": {
+        "hp": 78,
+        "atk": 84,
+        "def": 78,
+        "spa": 109,
+        "spd": 85,
+        "spe": 100
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acrobatics",
+        "aerial-ace",
+        "air-cutter",
+        "air-slash",
+        "ancient-power",
+        "beat-up",
+        "belly-drum",
+        "bite",
+        "blast-burn",
+        "body-slam",
+        "breaking-swipe",
+        "brick-break",
+        "brutal-swing",
+        "bulldoze",
+        "counter",
+        "crunch",
+        "dig",
+        "double-edge",
+        "dragon-cheer",
+        "dragon-claw",
+        "dragon-dance",
+        "dragon-pulse",
+        "dragon-rush",
+        "dragon-tail",
+        "earthquake",
+        "endure",
+        "facade",
+        "fire-blast",
+        "fire-fang",
+        "fire-punch",
+        "fire-spin",
+        "flame-charge",
+        "flamethrower",
+        "flare-blitz",
+        "fling",
+        "fly",
+        "focus-blast",
+        "focus-punch",
+        "giga-impact",
+        "heat-crash",
+        "heat-wave",
+        "helping-hand",
+        "hurricane",
+        "hyper-beam",
+        "inferno",
+        "iron-tail",
+        "mega-kick",
+        "outrage",
+        "overheat",
+        "protect",
+        "rest",
+        "roar",
+        "rock-slide",
+        "rock-tomb",
+        "roost",
+        "round",
+        "sandstorm",
+        "scale-shot",
+        "scary-face",
+        "scorching-sands",
+        "shadow-claw",
+        "sleep-talk",
+        "snore",
+        "solar-beam",
+        "steel-wing",
+        "substitute",
+        "sunny-day",
+        "swords-dance",
+        "temper-flare",
+        "thunder-punch",
+        "weather-ball",
+        "will-o-wisp",
+        "slash"
+      ],
+      "abilityIds": [
+        "blaze",
+        "solar-power"
+      ],
+      "spriteKey": "charizard",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Charizard Beta",
+        "natureId": "modest",
+        "statPoints": {
+          "hp": 2,
+          "atk": 0,
+          "def": 0,
+          "spa": 32,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "aerial-ace",
+          "dragon-tail",
+          "will-o-wisp",
+          "protect"
+        ],
+        "abilityId": "blaze",
+        "itemId": "sharp-beak"
+      }
+    },
+    {
+      "id": "meganium",
+      "sourceSlug": "meganium",
+      "sourceId": "69c72daef556071a643f82de",
+      "dexNumber": 154,
+      "formId": "meganium",
+      "name": "Meganium",
+      "types": [
+        "grass"
+      ],
+      "baseStats": {
+        "hp": 80,
+        "atk": 82,
+        "def": 100,
+        "spa": 83,
+        "spd": 100,
+        "spe": 80
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "ancient-power",
+        "body-press",
+        "body-slam",
+        "bulldoze",
+        "bullet-seed",
+        "charm",
+        "counter",
+        "curse",
+        "dazzling-gleam",
+        "double-edge",
+        "dragon-tail",
+        "earth-power",
+        "earthquake",
+        "encore",
+        "endeavor",
+        "endure",
+        "energy-ball",
+        "facade",
+        "fake-tears",
+        "flail",
+        "frenzy-plant",
+        "giga-drain",
+        "giga-impact",
+        "grass-knot",
+        "grassy-glide",
+        "grassy-terrain",
+        "heal-pulse",
+        "helping-hand",
+        "hyper-beam",
+        "ingrain",
+        "iron-tail",
+        "knock-off",
+        "leaf-blade",
+        "leaf-storm",
+        "leech-seed",
+        "light-screen",
+        "mud-slap",
+        "outrage",
+        "petal-blizzard",
+        "petal-dance",
+        "poison-powder",
+        "pollen-puff",
+        "protect",
+        "reflect",
+        "rest",
+        "round",
+        "safeguard",
+        "seed-bomb",
+        "sleep-talk",
+        "snore",
+        "solar-beam",
+        "solar-blade",
+        "stomping-tantrum",
+        "substitute",
+        "sunny-day",
+        "sweet-scent",
+        "swords-dance",
+        "synthesis",
+        "trailblaze",
+        "weather-ball",
+        "zen-headbutt"
+      ],
+      "abilityIds": [
+        "overgrow",
+        "leaf-guard"
+      ],
+      "spriteKey": "meganium",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Meganium Beta",
+        "natureId": "modest",
+        "statPoints": {
+          "hp": 32,
+          "atk": 0,
+          "def": 0,
+          "spa": 32,
+          "spd": 2,
+          "spe": 0
+        },
+        "moveIds": [
+          "giga-drain",
+          "leech-seed",
+          "charm",
+          "protect"
+        ],
+        "abilityId": "overgrow",
+        "itemId": "miracle-seed"
+      }
+    },
+    {
+      "id": "typhlosion",
+      "sourceSlug": "typhlosion",
+      "sourceId": "69c72db0f556071a643f8314",
+      "dexNumber": 157,
+      "formId": "typhlosion",
+      "name": "Typhlosion",
+      "types": [
+        "fire"
+      ],
+      "baseStats": {
+        "hp": 78,
+        "atk": 84,
+        "def": 78,
+        "spa": 109,
+        "spd": 85,
+        "spe": 100
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "aerial-ace",
+        "blast-burn",
+        "body-slam",
+        "brick-break",
+        "bulldoze",
+        "burn-up",
+        "burning-jealousy",
+        "covet",
+        "curse",
+        "dig",
+        "double-edge",
+        "earthquake",
+        "endeavor",
+        "endure",
+        "eruption",
+        "extrasensory",
+        "facade",
+        "fire-blast",
+        "fire-fang",
+        "fire-punch",
+        "fire-spin",
+        "flame-charge",
+        "flamethrower",
+        "flare-blitz",
+        "fling",
+        "focus-blast",
+        "focus-punch",
+        "giga-impact",
+        "gyro-ball",
+        "heat-wave",
+        "helping-hand",
+        "howl",
+        "hyper-beam",
+        "inferno",
+        "iron-head",
+        "lava-plume",
+        "low-kick",
+        "mega-kick",
+        "overheat",
+        "play-rough",
+        "protect",
+        "quick-attack",
+        "rest",
+        "reversal",
+        "roar",
+        "rock-slide",
+        "rock-tomb",
+        "round",
+        "scorching-sands",
+        "shadow-ball",
+        "shadow-claw",
+        "sleep-talk",
+        "snore",
+        "solar-beam",
+        "stomping-tantrum",
+        "substitute",
+        "sunny-day",
+        "temper-flare",
+        "throat-chop",
+        "thunder-punch",
+        "wild-charge",
+        "will-o-wisp",
+        "zen-headbutt",
+        "calm-mind",
+        "confuse-ray",
+        "hex",
+        "infernal-parade",
+        "mystical-fire",
+        "night-shade",
+        "poltergeist",
+        "spite"
+      ],
+      "abilityIds": [
+        "blaze",
+        "flash-fire"
+      ],
+      "spriteKey": "typhlosion",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Typhlosion Beta",
+        "natureId": "modest",
+        "statPoints": {
+          "hp": 2,
+          "atk": 0,
+          "def": 0,
+          "spa": 32,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "eruption",
+          "wild-charge",
+          "will-o-wisp",
+          "protect"
+        ],
+        "abilityId": "blaze",
+        "itemId": "charcoal"
+      }
+    },
+    {
+      "id": "scizor",
+      "sourceSlug": "scizor",
+      "sourceId": "69c72dd4f556071a643f86a4",
+      "dexNumber": 212,
+      "formId": "scizor",
+      "name": "Scizor",
+      "types": [
+        "bug",
+        "steel"
+      ],
+      "baseStats": {
+        "hp": 70,
+        "atk": 130,
+        "def": 100,
+        "spa": 55,
+        "spd": 80,
+        "spe": 65
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acrobatics",
+        "aerial-ace",
+        "agility",
+        "air-cutter",
+        "air-slash",
+        "assurance",
+        "baton-pass",
+        "brick-break",
+        "brutal-swing",
+        "bug-bite",
+        "bug-buzz",
+        "bullet-punch",
+        "close-combat",
+        "counter",
+        "curse",
+        "defog",
+        "double-hit",
+        "double-team",
+        "double-edge",
+        "dual-wingbeat",
+        "endure",
+        "facade",
+        "feint",
+        "flash-cannon",
+        "fling",
+        "focus-energy",
+        "giga-impact",
+        "hard-press",
+        "helping-hand",
+        "hyper-beam",
+        "iron-defense",
+        "iron-head",
+        "knock-off",
+        "light-screen",
+        "lunge",
+        "night-slash",
+        "pounce",
+        "protect",
+        "psycho-cut",
+        "quick-attack",
+        "quick-guard",
+        "rain-dance",
+        "rest",
+        "reversal",
+        "roost",
+        "round",
+        "sandstorm",
+        "scary-face",
+        "skitter-smack",
+        "sleep-talk",
+        "snore",
+        "steel-beam",
+        "steel-wing",
+        "struggle-bug",
+        "substitute",
+        "sunny-day",
+        "superpower",
+        "swords-dance",
+        "tailwind",
+        "thief",
+        "trailblaze",
+        "u-turn",
+        "vacuum-wave",
+        "x-scissor",
+        "slash"
+      ],
+      "abilityIds": [
+        "swarm",
+        "technician",
+        "light-metal"
+      ],
+      "spriteKey": "scizor",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Scizor Beta",
+        "natureId": "adamant",
+        "statPoints": {
+          "hp": 2,
+          "atk": 32,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "u-turn",
+          "dual-wingbeat",
+          "hard-press",
+          "quick-guard"
+        ],
+        "abilityId": "swarm",
+        "itemId": "metal-coat"
+      }
+    },
+    {
+      "id": "infernape",
+      "sourceSlug": "infernape",
+      "sourceId": "69c72e55f556071a643f927e",
+      "dexNumber": 392,
+      "formId": "infernape",
+      "name": "Infernape",
+      "types": [
+        "fire",
+        "fighting"
+      ],
+      "baseStats": {
+        "hp": 76,
+        "atk": 104,
+        "def": 71,
+        "spa": 104,
+        "spd": 71,
+        "spe": 108
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acrobatics",
+        "aerial-ace",
+        "agility",
+        "attract",
+        "aura-sphere",
+        "blast-burn",
+        "blaze-kick",
+        "body-slam",
+        "brick-break",
+        "bulk-up",
+        "bulldoze",
+        "burning-jealousy",
+        "calm-mind",
+        "close-combat",
+        "coaching",
+        "counter",
+        "dig",
+        "double-edge",
+        "drain-punch",
+        "earthquake",
+        "encore",
+        "endeavor",
+        "endure",
+        "facade",
+        "fake-out",
+        "fake-tears",
+        "feint",
+        "fire-blast",
+        "fire-punch",
+        "fire-spin",
+        "flame-charge",
+        "flamethrower",
+        "flare-blitz",
+        "fling",
+        "focus-blast",
+        "focus-energy",
+        "focus-punch",
+        "giga-impact",
+        "grass-knot",
+        "gunk-shot",
+        "heat-wave",
+        "helping-hand",
+        "hyper-beam",
+        "iron-tail",
+        "knock-off",
+        "lash-out",
+        "low-kick",
+        "low-sweep",
+        "mach-punch",
+        "mud-slap",
+        "nasty-plot",
+        "overheat",
+        "poison-jab",
+        "protect",
+        "psych-up",
+        "raging-fury",
+        "rest",
+        "reversal",
+        "roar",
+        "rock-slide",
+        "rock-tomb",
+        "round",
+        "scary-face",
+        "scorching-sands",
+        "shadow-claw",
+        "slack-off",
+        "sleep-talk",
+        "smack-down",
+        "snore",
+        "solar-beam",
+        "stealth-rock",
+        "stone-edge",
+        "substitute",
+        "sunny-day",
+        "switcheroo",
+        "swords-dance",
+        "taunt",
+        "temper-flare",
+        "thief",
+        "throat-chop",
+        "thunder-punch",
+        "torment",
+        "u-turn",
+        "upper-hand",
+        "uproar",
+        "vacuum-wave",
+        "will-o-wisp",
+        "zen-headbutt"
+      ],
+      "abilityIds": [
+        "blaze",
+        "iron-fist"
+      ],
+      "spriteKey": "infernape",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Infernape Beta",
+        "natureId": "jolly",
+        "statPoints": {
+          "hp": 2,
+          "atk": 32,
+          "def": 0,
+          "spa": 0,
+          "spd": 0,
+          "spe": 32
+        },
+        "moveIds": [
+          "drain-punch",
+          "coaching",
+          "feint",
+          "taunt"
+        ],
+        "abilityId": "blaze",
+        "itemId": "black-belt"
+      }
+    },
+    {
+      "id": "primarina",
+      "sourceSlug": "primarina",
+      "sourceId": "69c72f48f556071a643fa870",
+      "dexNumber": 730,
+      "formId": "primarina",
+      "name": "Primarina",
+      "types": [
+        "water",
+        "fairy"
+      ],
+      "baseStats": {
+        "hp": 80,
+        "atk": 74,
+        "def": 74,
+        "spa": 126,
+        "spd": 116,
+        "spe": 60
+      },
+      "regulationSets": [
+        "m-a"
+      ],
+      "moveIds": [
+        "acrobatics",
+        "alluring-voice",
+        "amnesia",
+        "aqua-jet",
+        "aqua-ring",
+        "attract",
+        "baby-doll-eyes",
+        "blizzard",
+        "body-slam",
+        "calm-mind",
+        "charm",
+        "chilling-water",
+        "dazzling-gleam",
+        "dive",
+        "draining-kiss",
+        "encore",
+        "endure",
+        "energy-ball",
+        "facade",
+        "flip-turn",
+        "giga-impact",
+        "haze",
+        "helping-hand",
+        "hydro-cannon",
+        "hydro-pump",
+        "hyper-beam",
+        "hyper-voice",
+        "ice-beam",
+        "ice-spinner",
+        "icy-wind",
+        "iron-tail",
+        "life-dew",
+        "light-screen",
+        "liquidation",
+        "misty-explosion",
+        "misty-terrain",
+        "moonblast",
+        "perish-song",
+        "play-rough",
+        "protect",
+        "psych-up",
+        "psychic",
+        "psychic-noise",
+        "rain-dance",
+        "reflect",
+        "rest",
+        "round",
+        "shadow-ball",
+        "sing",
+        "sleep-talk",
+        "snore",
+        "snowscape",
+        "sparkling-aria",
+        "stored-power",
+        "substitute",
+        "surf",
+        "triple-axel",
+        "uproar",
+        "water-pulse",
+        "waterfall",
+        "weather-ball",
+        "whirlpool",
+        "wonder-room"
+      ],
+      "abilityIds": [
+        "torrent",
+        "liquid-voice"
+      ],
+      "spriteKey": "primarina",
+      "enabledForBattle": true,
+      "defaultBuild": {
+        "name": "Primarina Beta",
+        "natureId": "modest",
+        "statPoints": {
+          "hp": 32,
+          "atk": 0,
+          "def": 0,
+          "spa": 32,
+          "spd": 2,
+          "spe": 0
+        },
+        "moveIds": [
+          "draining-kiss",
+          "stored-power",
+          "calm-mind",
+          "sing"
+        ],
+        "abilityId": "torrent",
+        "itemId": "fairy-feather"
+      }
+    }
+  ],
+  "moves": [
+    {
+      "id": "aerial-ace",
+      "sourceSlug": "aerial-ace",
+      "sourceId": "69c6180a5da2bc051de8da08",
+      "name": "Aerial Ace",
+      "type": "flying",
+      "category": "physical",
+      "power": 60,
+      "accuracy": null,
+      "maxPP": 20,
+      "description": "The user confounds the target with speed, then slashes. This attack never misses.",
+      "implemented": true,
+      "mechanics": {
+        "id": "aerial-ace",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-direct-damage:aerial-ace-single"
+          ],
+          "double": [
+            "r3-direct-damage:aerial-ace-double-ally"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "brave-bird",
+      "sourceSlug": "brave-bird",
+      "sourceId": "69c6181d5da2bc051de8dbec",
+      "name": "Brave Bird",
+      "type": "flying",
+      "category": "physical",
+      "power": 120,
+      "accuracy": 100,
+      "maxPP": 16,
+      "description": "The user tucks in its wings and charges at a low altitude. This also damages the user quite a lot.",
+      "implemented": true,
+      "mechanics": {
+        "id": "brave-bird",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-recoil",
+            "hook": "onMove",
+            "order": 130,
+            "params": {
+              "numerator": 33,
+              "denominator": 100
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-recoil-drain:single"
+          ],
+          "double": [
+            "r3-recoil-drain:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "bullet-seed",
+      "sourceSlug": "bullet-seed",
+      "sourceId": "69c6180a5da2bc051de8da03",
+      "name": "Bullet Seed",
+      "type": "grass",
+      "category": "physical",
+      "power": 25,
+      "accuracy": 100,
+      "maxPP": 20,
+      "description": "The user attacks by forcefully shooting seeds at the target. This move hits two to five times in a row.",
+      "implemented": true,
+      "mechanics": {
+        "id": "bullet-seed",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-multi-hit-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "hits": [
+                2,
+                5
+              ]
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-multi-hit:single"
+          ],
+          "double": [
+            "r3-multi-hit:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "calm-mind",
+      "sourceSlug": "calm-mind",
+      "sourceId": "69c6180e5da2bc051de8da64",
+      "name": "Calm Mind",
+      "type": "psychic",
+      "category": "status",
+      "power": null,
+      "accuracy": null,
+      "maxPP": 20,
+      "description": "The user quietly focuses its mind and calms its spirit to boost its Sp. Atk and Sp. Def stats.",
+      "implemented": true,
+      "mechanics": {
+        "id": "calm-mind",
+        "targetMode": "self",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "apply-stat-stages",
+            "hook": "onMove",
+            "order": 110,
+            "params": {
+              "boosts": {
+                "spa": 1,
+                "spd": 1
+              }
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-stat-stages:self-single"
+          ],
+          "double": [
+            "r3-stat-stages:self-double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "charm",
+      "sourceSlug": "charm",
+      "sourceId": "69c617ef5da2bc051de8d707",
+      "name": "Charm",
+      "type": "fairy",
+      "category": "status",
+      "power": null,
+      "accuracy": 100,
+      "maxPP": 20,
+      "description": "The user gazes at the target rather charmingly, making it less wary. This harshly lowers the target's Attack stat.",
+      "implemented": true,
+      "mechanics": {
+        "id": "charm",
+        "targetMode": "adjacentFoe",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "apply-stat-stages",
+            "hook": "onMove",
+            "order": 110,
+            "params": {
+              "boosts": {
+                "atk": -2
+              }
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-accuracy-stages:target-single"
+          ],
+          "double": [
+            "r3-accuracy-stages:target-double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "coaching",
+      "sourceSlug": "coaching",
+      "sourceId": "69c618775da2bc051de8e545",
+      "name": "Coaching",
+      "type": "fighting",
+      "category": "status",
+      "power": null,
+      "accuracy": null,
+      "maxPP": 12,
+      "description": "The user properly coaches its ally Pokémon, boosting their Attack and Defense stats.",
+      "implemented": true,
+      "mechanics": {
+        "id": "coaching",
+        "targetMode": "adjacentAlly",
+        "priority": 0,
+        "contact": false,
+        "redirectable": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "apply-stat-stages",
+            "hook": "onMove",
+            "order": 110,
+            "params": {
+              "boosts": {
+                "atk": 1,
+                "def": 1
+              }
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-stat-stages:ally-single-failure"
+          ],
+          "double": [
+            "r3-stat-stages:ally-double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "dragon-tail",
+      "sourceSlug": "dragon-tail",
+      "sourceId": "69c618365da2bc051de8de8f",
+      "name": "Dragon Tail",
+      "type": "dragon",
+      "category": "physical",
+      "power": 60,
+      "accuracy": 90,
+      "maxPP": 12,
+      "description": "The target is knocked away, and a different Pokémon is dragged out. In the wild, this ends a battle against a single Pokémon.",
+      "implemented": true,
+      "mechanics": {
+        "id": "dragon-tail",
+        "targetMode": "anyAdjacent",
+        "priority": -6,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-forced-switch",
+            "hook": "onMove",
+            "order": 120,
+            "params": {
+              "requireDamage": true
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-forced-switch:single"
+          ],
+          "double": [
+            "r3-forced-switch:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "drain-punch",
+      "sourceSlug": "drain-punch",
+      "sourceId": "69c6181c5da2bc051de8dbd6",
+      "name": "Drain Punch",
+      "type": "fighting",
+      "category": "physical",
+      "power": 75,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "The user attacks with an energy-draining punch. The user's HP is restored by up to half the damage taken by the target.",
+      "implemented": true,
+      "mechanics": {
+        "id": "drain-punch",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-drain",
+            "hook": "onMove",
+            "order": 130,
+            "params": {
+              "numerator": 1,
+              "denominator": 2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-recoil-drain:single"
+          ],
+          "double": [
+            "r3-recoil-drain:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "draining-kiss",
+      "sourceSlug": "draining-kiss",
+      "sourceId": "69c618415da2bc051de8dfc4",
+      "name": "Draining Kiss",
+      "type": "fairy",
+      "category": "special",
+      "power": 50,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "The user steals the target's HP with a kiss. The user's HP is restored by over half the damage taken by the target.",
+      "implemented": true,
+      "mechanics": {
+        "id": "draining-kiss",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-drain",
+            "hook": "onMove",
+            "order": 130,
+            "params": {
+              "numerator": 3,
+              "denominator": 4
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-recoil-drain:single"
+          ],
+          "double": [
+            "r3-recoil-drain:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "dual-wingbeat",
+      "sourceSlug": "dual-wingbeat",
+      "sourceId": "69c618775da2bc051de8e55d",
+      "name": "Dual Wingbeat",
+      "type": "flying",
+      "category": "physical",
+      "power": 40,
+      "accuracy": 90,
+      "maxPP": 12,
+      "description": "The user slams the target with its wings to inflict damage. The target is hit twice in a row.",
+      "implemented": true,
+      "mechanics": {
+        "id": "dual-wingbeat",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-multi-hit-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "hits": 2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-multi-hit:single"
+          ],
+          "double": [
+            "r3-multi-hit:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "eruption",
+      "sourceSlug": "eruption",
+      "sourceId": "69c618005da2bc051de8d8e8",
+      "name": "Eruption",
+      "type": "fire",
+      "category": "special",
+      "power": 150,
+      "accuracy": 100,
+      "maxPP": 8,
+      "description": "The user attacks opposing Pokémon with explosive fury. The lower the user's HP, the lower the move's power.",
+      "implemented": true,
+      "mechanics": {
+        "id": "eruption",
+        "targetMode": "allAdjacentFoes",
+        "priority": 0,
+        "contact": false,
+        "redirectable": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-variable-power-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "formula": "user-hp-proportional",
+              "basePower": 150
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-variable-power:single"
+          ],
+          "double": [
+            "r3-variable-power:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "feint",
+      "sourceSlug": "feint",
+      "sourceId": "69c618125da2bc051de8dacd",
+      "name": "Feint",
+      "type": "normal",
+      "category": "physical",
+      "power": 30,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "This attack can hit a target using a move such as Protect or Detect. This also lifts the effects of those moves.",
+      "implemented": true,
+      "mechanics": {
+        "id": "feint",
+        "targetMode": "anyAdjacent",
+        "priority": 2,
+        "contact": false,
+        "bypassesProtect": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "break-protection",
+            "hook": "onMove",
+            "order": 80
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-break-protection:single"
+          ],
+          "double": [
+            "r3-break-protection:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "flip-turn",
+      "sourceSlug": "flip-turn",
+      "sourceId": "69c618775da2bc051de8e543",
+      "name": "Flip Turn",
+      "type": "water",
+      "category": "physical",
+      "power": 60,
+      "accuracy": 100,
+      "maxPP": 20,
+      "description": "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.",
+      "implemented": true,
+      "mechanics": {
+        "id": "flip-turn",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-pivot-switch",
+            "hook": "onMove",
+            "order": 120
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-pivot-switch:single"
+          ],
+          "double": [
+            "r3-pivot-switch:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "giga-drain",
+      "sourceSlug": "giga-drain",
+      "sourceId": "69c617ee5da2bc051de8d6fb",
+      "name": "Giga Drain",
+      "type": "grass",
+      "category": "special",
+      "power": 75,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "A nutrient-draining attack. The user's HP is restored by up to half the damage taken by the target.",
+      "implemented": true,
+      "mechanics": {
+        "id": "giga-drain",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-drain",
+            "hook": "onMove",
+            "order": 130,
+            "params": {
+              "numerator": 1,
+              "denominator": 2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-recoil-drain:single"
+          ],
+          "double": [
+            "r3-recoil-drain:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "gyro-ball",
+      "sourceSlug": "gyro-ball",
+      "sourceId": "69c618115da2bc051de8daa5",
+      "name": "Gyro Ball",
+      "type": "steel",
+      "category": "physical",
+      "power": null,
+      "accuracy": 100,
+      "maxPP": 8,
+      "description": "The user tackles the target with a high-speed spin. The slower the user is than the target, the greater the move's power.",
+      "implemented": true,
+      "mechanics": {
+        "id": "gyro-ball",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-variable-power-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "formula": "slower-user"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-variable-power:single"
+          ],
+          "double": [
+            "r3-variable-power:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "hard-press",
+      "sourceSlug": "hard-press",
+      "sourceId": "69c6188c5da2bc051de8e7a1",
+      "name": "Hard Press",
+      "type": "steel",
+      "category": "physical",
+      "power": null,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "The target is crushed with an arm, a claw, or the like to inflict damage. The more HP the target has left, the greater the move's power.",
+      "implemented": true,
+      "mechanics": {
+        "id": "hard-press",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-variable-power-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "formula": "target-hp-proportional",
+              "basePower": 100
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-condition-power:single"
+          ],
+          "double": [
+            "r3-condition-power:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "hex",
+      "sourceSlug": "hex",
+      "sourceId": "69c618325da2bc051de8de1b",
+      "name": "Hex",
+      "type": "ghost",
+      "category": "special",
+      "power": 65,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "This relentless attack does massive damage to a target affected by status conditions.",
+      "implemented": true,
+      "mechanics": {
+        "id": "hex",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-variable-power-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "formula": "target-status",
+              "basePower": 65
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-condition-power:single"
+          ],
+          "double": [
+            "r3-condition-power:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "leech-seed",
+      "sourceSlug": "leech-seed",
+      "sourceId": "69c617d25da2bc051de8d3e9",
+      "name": "Leech Seed",
+      "type": "grass",
+      "category": "status",
+      "power": null,
+      "accuracy": 90,
+      "maxPP": 12,
+      "description": "A seed is planted on the target. It steals some HP from the target every turn.",
+      "implemented": true,
+      "mechanics": {
+        "id": "leech-seed",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "apply-volatile-status",
+            "hook": "onMove",
+            "order": 120,
+            "params": {
+              "volatile": "leech-seed"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-linked-residual:single"
+          ],
+          "double": [
+            "r3-linked-residual:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "protect",
+      "sourceSlug": "protect",
+      "sourceId": "69c617ea5da2bc051de8d67f",
+      "name": "Protect",
+      "type": "normal",
+      "category": "status",
+      "power": null,
+      "accuracy": null,
+      "maxPP": 8,
+      "description": "Protects the user from most targeted moves for the turn. Each consecutive use has a 1/3 chance of succeeding.",
+      "implemented": true,
+      "mechanics": {
+        "id": "protect",
+        "targetMode": "self",
+        "priority": 4,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "apply-protection",
+            "hook": "onMove",
+            "order": 100
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-protection:single"
+          ],
+          "double": [
+            "r3-protection:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "quick-guard",
+      "sourceSlug": "quick-guard",
+      "sourceId": "69c618315da2bc051de8de03",
+      "name": "Quick Guard",
+      "type": "fighting",
+      "category": "status",
+      "power": null,
+      "accuracy": null,
+      "maxPP": 16,
+      "description": "The user protects itself and its allies from priority moves.",
+      "implemented": true,
+      "mechanics": {
+        "id": "quick-guard",
+        "targetMode": "userSide",
+        "priority": 3,
+        "contact": false,
+        "redirectable": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "apply-side-protection",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "guard": "quick-guard"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-side-protection:single"
+          ],
+          "double": [
+            "r3-side-protection:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "scale-shot",
+      "sourceSlug": "scale-shot",
+      "sourceId": "69c618745da2bc051de8e4ff",
+      "name": "Scale Shot",
+      "type": "dragon",
+      "category": "physical",
+      "power": 25,
+      "accuracy": 90,
+      "maxPP": 20,
+      "description": "The user attacks by shooting scales two to five times in a row. This move boosts the user's Speed stat but lowers its Defense stat.",
+      "implemented": true,
+      "mechanics": {
+        "id": "scale-shot",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-multi-hit-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "hits": [
+                2,
+                5
+              ]
+            }
+          },
+          {
+            "id": "apply-stat-stages",
+            "hook": "onMove",
+            "order": 110,
+            "params": {
+              "boosts": {
+                "def": -1,
+                "spe": 1
+              },
+              "target": "self",
+              "requireDamage": true
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-multi-hit-self:single"
+          ],
+          "double": [
+            "r3-multi-hit-self:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "sing",
+      "sourceSlug": "sing",
+      "sourceId": "69c617cb5da2bc051de8d348",
+      "name": "Sing",
+      "type": "normal",
+      "category": "status",
+      "power": null,
+      "accuracy": 55,
+      "maxPP": 16,
+      "description": "A soothing lullaby is sung in a beautiful voice that puts the target to sleep.",
+      "implemented": true,
+      "mechanics": {
+        "id": "sing",
+        "targetMode": "adjacentFoe",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "apply-major-status",
+            "hook": "onMove",
+            "order": 120,
+            "params": {
+              "status": "sleep"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-advanced-status:single"
+          ],
+          "double": [
+            "r3-advanced-status:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "spiky-shield",
+      "sourceSlug": "spiky-shield",
+      "sourceId": "69c618455da2bc051de8e03a",
+      "name": "Spiky Shield",
+      "type": "grass",
+      "category": "status",
+      "power": null,
+      "accuracy": null,
+      "maxPP": 12,
+      "description": "In addition to protecting the user from attacks, this move also damages any attacker that makes direct contact.",
+      "implemented": true,
+      "mechanics": {
+        "id": "spiky-shield",
+        "targetMode": "self",
+        "priority": 4,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "apply-protection",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "retaliation": "spiky-damage"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-protection-retaliation:single"
+          ],
+          "double": [
+            "r3-protection-retaliation:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "stored-power",
+      "sourceSlug": "stored-power",
+      "sourceId": "69c618315da2bc051de8ddf9",
+      "name": "Stored Power",
+      "type": "psychic",
+      "category": "special",
+      "power": 20,
+      "accuracy": 100,
+      "maxPP": 12,
+      "description": "The user attacks the target with stored power. The more the user's stats are boosted, the greater the move's power.",
+      "implemented": true,
+      "mechanics": {
+        "id": "stored-power",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-variable-power-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "formula": "positive-stages",
+              "basePower": 20
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-variable-power:single"
+          ],
+          "double": [
+            "r3-variable-power:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "taunt",
+      "sourceSlug": "taunt",
+      "sourceId": "69c617fd5da2bc051de8d88a",
+      "name": "Taunt",
+      "type": "dark",
+      "category": "status",
+      "power": null,
+      "accuracy": 100,
+      "maxPP": 20,
+      "description": "The target is taunted into a rage that allows it to use only attack moves for three turns.",
+      "implemented": true,
+      "mechanics": {
+        "id": "taunt",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "apply-volatile-status",
+            "hook": "onMove",
+            "order": 120,
+            "params": {
+              "volatile": "taunt"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-move-lock:single"
+          ],
+          "double": [
+            "r3-move-lock:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "u-turn",
+      "sourceSlug": "u-turn",
+      "sourceId": "69c618135da2bc051de8dae3",
+      "name": "U-turn",
+      "type": "bug",
+      "category": "physical",
+      "power": 70,
+      "accuracy": 100,
+      "maxPP": 20,
+      "description": "After making its attack, the user rushes back to switch places with a party Pokémon in waiting.",
+      "implemented": true,
+      "mechanics": {
+        "id": "u-turn",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-pivot-switch",
+            "hook": "onMove",
+            "order": 120
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-pivot-switch:single"
+          ],
+          "double": [
+            "r3-pivot-switch:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "water-spout",
+      "sourceSlug": "water-spout",
+      "sourceId": "69c618085da2bc051de8d9d2",
+      "name": "Water Spout",
+      "type": "water",
+      "category": "special",
+      "power": 150,
+      "accuracy": 100,
+      "maxPP": 8,
+      "description": "The user spouts water to damage opposing Pokémon. The lower the user's HP, the lower the move's power.",
+      "implemented": true,
+      "mechanics": {
+        "id": "water-spout",
+        "targetMode": "allAdjacentFoes",
+        "priority": 0,
+        "contact": false,
+        "redirectable": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-variable-power-damage",
+            "hook": "onMove",
+            "order": 100,
+            "params": {
+              "formula": "user-hp-proportional",
+              "basePower": 150
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-variable-power:single"
+          ],
+          "double": [
+            "r3-variable-power:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "wild-charge",
+      "sourceSlug": "wild-charge",
+      "sourceId": "69c618375da2bc051de8dea1",
+      "name": "Wild Charge",
+      "type": "electric",
+      "category": "physical",
+      "power": 90,
+      "accuracy": 100,
+      "maxPP": 16,
+      "description": "The user shrouds itself in electricity and smashes into its target. This also damages the user a little.",
+      "implemented": true,
+      "mechanics": {
+        "id": "wild-charge",
+        "targetMode": "anyAdjacent",
+        "priority": 0,
+        "contact": true,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "deal-direct-damage",
+            "hook": "onMove",
+            "order": 100
+          },
+          {
+            "id": "apply-recoil",
+            "hook": "onMove",
+            "order": 130,
+            "params": {
+              "numerator": 1,
+              "denominator": 4
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-recoil-drain:single"
+          ],
+          "double": [
+            "r3-recoil-drain:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "will-o-wisp",
+      "sourceSlug": "will-o-wisp",
+      "sourceId": "69c617fb5da2bc051de8d85c",
+      "name": "Will-O-Wisp",
+      "type": "fire",
+      "category": "status",
+      "power": null,
+      "accuracy": 85,
+      "maxPP": 16,
+      "description": "The user shoots a sinister flame at the target to inflict a burn.",
+      "implemented": true,
+      "mechanics": {
+        "id": "will-o-wisp",
+        "targetMode": "adjacentFoe",
+        "priority": 0,
+        "contact": false,
+        "handlers": [
+          {
+            "id": "spend-pp",
+            "hook": "onTryMove",
+            "order": 10
+          },
+          {
+            "id": "check-accuracy",
+            "hook": "onMove",
+            "order": 90
+          },
+          {
+            "id": "apply-major-status",
+            "hook": "onMove",
+            "order": 120,
+            "params": {
+              "status": "burn"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-major-status:single"
+          ],
+          "double": [
+            "r3-major-status:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    }
+  ],
+  "abilities": [
+    {
+      "id": "blaze",
+      "sourceSlug": "blaze",
+      "sourceId": "69c71a78be80518c8477878a",
+      "name": "Blaze",
+      "description": "Powers up Fire-type moves when the Pokémon's HP is low.",
+      "isMegaAbility": false,
+      "implemented": true,
+      "mechanics": {
+        "id": "blaze",
+        "handlers": [
+          {
+            "id": "low-hp-type-boost",
+            "hook": "modifyDamage",
+            "order": 40,
+            "params": {
+              "type": "fire",
+              "hpDenominator": 3,
+              "multiplier": 1.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "overgrow",
+      "sourceSlug": "overgrow",
+      "sourceId": "69c71a96be80518c847789be",
+      "name": "Overgrow",
+      "description": "Powers up Grass-type moves when the Pokémon's HP is low.",
+      "isMegaAbility": false,
+      "implemented": true,
+      "mechanics": {
+        "id": "overgrow",
+        "handlers": [
+          {
+            "id": "low-hp-type-boost",
+            "hook": "modifyDamage",
+            "order": 40,
+            "params": {
+              "type": "grass",
+              "hpDenominator": 3,
+              "multiplier": 1.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "swarm",
+      "sourceSlug": "swarm",
+      "sourceId": "69c71aaabe80518c84778b32",
+      "name": "Swarm",
+      "description": "Powers up Bug-type moves when the Pokémon's HP is low.",
+      "isMegaAbility": false,
+      "implemented": true,
+      "mechanics": {
+        "id": "swarm",
+        "handlers": [
+          {
+            "id": "low-hp-type-boost",
+            "hook": "modifyDamage",
+            "order": 40,
+            "params": {
+              "type": "bug",
+              "hpDenominator": 3,
+              "multiplier": 1.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "torrent",
+      "sourceSlug": "torrent",
+      "sourceId": "69c71aaebe80518c84778b76",
+      "name": "Torrent",
+      "description": "Powers up Water-type moves when the Pokémon's HP is low.",
+      "isMegaAbility": false,
+      "implemented": true,
+      "mechanics": {
+        "id": "torrent",
+        "handlers": [
+          {
+            "id": "low-hp-type-boost",
+            "hook": "modifyDamage",
+            "order": 40,
+            "params": {
+              "type": "water",
+              "hpDenominator": 3,
+              "multiplier": 1.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    }
+  ],
+  "items": [
+    {
+      "id": "black-belt",
+      "sourceSlug": "black-belt",
+      "sourceId": "69c6440dd4bcdccb0c237612",
+      "name": "Black Belt",
+      "description": "Boosts the power of the holder’s Fighting-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "black-belt",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "fighting",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "charcoal",
+      "sourceSlug": "charcoal",
+      "sourceId": "69c64413d4bcdccb0c23769d",
+      "name": "Charcoal",
+      "description": "Boosts the power of the holder’s Fire-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "charcoal",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "fire",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "dragon-fang",
+      "sourceSlug": "dragon-fang",
+      "sourceId": "69c6441cd4bcdccb0c23777d",
+      "name": "Dragon Fang",
+      "description": "Boosts the power of the holder’s Dragon-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "dragon-fang",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "dragon",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "fairy-feather",
+      "sourceSlug": "fairy-feather",
+      "sourceId": "69d5e98b5408746faaa17b3d",
+      "name": "Fairy Feather",
+      "description": "Boosts the power of the holder's Fairy-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "fairy-feather",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "fairy",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "metal-coat",
+      "sourceSlug": "metal-coat",
+      "sourceId": "69c64447d4bcdccb0c237b90",
+      "name": "Metal Coat",
+      "description": "Boosts the power of the holder’s Steel-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "metal-coat",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "steel",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "miracle-seed",
+      "sourceSlug": "miracle-seed",
+      "sourceId": "69c64449d4bcdccb0c237bcc",
+      "name": "Miracle Seed",
+      "description": "Boosts the power of the holder’s Grass-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "miracle-seed",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "grass",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "muscle-band",
+      "sourceSlug": "muscle-band",
+      "sourceId": "6a325ae4ba1a515059986a02",
+      "name": "Muscle Band",
+      "description": "Boosts the power of the holder’s physical moves by 10%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "muscle-band",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "category": "physical",
+              "multiplier": 1.1
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "mystic-water",
+      "sourceSlug": "mystic-water",
+      "sourceId": "69c6444bd4bcdccb0c237bfa",
+      "name": "Mystic Water",
+      "description": "Boosts the power of the holder’s Water-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "mystic-water",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "water",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "sharp-beak",
+      "sourceSlug": "sharp-beak",
+      "sourceId": "69c64462d4bcdccb0c237e34",
+      "name": "Sharp Beak",
+      "description": "Boosts the power of the holder’s Flying-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "sharp-beak",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "flying",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "silver-powder",
+      "sourceSlug": "silver-powder",
+      "sourceId": "69c64465d4bcdccb0c237e6d",
+      "name": "Silver Powder",
+      "description": "Boosts the power of the holder’s Bug-type moves by 20%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "silver-powder",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "type": "bug",
+              "multiplier": 1.2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    },
+    {
+      "id": "wise-glasses",
+      "sourceSlug": "wise-glasses",
+      "sourceId": "6a325ae9ba1a515059986a0d",
+      "name": "Wise Glasses",
+      "description": "Boosts the power of the holder’s special moves by 10%.",
+      "category": "held-item",
+      "availableInChampions": true,
+      "unlock": "shop-700-vp",
+      "implemented": true,
+      "legalByRegulation": {},
+      "mechanics": {
+        "id": "wise-glasses",
+        "handlers": [
+          {
+            "id": "held-damage-boost",
+            "hook": "modifyDamage",
+            "order": 50,
+            "params": {
+              "category": "special",
+              "multiplier": 1.1
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-passive-damage:single"
+          ],
+          "double": [
+            "r3-passive-damage:double"
+          ]
+        }
+      },
+      "enabledForBattle": true
+    }
+  ],
+  "coverage": {
+    "singleSupported": true,
+    "doubleSupported": true,
+    "entries": [
+      {
+        "kind": "move",
+        "id": "aerial-ace",
+        "name": "Aerial Ace",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "brave-bird",
+        "name": "Brave Bird",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-recoil"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "bullet-seed",
+        "name": "Bullet Seed",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-multi-hit-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "calm-mind",
+        "name": "Calm Mind",
+        "requiredHandlers": [
+          "spend-pp",
+          "apply-stat-stages"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "charm",
+        "name": "Charm",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "apply-stat-stages"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "coaching",
+        "name": "Coaching",
+        "requiredHandlers": [
+          "spend-pp",
+          "apply-stat-stages"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "dragon-tail",
+        "name": "Dragon Tail",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-forced-switch"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "drain-punch",
+        "name": "Drain Punch",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-drain"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "draining-kiss",
+        "name": "Draining Kiss",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-drain"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "dual-wingbeat",
+        "name": "Dual Wingbeat",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-multi-hit-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "eruption",
+        "name": "Eruption",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-variable-power-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "feint",
+        "name": "Feint",
+        "requiredHandlers": [
+          "spend-pp",
+          "break-protection",
+          "check-accuracy",
+          "deal-direct-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "flip-turn",
+        "name": "Flip Turn",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-pivot-switch"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "giga-drain",
+        "name": "Giga Drain",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-drain"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "gyro-ball",
+        "name": "Gyro Ball",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-variable-power-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "hard-press",
+        "name": "Hard Press",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-variable-power-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "hex",
+        "name": "Hex",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-variable-power-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "leech-seed",
+        "name": "Leech Seed",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "apply-volatile-status"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "protect",
+        "name": "Protect",
+        "requiredHandlers": [
+          "spend-pp",
+          "apply-protection"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "quick-guard",
+        "name": "Quick Guard",
+        "requiredHandlers": [
+          "spend-pp",
+          "apply-side-protection"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "scale-shot",
+        "name": "Scale Shot",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-multi-hit-damage",
+          "apply-stat-stages"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "sing",
+        "name": "Sing",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "apply-major-status"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "spiky-shield",
+        "name": "Spiky Shield",
+        "requiredHandlers": [
+          "spend-pp",
+          "apply-protection"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "stored-power",
+        "name": "Stored Power",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-variable-power-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "taunt",
+        "name": "Taunt",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "apply-volatile-status"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "u-turn",
+        "name": "U-turn",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-pivot-switch"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "water-spout",
+        "name": "Water Spout",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-variable-power-damage"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "wild-charge",
+        "name": "Wild Charge",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "deal-direct-damage",
+          "apply-recoil"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "move",
+        "id": "will-o-wisp",
+        "name": "Will-O-Wisp",
+        "requiredHandlers": [
+          "spend-pp",
+          "check-accuracy",
+          "apply-major-status"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "ability",
+        "id": "blaze",
+        "name": "Blaze",
+        "requiredHandlers": [
+          "low-hp-type-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "ability",
+        "id": "overgrow",
+        "name": "Overgrow",
+        "requiredHandlers": [
+          "low-hp-type-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "ability",
+        "id": "swarm",
+        "name": "Swarm",
+        "requiredHandlers": [
+          "low-hp-type-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "ability",
+        "id": "torrent",
+        "name": "Torrent",
+        "requiredHandlers": [
+          "low-hp-type-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "black-belt",
+        "name": "Black Belt",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "charcoal",
+        "name": "Charcoal",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "dragon-fang",
+        "name": "Dragon Fang",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "fairy-feather",
+        "name": "Fairy Feather",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "metal-coat",
+        "name": "Metal Coat",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "miracle-seed",
+        "name": "Miracle Seed",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "muscle-band",
+        "name": "Muscle Band",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "mystic-water",
+        "name": "Mystic Water",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "sharp-beak",
+        "name": "Sharp Beak",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "silver-powder",
+        "name": "Silver Powder",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      },
+      {
+        "kind": "item",
+        "id": "wise-glasses",
+        "name": "Wise Glasses",
+        "requiredHandlers": [
+          "held-damage-boost"
+        ],
+        "formats": {
+          "single": {
+            "supported": true,
+            "reason": null
+          },
+          "double": {
+            "supported": true,
+            "reason": null
+          }
+        },
+        "missingHandlers": [],
+        "manifestProblems": []
+      }
+    ]
+  }
+}

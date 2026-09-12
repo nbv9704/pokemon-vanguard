@@ -569,3 +569,12 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Pinned the six downloads to repository commit `2ecb4eeacd5a1718621fc30f12772e3f60d830b9` and mapped filenames by National Dex ID.
 - Every asset is now an unmodified 475 × 475 RGBA PNG. The total artwork payload dropped from about 3.0 MB to under 1.0 MB.
 - Normalized the perceived size of each static artwork with a small presentation-only CSS scale derived from its non-transparent pixel area. Source PNGs remain unchanged, and battle sprites are not affected.
+
+## Beta 2-01 — Expanded catalog and schema-3 Roster Ranch
+
+- Active catalog: `pv-ma-2026-09-12-beta2-beta-slice-v2`, containing 12 Pokémon, 29 moves, 4 Abilities and 11 held items with Single/Double coverage. The original six remain the permanent starter team; Charizard, Meganium, Typhlosion, Scizor, Infernape and Primarina are recruitable.
+- Save safety: existing schema-3 saves are backed up and rebased onto the new catalog. Compatible Mon/build/team references are preserved, legacy `beta` ownership becomes `permanent`, and new species are not granted automatically.
+- Roster Ranch: ten unique seeded offers, a 22-hour cycle, three paid refreshes, one seven-day Trial and permanent purchase with 1,600 coins or one Recruitment Ticket. Trial-to-permanent upgrades preserve `monId` and `buildId`; expired Trial members cannot enter a new preview.
+- Economy loop: completed schema-3 battles now settle one ledger reward. Victory grants 180 coins/80 crystals; defeat or draw grants 60/20; surrender grants zero.
+- Presentation: all six new species have local official artwork plus front/back battle GIFs. Source proportions remain unmodified; no additional per-species scale tuning was added.
+- Validation: Beta slice gate reports 12 Pokémon/10 types/29 moves/4 Abilities/11 items; full suite passes 261/261. Browser QA caught and fixed an invalid dotted Recruitment action ID, then confirmed a real Primarina Trial, ticket upgrade, seven-card Archive, Team Builder save, Team Preview, all artwork loaded and zero console warnings/errors.

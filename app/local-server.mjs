@@ -19,6 +19,8 @@ import {synchronizeLegacyState,upgradeAdventure} from './server/v2-release.mjs';
 import {createServerClock} from './server/clock.mjs';
 import {applyV2RecruitmentAction,isV2RecruitmentAction,v2RecruitmentView} from './server/v2-recruitment.mjs';
 import {prepareRecruitmentState} from './server/v2-recruitment-state.mjs';
+import {applyV3RecruitmentAction,isV3RecruitmentAction,v3RecruitmentView} from './server/v3-recruitment.mjs';
+import {prepareV3RecruitmentState} from './server/v3-recruitment-state.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
   const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif', '.json':'application/json', '.woff2':'font/woff2' };
@@ -69,9 +71,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     const serverNow=clock.now();
     for (const [ws, player] of room.clients) {
       const legacyView=viewFor(room.state,player);
-      const {rngState,rewardReceipts,economyLedger,actionReceipts,recruitmentV2:_privateRecruitmentV2,progressionV3:_privateProgressionV3,legacyV2Archive,clockV2,mons,builds,teams,blueprints,nextMonId,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
+      const {rngState,rewardReceipts,economyLedger,actionReceipts,recruitmentV2:_privateRecruitmentV2,recruitmentV3:_privateRecruitmentV3,progressionV3:_privateProgressionV3,legacyV2Archive,clockV2,mons,builds,teams,blueprints,nextMonId,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
       const recruitmentV2=v2RecruitmentView(room.state,v2Catalog,{serverNow}),viewNow=recruitmentV2?.effectiveNow??serverNow;
-      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,recruitmentV2,battleV2:v2BattleView(room.state,v2Catalog),battleV3:v3BattleView(room.state)};
+      const recruitmentV3=v3RecruitmentView(room.state,v3Catalog,{serverNow});
+      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,recruitmentV2,recruitmentV3,battleV2:v2BattleView(room.state,v2Catalog),battleV3:v3BattleView(room.state)};
       send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view, result:null, meta });
     }
   };
@@ -95,10 +98,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if (!room.state) {
             const loaded=await storage.load(name);
             if(!loaded){const v2=upgradeAdventure(setup([message.playerId]),v2Catalog),v3=upgradeAdventureToV3(v2.state,v3Catalog);room.state=v3.state;await persist(name,room.state);}
-            else if(!loaded.battle){let base=loaded;if((loaded.schemaVersion||1)<2){const v2=upgradeAdventure(loaded,v2Catalog);base=v2.state;}const upgraded=upgradeAdventureToV3(base,v3Catalog);if(upgraded.status==='migrated'){await storage.backup(name,migrationBackups,'pre-v3-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=upgraded.state;}
+            else if(!loaded.battle){let base=loaded;if((loaded.schemaVersion||1)<2){const v2=upgradeAdventure(loaded,v2Catalog);base=v2.state;}const upgraded=upgradeAdventureToV3(base,v3Catalog);if(['migrated','catalog-upgraded'].includes(upgraded.status)){await storage.backup(name,migrationBackups,'pre-v3-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=upgraded.state;}
             else room.state=loaded;
           }
-          if((room.state.schemaVersion||1)>=2){prepareRecruitmentState(room.state,v2Catalog,clock.now());await persist(name,room.state);}
+          if((room.state.schemaVersion||1)>=2)prepareRecruitmentState(room.state,v2Catalog,clock.now());if(room.state.progressionV3)prepareV3RecruitmentState(room.state,v3Catalog,clock.now());await persist(name,room.state);
           room.clients.set(ws,message.playerId); broadcast(room); return;
         }
         const player = room.clients.get(ws);
@@ -110,12 +113,17 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if((room.state.schemaVersion||1)>=2||!room.state.battle?.result)return fail('NO_LEGACY_RESULT');
           await storage.backup(name,migrationBackups,'pre-v2-schema');const upgraded=upgradeAdventure(room.state,v2Catalog);await persist(name,upgraded.state);room.state=upgraded.state;broadcast(room);return;
         }
-        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')||message.action?.type?.startsWith('battleV3.')))return fail('LEGACY_BATTLE_ACTIVE');
+        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||isV3RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')||message.action?.type?.startsWith('battleV3.')))return fail('LEGACY_BATTLE_ACTIVE');
         if(['buildV3.save','teamV3.save'].includes(message.action?.type)){
           if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3ProgressionAction(room.state.progressionV3,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
           room.state={...room.state,progressionV3:result.progression,revision:(room.state.revision||0)+1};await persist(name,room.state);broadcast(room);return;
         }
+        if(isV3RecruitmentAction(message.action)){
+          if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3RecruitmentAction(room.state,message.action,v3Catalog,{serverNow:clock.now()});if(!result.ok)return fail(result.code);
+          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+        }
         if(message.action?.type?.startsWith('battleV3.')){
+          prepareV3RecruitmentState(room.state,v3Catalog,clock.now());
           const result=applyV3BattleAction(room.state,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }

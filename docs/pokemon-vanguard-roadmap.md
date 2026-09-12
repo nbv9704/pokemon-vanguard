@@ -24,11 +24,12 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | Chặng | Trạng thái | Bằng chứng hiện tại |
 | --- | --- | --- |
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
-| R1 M-A Data | BETA SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-11`: scoped hash-bound approval cho 6 species/15 moves/3 Abilities/6 items; phần còn lại chưa được duyệt |
+| R1 M-A Data | BETA 2 SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-12-beta2`: scoped hash-bound approval cho 12 species/29 moves/4 Abilities/11 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move + 4 Ability + 6 item; 97/862 entry supported mỗi format; đội beta 6 Pokémon qua automated gate |
+| R3 Mechanics Coverage | IN PROGRESS / BETA 2 SLICE LOCKED | 87 move + 4 Ability và nhóm item damage boost đã kiểm thử; catalog Beta 2 gồm 29 move/4 Ability/11 item dùng được ở cả hai format |
 | R4 | BETA GATE PASSED | Schema 3 chạy Home/Archive/Training/Team/Recruitment status/Guide → Preview → Battle Single/Double; Inspector migration theo beta feedback |
-| R5–R7 | NOT STARTED; R7 FOUNDATION STARTED | R5/R6 chưa nối runtime; sáu idle sprite local và nền move-FX code-based đã có cho R7 |
+| R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 |
+| R6–R7 | R6 NOT STARTED; R7 FOUNDATION EXPANDED | 12 cặp front/back idle sprite, 12 official artwork local và nền move-FX theo ordered event timeline |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
 Baseline logic hiện tại có 97/862 entry supported ở cả hai format. Trạng thái 765 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
@@ -276,9 +277,11 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 **Gate:** tạo team hợp lệ từ promoted M-A slice, restart, chơi xong Single và Double bằng schema 3; schema 2 chỉ còn compatibility/migration path.
 
-**Beta UI correction:** Recruitment đã bỏ projection/catalog Mon schema 2, hiển thị sáu Pokémon promoted cùng idle GIF local. Vì sáu Pokémon đang được cấp sẵn cho battle test, rotation/trial/permanent recruitment không được giả lập trong R4 và tiếp tục là deliverable đầu của R5.
+**Beta 2 transition:** Catalog active đã mở rộng lên 12 Pokémon. Sáu starter giữ permanent; sáu Pokémon còn lại đi qua Roster Ranch thay vì được cấp sẵn. Save Beta 1 được backup và rebase catalog, giữ build/team tương thích.
 
 ## 12. R5 — Roster Ranch
+
+**Trạng thái:** BETA 2 GATE PASSED. Runtime schema 3 dùng 10 offer không trùng, cycle 22 giờ, một Trial 7 ngày, ba paid refresh/cycle, permanent bằng 1.600 coin hoặc một Recruitment Ticket. Trial → permanent giữ `monId/buildId`; Trial hết hạn chặn preview mới. Action revision, action ID, ledger receipt, clock rollback và restart đã có test.
 
 Nguồn chính thức M-A xác nhận lineup không có hai Pokémon giống nhau và miễn phí sau mỗi 22 giờ; VP/Quick Coupon có thể rút ngắn. Snapshot PokéBase đã quan sát 10 kết quả một Recruit. Vì số 10 chưa có bằng chứng chính thức trong audit, `pullCount` phải thuộc banner snapshot và kèm provenance.
 
@@ -412,7 +415,7 @@ Ticket chỉ DONE khi có:
 2. Làm R4.1 catalog service + promote dry-run chỉ xuất nội dung trong slice và coverage artifact cùng snapshot/hash.
 3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
 4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
-5. Sau phản hồi beta, tiếp tục R3 theo capability có tác động lớn đến team diversity: field conditions, entry/immunity abilities, consumable/recovery items, rồi trap/transfer dependencies. Không bắt đầu R5/R6/R7 production integration trước khi schema-3 battle loop chạy xong cả hai format.
+5. Beta 2 hiện cần browser QA từ Recruitment → Trial/permanent → Team → Single/Double → reward. Sau phản hồi, tiếp tục R3 theo capability có tác động lớn rồi bắt đầu R6 Mega Evolution.
 
 Tài liệu tham chiếu trong repo:
 
@@ -425,7 +428,7 @@ Tài liệu tham chiếu trong repo:
 
 - Command Center, Pokémon Archive, Recruitment, Gym status, Field Guide and Battle now read the promoted schema-3 beta slice.
 - Schema-3 saves cannot enter the legacy Gym battle path. Gym progression remains a later roadmap deliverable rather than an implied beta feature.
-- Visible beta roster is intentionally six Pokémon for feedback speed; R5 owns rotation, trials, permanent recruitment and roster expansion.
+- Beta 2 catalog có 12 Pokémon; sáu starter permanent và sáu species mở qua Roster Ranch schema 3.
 #### Ordered battle presentation gate (completed)
 
 - Schema-3 UI replays the authoritative event order rather than applying the final turn snapshot immediately.
@@ -433,6 +436,6 @@ Tài liệu tham chiếu trong repo:
 - Battle Log records readable full-history entries with effective Speed and preserves cancelled actions in their correct queue position.
 #### R7 battle perspective foundation (completed)
 
-- Local battle assets now include paired front/back idle GIFs for the six-Pokémon beta slice.
+- Local battle assets now include paired front/back idle GIFs for the 12-Pokémon Beta 2 slice.
 - Player fighters render with back sprites in the near field; opponents render with front sprites in the far field for both Single and Double.
 - Non-battle artwork now uses the native transparent `official-artwork` PNG set from the PokeAPI sprites repository. The source is pinned to a reviewed commit and its Dex mapping is tracked in `docs/pokemon-artwork-sources.md`.
