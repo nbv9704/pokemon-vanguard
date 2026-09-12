@@ -27,7 +27,7 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R1 M-A Data | BETA SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-11`: scoped hash-bound approval cho 6 species/15 moves/3 Abilities/6 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move + 4 Ability + 6 item; 97/862 entry supported mỗi format; đội beta 6 Pokémon qua automated gate |
-| R4 | IN PROGRESS — BETA LOOP | Catalog, migration/save và Training/Team schema 3 đã xong; Preview/Battle và browser QA còn lại |
+| R4 | BETA GATE PASSED | Schema 3 chạy Training → Team → Preview → Battle Single/Double; full Archive/Inspector migration theo beta feedback |
 | R5–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
@@ -256,7 +256,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Preview khóa immutable battle snapshot; chỉnh build sau đó không đổi trận đang diễn ra.
 - AI chỉ nhận public projection và chỉ chọn command server xác nhận hợp lệ.
 
-**Tiến độ:** Team Builder schema 3 DONE với sáu slot, Species Clause và Item Clause authoritative. Preview snapshot, projected AI và battle action đang thực hiện.
+**Tiến độ:** DONE cho beta. Team Builder có sáu slot và clause authoritative; Preview khóa 3/4 ordered picks; battle snapshot pin build/stats/PP/passive; AI dùng projected state; server resolve Single/Double bằng cùng R2/R3 engine.
 
 ### R4.4 Migration schema 3
 
@@ -272,7 +272,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Kiểm empty/loading/error/unsupported states, keyboard focus, reduced motion và console/network errors.
 - Test cả single-type/dual-type, invalid Stat Points, unsupported mechanic, expired Trial và snapshot mismatch.
 
-**Tiến độ:** Training/Team đã có automated UI coverage. Browser QA end-to-end chờ Preview/Battle schema 3; đây là gate cuối trước khi báo beta sẵn sàng.
+**Tiến độ:** BETA GATE PASSED. Browser QA đã chơi xong Single/Double, đi qua replacement và move FX, kiểm restart cùng console/network; automated suite đạt 254/254. Archive/Inspector schema 3 được xếp sau beta feedback vì không chặn playable loop.
 
 **Gate:** tạo team hợp lệ từ promoted M-A slice, restart, chơi xong Single và Double bằng schema 3; schema 2 chỉ còn compatibility/migration path.
 

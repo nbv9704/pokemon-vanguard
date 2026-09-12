@@ -13,6 +13,7 @@ import {renderV2Tutorial} from "./js/v2-tutorial.js";
 import {RecruitmentView} from "./js/recruitment-view.js";
 import {V3TrainingEditor} from "./js/v3-training-editor.js";
 import {V3TeamBuilder} from "./js/v3-team-builder.js";
+import {V3BattleScreen} from "./js/v3-battle-screen.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
 let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
@@ -71,9 +72,10 @@ const damageInspector=new DamageInspector({fetchImpl:(...args)=>fetch(...args),g
 const recruitmentView=new RecruitmentView({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
 const v3TrainingEditor=new V3TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
 const v3TeamBuilder=new V3TeamBuilder({onChange:redrawWorkspace,sendAction:send});
+const v3BattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
 trainingEditor.load().catch(error=>notify(error.message));
 v3TrainingEditor.load().catch(error=>notify(error.message));
-function start(mode,gym){commands={};router.go("battle");const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard'});}
+function start(mode,gym){commands={};router.go("battle");if(V.trainingV3&&gym===undefined){send({type:'battleV3.preview.start',mode,difficulty:v3BattleScreen.difficulty});return;}const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard'});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; VANGUARD LEAGUE · LOCAL PREVIEW</span></div>';}
 function home(){
@@ -117,6 +119,7 @@ function ensureCommands(){for(const {m,i} of live("allies"))if(!commands[i])comm
 function fighter(m,side,i){return '<div class="fighter" data-fighter="'+side+'-'+i+'">'+art(m.id)+'<div class="hpbox"><strong>'+V.catalog[m.id].name+'<span>Lv.'+m.level+'</span></strong><div class="progress"><i class="'+(m.hp<m.max*.3?"low":"")+'" style="width:'+m.hp/m.max*100+'%"></i></div><small>'+m.hp+'/'+m.max+' HP · '+m.energy+' EN'+(m.status?" · "+m.status.toUpperCase():"")+'</small></div></div>';}
 function battle(){
  if(V.battle?.result)return head("Legacy battle complete","Your v1 result was saved safely before the adventure upgrade.")+`<section class="panel v2-result"><small>LEGACY V1 · MATCH COMPLETE</small><h2>${esc(V.battle.result)}</h2><p>+${V.battle.reward?.coins||0} coins · +${V.battle.reward?.gems||0} crystals</p>${btn("Continue to Vanguard battles","legacy-finish","primary")}</section>`;
+ if(V.trainingV3){const catalog=v3TrainingEditor.catalog,artV3=speciesId=>art(Math.max(0,catalog?.species.findIndex(entry=>entry.id===speciesId)??0));return head("Battle arena","Choose a Regulation M-A beta lineup, then battle through the schema-3 rules engine.")+v3BattleScreen.render(V,catalog,{art:artV3});}
  if(!V.battle)return head("Battle arena","Choose your lineup in Team Preview, then battle with the phase-based engine.")+v2BattleScreen.render(V,trainingEditor.catalog,{art});
  const b=V.battle;if(!b)return head("Battle arena","Choose your format and face an AI challenger.")+'<div class="modegrid"><div class="panel"><h2>Single Battle</h2><p>One active monster per side. Bring up to four.</p>'+btn("Start single battle","start:single","primary")+'</div><div class="panel"><h2>Double Battle</h2><p>Two active monsters per side. Combine their strengths.</p>'+btn("Start double battle","start:double","primary")+'</div></div><div class="panel" style="margin-top:20px"><h3>Ready your team</h3><p>Manage your lead monsters, held items and levels before entering.</p>'+btn("Manage battle team →","nav:collection","ghost")+'</div>';
  ensureCommands();
@@ -145,7 +148,7 @@ function chart(){
  modalId=null;$("#modal").innerHTML='<div class="modalback"><section class="modal" role="dialog" aria-modal="true" aria-label="Type effectiveness">'+btn("✕","close","close small")+'<h2>Type effectiveness</h2><p style="font-size:12px">Rows attack → columns defend. Dual types multiply. 2× strong · ½× resisted · 0× immune.</p><div class="tablewrap"><table class="chart"><thead><tr><th>ATK ↓ DEF →</th>'+V.types.map(t=>'<th>'+t+'</th>').join("")+'</tr></thead><tbody>'+V.types.map((t,i)=>'<tr><th>'+t+'</th>'+V.typeChart[i].map(v=>'<td class="'+(v>1?"good":v<1?"bad":"")+'">'+(v===.5?"½":v)+'×</td>').join("")+'</tr>').join("")+'</tbody></table></div></section></div>';
 }
 document.addEventListener("click",e=>{
- const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-recruit],[data-v2battle],[data-damage],[data-v3-training],[data-v3-team]");if(!el||el.disabled)return;if(el.dataset.v3Training){v3TrainingEditor.handleClick(el,V);return;}if(el.dataset.v3Team){v3TeamBuilder.handleClick(el);return;}if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.recruit){recruitmentView.handleClick(el,V);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
+ const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-recruit],[data-v2battle],[data-v3-battle],[data-damage],[data-v3-training],[data-v3-team]");if(!el||el.disabled)return;if(el.dataset.v3Battle){v3BattleScreen.handleClick(el,V,v3TrainingEditor.catalog);return;}if(el.dataset.v3Training){v3TrainingEditor.handleClick(el,V);return;}if(el.dataset.v3Team){v3TeamBuilder.handleClick(el);return;}if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.recruit){recruitmentView.handleClick(el,V);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
  if(a==="nav"&&router.go(b)){closeModal();draw();window.scrollTo(0,0);}
@@ -165,6 +168,7 @@ document.addEventListener("click",e=>{
 });
 document.addEventListener("change",e=>{
  const t=e.target;
+ if(v3BattleScreen.handleInput(t))return;
  if(damageInspector.handleInput(t,V,trainingEditor.catalog))return;
  if(v2BattleScreen.handleInput(t))return;
  if(v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t))return;

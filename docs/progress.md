@@ -10,7 +10,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move, 4 Ability và 6 item có evidence Single/Double; đội beta 6 Pokémon đã qua legality/coverage gate | Mở rộng mechanics theo batch sau khi beta loop chạy; 765/862 entry vẫn fail-closed |
-| R4 Training/Team UI | IN PROGRESS | Beta catalog schema 3 đã promote; migration/save và Training/Team UI đã dùng build/team validator 66/32, learnset, Ability/item, Species/Item Clause | Nối Preview/AI/Battle schema 3, sau đó browser QA Single/Double |
+| R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Training/Team, Preview/AI/Battle schema 3 đã chạy end-to-end; browser QA hoàn tất Single/Double và restart | Mở rộng Archive/Inspector sang schema 3 sau beta feedback; tiếp tục R5 theo slice |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
 | R7 Sprite/Move FX | NOT STARTED | Có animation queue cũ và audit kiến trúc Showdown | Cache sprite local, audit Mega aliases, làm FX primitives/profiles/overrides theo battle events |
@@ -21,7 +21,7 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. Scoped source review, promote command, migration/save và Training/Team schema 3 đã hoàn tất cho `beta-slice-v1`. Kế tiếp nối Preview → Battle cho cả hai format. R3 vẫn mở rộng theo batch sau khi loop đầu tiên test được; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. `beta-slice-v1` hiện chạy end-to-end bằng schema 3 từ Training → Team → Preview → Battle cho cả Single/Double và đã qua restart QA. Kế tiếp nhận beta feedback rồi mở R5 Roster Ranch song song với các batch R3 có tác động rõ đến roster; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -513,3 +513,14 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - UI: Training hiển thị sáu Mon beta, một/song hệ, đúng 66 Stat Points, nature, Ability, item và bốn move hợp lệ. Team Builder có sáu slot và báo legality trước khi gửi; server vẫn quyết định Species/Item Clause.
 - Compatibility: màn legacy và battle schema 2 vẫn tồn tại tạm thời để save cũ kết thúc an toàn; dữ liệu beta mới đã đọc/ghi qua schema 3.
 - Validation: `npm run check`, `npm run beta:validate`, targeted tests đạt 6/6 và full suite đạt 247/247.
+
+## R4-04 — Schema-3 Preview/Battle beta gate
+
+- Status: BETA READY; đây là playable slice sáu Mon, chưa phải full roster/content coverage.
+- Preview: Single khóa đúng 3 và lead 1; Double khóa đúng 4 và lead 2. Snapshot giữ stats level 50, PP, build, Ability/item passive effects, rules/catalog version; sửa build sau đó không đổi trận.
+- Runtime: server chuẩn hóa target, priority, effective Speed, switch/pivot và phase revision trước khi gọi chung R2 turn engine + R3 mechanic handlers. End-turn, faint, replacement, surrender và result đều persist authoritative.
+- Privacy: public opponent chỉ có species/type/HP percent/status; raw build, PP, passive effects và exact damage breakdown không broadcast. AI nhận projected player state và không cần hidden build để chọn target.
+- UI: Battle Arena dùng schema 3, có closed Team Preview, command panels theo active slot, PP/target/switch, replacement validation, result và move FX code-based theo event/type; reduced-motion tắt projectile.
+- Regression đã bắt và sửa trong browser QA: command cũ của Mon faint làm dư action; pivot target cũ sau replacement; nút replacement bật khi chưa chọn.
+- Automated gate: `npm run check` và `npm run beta:validate` đạt; full suite đạt 254/254, gồm deterministic full-match Single/Double.
+- Browser gate: Training hiện dual type + 66/66; Team có 6 slot hợp lệ; Single kết thúc ở turn 9, Double ở turn 8 qua replacement; move FX xuất hiện; restart phục hồi result; 0 console warning/error.

@@ -9,4 +9,5 @@ if(!file.startsWith(root+path.sep))throw new Error('active catalog path escapes 
 const body=readFileSync(file);if(sha256(body)!==pointer.sha256)throw new Error('active catalog hash mismatch');
 const lists=JSON.parse(body.toString('utf8'));
 export const v3Catalog={...lists,speciesById:Object.fromEntries(lists.species.map(entry=>[entry.id,entry])),movesById:Object.fromEntries(lists.moves.map(entry=>[entry.id,entry])),abilitiesById:Object.fromEntries(lists.abilities.map(entry=>[entry.id,entry])),itemsById:Object.fromEntries(lists.items.map(entry=>[entry.id,entry]))};
-export const publicV3Catalog=publicBetaCatalog(lists);
+const publicCatalog=publicBetaCatalog(lists);
+export const publicV3Catalog={...publicCatalog,moves:publicCatalog.moves.map(move=>{const mechanics=v3Catalog.movesById[move.id].mechanics;return {...move,actionProfile:{targetMode:mechanics.targetMode,priority:mechanics.priority||0,requiresPivotTarget:mechanics.handlers.some(handler=>handler.id==='apply-pivot-switch')}};})};

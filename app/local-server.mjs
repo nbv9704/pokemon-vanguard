@@ -9,6 +9,8 @@ import { publicV2Catalog, v2Catalog } from './server/v2-catalog.mjs';
 import {publicV3Catalog,v3Catalog} from './server/v3-catalog.mjs';
 import {applyV3ProgressionAction,v3TrainingView} from './server/v3-progression.mjs';
 import {upgradeAdventureToV3} from './server/v3-release.mjs';
+import {applyV3BattleAction} from './server/v3-battle-actions.mjs';
+import {v3BattleView} from './server/v3-battle-view.mjs';
 import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
 import { applyV2BattleAction, v2BattleView } from './server/v2-battle-actions.mjs';
 import { applyV2EconomyAction, isV2EconomyAction } from './server/v2-economy.mjs';
@@ -69,7 +71,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
       const legacyView=viewFor(room.state,player);
       const {rngState,rewardReceipts,economyLedger,actionReceipts,recruitmentV2:_privateRecruitmentV2,progressionV3:_privateProgressionV3,legacyV2Archive,clockV2,mons,builds,teams,blueprints,nextMonId,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
       const recruitmentV2=v2RecruitmentView(room.state,v2Catalog,{serverNow}),viewNow=recruitmentV2?.effectiveNow??serverNow;
-      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,recruitmentV2,battleV2:v2BattleView(room.state,v2Catalog)};
+      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,recruitmentV2,battleV2:v2BattleView(room.state,v2Catalog),battleV3:v3BattleView(room.state)};
       send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view, result:null, meta });
     }
   };
@@ -108,10 +110,14 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if((room.state.schemaVersion||1)>=2||!room.state.battle?.result)return fail('NO_LEGACY_RESULT');
           await storage.backup(name,migrationBackups,'pre-v2-schema');const upgraded=upgradeAdventure(room.state,v2Catalog);await persist(name,upgraded.state);room.state=upgraded.state;broadcast(room);return;
         }
-        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')))return fail('LEGACY_BATTLE_ACTIVE');
+        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')||message.action?.type?.startsWith('battleV3.')))return fail('LEGACY_BATTLE_ACTIVE');
         if(['buildV3.save','teamV3.save'].includes(message.action?.type)){
           if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3ProgressionAction(room.state.progressionV3,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
           room.state={...room.state,progressionV3:result.progression,revision:(room.state.revision||0)+1};await persist(name,room.state);broadcast(room);return;
+        }
+        if(message.action?.type?.startsWith('battleV3.')){
+          const result=applyV3BattleAction(room.state,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
+          await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         if (['build.save','team.save','blueprint.import'].includes(message.action?.type)) {
           const result=applyV2ProgressionAction(room.state,message.action,v2Catalog);
