@@ -21,6 +21,7 @@ import {applyV2RecruitmentAction,isV2RecruitmentAction,v2RecruitmentView} from '
 import {prepareRecruitmentState} from './server/v2-recruitment-state.mjs';
 import {applyV3RecruitmentAction,isV3RecruitmentAction,v3RecruitmentView} from './server/v3-recruitment.mjs';
 import {prepareV3RecruitmentState} from './server/v3-recruitment-state.mjs';
+import {reconcileV3BattleAfterTeamSave} from './server/v3-battle-session.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
   const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif', '.json':'application/json', '.woff2':'font/woff2' };
@@ -116,7 +117,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||isV3RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')||message.action?.type?.startsWith('battleV3.')))return fail('LEGACY_BATTLE_ACTIVE');
         if(['buildV3.save','teamV3.save'].includes(message.action?.type)){
           if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3ProgressionAction(room.state.progressionV3,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
-          room.state={...room.state,progressionV3:result.progression,revision:(room.state.revision||0)+1};await persist(name,room.state);broadcast(room);return;
+          room.state={...room.state,progressionV3:result.progression,revision:(room.state.revision||0)+1};if(message.action.type==='teamV3.save')room.state=reconcileV3BattleAfterTeamSave(room.state,result.team.teamId);await persist(name,room.state);broadcast(room);return;
         }
         if(isV3RecruitmentAction(message.action)){
           if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3RecruitmentAction(room.state,message.action,v3Catalog,{serverNow:clock.now()});if(!result.ok)return fail(result.code);

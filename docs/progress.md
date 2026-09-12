@@ -578,3 +578,9 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Economy loop: completed schema-3 battles now settle one ledger reward. Victory grants 180 coins/80 crystals; defeat or draw grants 60/20; surrender grants zero.
 - Presentation: all six new species have local official artwork plus front/back battle GIFs. Source proportions remain unmodified; no additional per-species scale tuning was added.
 - Validation: Beta slice gate reports 12 Pokémon/10 types/29 moves/4 Abilities/11 items; full suite passes 261/261. Browser QA caught and fixed an invalid dotted Recruitment action ID, then confirmed a real Primarina Trial, ticket upgrade, seven-card Archive, Team Builder save, Team Preview, all artwork loaded and zero console warnings/errors.
+
+## Beta 2-02 — Team Builder/Battle Arena synchronization
+
+- Fixed Battle Arena retaining a Team Preview or finished-session roster created before the latest `teamV3.save`.
+- Saving a team now discards only unlocked Preview and finished battle sessions. A battle already in Command/Replacement keeps its immutable lineup; Team Builder explains that saved changes apply to the next battle.
+- Integration QA changed slot one from Primarina to Venusaur while an older Preview existed. Battle Arena returned to format selection, and the next Single Preview showed the exact six saved members with no console warnings/errors.

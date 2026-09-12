@@ -28,6 +28,8 @@ test('schema-3 Team UI renders six slots and emits revision-safe saves',()=>{
  const sent=[],builder=new V3TeamBuilder({onChange(){},sendAction:action=>sent.push(action)}),view=state(),html=builder.render(view,publicV3Catalog);assert.equal((html.match(/class="team-slot filled"/g)||[]).length,6);assert.match(html,/Legal for M-A beta/);builder.handleClick({dataset:{v3Team:'save'}});assert.equal(sent[0].type,'teamV3.save');assert.equal(sent[0].expectedRevision,1);
 });
 
+test('schema-3 Team UI explains that active battle snapshots keep the old lineup',()=>{const builder=new V3TeamBuilder({onChange(){},sendAction(){}}),view={...state(),battleV3:{phase:'COMMAND'}};assert.match(builder.render(view,publicV3Catalog),/Saved changes apply to your next battle/);});
+
 test('schema-3 Battle UI covers landing, Double Preview and command submission',()=>{
  const sent=[],screen=new V3BattleScreen({onChange(){},sendAction:action=>sent.push(action)}),base={...state(),battleV3:null};assert.match(screen.render(base,publicV3Catalog,{art:id=>`<i>${id}</i>`}),/Single Battle/);
  screen.handleClick({dataset:{v3Battle:'start',mode:'double'}},base,publicV3Catalog);assert.equal(sent[0].type,'battleV3.preview.start');let domain={schemaVersion:3,seed:91,progressionV3:createV3BetaProgression(v3Catalog)},result=applyV3BattleAction(domain,sent[0],v3Catalog);domain=result.state;let view={...base,battleV3:v3BattleView(domain)};assert.match(screen.render(view,publicV3Catalog,{art:()=>''}),/Choose 4 Mon/);
