@@ -1,8 +1,6 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {baseDamage} from '../rules-v3/damage.mjs';
-
-const stageMultiplier=stage=>stage>=0?[(2+stage),2]:[2,2-stage];
-function stagedStat(value,stage=0){const bounded=Math.max(-6,Math.min(6,stage)),[top,bottom]=stageMultiplier(bounded);return Math.max(1,Math.floor(value*top/bottom));}
+import {stagedStat} from '../rules-v3/stats.mjs';
 
 function confusionDamage(unit,runtime,level){
  const attack=stagedStat(unit.stats.atk,unit.stages?.atk||0),defense=stagedStat(unit.stats.def,unit.stages?.def||0);

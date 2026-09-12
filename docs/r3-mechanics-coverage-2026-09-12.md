@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the damage-variant batch is:
+The current coverage after the fixed and variable damage batch is:
 
-- Single: 51 supported, 811 blocked.
-- Double: 51 supported, 811 blocked.
-- Supported moves: the previous 39 plus four multi-hit, four recoil and four draining moves.
+- Single: 63 supported, 799 blocked.
+- Double: 63 supported, 799 blocked.
+- Supported moves: the previous 51 plus three fixed-damage and nine variable-power moves.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -36,6 +36,8 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 `damage-hit.mjs` owns one authoritative damage hit and is shared by direct and multi-hit handlers. The multi-hit handler resolves target/accuracy once, samples the modern 2–5 distribution, gives every hit its own crit and damage roll, emits hit-indexed damage plus a `hitCount` summary, and stops on immunity or faint. Recoil and drain handlers consume aggregate actual damage after HP caps; their fractions and rounding match the pinned Showdown implementation.
 
+`fixed-damage.mjs` applies level and current-HP formulas after targeting, accuracy and immunity without ordinary damage modifiers. `variable-power.mjs` resolves HP, effective-Speed, positive-stage and fainted-ally formulas; `variable-power-damage.mjs` then sends that power through the shared hit pipeline and emits `powerResolved`. The shared hit now applies Attack/Defense stages and the reviewed critical-stage bypass rules.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -59,6 +61,8 @@ Taunt blocks status-category choices, Encore binds the target's last valid move,
 Leech Seed uses the shared accuracy, targeting and volatile application handlers. Grass immunity, source replacement, unavailable source, low-HP damage, healing cap, multiple Double targets and ordering before poison/burn all have fixtures. Liquid Ooze and Big Root remain unavailable until their own Ability/item manifests are reviewed.
 
 Bullet Seed, Rock Blast and Icicle Spear use the 2–5 distribution; Dual Wingbeat always hits twice. Double-Edge and Brave Bird use 33/100 recoil, Wild Charge uses 1/4 and Head Smash uses 1/2. Giga Drain, Drain Punch and Horn Leech restore 1/2 actual damage; Draining Kiss restores 3/4. Scale Shot, Skill Link, Loaded Dice, Rock Head, Reckless, Liquid Ooze and Big Root remain blocked until their additional handlers have explicit evidence.
+
+Night Shade and Seismic Toss deal level damage; Super Fang removes half current HP. Flail, Reversal, Electro Ball, Gyro Ball, Eruption, Water Spout, Stored Power, Power Trip and Last Respects use explicit variable-power callbacks. Grass Knot, Low Kick, Heat Crash and Heavy Slam remain blocked because the current M-A species snapshot has no canonical weight field.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 

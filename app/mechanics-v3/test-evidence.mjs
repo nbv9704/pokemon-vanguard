@@ -26,5 +26,9 @@ export const TEST_EVIDENCE=[
  'r3-multi-hit:single',
  'r3-multi-hit:double',
  'r3-recoil-drain:single',
- 'r3-recoil-drain:double'
+ 'r3-recoil-drain:double',
+ 'r3-fixed-damage:single',
+ 'r3-fixed-damage:double',
+ 'r3-variable-power:single',
+ 'r3-variable-power:double'
 ];

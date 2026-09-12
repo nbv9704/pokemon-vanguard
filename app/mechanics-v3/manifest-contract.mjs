@@ -6,6 +6,7 @@ export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
 export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
+export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -46,6 +47,14 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='apply-recoil'||entry?.id==='apply-drain'){
    const numerator=entry.params?.numerator,denominator=entry.params?.denominator;
    if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1||numerator>denominator)problems.push(`${entry.id} requires a valid positive fraction`);
+  }
+  if(entry?.id==='deal-fixed-damage'){
+   if(!['user-level','target-current-fraction'].includes(entry.params?.formula))problems.push('deal-fixed-damage requires a supported formula');
+   if(entry.params?.formula==='target-current-fraction'&&(!Number.isInteger(entry.params?.denominator)||entry.params.denominator<2))problems.push('target-current-fraction requires denominator >= 2');
+  }
+  if(entry?.id==='deal-variable-power-damage'){
+   if(!VARIABLE_POWER_FORMULAS.includes(entry.params?.formula))problems.push('deal-variable-power-damage requires a supported formula');
+   if(['user-hp-proportional','positive-stages','fainted-allies'].includes(entry.params?.formula)&&(!Number.isInteger(entry.params?.basePower)||entry.params.basePower<1))problems.push(`${entry.params?.formula} requires positive basePower`);
   }
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }

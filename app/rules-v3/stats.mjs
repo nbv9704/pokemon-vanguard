@@ -23,6 +23,16 @@ export function natureMultiplier(natureId,stat){
  return nature.up===stat?1.1:nature.down===stat?.9:1;
 }
 
+export function stageMultiplier(stage=0){
+ const bounded=Math.max(-6,Math.min(6,stage));
+ return bounded>=0?(2+bounded)/2:2/(2-bounded);
+}
+
+export function stagedStat(value,stage=0){
+ if(!Number.isFinite(value)||value<0)throw new Error('stat must be a non-negative number');
+ return Math.max(1,Math.floor(value*stageMultiplier(stage)));
+}
+
 export function calculateLevel50Stats(baseStats,points,natureId='serious'){
  const problems=validateStatPoints(points);if(problems.length)throw new Error(problems.join('; '));
  for(const key of STAT_KEYS)if(!Number.isInteger(baseStats?.[key])||baseStats[key]<1)throw new Error(`invalid base stat: ${key}`);

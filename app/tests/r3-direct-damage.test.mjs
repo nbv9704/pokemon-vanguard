@@ -52,3 +52,9 @@ test('accuracy and evasion stages affect direct damage while always-hit moves by
  const hit=resolveMove(aerialBattle,{kind:'move',side:'A',actorId:'a1',moveId:'aerial-ace',target:{side:'B',slot:0}},{nextRandom:()=>.999});
  assert.equal(hit.events.at(-1).kind,'damage');assert.ok(hit.battle.sides.B.roster[0].hp<200);
 });
+
+test('direct damage applies Attack and Defense stages while critical hits bypass adverse stages',()=>{
+ const boosted=fixture();boosted.sides.A.roster[0].stages.atk=2;const raised=resolveMove(boosted,{kind:'move',side:'A',actorId:'a1',moveId:'tackle',target:{side:'B',slot:0}},runtime);
+ const neutral=resolveMove(fixture(),{kind:'move',side:'A',actorId:'a1',moveId:'tackle',target:{side:'B',slot:0}},runtime);assert.ok(raised.events.at(-1).amount>neutral.events.at(-1).amount);
+ const criticalBattle=fixture();criticalBattle.sides.A.roster[0].stages.atk=-6;criticalBattle.sides.B.roster[0].stages.def=6;const rolls=[0,.999],critical=resolveMove(criticalBattle,{kind:'move',side:'A',actorId:'a1',moveId:'tackle',target:{side:'B',slot:0}},{nextRandom:()=>rolls.shift()});assert.equal(critical.events.at(-1).breakdown.critical,1.5);assert.equal(critical.events.at(-1).breakdown.base,23);
+});

@@ -7,5 +7,7 @@ import {spendPpHandler} from './spend-pp.mjs';
 import {multiHitDamageHandler} from './multi-hit-damage.mjs';
 import {applyRecoilHandler} from './apply-recoil.mjs';
 import {applyDrainHandler} from './apply-drain.mjs';
+import {fixedDamageHandler} from './fixed-damage.mjs';
+import {variablePowerDamageHandler} from './variable-power-damage.mjs';
 
-export const HANDLER_DEFINITIONS=[spendPpHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyRecoilHandler,applyDrainHandler];
+export const HANDLER_DEFINITIONS=[spendPpHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyRecoilHandler,applyDrainHandler];

@@ -1,4 +1,4 @@
-export {CONTENT_KINDS,BATTLE_FORMATS,BATTLE_STAGES,MAJOR_STATUS_IDS,VOLATILE_STATUS_IDS,HOOKS,validateMechanicManifest} from './manifest-contract.mjs';
+export {CONTENT_KINDS,BATTLE_FORMATS,BATTLE_STAGES,MAJOR_STATUS_IDS,VOLATILE_STATUS_IDS,VARIABLE_POWER_FORMULAS,HOOKS,validateMechanicManifest} from './manifest-contract.mjs';
 export {createHookRegistry,dispatchHook} from './registry.mjs';
 export {validateManifestCatalog,coverageForEntry,buildMechanicsCoverage} from './coverage.mjs';
 export {directDamageHandler} from './handlers/direct-damage.mjs';
@@ -6,6 +6,9 @@ export {applyDamageHit} from './damage-hit.mjs';
 export {multiHitDamageHandler,selectHitCount} from './handlers/multi-hit-damage.mjs';
 export {applyRecoilHandler} from './handlers/apply-recoil.mjs';
 export {applyDrainHandler} from './handlers/apply-drain.mjs';
+export {fixedDamageHandler} from './handlers/fixed-damage.mjs';
+export {variablePowerDamageHandler} from './handlers/variable-power-damage.mjs';
+export {variableMovePower} from './variable-power.mjs';
 export {spendPpHandler} from './handlers/spend-pp.mjs';
 export {applyStatStagesHandler} from './handlers/apply-stat-stages.mjs';
 export {checkAccuracyHandler,effectiveAccuracy} from './handlers/check-accuracy.mjs';
