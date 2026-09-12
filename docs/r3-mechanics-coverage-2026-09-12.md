@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after completing the available-state R3.4 batch is:
+The current coverage after completing the protection-core R3.5 batch is:
 
-- Single: 69 supported, 793 blocked.
-- Double: 69 supported, 793 blocked.
-- Supported moves: the previous 63 plus five conditional-power moves and Scale Shot.
+- Single: 73 supported, 789 blocked.
+- Double: 73 supported, 789 blocked.
+- Supported moves: the previous 69 plus Protect, Detect, Wide Guard and Quick Guard.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -40,6 +40,8 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 Conditional callbacks reuse the variable-power pipeline for user/target status, poison-only status, target current HP and seeded random doubling. Facade tells the shared hit to ignore burn reduction only while its status boost is active. `apply-stat-stages` can now explicitly target self after a successful damaging handler, allowing Scale Shot to compose multi-hit damage with one post-move Defense drop and Speed boost.
 
+`protection.mjs` owns the shared consecutive-use gate and protection lookup. Protect and Detect create a personal one-turn volatile; Wide Guard and Quick Guard create one-turn side conditions. The shared accuracy handler checks protection before consuming accuracy RNG, filters protected targets independently and records whether personal, spread or positive-priority protection blocked the move. An explicit manifest `bypassesProtect` flag keeps future Feint-like behavior reviewable instead of relying on move IDs.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -67,6 +69,8 @@ Bullet Seed, Rock Blast and Icicle Spear use the 2–5 distribution; Dual Wingbe
 Night Shade and Seismic Toss deal level damage; Super Fang removes half current HP. Flail, Reversal, Electro Ball, Gyro Ball, Eruption, Water Spout, Stored Power, Power Trip and Last Respects use explicit variable-power callbacks. Grass Knot, Low Kick, Heat Crash and Heavy Slam remain blocked because the current M-A species snapshot has no canonical weight field.
 
 Facade, Hex, Venoshock, Hard Press and Fickle Beam cover the condition-power formulas available from current battle state. Scale Shot joins the multi-hit group with a damage-gated self stage change. Turn-history moves, secondary-effect combinations and weight-based formulas remain fail-closed with their dependencies documented.
+
+Protect and Detect block external moves for one turn. The first protection attempt succeeds, then uninterrupted attempts use the shared `1/3`, `1/9` sequence with denominator capped at 729; skipping a turn resets the chain. Wide Guard blocks spread moves for the whole side and Quick Guard blocks positive-priority moves for the whole side. Single/Double fixtures cover expiry, target filtering, PP/RNG order, both allies, one target of a spread move and explicit bypass. Contact retaliation variants and protection removal remain blocked until their own handlers and evidence exist.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 

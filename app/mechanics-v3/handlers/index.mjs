@@ -9,5 +9,7 @@ import {applyRecoilHandler} from './apply-recoil.mjs';
 import {applyDrainHandler} from './apply-drain.mjs';
 import {fixedDamageHandler} from './fixed-damage.mjs';
 import {variablePowerDamageHandler} from './variable-power-damage.mjs';
+import {applyProtectionHandler} from './apply-protection.mjs';
+import {applySideProtectionHandler} from './apply-side-protection.mjs';
 
-export const HANDLER_DEFINITIONS=[spendPpHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyRecoilHandler,applyDrainHandler];
+export const HANDLER_DEFINITIONS=[spendPpHandler,checkAccuracyHandler,directDamageHandler,multiHitDamageHandler,fixedDamageHandler,variablePowerDamageHandler,applyStatStagesHandler,applyMajorStatusHandler,applyVolatileStatusHandler,applyProtectionHandler,applySideProtectionHandler,applyRecoilHandler,applyDrainHandler];

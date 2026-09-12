@@ -58,6 +58,7 @@ export function validateMechanicManifest(manifest,kind){
    if(!VARIABLE_POWER_FORMULAS.includes(entry.params?.formula))problems.push('deal-variable-power-damage requires a supported formula');
    if(['user-hp-proportional','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'].includes(entry.params?.formula)&&(!Number.isInteger(entry.params?.basePower)||entry.params.basePower<1))problems.push(`${entry.params?.formula} requires positive basePower`);
   }
+  if(entry?.id==='apply-side-protection'&&!['wide-guard','quick-guard'].includes(entry.params?.guard))problems.push('apply-side-protection requires a supported guard');
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);
@@ -65,6 +66,7 @@ export function validateMechanicManifest(manifest,kind){
   if(!TARGET_MODES.includes(manifest.targetMode))problems.push('move targetMode is required');
   if(!Number.isInteger(manifest.priority))problems.push('move priority must be an integer');
   if(typeof manifest.contact!=='boolean')problems.push('move contact must be boolean');
+  if(manifest.bypassesProtect!==undefined&&typeof manifest.bypassesProtect!=='boolean')problems.push('move bypassesProtect must be boolean');
  }
  return problems;
 }

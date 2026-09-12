@@ -1,5 +1,6 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
 import {resolveTargets} from '../../rules-v3/targets.mjs';
+import {protectionBlockReason} from '../protection.mjs';
 
 const clampStage=value=>Math.max(-6,Math.min(6,value));
 
@@ -20,6 +21,7 @@ export const checkAccuracyHandler={
   const hitTargetIds=[],events=[];
   for(const targetRef of targets){
    const target=unitById(next,targetRef.actorId);if(!target||target.hp<=0)continue;
+   const protection=target.actorId===actor.actorId?null:protectionBlockReason(next,targetRef,mechanics);if(protection){events.push({kind:'moveBlocked',actorId:actor.actorId,targetId:target.actorId,moveId:move.id,reason:protection});continue;}
    const alwaysHits=(params.alwaysHitsForUserTypes||[]).some(type=>(actor.types||[]).includes(type));
    const chance=alwaysHits?null:effectiveAccuracy(move.accuracy,actor.stages?.accuracy||0,target.stages?.evasion||0);
    const hit=chance===null||chance>=100||(typeof runtime.nextRandom==='function'&&runtime.nextRandom()<chance/100);
