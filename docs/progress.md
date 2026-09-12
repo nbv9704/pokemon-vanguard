@@ -524,3 +524,12 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Regression đã bắt và sửa trong browser QA: command cũ của Mon faint làm dư action; pivot target cũ sau replacement; nút replacement bật khi chưa chọn.
 - Automated gate: `npm run check` và `npm run beta:validate` đạt; full suite đạt 254/254, gồm deterministic full-match Single/Double.
 - Browser gate: Training hiện dual type + 66/66; Team có 6 slot hợp lệ; Single kết thúc ở turn 9, Double ở turn 8 qua replacement; move FX xuất hiện; restart phục hồi result; 0 console warning/error.
+
+## R4-05 — Recruitment beta catalog và Pokémon idle sprites
+
+- Status: DONE cho beta presentation; Roster Ranch rotation/trial/permanent action vẫn thuộc R5.
+- Sửa regression: Recruitment từng tiếp tục đọc `recruitmentV2` + catalog Mon cũ nên có thể đứng ở `Loading Recruitment…` hoặc render Emberlyn/Tideray thay vì Pokémon schema 3.
+- UI: `V3RecruitmentView` đọc trực tiếp `trainingV3` và promoted catalog, hiển thị sáu Pokémon, National Dex, hệ đơn/song hệ, Ability và bốn move hiện dùng. Sáu thành viên ghi `Unlocked` vì beta progression cấp sẵn đội hình để test battle.
+- Art: Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye và Feraligatr có animated idle GIF lưu local trong `public/pokemon-sprites`; Recruitment và Battle Preview/Arena không còn dùng SVG Mon cũ.
+- Boundary: màn hình ghi rõ rotation, trial và permanent recruitment sẽ được mở trong R5 thay vì giả lập action chưa có schema-3 domain.
+- Validation: UI test xác nhận 6 card, không có tên Mon cũ/Loading; browser xác nhận 6 ảnh `complete`, natural dimensions hợp lệ, Team Preview có 12 sprite instance từ đúng 6 local URL và 0 console warning/error.

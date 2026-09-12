@@ -6,6 +6,7 @@ import {v3Catalog} from '../server/v3-catalog.mjs';
 import {V3TrainingEditor} from '../public/js/v3-training-editor.js';
 import {V3TeamBuilder} from '../public/js/v3-team-builder.js';
 import {V3BattleScreen} from '../public/js/v3-battle-screen.js';
+import {V3RecruitmentView} from '../public/js/v3-recruitment-view.js';
 import {applyV3BattleAction} from '../server/v3-battle-actions.mjs';
 import {v3BattleView} from '../server/v3-battle-view.mjs';
 
@@ -29,3 +30,5 @@ test('schema-3 Battle UI covers landing, Double Preview and command submission',
  screen.handleClick({dataset:{v3Battle:'start',mode:'double'}},base,publicV3Catalog);assert.equal(sent[0].type,'battleV3.preview.start');let domain={schemaVersion:3,seed:91,progressionV3:createV3BetaProgression(v3Catalog)},result=applyV3BattleAction(domain,sent[0],v3Catalog);domain=result.state;let view={...base,battleV3:v3BattleView(domain)};assert.match(screen.render(view,publicV3Catalog,{art:()=>''}),/Choose 4 Mon/);
  for(const mon of view.battleV3.playerRoster.slice(0,4))screen.handleClick({dataset:{v3Battle:'pick',buildId:mon.buildId}},view,publicV3Catalog);screen.handleClick({dataset:{v3Battle:'lock'}},view,publicV3Catalog);result=applyV3BattleAction(domain,sent.at(-1),v3Catalog);domain=result.state;view={...base,battleV3:v3BattleView(domain)};assert.equal((screen.render(view,publicV3Catalog,{art:()=>''}).match(/choose an action/g)||[]).length,2);screen.commands['A-fainted']={kind:'move',actorId:'A-fainted',moveId:'protect'};screen.handleClick({dataset:{v3Battle:'submit'}},view,publicV3Catalog);assert.equal(sent.at(-1).type,'battleV3.commands');assert.equal(sent.at(-1).commands.length,2);
 });
+
+test('schema-3 Recruitment renders the reviewed Pokémon roster without legacy Mon',()=>{const html=new V3RecruitmentView().render(state(),publicV3Catalog,{art:id=>`<img src="/pokemon-sprites/${id}.gif">`});assert.equal((html.match(/class="recruit-card permanent"/g)||[]).length,6);assert.match(html,/Venusaur/);assert.match(html,/Blastoise/);assert.match(html,/pokemon-sprites\/venusaur\.gif/);assert.doesNotMatch(html,/Emberlyn|Loading Recruitment/);});

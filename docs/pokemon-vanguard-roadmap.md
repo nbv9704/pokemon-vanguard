@@ -276,6 +276,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 **Gate:** tạo team hợp lệ từ promoted M-A slice, restart, chơi xong Single và Double bằng schema 3; schema 2 chỉ còn compatibility/migration path.
 
+**Beta UI correction:** Recruitment đã bỏ projection/catalog Mon schema 2, hiển thị sáu Pokémon promoted cùng idle GIF local. Vì sáu Pokémon đang được cấp sẵn cho battle test, rotation/trial/permanent recruitment không được giả lập trong R4 và tiếp tục là deliverable đầu của R5.
+
 ## 12. R5 — Roster Ranch
 
 Nguồn chính thức M-A xác nhận lineup không có hai Pokémon giống nhau và miễn phí sau mỗi 22 giờ; VP/Quick Coupon có thể rút ngắn. Snapshot PokéBase đã quan sát 10 kết quả một Recruit. Vì số 10 chưa có bằng chứng chính thức trong audit, `pullCount` phải thuộc banner snapshot và kèm provenance.

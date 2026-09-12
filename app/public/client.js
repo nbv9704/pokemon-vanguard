@@ -14,6 +14,7 @@ import {RecruitmentView} from "./js/recruitment-view.js";
 import {V3TrainingEditor} from "./js/v3-training-editor.js";
 import {V3TeamBuilder} from "./js/v3-team-builder.js";
 import {V3BattleScreen} from "./js/v3-battle-screen.js";
+import {V3RecruitmentView} from "./js/v3-recruitment-view.js";
 const browserStore=createBrowserStore({storage:localStorage,cryptoApi:crypto,locationLike:location});
 const id=browserStore.playerId,room=browserStore.room,router=createRouter();
 let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,toastTimer;
@@ -22,6 +23,7 @@ const settings=browserStore.settings;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const art=id=>'<div class="art">'+creature(id)+'</div>';
+const pokemonArt=id=>`<div class="art pokemon-art"><img src="/pokemon-sprites/${encodeURIComponent(id)}.gif" alt="${esc(id)} idle sprite"></div>`;
 const btn=(label,action,cls="",disabled=false)=>'<button class="'+cls+'" data-action="'+action+'" '+(disabled?"disabled":"")+'>'+label+'</button>';
 const navs=NAV_ITEMS;
 function notify(t){$("#toast").textContent=t;$("#toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").classList.remove("show"),4200);}
@@ -73,6 +75,7 @@ const recruitmentView=new RecruitmentView({onChange:redrawWorkspace,sendAction:s
 const v3TrainingEditor=new V3TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
 const v3TeamBuilder=new V3TeamBuilder({onChange:redrawWorkspace,sendAction:send});
 const v3BattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
+const v3RecruitmentView=new V3RecruitmentView();
 trainingEditor.load().catch(error=>notify(error.message));
 v3TrainingEditor.load().catch(error=>notify(error.message));
 function start(mode,gym){commands={};router.go("battle");if(V.trainingV3&&gym===undefined){send({type:'battleV3.preview.start',mode,difficulty:v3BattleScreen.difficulty});return;}const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard'});}
@@ -93,7 +96,7 @@ function archive(training=false){
  return head("Pokémon archive","Browse permanent, trial and locked Pokémon, their builds and team usage.")+boxView.render(V,trainingEditor.catalog,{art});
 }
 function teamsPage(){return head("Team builder","Build a six-Pokémon Regulation M-A beta team.")+(V.trainingV3?v3TeamBuilder.render(V,v3TrainingEditor.catalog):teamBuilder.render(V,trainingEditor.catalog,{art}));}
-function recruitment(){return head("Recruitment","Choose one of eight Pokémon, start a seven-day trial, or recruit it permanently.","RECRUITMENT · SERVER UTC")+recruitmentView.render(V,trainingEditor.catalog,{art});}
+function recruitment(){if(V.trainingV3)return head("Recruitment","Review the Pokémon currently enabled for the Regulation M-A battle beta.","RECRUITMENT · SCHEMA 3")+v3RecruitmentView.render(V,v3TrainingEditor.catalog,{art:pokemonArt});return head("Recruitment","Choose one of eight Pokémon, start a seven-day trial, or recruit it permanently.","RECRUITMENT · SERVER UTC")+recruitmentView.render(V,trainingEditor.catalog,{art});}
 const gyms=["Ember Coast","Wild Current","Frozen Quarry","Skyfall Spire","Eclipse Garden","Astral Citadel"];
 function gym(){return head("The road to champion","Six leaders. Six badges. One place at the top.")+'<div class="filters"><label>Battle format &nbsp; <select id="gymmode"><option value="single">Single battle</option><option value="double">Double battle</option></select></label></div><div class="gymgrid">'+gyms.map((n,i)=>'<div class="panel gym '+(i>V.badges.length?"locked":"")+'">'+art(i*6+1)+'<div class="eyebrow">GYM 0'+(i+1)+' · LEVEL '+(5+i*3)+'</div><h2>'+n+'</h2><p>'+V.catalog[i*6].types[0]+' / '+V.catalog[i*6+3].types[0]+' specialists</p><span class="reward">'+(V.badges.includes(i)?"✦ Badge earned":"First victory: +380 crystals · +680 coins")+'</span><br>'+btn(i>V.badges.length?"Locked":V.badges.includes(i)?"Challenge again →":"Challenge leader →","gym:"+i,i===V.badges.length?"primary":"",i>V.badges.length)+'</div>').join("")+'</div>';}
 function mail(){return head("Mailbox","League news and milestone rewards, all in one place.")+["Welcome to Vanguard","Your first victory","A badge to remember"].map((n,i)=>{
@@ -119,7 +122,7 @@ function ensureCommands(){for(const {m,i} of live("allies"))if(!commands[i])comm
 function fighter(m,side,i){return '<div class="fighter" data-fighter="'+side+'-'+i+'">'+art(m.id)+'<div class="hpbox"><strong>'+V.catalog[m.id].name+'<span>Lv.'+m.level+'</span></strong><div class="progress"><i class="'+(m.hp<m.max*.3?"low":"")+'" style="width:'+m.hp/m.max*100+'%"></i></div><small>'+m.hp+'/'+m.max+' HP · '+m.energy+' EN'+(m.status?" · "+m.status.toUpperCase():"")+'</small></div></div>';}
 function battle(){
  if(V.battle?.result)return head("Legacy battle complete","Your v1 result was saved safely before the adventure upgrade.")+`<section class="panel v2-result"><small>LEGACY V1 · MATCH COMPLETE</small><h2>${esc(V.battle.result)}</h2><p>+${V.battle.reward?.coins||0} coins · +${V.battle.reward?.gems||0} crystals</p>${btn("Continue to Vanguard battles","legacy-finish","primary")}</section>`;
- if(V.trainingV3){const catalog=v3TrainingEditor.catalog,artV3=speciesId=>art(Math.max(0,catalog?.species.findIndex(entry=>entry.id===speciesId)??0));return head("Battle arena","Choose a Regulation M-A beta lineup, then battle through the schema-3 rules engine.")+v3BattleScreen.render(V,catalog,{art:artV3});}
+ if(V.trainingV3){const catalog=v3TrainingEditor.catalog;return head("Battle arena","Choose a Regulation M-A beta lineup, then battle through the schema-3 rules engine.")+v3BattleScreen.render(V,catalog,{art:pokemonArt});}
  if(!V.battle)return head("Battle arena","Choose your lineup in Team Preview, then battle with the phase-based engine.")+v2BattleScreen.render(V,trainingEditor.catalog,{art});
  const b=V.battle;if(!b)return head("Battle arena","Choose your format and face an AI challenger.")+'<div class="modegrid"><div class="panel"><h2>Single Battle</h2><p>One active monster per side. Bring up to four.</p>'+btn("Start single battle","start:single","primary")+'</div><div class="panel"><h2>Double Battle</h2><p>Two active monsters per side. Combine their strengths.</p>'+btn("Start double battle","start:double","primary")+'</div></div><div class="panel" style="margin-top:20px"><h3>Ready your team</h3><p>Manage your lead monsters, held items and levels before entering.</p>'+btn("Manage battle team →","nav:collection","ghost")+'</div>';
  ensureCommands();
