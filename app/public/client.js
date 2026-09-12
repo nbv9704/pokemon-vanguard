@@ -38,6 +38,9 @@ function receiveView(next){
   if(previous?.battle?.id===next.battle?.id&&previous?.battle?.round===next.battle?.round)return;
   finishPlayback();return;
  }
+ if(previous&&router.current==='battle'&&previous.battleV3?.id===next.battleV3?.id&&next.battleV3?.turnSnapshots?.initial&&next.battleV3.events?.some(event=>event.kind==='turnStarted')){
+  V=next;announceNotice(!!previous);closeModal();draw();void v3BattleScreen.playTurn(next.battleV3,{reduced:!!settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches});return;
+ }
  if(previous&&router.current==="battle"&&previous.battle&&!previous.battle.result&&next.battle?.id===previous.battle.id&&next.battle.round===previous.battle.round+1&&next.battle.eventsRound===previous.battle.round&&next.battle.events?.length){
   void playTurn(previous,next);return;
  }
@@ -158,7 +161,7 @@ document.addEventListener("click",e=>{
  const el=e.target.closest("[data-action],[data-training],[data-box],[data-team],[data-recruit],[data-v2battle],[data-v3-battle],[data-damage],[data-v3-training],[data-v3-team]");if(!el||el.disabled)return;if(el.dataset.v3Battle){v3BattleScreen.handleClick(el,V,v3TrainingEditor.catalog);return;}if(el.dataset.v3Training){v3TrainingEditor.handleClick(el,V);return;}if(el.dataset.v3Team){v3TeamBuilder.handleClick(el);return;}if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.recruit){recruitmentView.handleClick(el,V);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="skip-animation"){finishPlayback();return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
- if(a==="nav"&&router.go(b)){closeModal();draw();window.scrollTo(0,0);}
+ if(a==="nav"&&router.go(b)){v3BattleScreen.cancelPlayback();closeModal();draw();window.scrollTo(0,0);}
  if(a==="start")start(b);
  if(a==="detail")detail(+b);
  if(a==="close")closeModal();

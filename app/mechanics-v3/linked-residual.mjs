@@ -24,5 +24,5 @@ export function applyLinkedResiduals(battle){
 
 export function resolveMechanicsEndTurn(battle,groups=[]){
  const linked=applyLinkedResiduals(battle),major=prepareMajorStatusEndTurn(linked.battle);
- return resolveEndTurn(major.battle,[...groups,major.group],{initialEvents:linked.events});
+ return resolveEndTurn(major.battle,[...groups,major.group],{initialEvents:[{kind:'endTurnStarted',turn:battle.turn},...linked.events]});
 }

@@ -426,3 +426,8 @@ Tài liệu tham chiếu trong repo:
 - Command Center, Pokémon Archive, Recruitment, Gym status, Field Guide and Battle now read the promoted schema-3 beta slice.
 - Schema-3 saves cannot enter the legacy Gym battle path. Gym progression remains a later roadmap deliverable rather than an implied beta feature.
 - Visible beta roster is intentionally six Pokémon for feedback speed; R5 owns rotation, trials, permanent recruitment and roster expansion.
+#### Ordered battle presentation gate (completed)
+
+- Schema-3 UI replays the authoritative event order rather than applying the final turn snapshot immediately.
+- A move's cast/skill FX completes before its damage and secondary events update the visible target; the next queued actor starts only after the impact frame.
+- Battle Log records readable full-history entries with effective Speed and preserves cancelled actions in their correct queue position.

@@ -541,3 +541,11 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Browser QA trên `localhost:3100`: Home, Archive, Recruitment đều tải sáu sprite; Gym có sáu nút bị khóa; bốn màn không còn Emberlyn, Tideray, Mossprout hoặc Voltkit.
 - Logic UI có test chống hồi quy cho roster sáu Pokémon, Single/Double entry point và Gym legacy bị khóa.
 - Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `256/256` đều đạt.
+## R4-07 — Ordered turn playback và Battle Log schema 3
+
+- Turn engine tiếp tục dùng thứ tự authoritative: switch → Mega → move priority → effective Speed → seeded tie key; Speed được tính lại trước mỗi action còn chờ nên speed control giữa turn có thể đổi thứ tự phần còn lại.
+- Mỗi turn lưu snapshot đầu/cuối và event history đã project. Double Battle có test end-to-end xác nhận đủ bốn action opportunity đi theo Speed; Pokémon đã faint trước lượt phát `actionCancelled` đúng vị trí.
+- `V3BattleTimeline` tách event stream thành từng action. Cast/skill FX chạy 1,05 giây trên snapshot trước impact; damage, heal, status, switch và faint chỉ áp vào snapshot hiển thị sau khi FX kết thúc, sau đó mới chuyển action kế tiếp.
+- Battle Log chuyển từ mã event thô sang câu có Pokémon, move, Speed, PP, damage/HP%, effectiveness, status, switch, faint và end-turn; history của các turn trước được giữ lại.
+- Browser QA Double turn 1: Feraligatr Speed 143 → Decidueye 134 → Venusaur 132 bị hủy do faint → Blastoise 130. HP giữ 100% tại 0 ms và 500 ms, chỉ đổi sau impact; UI hiển thị `ACTION 1/4`, không tính end-turn thành action thứ năm.
+- Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `257/257` đều đạt.

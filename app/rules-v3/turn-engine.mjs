@@ -40,7 +40,7 @@ export function resolveActionQueue(battle,actions,handlers,{trickRoom=false,getS
   return {...action,speed};
  }),{trickRoom});
  const execute=(action,kind=action.kind)=>{
-  if(!actorAvailable(next,action.side,action.actorId)){events.push({kind:'actionCancelled',actorId:action.actorId,reason:'actorUnavailable'});return;}
+  if(!actorAvailable(next,action.side,action.actorId)){events.push({kind:'actionCancelled',actorId:action.actorId,reason:'actorUnavailable',speed:action.speed,priority:action.priority??0});return;}
   const handler=handlers?.[kind];if(typeof handler!=='function')throw new Error(`missing action handler: ${kind}`);
   const handlerInput=clone(next),handlerBefore=JSON.stringify(handlerInput);
   const result=handler(handlerInput,clone({...action,kind}),{hasActed:actorId=>executionOrder.some(entry=>entry.actorId===actorId),nextRandom(){const roll=nextRandom(rngState);rngState=roll.rngState;return roll.value;}});

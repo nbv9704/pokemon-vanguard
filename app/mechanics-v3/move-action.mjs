@@ -11,7 +11,7 @@ export function createMoveActionHandler({moves,manifests,registry,beforeAction=t
   const evidence=mechanics.testEvidence?.[battle.format];if(!Array.isArray(evidence)||!evidence.length)throw new Error(`move lacks ${battle.format} test evidence: ${action.moveId}`);
   const gate=beforeAction?.(battle,action,runtime,move)||{cancelled:false,battle,events:[]};
   if(gate.cancelled)return {battle:gate.battle,events:gate.events};
-  const started={kind:'moveStarted',actorId:action.actorId,moveId:action.moveId};
+  const started={kind:'moveStarted',actorId:action.actorId,moveId:action.moveId,speed:action.speed,priority:action.priority??0};
   const tried=dispatchHook(registry,{hook:'onTryMove',battle:gate.battle,invocations:mechanics.handlers,payload:{action,move,mechanics},runtime});
   if(tried.payload.cancelled)return {battle:tried.battle,events:[started,...tried.events]};
   const result=dispatchHook(registry,{hook:'onMove',battle:tried.battle,invocations:mechanics.handlers,payload:tried.payload,runtime});
