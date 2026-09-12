@@ -68,9 +68,10 @@ export function completeEntry(battle,events=[]){
  return {ok:true,...commitEvents(next,events)};
 }
 
-export function resolveEndTurn(battle,groups){
+export function resolveEndTurn(battle,groups,{initialEvents=[]}={}){
  if(battle.phase!=='END_TURN')return {ok:false,code:'WRONG_PHASE'};
- let next=clone(battle);const events=[],groupIds=new Set();
+ if(!Array.isArray(initialEvents))throw new Error('initial end-turn events must be an array');
+ let next=clone(battle);const events=clone(initialEvents),groupIds=new Set();
  for(const group of groups||[]){
   if(!group?.id||groupIds.has(group.id)||!Array.isArray(group.changes))throw new Error('end-turn groups require unique ids and change arrays');groupIds.add(group.id);
   const applied=applyHpGroup(next,group.changes,group.id);next=applied.battle;events.push(...applied.events);

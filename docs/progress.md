@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Major status, confusion/flinch và Taunt/Encore/Disable; 38 move có evidence Single/Double | 824/862 entry còn bị chặn; tiếp tục seed-like residual, damage variants, Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Major/volatile status core và Leech Seed linked residual; 39 move có evidence Single/Double | 823/862 entry còn bị chặn; chuyển sang damage variants, Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **159/159**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **38 supported / 824 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 824 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **167/167**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **39 supported / 823 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 823 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Move-lock volatile đã có legality API và resolver fail-safe; thứ tự gần nhất là seed-like residual → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Major/volatile foundation của playable slice đã đủ để chuyển sang R3.4: multi-hit distribution → recoil/drain theo actual damage → fixed/variable damage, rồi mới protection/redirection/switching → field conditions → Ability hooks → item hooks.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -383,3 +383,15 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Move-lock 
 - Nguồn cross-check: candidate PokéBase cho Champions description/accuracy/max PP; Pokémon Showdown server pin cho duration, failure list, action order và PP expiry.
 - Coverage: Single 38/862; Double 38/862; inventory còn 478 move chờ review.
 - Validation: `npm run check` đạt; `npm test` đạt 159/159; candidate validate 0 lỗi.
+
+## R3-08 — Leech Seed linked residual
+
+- Status: DONE cho Leech Seed core; Liquid Ooze/Big Root và các Ability/item modifier vẫn blocked cùng entry sở hữu chúng.
+- Ngày: 12/09/2026
+- State: volatile lưu `sourceSide/sourceSlot`; Mon thay vào đúng slot nguồn nhận heal, còn source slot trống hoặc faint thì lượt đó không drain. Target switch xóa link theo cleanup volatile chung.
+- Residual: lấy `1/8 max HP`, heal đúng actual damage sau HP cap. Nhiều target cùng source được damage trong một nhóm đối xứng rồi aggregate heal, không hồi sinh source đã faint.
+- Ordering: `resolveMechanicsEndTurn` chạy linked drain trước regular/bad poison và burn, sau đó commit một chuỗi event duy nhất để replay giữ đúng thứ tự.
+- Move được mở: Leech Seed với accuracy 90, Grass immunity, `anyAdjacent`, ally target và foe redirection trong Double.
+- Nguồn cross-check: candidate PokéBase cho Champions description/accuracy/max PP; Pokémon Showdown server pin `data/moves.ts` cho source-slot, immunity và residual fraction.
+- Coverage: Single 39/862; Double 39/862; inventory còn 477 move chờ review.
+- Validation: `npm run check` đạt; `npm test` đạt 167/167; candidate validate 0 lỗi.

@@ -17,3 +17,4 @@ export {tryConfusionAction,tryFlinchAction,tryVolatileAction} from './volatile-a
 export {tryBeforeMoveConditions} from './before-action.mjs';
 export {createMoveChoiceValidator,tryVolatileMoveRestriction,validateVolatileMoveChoice} from './move-restrictions.mjs';
 export {recordLastMove} from './move-history.mjs';
+export {applyLinkedResiduals,resolveMechanicsEndTurn} from './linked-residual.mjs';

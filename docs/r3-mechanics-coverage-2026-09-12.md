@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the move-lock volatile batch is:
+The current coverage after the linked-residual batch is:
 
-- Single: 38 supported, 824 blocked.
-- Double: 38 supported, 824 blocked.
-- Supported moves: the previous 35 plus Taunt, Encore and Disable.
+- Single: 39 supported, 823 blocked.
+- Double: 39 supported, 823 blocked.
+- Supported moves: the previous 38 plus Leech Seed.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -32,6 +32,8 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 `move-restrictions.mjs` exposes a command validator for Taunt, Encore and Disable and a resolver fail-safe that runs before PP. `move-history.mjs` records the last move only after execution passes action and PP gates. The turn engine supplies `hasActed` so three/four-turn durations remain correct whether the target has already moved; end-turn cleanup also ends Encore early when its bound move reaches zero PP.
 
+`linked-residual.mjs` resolves source-bound end-turn damage before major statuses. Leech Seed stores a side/slot locator, so a replacement in the source position receives healing. Damage uses one eighth of target max HP and healing uses actual HP lost; unavailable sources suppress both operations. Multiple links use symmetric damage followed by capped aggregate healing.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -51,6 +53,8 @@ Hypnosis, Sing and Sleep Powder apply sleep; Sleep Powder additionally rejects G
 Confuse Ray, Flatter and Swagger apply confusion. Flatter and Swagger compose their existing stat-stage behavior before volatile application. Their `anyAdjacent` target contract covers ally targeting in Double; foe targeting remains redirectable. Fake Out and other flinch moves remain blocked until damage-secondary chance and first-turn-after-entry requirements have explicit handlers.
 
 Taunt blocks status-category choices, Encore binds the target's last valid move, and Disable blocks that exact last move. All three support `anyAdjacent`; invalid history, exhausted PP, duration expiry, switch cleanup and before-action ordering have positive and negative fixtures. R4 must call the command validator while building legal choices and retain the resolver gate as authoritative fallback.
+
+Leech Seed uses the shared accuracy, targeting and volatile application handlers. Grass immunity, source replacement, unavailable source, low-HP damage, healing cap, multiple Double targets and ordering before poison/burn all have fixtures. Liquid Ooze and Big Root remain unavailable until their own Ability/item manifests are reviewed.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 

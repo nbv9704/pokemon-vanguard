@@ -5,7 +5,7 @@ export const CONTENT_KINDS=['moves','abilities','items'];
 export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
-export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable'];
+export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
