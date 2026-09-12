@@ -6,5 +6,11 @@ export const TEST_EVIDENCE=[
  'r3-stat-stages:self-single',
  'r3-stat-stages:self-double',
  'r3-stat-stages:ally-single-failure',
- 'r3-stat-stages:ally-double'
+ 'r3-stat-stages:ally-double',
+ 'r3-accuracy-stages:self-single',
+ 'r3-accuracy-stages:self-double',
+ 'r3-accuracy-stages:target-single',
+ 'r3-accuracy-stages:target-double',
+ 'r3-accuracy-stages:spread-single',
+ 'r3-accuracy-stages:spread-double'
 ];

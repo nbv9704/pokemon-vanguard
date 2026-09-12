@@ -43,3 +43,12 @@ test('move action stops after PP validation fails',()=>{
  const result=resolveMove(battle,{kind:'move',side:'A',actorId:'a1',moveId:'tackle',target:{side:'B',slot:0}},runtime);
  assert.deepEqual(result.events.map(event=>event.kind),['moveStarted','moveFailed']);assert.equal(result.events[1].reason,'noPP');assert.equal(result.battle.sides.B.roster[0].hp,200);
 });
+
+test('accuracy and evasion stages affect direct damage while always-hit moves bypass them',()=>{
+ const tackleBattle=fixture();tackleBattle.sides.A.roster[0].stages.accuracy=-1;tackleBattle.sides.B.roster[0].stages.evasion=1;
+ const missed=resolveMove(tackleBattle,{kind:'move',side:'A',actorId:'a1',moveId:'tackle',target:{side:'B',slot:0}},{nextRandom:()=>.99});
+ assert.deepEqual(missed.events.map(event=>event.kind),['moveStarted','ppSpent','moveMissed']);assert.equal(missed.events[2].effectiveAccuracy,60);assert.equal(missed.battle.sides.B.roster[0].hp,200);
+ const aerialBattle=fixture();aerialBattle.sides.A.roster[0].stages.accuracy=-6;aerialBattle.sides.B.roster[0].stages.evasion=6;
+ const hit=resolveMove(aerialBattle,{kind:'move',side:'A',actorId:'a1',moveId:'aerial-ace',target:{side:'B',slot:0}},{nextRandom:()=>.999});
+ assert.equal(hit.events.at(-1).kind,'damage');assert.ok(hit.battle.sides.B.roster[0].hp<200);
+});

@@ -8,6 +8,7 @@
       "contact": true,
       "handlers": [
         {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
         {"id": "deal-direct-damage", "hook": "onMove", "order": 100}
       ],
       "testEvidence": {
@@ -87,6 +88,112 @@
       ],
       "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
     },
+    "baby-doll-eyes": {
+      "id": "baby-doll-eyes", "targetMode": "adjacentFoe", "priority": 1, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -1}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "charm": {
+      "id": "charm", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "coil": {
+      "id": "coil", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 1, "def": 1, "accuracy": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:self-single"], "double": ["r3-accuracy-stages:self-double"]}
+    },
+    "confide": {
+      "id": "confide", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spa": -1}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "double-team": {
+      "id": "double-team", "targetMode": "self", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"evasion": 1}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:self-single"], "double": ["r3-accuracy-stages:self-double"]}
+    },
+    "fake-tears": {
+      "id": "fake-tears", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spd": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "feather-dance": {
+      "id": "feather-dance", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "noble-roar": {
+      "id": "noble-roar", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -1, "spa": -1}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "scary-face": {
+      "id": "scary-face", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spe": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "screech": {
+      "id": "screech", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+    },
+    "string-shot": {
+      "id": "string-shot", "targetMode": "allAdjacentFoes", "priority": 0, "contact": false, "redirectable": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spe": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:spread-single"], "double": ["r3-accuracy-stages:spread-double"]}
+    },
+    "sweet-scent": {
+      "id": "sweet-scent", "targetMode": "allAdjacentFoes", "priority": 0, "contact": false, "redirectable": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"evasion": -2}}}
+      ],
+      "testEvidence": {"single": ["r3-accuracy-stages:spread-single"], "double": ["r3-accuracy-stages:spread-double"]}
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
@@ -94,6 +201,7 @@
       "contact": true,
       "handlers": [
         {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
         {"id": "deal-direct-damage", "hook": "onMove", "order": 100}
       ],
       "testEvidence": {

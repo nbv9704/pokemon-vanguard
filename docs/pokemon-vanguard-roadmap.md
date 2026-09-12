@@ -26,11 +26,11 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Registry/manifest/coverage, capability inventory và stat-stage primitives hoàn tất; 11/862 entry supported trong mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | Registry/manifest/coverage, inventory, shared accuracy/evasion và stat-stage primitives hoàn tất; 23/862 entry supported trong mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline hiện tại: `npm run check` đạt, `npm test` đạt 120/120. Trạng thái 851 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline hiện tại: `npm run check` đạt, `npm test` đạt 127/127. Trạng thái 839 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -147,7 +147,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 ## 10. R3 — Mechanics Coverage
 
-**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, `spend-pp`, `direct-damage` và `apply-stat-stages` đã có. Tackle/Aerial Ace cùng chín self/ally stat moves tạo thành 11 entry supported đầu tiên.
+**Trạng thái:** IN PROGRESS. Registry, manifest schema, coverage generator, capability inventory, `spend-pp`, shared `check-accuracy`, `direct-damage` và `apply-stat-stages` đã có. Direct damage, self/ally boosts và target debuffs hiện tạo thành 23 entry supported đầu tiên.
 
 ### R3.1 Direct/status damage core
 
@@ -163,6 +163,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Handler tăng/giảm/reset/copy stat stages; clamp −6…+6; self/target/all target.
 - Xác minh thứ tự accuracy/evasion, always-hit và Ability/item modifier.
 - Event phải ghi requested delta, applied delta và reason khi fail/clamp.
+
+**Tiến độ:** basic self/ally boosts, target debuffs, accuracy/evasion stages, per-target spread accuracy, redirection và always-hit bypass đã hoàn tất. Minimize và các move có volatile/named exception vẫn bị chặn cho đến khi interaction riêng có handler.
 
 ### R3.3 Major status và volatile status
 
@@ -377,7 +379,7 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Tiếp tục R3.2: accuracy/evasion modifiers và target debuff có accuracy check.
+1. Tiếp tục R3.3: major status foundation, immunity, overwrite và end-turn timing.
 2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.

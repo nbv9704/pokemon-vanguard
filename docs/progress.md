@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Manifest/registry/coverage, direct damage, stat-stage handler và inventory 516 move; 11 move có evidence Single/Double | 851/862 entry còn bị chặn; tiếp tục accuracy/evasion, target debuff, status, Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Manifest/registry/coverage, inventory, shared accuracy/evasion và stat-stage handlers; 23 move có evidence Single/Double | 839/862 entry còn bị chặn; tiếp tục major/volatile status, damage variants, Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **120/120**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **11 supported / 851 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 851 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **127/127**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **23 supported / 839 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 839 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Self/ally stat boosts cơ bản đã có; thứ tự gần nhất là accuracy/evasion và target debuff → major/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Accuracy/evasion, self/ally boost và target debuff cơ bản đã có; thứ tự gần nhất là major/volatile status → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double. Roadmap chi tiết định nghĩa nguồn cần kiểm, cách implement, test matrix và gate cho từng bước.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -322,3 +322,16 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Self/ally 
 - Inventory: `npm run mechanics:inventory -- pv-ma-2026-09-11` phân loại đủ 516 move thành review queues. Description signals chỉ hỗ trợ nghiên cứu, có cờ `trustedMechanics:false`, không thay implementation hoặc legality.
 - Coverage: 862 entries; Single 11 supported/851 blocked; Double 11 supported/851 blocked.
 - Validation: `npm run check` đạt; `npm test` đạt 120/120.
+
+## R3-03 — Accuracy/evasion và target stat debuffs
+
+- Status: DONE
+- Ngày: 12/09/2026
+- Accuracy: thêm `check-accuracy` dùng cùng seeded RNG cho damage/status, công thức stage ba-based, kết hợp `accuracy - evasion` rồi clamp −6…+6; always-hit bỏ qua stage.
+- Tích hợp: Tackle giờ có thể miss do accuracy/evasion stage; Aerial Ace vẫn luôn hit. Damage và status không còn duy trì hai công thức accuracy riêng.
+- Move mới: Baby-Doll Eyes, Charm, Coil, Confide, Double Team, Fake Tears, Feather Dance, Noble Roar, Scary Face, Screech, String Shot và Sweet Scent.
+- Double: single target đi qua redirection; spread status kiểm accuracy độc lập từng foe. String Shot fixture xác nhận một foe hit và một foe miss trong cùng action.
+- Event: miss ghi target cùng effective accuracy; stage change giữ requested/applied delta và clamp. Cùng roll stream tạo output byte-identical.
+- Minimize cố ý chưa bật vì còn volatile riêng làm một số move gây damage gấp đôi/always-hit; stage evasion đơn lẻ chưa đủ mechanic.
+- Coverage: 862 entries; Single 23 supported/839 blocked; Double 23 supported/839 blocked. Inventory còn 493 move chờ manual review.
+- Validation: `npm run check` đạt; `npm test` đạt 127/127.
