@@ -435,4 +435,4 @@ Tài liệu tham chiếu trong repo:
 
 - Local battle assets now include paired front/back idle GIFs for the six-Pokémon beta slice.
 - Player fighters render with back sprites in the near field; opponents render with front sprites in the far field for both Single and Double.
-- Non-battle artwork now uses local transparent copies of the official artwork linked from Pokémon Database; direct source URLs and processing notes are tracked in `docs/pokemon-artwork-sources.md`.
+- Non-battle artwork now uses the native transparent `official-artwork` PNG set from the PokeAPI sprites repository. The source is pinned to a reviewed commit and its Dex mapping is tracked in `docs/pokemon-artwork-sources.md`.

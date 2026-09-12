@@ -562,3 +562,9 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Verified the large official-artwork links on Pokémon Database for all six beta Pokémon and recorded their direct sources in `docs/pokemon-artwork-sources.md`.
 - Added local transparent PNG copies for Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye and Feraligatr. Only the edge-connected white JPEG canvas was removed.
 - Home, Collection, Recruitment, Gym and Team Preview now use static official artwork. The active battle arena keeps the animated front/back GIF pair through a separate `battleArt` renderer.
+
+## R7-03 — PokeAPI artwork source correction
+
+- Replaced the processed Pokémon Database JPEG copies with native transparent official-artwork PNGs from `PokeAPI/sprites`.
+- Pinned the six downloads to repository commit `2ecb4eeacd5a1718621fc30f12772e3f60d830b9` and mapped filenames by National Dex ID.
+- Every asset is now an unmodified 475 × 475 RGBA PNG. The total artwork payload dropped from about 3.0 MB to under 1.0 MB.
