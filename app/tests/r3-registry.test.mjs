@@ -33,6 +33,7 @@ test('manifest validation requires move targeting, handler order and format evid
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-recoil',hook:'onMove',order:10,params:{numerator:2,denominator:1}}]},'moves').join('\n'),/positive fraction/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'deal-fixed-damage',hook:'onMove',order:10,params:{formula:'target-current-fraction',denominator:1}}]},'moves').join('\n'),/denominator/);
  assert.match(validateMechanicManifest({...manifest,handlers:[{id:'deal-variable-power-damage',hook:'onMove',order:10,params:{formula:'unknown'}}]},'moves').join('\n'),/variable-power/);
+ assert.match(validateMechanicManifest({...manifest,handlers:[{id:'apply-stat-stages',hook:'onMove',order:10,params:{boosts:{spe:1},target:'foe'}}]},'moves').join('\n'),/target override/);
 });
 
 test('coverage derives support and machine-readable block reasons',()=>{

@@ -30,5 +30,9 @@ export const TEST_EVIDENCE=[
  'r3-fixed-damage:single',
  'r3-fixed-damage:double',
  'r3-variable-power:single',
- 'r3-variable-power:double'
+ 'r3-variable-power:double',
+ 'r3-condition-power:single',
+ 'r3-condition-power:double',
+ 'r3-multi-hit-self:single',
+ 'r3-multi-hit-self:double'
 ];

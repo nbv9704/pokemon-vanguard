@@ -8,7 +8,8 @@ const moves={
  'bullet-seed':{id:'bullet-seed',type:'grass',category:'physical',power:25,accuracy:100},
  'rock-blast':{id:'rock-blast',type:'rock',category:'physical',power:25,accuracy:90},
  'icicle-spear':{id:'icicle-spear',type:'ice',category:'physical',power:25,accuracy:100},
- 'dual-wingbeat':{id:'dual-wingbeat',type:'flying',category:'physical',power:40,accuracy:90}
+ 'dual-wingbeat':{id:'dual-wingbeat',type:'flying',category:'physical',power:40,accuracy:90},
+ 'scale-shot':{id:'scale-shot',type:'dragon',category:'physical',power:25,accuracy:90}
 };
 const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0});
 const unit=actorId=>({actorId,types:['normal'],hp:200,maxHp:200,stats:{hp:200,atk:120,def:100,spa:100,spd:100,spe:100},pp:Object.fromEntries(Object.keys(moves).map(id=>[id,20])),status:null,volatiles:{},stages:stages()});
@@ -38,4 +39,14 @@ test('r3-multi-hit:double resolves redirection once before the full sequence',()
  const battle=fixture('double');battle.sides.B.roster[1].volatiles.redirection={active:true,order:1};
  const result=resolveMove(battle,action('dual-wingbeat'),sequence([0,.999,.999,.999,.999]));
  assert.equal(result.battle.sides.B.roster[0].hp,200);assert.equal(result.events.filter(event=>event.kind==='damage').length,2);assert.ok(result.battle.sides.B.roster[1].hp<200);assert.equal(result.events.find(event=>event.kind==='hitCount').targetId,'b2');
+});
+
+test('r3-multi-hit-self:single applies Scale Shot self stages once after a damaging sequence',()=>{
+ const result=resolveMove(fixture(),action('scale-shot'),sequence([0,.1,.999,.999,.999,.999]));const actor=result.battle.sides.A.roster[0];
+ assert.deepEqual({def:actor.stages.def,spe:actor.stages.spe},{def:-1,spe:1});assert.equal(result.events.filter(event=>event.kind==='statStageChanged').length,2);
+});
+
+test('r3-multi-hit-self:double boosts only the user after redirected Scale Shot damage',()=>{
+ const battle=fixture('double');battle.sides.B.roster[1].volatiles.redirection={active:true,order:1};const result=resolveMove(battle,action('scale-shot'),sequence([0,.1,.999,.999,.999,.999]));
+ assert.equal(result.events.find(event=>event.kind==='damage').targetId,'b2');assert.equal(result.battle.sides.A.roster[0].stages.spe,1);assert.equal(result.battle.sides.A.roster[1].stages.spe,0);
 });

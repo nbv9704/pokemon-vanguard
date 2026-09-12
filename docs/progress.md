@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Status/volatile/linked residual và damage variants nền; 63 move có evidence Single/Double | 799/862 entry còn bị chặn; tiếp tục conditional damage rồi protection/field/Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Status/volatile/linked residual và R3.4 damage variants; 69 move có evidence Single/Double | 793/862 entry còn bị chặn; chuyển sang protection/target control rồi field/Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **185/185**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **63 supported / 799 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 799 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **192/192**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **69 supported / 793 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 793 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Fixed/level/HP/speed/stage/fainted-count damage của R3.4 đã xong; bước kế tiếp là condition-based power và named damage exceptions, rồi protection/redirection/switching → field conditions → Ability hooks → item hooks. Weight-based power chờ R1 bổ sung weight vào species và battle snapshot.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. R3.4 đã hoàn tất trong phạm vi dữ liệu runtime hiện có; bước kế tiếp là R3.5 protection/redirection/target control → field conditions → Ability hooks → item hooks. Weight-based power chờ R1 bổ sung weight vào species và battle snapshot; các damage exception cần turn history được xử lý cùng contract lịch sử tương ứng.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -421,3 +421,14 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Fixed/leve
 - Deferred: Grass Knot, Low Kick, Heat Crash và Heavy Slam cần weight canonical trong R1 data + snapshot; Hard Press và các condition-specific move sẽ vào batch riêng để giữ test evidence độc lập.
 - Coverage: Single 63/862; Double 63/862; inventory còn 453 move chờ review.
 - Validation: `npm run check` đạt; `npm test` đạt 185/185; candidate validate 0 lỗi.
+
+## R3-11 — Conditional power và Scale Shot composition
+
+- Status: DONE; khép R3.4 trong phạm vi state hiện có.
+- Ngày: 12/09/2026
+- Conditional power: Facade nhân đôi khi user có status hợp lệ và bỏ burn penalty; Hex nhân đôi với target có major status; Venoshock chỉ nhân đôi với poison/bad-poison; Hard Press dùng fixed-point current-HP callback; Fickle Beam dùng đúng một roll seeded 30% để nhân đôi.
+- Multi-hit composition: `apply-stat-stages` hỗ trợ target override `self` và `requireDamage`; Scale Shot roll 2–5 hit rồi hạ Defense/tăng Speed của user đúng một lần. Miss, immunity hoặc zero total damage không đổi stage.
+- Event order: `powerResolved` đứng trước damage; Scale Shot phát damage theo hit, `hitCount`, rồi hai `statStageChanged`, đủ dữ liệu cho replay và move FX.
+- Deferred: Assurance/Avalanche/Payback/Stomping Tantrum/Temper Flare cần per-turn damage/failure/action history; weight moves cần canonical weight; Infernal Parade cần secondary-status handler.
+- Coverage: Single 69/862; Double 69/862; inventory còn 447 move chờ review.
+- Validation: `npm run check` đạt; `npm test` đạt 192/192; candidate validate 0 lỗi.

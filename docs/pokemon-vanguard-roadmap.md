@@ -26,7 +26,7 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Status core, linked residual và damage variants nền hoàn tất; 63/862 entry supported trong mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | R3.3 status/volatile và R3.4 damage variants hoàn tất trong state hiện có; 69/862 entry supported mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
@@ -180,7 +180,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Recoil/drain dựa trên actual damage; fixed/level/HP/weight/speed/condition power có capability riêng.
 - Secondary chance dùng battle RNG và có replay evidence.
 
-**Tiến độ:** hoàn tất multi-hit hiện đại 35/35/15/15, fixed two-hit, dừng khi faint, recoil/drain actual damage, fixed level/current-HP và variable power theo user HP, Speed, positive stages, fainted allies. Đã mở 24 move qua hai batch. Weight-based power chờ bổ sung weight canonical vào R1 snapshot; bước kế tiếp xử lý condition power và named damage exceptions trước khi sang R3.5.
+**Tiến độ:** hoàn tất multi-hit hiện đại 35/35/15/15, fixed two-hit, dừng khi faint, recoil/drain actual damage, fixed level/current-HP, variable power theo HP/Speed/stages/fainted allies/status và seeded random. Scale Shot đã compose self stage sau chuỗi hit. Đã mở 30 move qua ba batch. Weight và per-turn-history variants giữ blocked cùng dependency rõ; chuyển sang R3.5.
 
 ### R3.5 Protection, redirection và target control
 
@@ -383,7 +383,7 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Kết thúc R3.4 bằng condition-based power và named damage exceptions; thêm weight vào R1 schema trước khi mở weight-based moves.
+1. Bắt đầu R3.5 với Protect/Detect core, protect chain, bypass và target-control evidence cho Single/Double.
 2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
 3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
 4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.

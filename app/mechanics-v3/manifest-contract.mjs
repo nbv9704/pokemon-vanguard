@@ -6,7 +6,7 @@ export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
 export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
-export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies'];
+export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -29,6 +29,8 @@ export function validateMechanicManifest(manifest,kind){
     if(!BATTLE_STAGES.includes(stat))problems.push(`unknown battle stage: ${stat}`);
     if(!Number.isInteger(delta)||delta===0||delta<-6||delta>6)problems.push(`invalid stage delta for ${stat}`);
    }
+   if(entry.params?.target!==undefined&&entry.params.target!=='self')problems.push('apply-stat-stages target override must be self');
+   if(entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-stat-stages requireDamage must be boolean');
   }
   if(entry?.id==='apply-major-status'){
    if(!MAJOR_STATUS_IDS.includes(entry.params?.status))problems.push(`unsupported major status: ${entry.params?.status}`);
@@ -54,7 +56,7 @@ export function validateMechanicManifest(manifest,kind){
   }
   if(entry?.id==='deal-variable-power-damage'){
    if(!VARIABLE_POWER_FORMULAS.includes(entry.params?.formula))problems.push('deal-variable-power-damage requires a supported formula');
-   if(['user-hp-proportional','positive-stages','fainted-allies'].includes(entry.params?.formula)&&(!Number.isInteger(entry.params?.basePower)||entry.params.basePower<1))problems.push(`${entry.params?.formula} requires positive basePower`);
+   if(['user-hp-proportional','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'].includes(entry.params?.formula)&&(!Number.isInteger(entry.params?.basePower)||entry.params.basePower<1))problems.push(`${entry.params?.formula} requires positive basePower`);
   }
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
