@@ -9,7 +9,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | IMPLEMENTED / REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move được tham chiếu, 180 Ability, 166 item, 5 banner, 0 unresolved | Review semantic diff, bổ sung promote command và chỉ promote khi R3/R4 sẵn sàng |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Accuracy/stages, sáu major status, confusion/flinch lifecycle; 35 move có evidence Single/Double | 827/862 entry còn bị chặn; tiếp tục move-lock volatile, damage variants, Ability/item hooks |
+| R3 Mechanics Coverage | IN PROGRESS | Major status, confusion/flinch và Taunt/Encore/Disable; 38 move có evidence Single/Double | 824/862 entry còn bị chặn; tiếp tục seed-like residual, damage variants, Ability/item hooks |
 | R4 Training/Team UI | NOT STARTED | Có UI/validator schema 2 để tái sử dụng | Catalog service schema 3, promote M-A, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
@@ -17,11 +17,11 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **149/149**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **35 supported / 827 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 827 mechanic đã hỏng.
+Baseline R3 hiện tại: `npm run check` đạt, `npm test` đạt **159/159**, candidate M-A validate thành công, và replay/battle invariants vẫn deterministic. Coverage hiện tại là **38 supported / 824 blocked** cho từng format; đây là trạng thái cố ý fail-closed, không phải 824 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Confusion/flinch action ordering đã có; thứ tự gần nhất là Taunt command gate → Encore/Disable last-move tracking → seed-like residual → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double.
+Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Move-lock volatile đã có legality API và resolver fail-safe; thứ tự gần nhất là seed-like residual → multi-hit/recoil/drain → protection/redirection/switching → field conditions → Ability hooks → item hooks. Sau mỗi family phải regenerate coverage và chỉ bật entry có evidence cho cả Single lẫn Double.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -370,3 +370,16 @@ Tiếp tục ở **R3**, không nhảy thẳng sang UI hoặc sprite. Confusion/
 - Nguồn cross-check: Pokémon Showdown server commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/conditions.ts`, `data/moves.ts` và `sim/battle-actions.ts`; accuracy/max PP lấy từ candidate PokéBase.
 - Coverage: Single 35/862; Double 35/862; inventory còn 481 move chờ review.
 - Validation: `npm run check` đạt; `npm test` đạt 149/149; candidate validate 0 lỗi.
+
+## R3-07 — Move-lock volatile và command legality
+
+- Status: DONE cho Taunt, Encore và Disable core.
+- Ngày: 12/09/2026
+- Command gate: `createMoveChoiceValidator` trả mã lỗi machine-readable trước khi queue lock; move resolver có fail-safe cùng quy tắc và không tiêu PP khi lệnh bị khóa.
+- History: move đi qua action gates được ghi vào `lastMoveId`; action bị sleep/freeze/flinch/confusion/paralysis, move lock hoặc hết PP không ghi đè history.
+- Duration: Taunt/Encore khóa ba lượt và Disable bốn lượt. Runtime `hasActed` từ turn engine điều chỉnh timer khi effect được áp trước hoặc sau action của target; switch xóa effect, end turn giảm timer và phát event kết thúc.
+- Encore/Disable chỉ bind last move hợp lệ còn PP. Encore chặn danh sách move không thể encore và tự kết thúc khi move bị ép hết PP.
+- Move được mở: Taunt, Encore và Disable; cả ba dùng `anyAdjacent`, hỗ trợ ally target và foe redirection trong Double.
+- Nguồn cross-check: candidate PokéBase cho Champions description/accuracy/max PP; Pokémon Showdown server pin cho duration, failure list, action order và PP expiry.
+- Coverage: Single 38/862; Double 38/862; inventory còn 478 move chờ review.
+- Validation: `npm run check` đạt; `npm test` đạt 159/159; candidate validate 0 lỗi.

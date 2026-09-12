@@ -4,11 +4,11 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the first volatile-status batch is:
+The current coverage after the move-lock volatile batch is:
 
-- Single: 35 supported, 827 blocked.
-- Double: 35 supported, 827 blocked.
-- Supported moves: the previous 32 plus Confuse Ray, Flatter and Swagger.
+- Single: 38 supported, 824 blocked.
+- Double: 38 supported, 824 blocked.
+- Supported moves: the previous 35 plus Taunt, Encore and Disable.
 - Supported Abilities: none yet.
 - Supported items: none yet.
 
@@ -30,6 +30,8 @@ Every unsupported entry currently resolves to `missing-manifest`. As implementat
 
 `volatile-state.mjs` owns volatile application and duration state. `volatile-action.mjs` resolves flinch and confusion, while `before-action.mjs` preserves the reviewed sleep/freeze → flinch → confusion → paralysis order. Confusion self-damage uses the source's isolated power-40 formula and does not enter the ordinary damage modifier pipeline.
 
+`move-restrictions.mjs` exposes a command validator for Taunt, Encore and Disable and a resolver fail-safe that runs before PP. `move-history.mjs` records the last move only after execution passes action and PP gates. The turn engine supplies `hasActed` so three/four-turn durations remain correct whether the target has already moved; end-turn cleanup also ends Encore early when its bound move reaches zero PP.
+
 ## Initial move evidence
 
 PokéBase supplies the Champions power, type, category, accuracy and PP values. Pokémon Showdown's move data is used as an architecture and mechanics cross-check for fields absent from the PokéBase payload: <https://github.com/smogon/pokemon-showdown/blob/master/data/moves.ts>.
@@ -47,6 +49,8 @@ Minimize remains blocked even though the generic evasion stage exists. Its named
 Hypnosis, Sing and Sleep Powder apply sleep; Sleep Powder additionally rejects Grass targets. Toxic applies bad poison, rejects Poison/Steel targets and bypasses its accuracy roll for a Poison-type user. These behaviors were cross-checked at the pinned Showdown server commit in `data/conditions.ts`, `data/moves.ts` and `sim/battle-actions.ts`. Rest, Yawn, secondary status chances, Fire-hit thaw and defrost moves remain blocked because they require heal, delayed-status, secondary-effect or damage-interaction handlers.
 
 Confuse Ray, Flatter and Swagger apply confusion. Flatter and Swagger compose their existing stat-stage behavior before volatile application. Their `anyAdjacent` target contract covers ally targeting in Double; foe targeting remains redirectable. Fake Out and other flinch moves remain blocked until damage-secondary chance and first-turn-after-entry requirements have explicit handlers.
+
+Taunt blocks status-category choices, Encore binds the target's last valid move, and Disable blocks that exact last move. All three support `anyAdjacent`; invalid history, exhausted PP, duration expiry, switch cleanup and before-action ordering have positive and negative fixtures. R4 must call the command validator while building legal choices and retain the resolver gate as authoritative fallback.
 
 The supporting fixtures cover normal Single damage, Ghost immunity, an adjacent ally target in Double and Double redirection. Neither move has been added to the schema-2 playable catalog; promotion remains part of R4.
 

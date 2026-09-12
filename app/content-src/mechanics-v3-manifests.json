@@ -304,6 +304,33 @@
       ],
       "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
     },
+    "taunt": {
+      "id": "taunt", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "taunt"}}
+      ],
+      "testEvidence": {"single": ["r3-move-lock:single"], "double": ["r3-move-lock:double"]}
+    },
+    "encore": {
+      "id": "encore", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "encore"}}
+      ],
+      "testEvidence": {"single": ["r3-move-lock:single"], "double": ["r3-move-lock:double"]}
+    },
+    "disable": {
+      "id": "disable", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "handlers": [
+        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
+        {"id": "check-accuracy", "hook": "onMove", "order": 90},
+        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "disable"}}
+      ],
+      "testEvidence": {"single": ["r3-move-lock:single"], "double": ["r3-move-lock:double"]}
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",

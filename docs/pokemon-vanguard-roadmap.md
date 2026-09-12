@@ -26,11 +26,11 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS | Accuracy/stages, sáu major status và confusion/flinch lifecycle hoàn tất; 35/862 entry supported trong mỗi format |
+| R3 Mechanics Coverage | IN PROGRESS | Major status, confusion/flinch và Taunt/Encore/Disable hoàn tất; 38/862 entry supported trong mỗi format |
 | R4–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline hiện tại: `npm run check` đạt, `npm test` đạt 149/149. Trạng thái 827 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
+Baseline hiện tại: `npm run check` đạt, `npm test` đạt 159/159. Trạng thái 824 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -172,7 +172,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Volatile: flinch, confusion, taunt, encore, disable, leech/seed-like effects và duration counters.
 - Capture duration, immunity, overwrite, switch cleanup/persistence và end-turn order; điều chưa xác minh giữ blocked.
 
-**Tiến độ:** đủ sáu major status đã có state/lifecycle cơ bản. Confusion đã có timer, 33% stage-aware self-hit và action ordering; flinch đã có consume/end-turn cleanup. Confuse Ray, Flatter và Swagger có evidence Single/Double, bao gồm ally target và redirection. Rest, Yawn, damaging secondary status, Fire-hit thaw và defrost move tiếp tục blocked. Bước kế tiếp là Taunt command gate; sau đó thêm last-successful-move tracking cho Encore/Disable rồi mới tới seed-like residual.
+**Tiến độ:** đủ sáu major status, confusion/flinch và move-lock volatile cơ bản. Taunt, Encore và Disable có command-legality API, resolver fail-safe, duration phụ thuộc action order, switch cleanup và last-move/PP rules. Rest, Yawn, damaging secondary status, Fire-hit thaw và defrost move tiếp tục blocked. Bước kế tiếp là seed-like residual, sau đó chuyển sang R3.4 multi-hit/recoil/drain.
 
 ### R3.4 Damage variants
 
@@ -381,11 +381,12 @@ Ticket chỉ DONE khi có:
 
 ## 19. Việc làm ngay sau tài liệu này
 
-1. Tiếp tục R3.3: Taunt command gate, last-successful-move tracking cho Encore/Disable, rồi seed-like residual.
-2. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
-3. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
-4. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.
-5. Không bắt đầu R5/R6/R7 production integration trước khi schema 3 battle loop của R4 chạy xong cả Single và Double.
+1. Hoàn tất phần gần nhất của R3.3 bằng seed-like residual và source-bound healing.
+2. Chuyển sang R3.4: multi-hit distribution, recoil và drain dựa trên actual damage.
+3. Dùng capability inventory 516 move để chọn batch theo mức tái sử dụng; description signals chỉ là research queue.
+4. Thêm fixture/provenance cho mỗi capability; regenerate coverage sau từng batch.
+5. Khi có playable slice đủ team, thực hiện R1 manual review cho đúng slice rồi bắt đầu R4 catalog service/promote dry-run.
+6. Không bắt đầu R5/R6/R7 production integration trước khi schema 3 battle loop của R4 chạy xong cả Single và Double.
 
 Tài liệu tham chiếu trong repo:
 

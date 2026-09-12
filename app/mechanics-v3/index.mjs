@@ -13,5 +13,7 @@ export {createMoveActionHandler} from './move-action.mjs';
 export {TEST_EVIDENCE} from './test-evidence.mjs';
 export {buildMoveCapabilityInventory,reviewSignalsForMove} from './capability-inventory.mjs';
 export {applyVolatileStatus} from './volatile-state.mjs';
-export {tryVolatileAction} from './volatile-action.mjs';
+export {tryConfusionAction,tryFlinchAction,tryVolatileAction} from './volatile-action.mjs';
 export {tryBeforeMoveConditions} from './before-action.mjs';
+export {createMoveChoiceValidator,tryVolatileMoveRestriction,validateVolatileMoveChoice} from './move-restrictions.mjs';
+export {recordLastMove} from './move-history.mjs';

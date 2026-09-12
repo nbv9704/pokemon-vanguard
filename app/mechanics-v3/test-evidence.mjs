@@ -18,5 +18,7 @@ export const TEST_EVIDENCE=[
  'r3-advanced-status:single',
  'r3-advanced-status:double',
  'r3-volatile-status:single',
- 'r3-volatile-status:double'
+ 'r3-volatile-status:double',
+ 'r3-move-lock:single',
+ 'r3-move-lock:double'
 ];

@@ -78,6 +78,13 @@ export function resolveEndTurn(battle,groups){
  for(const side of ['A','B'])for(const entry of activeUnits(next,side,{includeFainted:true})){
   if(entry.unit.volatiles?.redirection)delete entry.unit.volatiles.redirection;
   if(entry.unit.volatiles?.flinch)delete entry.unit.volatiles.flinch;
+  for(const [volatile,state] of Object.entries(entry.unit.volatiles||{}))if(Number.isInteger(state?.endTurnTimer)){
+   if(state.endsWhenMoveHasNoPp&&(!Number.isInteger(entry.unit.pp?.[state.moveId])||entry.unit.pp[state.moveId]<=0)){
+    delete entry.unit.volatiles[volatile];events.push({kind:'volatileEnded',actorId:entry.actorId,volatile,reason:'noPP'});continue;
+   }
+   state.endTurnTimer--;
+   if(state.endTurnTimer<=0){delete entry.unit.volatiles[volatile];events.push({kind:'volatileEnded',actorId:entry.actorId,volatile,reason:'duration'});}
+  }
  }
  events.push({kind:'turnEnded',turn:next.turn});
  const result=checkBattleResult(next);next=result.battle;events.push(...result.events);
