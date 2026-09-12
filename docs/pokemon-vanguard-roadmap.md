@@ -27,8 +27,8 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R1 M-A Data | BETA SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-11`: scoped hash-bound approval cho 6 species/15 moves/3 Abilities/6 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move + 4 Ability + 6 item; 97/862 entry supported mỗi format; đội beta 6 Pokémon qua automated gate |
-| R4 | BETA GATE PASSED | Schema 3 chạy Training → Team → Preview → Battle Single/Double; full Archive/Inspector migration theo beta feedback |
-| R5–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
+| R4 | BETA GATE PASSED | Schema 3 chạy Home/Archive/Training/Team/Recruitment status/Guide → Preview → Battle Single/Double; Inspector migration theo beta feedback |
+| R5–R7 | NOT STARTED; R7 FOUNDATION STARTED | R5/R6 chưa nối runtime; sáu idle sprite local và nền move-FX code-based đã có cho R7 |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
 Baseline logic hiện tại có 97/862 entry supported ở cả hai format. Trạng thái 765 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
@@ -421,3 +421,8 @@ Tài liệu tham chiếu trong repo:
 - `docs/r3-mechanics-coverage-2026-09-12.md`
 - `docs/showdown-animation-reference-2026-09-12.md`
 - `app/content-src/pokemon-sources.json`
+#### Beta UI consistency gate (completed)
+
+- Command Center, Pokémon Archive, Recruitment, Gym status, Field Guide and Battle now read the promoted schema-3 beta slice.
+- Schema-3 saves cannot enter the legacy Gym battle path. Gym progression remains a later roadmap deliverable rather than an implied beta feature.
+- Visible beta roster is intentionally six Pokémon for feedback speed; R5 owns rotation, trials, permanent recruitment and roster expansion.

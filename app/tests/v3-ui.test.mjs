@@ -7,6 +7,7 @@ import {V3TrainingEditor} from '../public/js/v3-training-editor.js';
 import {V3TeamBuilder} from '../public/js/v3-team-builder.js';
 import {V3BattleScreen} from '../public/js/v3-battle-screen.js';
 import {V3RecruitmentView} from '../public/js/v3-recruitment-view.js';
+import {V3OverviewView} from '../public/js/v3-overview-view.js';
 import {applyV3BattleAction} from '../server/v3-battle-actions.mjs';
 import {v3BattleView} from '../server/v3-battle-view.mjs';
 
@@ -32,3 +33,5 @@ test('schema-3 Battle UI covers landing, Double Preview and command submission',
 });
 
 test('schema-3 Recruitment renders the reviewed Pokémon roster without legacy Mon',()=>{const html=new V3RecruitmentView().render(state(),publicV3Catalog,{art:id=>`<img src="/pokemon-sprites/${id}.gif">`});assert.equal((html.match(/class="recruit-card permanent"/g)||[]).length,6);assert.match(html,/Venusaur/);assert.match(html,/Blastoise/);assert.match(html,/pokemon-sprites\/venusaur\.gif/);assert.doesNotMatch(html,/Emberlyn|Loading Recruitment/);});
+
+test('schema-3 overview pages use the promoted roster and keep legacy gyms disabled',()=>{const view=new V3OverviewView(),current=state(),art=id=>`<img src="/pokemon-sprites/${id}.gif">`;for(const html of [view.renderHome(current,publicV3Catalog,{art}),view.renderArchive(current,publicV3Catalog,{art}),view.renderGym(current,publicV3Catalog,{art}),view.renderGuide(publicV3Catalog)])assert.doesNotMatch(html,/Emberlyn|Tideray|Mossprout|Voltkit/);assert.equal((view.renderArchive(current,publicV3Catalog,{art}).match(/class="box-card permanent v3-box-card"/g)||[]).length,6);assert.match(view.renderHome(current,publicV3Catalog,{art}),/Single Battle[\s\S]*Double Battle/);assert.equal((view.renderGym(current,publicV3Catalog,{art}).match(/Not available in beta/g)||[]).length,6);});

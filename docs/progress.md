@@ -10,10 +10,10 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move, 4 Ability và 6 item có evidence Single/Double; đội beta 6 Pokémon đã qua legality/coverage gate | Mở rộng mechanics theo batch sau khi beta loop chạy; 765/862 entry vẫn fail-closed |
-| R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Training/Team, Preview/AI/Battle schema 3 đã chạy end-to-end; browser QA hoàn tất Single/Double và restart | Mở rộng Archive/Inspector sang schema 3 sau beta feedback; tiếp tục R5 theo slice |
+| R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector sau beta feedback; tiếp tục R5 theo slice |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
-| R7 Sprite/Move FX | NOT STARTED | Có animation queue cũ và audit kiến trúc Showdown | Cache sprite local, audit Mega aliases, làm FX primitives/profiles/overrides theo battle events |
+| R7 Sprite/Move FX | FOUNDATION STARTED | Sáu front idle GIF đã cache local; battle dùng animation queue code-based và đã có audit Showdown | Audit Mega aliases, mở rộng FX primitives/profiles/overrides theo battle events |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
@@ -533,3 +533,11 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Art: Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye và Feraligatr có animated idle GIF lưu local trong `public/pokemon-sprites`; Recruitment và Battle Preview/Arena không còn dùng SVG Mon cũ.
 - Boundary: màn hình ghi rõ rotation, trial và permanent recruitment sẽ được mở trong R5 thay vì giả lập action chưa có schema-3 domain.
 - Validation: UI test xác nhận 6 card, không có tên Mon cũ/Loading; browser xác nhận 6 ảnh `complete`, natural dimensions hợp lệ, Team Preview có 12 sprite instance từ đúng 6 local URL và 0 console warning/error.
+### R4-06 — Đồng bộ các màn beta với Pokémon schema 3
+
+- Home, Pokémon Archive, Gym và Field Guide đã chuyển sang `V3OverviewView`, dùng cùng catalog và build/team schema 3 với Training, Recruitment và Battle.
+- Home và Archive hiển thị sáu Pokémon beta cùng idle sprite local; footer cũng báo đúng `6 / 6 BETA POKÉMON · SCHEMA 3`.
+- Gym v1/v2 được chặn trong save schema 3. Màn Gym hiện ghi rõ trạng thái roadmap và vô hiệu hóa thử thách cho tới khi luồng Roster Ranch/Gym mới được triển khai, tránh trộn luật battle cũ vào beta.
+- Browser QA trên `localhost:3100`: Home, Archive, Recruitment đều tải sáu sprite; Gym có sáu nút bị khóa; bốn màn không còn Emberlyn, Tideray, Mossprout hoặc Voltkit.
+- Logic UI có test chống hồi quy cho roster sáu Pokémon, Single/Double entry point và Gym legacy bị khóa.
+- Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `256/256` đều đạt.
