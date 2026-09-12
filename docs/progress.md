@@ -568,3 +568,4 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Replaced the processed Pokémon Database JPEG copies with native transparent official-artwork PNGs from `PokeAPI/sprites`.
 - Pinned the six downloads to repository commit `2ecb4eeacd5a1718621fc30f12772e3f60d830b9` and mapped filenames by National Dex ID.
 - Every asset is now an unmodified 475 × 475 RGBA PNG. The total artwork payload dropped from about 3.0 MB to under 1.0 MB.
+- Normalized the perceived size of each static artwork with a small presentation-only CSS scale derived from its non-transparent pixel area. Source PNGs remain unchanged, and battle sprites are not affected.

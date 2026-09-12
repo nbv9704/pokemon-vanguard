@@ -25,7 +25,8 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const art=id=>'<div class="art">'+creature(id)+'</div>';
 const pokemonBattleArt=(id,view='front')=>`<div class="art pokemon-art ${view==='back'?'back-view':'front-view'}"><img src="/pokemon-sprites/${view==='back'?'back/':''}${encodeURIComponent(id)}.gif" alt="${esc(id)} ${view} idle sprite"></div>`;
-const pokemonArtwork=id=>`<div class="art pokemon-art pokemon-key-art"><img src="/pokemon-artwork/${encodeURIComponent(id)}.png" alt="${esc(id)} official artwork"></div>`;
+const artworkScale={venusaur:1.03,blastoise:.95,beedrill:1,chesnaught:1,decidueye:1.095,feraligatr:.97};
+const pokemonArtwork=id=>`<div class="art pokemon-art pokemon-key-art" style="--art-scale:${artworkScale[id]||1}"><img src="/pokemon-artwork/${encodeURIComponent(id)}.png" alt="${esc(id)} official artwork"></div>`;
 const btn=(label,action,cls="",disabled=false)=>'<button class="'+cls+'" data-action="'+action+'" '+(disabled?"disabled":"")+'>'+label+'</button>';
 const navs=NAV_ITEMS;
 function notify(t){$("#toast").textContent=t;$("#toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").classList.remove("show"),4200);}
