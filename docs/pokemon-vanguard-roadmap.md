@@ -248,6 +248,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Hiển thị một/song hệ rõ ràng; Mega form không được chọn như base build nếu flow yêu cầu stone + transform.
 - Damage Inspector gọi cùng pure calculator/handlers của battle và ghi catalog/rules version.
 
+**Tiến độ:** pure schema-3 domain đã tạo sáu owned Mon/default builds/đội beta từ catalog. Build validator khóa exact 66/32, nature, bốn learnset moves, Ability và enabled item; team validator khóa sáu slot cùng Species/Item Clause. Save/server actions và UI binding là bước kế tiếp.
+
 ### R4.3 Team/Preview/AI
 
 - Regulation định nghĩa roster size, pick count, Species Clause, Item Clause, level, format và Mega count.

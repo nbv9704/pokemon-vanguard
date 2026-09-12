@@ -10,7 +10,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move, 4 Ability và 6 item có evidence Single/Double; đội beta 6 Pokémon đã qua legality/coverage gate | Mở rộng mechanics theo batch sau khi beta loop chạy; 765/862 entry vẫn fail-closed |
-| R4 Training/Team UI | IN PROGRESS | Beta catalog schema 3 đã promote bằng hash; `/api/v3/catalog` chỉ trả 6 species/15 move/3 Ability/6 item đã duyệt | Build/team validator schema 3, migration roster/build/team, nối Archive/Training/Team/Preview/AI |
+| R4 Training/Team UI | IN PROGRESS | Beta catalog schema 3 đã promote; build/team state và validator thuần đã có 66/32, learnset, Ability/item, Species/Item Clause | Nối action vào save/server, migration schema 3, Archive/Training/Team/Preview/AI |
 | R5 Roster Ranch | NOT STARTED | Ledger, receipt, clock và Trial reference của M4 tái sử dụng được | Dùng banner snapshot; xác minh luật lineup/coupon; thay prototype 8 offer |
 | R6 Mega Evolution | NOT STARTED | R2 đã có vị trí Mega trong turn lifecycle | Xác minh legality/state transition, implement form swap và coverage Single/Double |
 | R7 Sprite/Move FX | NOT STARTED | Có animation queue cũ và audit kiến trúc Showdown | Cache sprite local, audit Mega aliases, làm FX primitives/profiles/overrides theo battle events |
@@ -493,3 +493,13 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Service: `/api/v3/catalog` là read-only, `no-store`; response public bỏ mechanic manifests, còn server catalog giữ lookup maps và content đã pin hash.
 - Validation: `npm run check`, candidate/beta validation, promote dry-run và `npm test` đạt 236/236.
 - Remaining trước beta: schema-3 build/team/migration, battle factory/engine integration, Single/Double simulation và browser QA.
+
+## R4-02 — Schema-3 Training/Team domain
+
+- Status: DONE cho pure domain; server/save/UI wiring là ticket kế tiếp.
+- State: tạo sáu Mon beta owned, sáu default builds và `Beta Squad` sáu thành viên từ promoted catalog. Mọi build giữ `catalogVersion`, revision và stable ID.
+- Build validator: yêu cầu nature hợp lệ, đúng 66 Stat Points/cap 32, bốn move khác nhau thuộc learnset và enabled, Ability thuộc species và item enabled.
+- Team validator: đúng sáu build, reference tồn tại, Species Clause và Item Clause; item `none` được phép lặp nếu được thêm ở slice tương lai.
+- Actions: `buildV3.save` và `teamV3.save` dùng optimistic revision, trả lỗi machine-readable và không mutate input; beta editing không gắn phí economy trong domain này.
+- Projection: Training view clone dữ liệu và trả một/song hệ từ catalog để UI không tự suy luận.
+- Validation: targeted tests đạt 5/5; `npm run check` và full suite đạt 241/241.
