@@ -24,10 +24,10 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | Chặng | Trạng thái | Bằng chứng hiện tại |
 | --- | --- | --- |
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
-| R1 M-A Data | CODE DONE, REVIEW PENDING | `pv-ma-2026-09-11`: 213 species/forms, 516 moves, 180 Abilities, 166 items, 5 banners, 0 unresolved |
+| R1 M-A Data | BETA SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-11`: scoped hash-bound approval cho 6 species/15 moves/3 Abilities/6 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
 | R3 Mechanics Coverage | IN PROGRESS / BETA SLICE LOCKED | 87 move + 4 Ability + 6 item; 97/862 entry supported mỗi format; đội beta 6 Pokémon qua automated gate |
-| R4 | NEXT — BETA LOOP | Tích hợp đúng `beta-slice-v1` vào catalog/training/team/battle schema 3 trước khi mở rộng content |
+| R4 | IN PROGRESS — BETA LOOP | Catalog schema 3 đã promote và có read-only API; build/team/migration/battle integration còn lại |
 | R5–R7 | NOT STARTED | Chỉ có module schema 2 và prototype cũ có thể tái sử dụng |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
@@ -128,11 +128,15 @@ Có thể làm prototype của chặng sau để kiểm kiến trúc, nhưng kh�
 - Phân loại 516 moves theo capability để lên batch R3; không review tuần tự theo alphabet.
 - Ghi rõ 5 banner nào thuộc M-A, special hay future; active interval phải có timezone.
 
+**Tiến độ beta:** scoped review cho `beta-slice-v1` đã pass và khóa SHA-256 của pokemon/moves/abilities/items snapshot. Sáu species detail URL, 15 learnset relations, ba Ability được dùng, sáu item và M-A Item Clause đã được đối chiếu. Approval này không mở khóa 856 entry ngoài slice.
+
 ### R1.3 Promote command — làm cùng R4
 
 - `content:promote -- <snapshot-id>` phải validate lại, in semantic diff, yêu cầu exact ID và tạo atomic active pointer.
 - Refuse snapshot chưa review, hash khác, unresolved khác 0, parser version không hỗ trợ hoặc thiếu coverage artifact.
 - Có rollback về previous active snapshot; battle đã lock vẫn dùng snapshot cũ.
+
+**Tiến độ beta:** `content:promote` đã có dry-run mặc định, exact snapshot check, review/hash/coverage gate và atomic active pointer. Catalog active `pv-ma-2026-09-11-beta-slice-v1` pin rules/catalog/snapshot versions; rollback UI và multi-version battle retention sẽ hoàn thiện cùng migration/battle factory.
 
 **Gate:** cùng raw fixture sinh normalized JSON byte-identical; review report được ký nhận; promote dry-run cho diff dễ đọc và không chạm `.local-data`.
 
@@ -235,6 +239,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Tạo read-only versioned catalog service dùng chung cho Archive, Training, Inspector, Team Builder, Preview, AI và battle factory.
 - Không để UI import JSON trực tiếp hoặc tự tính legality.
 - Response trả stable ID, display fields, support status và lỗi regulation có mã.
+
+**Tiến độ:** DONE cho beta catalog. `/api/v3/catalog` đọc active pointer, xác minh SHA-256 trước khi load và chỉ expose nội dung đã promote; mechanic manifests chỉ tồn tại trong server catalog. Archive/Training/Team/Preview sẽ chuyển sang service này ở các ticket tiếp theo.
 
 ### R4.2 Build validator
 

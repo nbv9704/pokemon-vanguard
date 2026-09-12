@@ -6,6 +6,7 @@ import { WebSocketServer, WebSocket } from 'ws';
 import { meta, setup, validateAction, applyAction, viewFor } from './src/logic.js';
 import { JsonAdventureStorage } from './server/storage-json.mjs';
 import { publicV2Catalog, v2Catalog } from './server/v2-catalog.mjs';
+import {publicV3Catalog} from './server/v3-catalog.mjs';
 import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
 import { applyV2BattleAction, v2BattleView } from './server/v2-battle-actions.mjs';
 import { applyV2EconomyAction, isV2EconomyAction } from './server/v2-economy.mjs';
@@ -35,6 +36,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
       if (pathname === '/api/v2/catalog') {
         res.writeHead(200, { 'Content-Type':'application/json; charset=utf-8', 'Cache-Control':'no-store', 'X-Content-Type-Options':'nosniff' });
         return res.end(req.method === 'HEAD' ? undefined : JSON.stringify(publicV2Catalog));
+      }
+      if(pathname==='/api/v3/catalog'){
+        res.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+        return res.end(req.method==='HEAD'?undefined:JSON.stringify(publicV3Catalog));
       }
       const file = path.resolve(publicDir, '.' + (pathname === '/' ? '/index.html' : pathname));
       if (!file.startsWith(publicDir + path.sep)) { res.writeHead(403); return res.end(); }

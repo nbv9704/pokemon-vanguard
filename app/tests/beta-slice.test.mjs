@@ -13,7 +13,7 @@ const coverage=buildMechanicsCoverage(catalog,manifests,HANDLER_DEFINITIONS.map(
 const validate=value=>validateBetaSlice(value,catalog,coverage);
 
 test('beta-slice-v1:single locks a legal six-member M-A team to supported content',()=>{
- const result=validate(slice);assert.equal(result.ok,true,result.problems.join('\n'));assert.equal(result.summary.members,6);assert.deepEqual(result.summary.types,['bug','fighting','ghost','grass','poison','water']);assert.equal(result.summary.abilityIds.length,3);assert.equal(result.summary.itemIds.length,6);
+ const result=validate(slice);assert.equal(result.ok,true,result.problems.join('\n'));assert.equal(result.summary.members,6);assert.deepEqual(result.summary.types,['bug','fighting','ghost','grass','poison','water']);assert.equal(result.summary.abilityIds.length,3);assert.equal(result.summary.itemIds.length,6);assert.ok(slice.team.every(member=>Object.values(member.statPoints).reduce((sum,value)=>sum+value,0)===66));
 });
 
 test('beta-slice-v1:double requires every selected capability in both formats',()=>{

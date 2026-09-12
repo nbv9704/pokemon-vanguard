@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "sliceId": "beta-slice-v1",
+  "snapshotId": "pv-ma-2026-09-11",
+  "regulationSet": "m-a",
+  "status": "approved-for-beta",
+  "reviewedAt": "2026-09-12T11:34:36.684Z",
+  "reviewer": "Codex scoped source audit",
+  "sourceHashes": {
+    "pokemon": "1f082be61342ae0a9228c18c0ed8899072bfdef15b2eaad55877564b8b6f20ec",
+    "moves": "047d8b55092ed52d2e06b0c2931a122eba19dc038fa6c2997ad4143b2b7d6d5b",
+    "abilities": "fba167ab90bdce5184e11d51cb6e2ee5aefbb4a26307e46e6e2771456ddd765a",
+    "items": "cfda3b6dd84ee99a63d19832a20437e4c8e67470d4ee94d0181459728ac7e0a3"
+  },
+  "sources": {
+    "officialRegulation": "https://champions-news.pokemon-home.com/en/page/751.html",
+    "pokemonList": "https://pokebase.app/pokemon-champions/pokemon",
+    "moves": "https://pokebase.app/pokemon-champions/moves",
+    "abilities": "https://pokebase.app/pokemon-champions/abilities",
+    "items": "https://pokebase.app/pokemon-champions/items"
+  },
+  "speciesDetailUrls": [
+    "https://pokebase.app/pokemon-champions/pokemon/venusaur",
+    "https://pokebase.app/pokemon-champions/pokemon/blastoise",
+    "https://pokebase.app/pokemon-champions/pokemon/beedrill",
+    "https://pokebase.app/pokemon-champions/pokemon/chesnaught",
+    "https://pokebase.app/pokemon-champions/pokemon/decidueye",
+    "https://pokebase.app/pokemon-champions/pokemon/feraligatr"
+  ],
+  "checks": {
+    "speciesFormsTypesStats": "pass",
+    "learnsetRelations": "pass",
+    "abilityRelations": "pass",
+    "itemAvailability": "pass",
+    "singleDoubleCoverage": "pass",
+    "speciesClause": "pass",
+    "itemClause": "pass"
+  },
+  "notes": [
+    "Review is scoped to Beta Slice v1 and does not approve the remaining M-A candidate entries.",
+    "Mega forms and Mega Stones remain outside this beta slice.",
+    "Official Regulation M-A confirms duplicate held items are not allowed."
+  ]
+}

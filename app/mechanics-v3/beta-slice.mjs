@@ -1,3 +1,5 @@
+import {NATURES,validateStatPoints} from '../rules-v3/stats.mjs';
+
 const byId=list=>new Map((list||[]).map(entry=>[entry.id,entry]));
 
 export function validateBetaSlice(slice,catalog,coverage){
@@ -16,6 +18,9 @@ export function validateBetaSlice(slice,catalog,coverage){
   if(seenSpecies.has(mon.id))problems.push(`duplicate species ${mon.id}`);seenSpecies.add(mon.id);
   if(!mon.regulationSets?.includes(slice.regulationSet))problems.push(`${mon.id} is not in M-A`);
   if(!Array.isArray(member.moveIds)||member.moveIds.length!==4||new Set(member.moveIds).size!==4)problems.push(`${mon.id} requires four distinct moves`);
+  const pointProblems=validateStatPoints(member.statPoints);if(pointProblems.length)problems.push(...pointProblems.map(problem=>`${mon.id} ${problem}`));
+  else if(Object.values(member.statPoints).reduce((sum,value)=>sum+value,0)!==66)problems.push(`${mon.id} requires exactly 66 stat points`);
+  if(!NATURES[member.natureId])problems.push(`${mon.id} has unknown nature ${member.natureId}`);
   for(const moveId of member.moveIds||[]){if(!moves.has(moveId)||!mon.moveIds.includes(moveId))problems.push(`${mon.id} cannot use ${moveId}`);else requireCoverage(coverageByKey,'move',moveId,formats,problems);}
   if(!abilities.has(member.abilityId)||!mon.abilityIds.includes(member.abilityId))problems.push(`${mon.id} cannot use ability ${member.abilityId}`);else requireCoverage(coverageByKey,'ability',member.abilityId,formats,problems);
   const item=items.get(member.itemId);if(!item)problems.push(`unknown item ${member.itemId}`);else if(item.availableInChampions!==true)problems.push(`item ${member.itemId} is unavailable in Champions`);else requireCoverage(coverageByKey,'item',member.itemId,formats,problems);

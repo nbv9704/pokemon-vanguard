@@ -5,11 +5,11 @@
   "regulationSet": "m-a",
   "formats": ["single", "double"],
   "team": [
-    {"speciesId":"venusaur","abilityId":"overgrow","itemId":"miracle-seed","moveIds":["bullet-seed","giga-drain","leech-seed","protect"]},
-    {"speciesId":"blastoise","abilityId":"torrent","itemId":"mystic-water","moveIds":["flip-turn","water-spout","gyro-ball","protect"]},
-    {"speciesId":"beedrill","abilityId":"swarm","itemId":"silver-powder","moveIds":["u-turn","dual-wingbeat","giga-drain","protect"]},
-    {"speciesId":"chesnaught","abilityId":"overgrow","itemId":"muscle-band","moveIds":["bullet-seed","drain-punch","leech-seed","spiky-shield"]},
-    {"speciesId":"decidueye","abilityId":"overgrow","itemId":"wise-glasses","moveIds":["bullet-seed","brave-bird","hex","u-turn"]},
-    {"speciesId":"feraligatr","abilityId":"torrent","itemId":"dragon-fang","moveIds":["flip-turn","dragon-tail","scale-shot","protect"]}
+    {"speciesId":"venusaur","abilityId":"overgrow","itemId":"miracle-seed","moveIds":["bullet-seed","giga-drain","leech-seed","protect"],"natureId":"modest","statPoints":{"hp":2,"atk":0,"def":0,"spa":32,"spd":0,"spe":32}},
+    {"speciesId":"blastoise","abilityId":"torrent","itemId":"mystic-water","moveIds":["flip-turn","water-spout","gyro-ball","protect"],"natureId":"modest","statPoints":{"hp":2,"atk":0,"def":0,"spa":32,"spd":0,"spe":32}},
+    {"speciesId":"beedrill","abilityId":"swarm","itemId":"silver-powder","moveIds":["u-turn","dual-wingbeat","giga-drain","protect"],"natureId":"jolly","statPoints":{"hp":2,"atk":32,"def":0,"spa":0,"spd":0,"spe":32}},
+    {"speciesId":"chesnaught","abilityId":"overgrow","itemId":"muscle-band","moveIds":["bullet-seed","drain-punch","leech-seed","spiky-shield"],"natureId":"adamant","statPoints":{"hp":32,"atk":32,"def":2,"spa":0,"spd":0,"spe":0}},
+    {"speciesId":"decidueye","abilityId":"overgrow","itemId":"wise-glasses","moveIds":["bullet-seed","brave-bird","hex","u-turn"],"natureId":"jolly","statPoints":{"hp":2,"atk":32,"def":0,"spa":0,"spd":0,"spe":32}},
+    {"speciesId":"feraligatr","abilityId":"torrent","itemId":"dragon-fang","moveIds":["flip-turn","dragon-tail","scale-shot","protect"],"natureId":"jolly","statPoints":{"hp":2,"atk":32,"def":0,"spa":0,"spd":0,"spe":32}}
   ]
 }
