@@ -549,3 +549,10 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Battle Log chuyển từ mã event thô sang câu có Pokémon, move, Speed, PP, damage/HP%, effectiveness, status, switch, faint và end-turn; history của các turn trước được giữ lại.
 - Browser QA Double turn 1: Feraligatr Speed 143 → Decidueye 134 → Venusaur 132 bị hủy do faint → Blastoise 130. HP giữ 100% tại 0 ms và 500 ms, chỉ đổi sau impact; UI hiển thị `ACTION 1/4`, không tính end-turn thành action thứ năm.
 - Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `257/257` đều đạt.
+## R7-01 — Battle perspective sprites và arena staging
+
+- Sáu front idle GIF tiếp tục dùng cho đối thủ trong battle; đã cache thêm sáu back idle GIF local cho phe người chơi dưới `public/pokemon-sprites/back`.
+- `V3BattleScreen` yêu cầu perspective rõ ràng từ art helper: `front` cho opponent và `back` cho player. UI regression test khóa đúng hai front + hai back trong Double.
+- Arena schema 3 có stylesheet riêng: enemy ở xa phía trên/phải, player ở gần phía dưới/trái, mỗi fighter có platform và HUD tách khỏi sprite. Single và Double có layout riêng cùng responsive rules.
+- Browser QA xác nhận Single hiển thị Feraligatr front đối diện Venusaur back; Double hiển thị hai front sprite ở hàng xa và hai back sprite ở hàng gần, đúng góc nhìn game Pokémon tham khảo.
+- Artwork ngoài battle chưa đổi; front GIF hiện tại chỉ là placeholder cho tới khi có nguồn key art/menu artwork riêng.

@@ -431,3 +431,8 @@ Tài liệu tham chiếu trong repo:
 - Schema-3 UI replays the authoritative event order rather than applying the final turn snapshot immediately.
 - A move's cast/skill FX completes before its damage and secondary events update the visible target; the next queued actor starts only after the impact frame.
 - Battle Log records readable full-history entries with effective Speed and preserves cancelled actions in their correct queue position.
+#### R7 battle perspective foundation (completed)
+
+- Local battle assets now include paired front/back idle GIFs for the six-Pokémon beta slice.
+- Player fighters render with back sprites in the near field; opponents render with front sprites in the far field for both Single and Double.
+- Non-battle artwork remains a separate asset track and will be replaced when an approved source set is available.

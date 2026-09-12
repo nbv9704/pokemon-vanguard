@@ -24,7 +24,7 @@ const settings=browserStore.settings;
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const art=id=>'<div class="art">'+creature(id)+'</div>';
-const pokemonArt=id=>`<div class="art pokemon-art"><img src="/pokemon-sprites/${encodeURIComponent(id)}.gif" alt="${esc(id)} idle sprite"></div>`;
+const pokemonArt=(id,view='front')=>`<div class="art pokemon-art ${view==='back'?'back-view':'front-view'}"><img src="/pokemon-sprites/${view==='back'?'back/':''}${encodeURIComponent(id)}.gif" alt="${esc(id)} ${view} idle sprite"></div>`;
 const btn=(label,action,cls="",disabled=false)=>'<button class="'+cls+'" data-action="'+action+'" '+(disabled?"disabled":"")+'>'+label+'</button>';
 const navs=NAV_ITEMS;
 function notify(t){$("#toast").textContent=t;$("#toast").classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>$("#toast").classList.remove("show"),4200);}
