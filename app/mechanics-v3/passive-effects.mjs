@@ -4,7 +4,7 @@ export function compilePassiveEffects({abilityId=null,itemId=null,manifests}){
  const effects=[];for(const [sourceKind,sourceId] of [['ability',abilityId],['item',itemId]]){
   if(!sourceId||sourceId==='none')continue;const manifest=manifests?.[sourceKind==='ability'?'abilities':'items']?.[sourceId];
   if(!manifest)throw new Error(`unsupported ${sourceKind}: ${sourceId}`);
-  for(const handler of manifest.handlers||[])if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-speed','weather-duration','weather-heal'].includes(handler.id))effects.push({sourceKind,sourceId,kind:handler.id,order:handler.order,...handler.params});
+  for(const handler of manifest.handlers||[])if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-speed','weather-duration','weather-heal','screen-duration'].includes(handler.id))effects.push({sourceKind,sourceId,kind:handler.id,order:handler.order,...handler.params});
  }
  return effects.sort((a,b)=>a.order-b.order||a.sourceKind.localeCompare(b.sourceKind)||a.sourceId.localeCompare(b.sourceId));
 }

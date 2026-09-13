@@ -1,4 +1,4 @@
-export {CONTENT_KINDS,BATTLE_FORMATS,BATTLE_STAGES,MAJOR_STATUS_IDS,VOLATILE_STATUS_IDS,VARIABLE_POWER_FORMULAS,WEATHER_IDS,HOOKS,validateMechanicManifest} from './manifest-contract.mjs';
+export {CONTENT_KINDS,BATTLE_FORMATS,BATTLE_STAGES,MAJOR_STATUS_IDS,VOLATILE_STATUS_IDS,VARIABLE_POWER_FORMULAS,WEATHER_IDS,SIDE_CONDITION_IDS,HOOKS,validateMechanicManifest} from './manifest-contract.mjs';
 export {createHookRegistry,dispatchHook} from './registry.mjs';
 export {validateManifestCatalog,coverageForEntry,buildMechanicsCoverage} from './coverage.mjs';
 export {directDamageHandler} from './handlers/direct-damage.mjs';
@@ -31,6 +31,7 @@ export {applyVolatileStatusHandler} from './handlers/apply-volatile-status.mjs';
 export {MAJOR_STATUSES,applyMajorStatus,majorStatusBlockReason,majorStatusEndTurnGroup,majorStatusTurnOptions,prepareMajorStatusEndTurn,resolveMajorStatusEndTurn,speedWithMajorStatus,tryMajorStatusAction} from './major-status.mjs';
 export {HANDLER_DEFINITIONS} from './handlers/index.mjs';
 export {applyWeather,weatherDamageModifier,weatherHealingGroup,speedWithWeather} from './weather.mjs';
+export {applySideCondition,sideConditionDamageModifiers,speedWithSideConditions} from './side-conditions.mjs';
 export {createMoveActionHandler} from './move-action.mjs';
 export {TEST_EVIDENCE} from './test-evidence.mjs';
 export {buildMoveCapabilityInventory,reviewSignalsForMove} from './capability-inventory.mjs';

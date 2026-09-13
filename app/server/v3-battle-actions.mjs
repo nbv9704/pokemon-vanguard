@@ -1,5 +1,5 @@
 import {activeUnits,applyReplacements,applySwitch,completeEntry,legalTargets,resolveActionQueue,stagedStat,unitById,validateReplacements} from '../rules-v3/index.mjs';
-import {createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS,resolveMechanicsEndTurn,speedWithMajorStatus,speedWithWeather} from '../mechanics-v3/index.mjs';
+import {createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS,resolveMechanicsEndTurn,speedWithMajorStatus,speedWithSideConditions,speedWithWeather} from '../mechanics-v3/index.mjs';
 import {createV3Battle,mechanicCatalog,publicV3Preview} from './v3-battle-factory.mjs';
 import {firstAiReplacements,projectV3BattleForAi,v3BattleSnapshot} from './v3-battle-view.mjs';
 import {validateV3Team} from './v3-progression.mjs';
@@ -8,7 +8,7 @@ import {applyMegaEvolution,megaRelationFor,validateMegaChoice} from './v3-mega.m
 
 const clone=value=>structuredClone(value),other=side=>side==='A'?'B':'A';
 const handlersFor=catalog=>{const manifests=mechanicCatalog(catalog);return {manifests,handlers:{move:createMoveActionHandler({moves:catalog.movesById,manifests:manifests.moves,registry:createHookRegistry(HANDLER_DEFINITIONS)}),switch:(battle,action)=>applySwitch(battle,action.side,action.actorId,action.toId),mega:(battle,action)=>applyMegaEvolution(battle,action,catalog)}};};
-const effectiveSpeed=(battle,unit)=>speedWithWeather(speedWithMajorStatus(stagedStat(unit.stats.spe,unit.stages?.spe||0),unit),unit,battle);
+const effectiveSpeed=(battle,unit)=>speedWithSideConditions(speedWithWeather(speedWithMajorStatus(stagedStat(unit.stats.spe,unit.stages?.spe||0),unit),unit,battle),unit,battle);
 function settleBattle(base){const session=base.battleV3,battle=session?.battle;if(battle?.phase!=='FINISHED'||session.reward)return base;const won=battle.result?.winner==='A',reward=won?{coins:180,crystals:80}:{coins:60,crystals:20},tx=applyEconomyTransaction(base,{receiptId:`${battle.result?.receiptId||battle.id}:reward`,kind:'battleV3.reward',delta:reward,details:{battleId:battle.id,winner:battle.result?.winner,reason:battle.result?.reason}});if(tx.ok)session.reward={...reward,receiptId:tx.entry.receiptId};return base;}
 
 function normalizeCommands(battle,side,input,catalog){

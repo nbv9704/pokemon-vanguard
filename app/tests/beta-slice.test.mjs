@@ -5,8 +5,8 @@ import {buildMechanicsCoverage,HANDLER_DEFINITIONS,TEST_EVIDENCE} from '../mecha
 import {validateBetaSlice} from '../mechanics-v3/beta-slice.mjs';
 
 const json=url=>readFile(new URL(url,import.meta.url),'utf8').then(JSON.parse);
-const [slice,v3slice,species,moves,abilities,items,manifests]=await Promise.all([
- json('../content-src/beta-slice-v1.json'),json('../content-src/beta-slice-v3.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/species.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/moves.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/abilities.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/items.json'),json('../content-src/mechanics-v3-manifests.json')
+const [slice,v4slice,species,moves,abilities,items,manifests]=await Promise.all([
+ json('../content-src/beta-slice-v1.json'),json('../content-src/beta-slice-v4.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/species.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/moves.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/abilities.json'),json('../content-candidates/pv-ma-2026-09-11/normalized/items.json'),json('../content-src/mechanics-v3-manifests.json')
 ]);
 const catalog={species,moves,abilities,items};
 const coverage=buildMechanicsCoverage(catalog,manifests,HANDLER_DEFINITIONS.map(entry=>entry.id),TEST_EVIDENCE);
@@ -36,8 +36,8 @@ test('beta slice pins M-A and rejects unavailable held items',()=>{
  const result=validateBetaSlice(slice,changedCatalog,coverage);assert.equal(result.ok,false);assert.match(result.problems.join('\n'),/item miracle-seed is unavailable in Champions/);
 });
 
-test('beta slice v3 enables reviewed optional content without changing default builds',()=>{
- const result=validate(v3slice);assert.equal(result.ok,true,result.problems.join('\n'));assert.deepEqual(v3slice.enabledContent.moveIds,['sunny-day','rain-dance']);assert.equal(result.summary.moveIds.length,31);assert.equal(result.summary.abilityIds.length,6);assert.equal(result.summary.itemIds.length,13);
- const illegalRelation=structuredClone(v3slice);illegalRelation.enabledContent.abilityIds.push('swift-swim');assert.match(validate(illegalRelation).problems.join('\n'),/enabled ability swift-swim has no beta species relation/);
- const duplicate=structuredClone(v3slice);duplicate.enabledContent.itemIds.push('heat-rock');assert.match(validate(duplicate).problems.join('\n'),/enabledContent.itemIds must contain distinct IDs/);
+test('beta slice v4 enables reviewed optional content without changing default builds',()=>{
+ const result=validate(v4slice);assert.equal(result.ok,true,result.problems.join('\n'));assert.deepEqual(v4slice.enabledContent.moveIds,['sunny-day','rain-dance','tailwind','reflect','light-screen']);assert.equal(result.summary.moveIds.length,34);assert.equal(result.summary.abilityIds.length,6);assert.equal(result.summary.itemIds.length,14);
+ const illegalRelation=structuredClone(v4slice);illegalRelation.enabledContent.abilityIds.push('swift-swim');assert.match(validate(illegalRelation).problems.join('\n'),/enabled ability swift-swim has no beta species relation/);
+ const duplicate=structuredClone(v4slice);duplicate.enabledContent.itemIds.push('light-clay');assert.match(validate(duplicate).problems.join('\n'),/enabledContent.itemIds must contain distinct IDs/);
 });

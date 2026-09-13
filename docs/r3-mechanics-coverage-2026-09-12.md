@@ -4,13 +4,13 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the Sun/Rain battlefield-condition batch is:
+The current coverage after the first persistent side-condition batch is:
 
-- Single: 109 supported, 753 blocked.
-- Double: 109 supported, 753 blocked.
-- Supported moves: 89, now including Sunny Day and Rain Dance.
+- Single: 113 supported, 749 blocked.
+- Double: 113 supported, 749 blocked.
+- Supported moves: 92, now including Sunny Day, Rain Dance, Tailwind, Reflect and Light Screen.
 - Supported Abilities: 7, including Chlorophyll, Swift Swim and Rain Dish.
-- Supported items: 13, including Heat Rock and Damp Rock.
+- Supported items: 14, including Heat Rock, Damp Rock and Light Clay.
 
 Every unsupported entry currently resolves to `missing-manifest`. As implementation expands, more precise reasons such as `missing-handler:<id>`, `missing-test-evidence` and `invalid-manifest:<problem>` prevent incomplete mechanics from entering a legal build.
 
@@ -50,9 +50,11 @@ Conditional callbacks reuse the variable-power pipeline for user/target status, 
 
 `weather.mjs` owns the shared Sun/Rain state and its damage, Speed, duration and healing hooks. Sunny Day and Rain Dance set one global five-turn condition; Heat Rock and Damp Rock extend only their matching weather to eight turns. Sun and Rain modify Fire/Water damage by 1.5×/0.5×, Chlorophyll and Swift Swim double effective Speed in matching weather, and Rain Dish heals 1/16 maximum HP before the weather counter expires. The server recalculates Speed from current battle state before each queued action, while the timeline applies the weather layer only after the move FX impact frame.
 
+`side-conditions.mjs` owns persistent conditions scoped to one side. Tailwind doubles dynamic Speed for four turns. Reflect and Light Screen reduce their matching physical/special damage, use 1/2 in Single and Showdown's 2732/4096 fixed-point modifier in Double, and are bypassed by critical hits. Light Clay extends only the two screens from five to eight turns. Persistent counters share lifecycle cleanup with one-turn guards without being decremented twice.
+
 `beta-slice.mjs` is a fail-closed content gate rather than a second legality engine. It requires exactly six unique M-A species, four distinct learnset moves per member, supported Ability/item/move coverage in both formats and unique held items. `npm run beta:validate` currently locks Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye and Feraligatr: 15 unique moves, three used Abilities and six items. Blaze is supported for the next Fire roster batch but is not silently added to v1.
 
-Beta Slice v3 keeps all 12 default builds unchanged and enables reviewed optional choices through a separate `enabledContent` contract. The promoted catalog exposes 31 moves, 6 Abilities and 13 items: Venusaur can select Sunny Day, Chlorophyll and Heat Rock; Blastoise can select Rain Dance, Rain Dish and Damp Rock. Swift Swim remains mechanics-supported but fail-closed from this beta catalog because none of the 12 reviewed species has that legal relation.
+Beta Slice v4 keeps all 12 default builds unchanged and enables reviewed optional choices through a separate `enabledContent` contract. The promoted catalog exposes 34 moves, 6 Abilities and 14 items. Decidueye/Scizor can select Tailwind; legal members can select Reflect or Light Screen and Light Clay. Swift Swim remains mechanics-supported but fail-closed from this beta catalog because none of the 12 reviewed species has that legal relation.
 
 ## Initial move evidence
 

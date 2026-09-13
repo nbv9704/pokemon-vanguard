@@ -10,7 +10,7 @@ const OVERRIDES={
  'feint':'slash','flip-turn':'rush','giga-drain':'drain','gyro-ball':'rush','hard-press':'impact',
  'hex':'aura','leech-seed':'seed','protect':'barrier','quick-guard':'barrier','scale-shot':'barrage',
  'sing':'notes','spiky-shield':'barrier','stored-power':'beam','taunt':'notes','u-turn':'rush',
- 'rain-dance':'field-burst','sunny-day':'field-burst','water-spout':'field-burst','wild-charge':'rush','will-o-wisp':'orb'
+ 'light-screen':'barrier','rain-dance':'field-burst','reflect':'barrier','sunny-day':'field-burst','tailwind':'field-burst','water-spout':'field-burst','wild-charge':'rush','will-o-wisp':'orb'
 };
 
 const SELF_TARGETS=new Set(['self','userSide','field','foeSide']);

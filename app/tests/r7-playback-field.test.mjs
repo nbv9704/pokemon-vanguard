@@ -26,6 +26,7 @@ test('field adapter renders persistent weather, terrain, room and public side co
 test('condition events update only their declared layer at the impact commit point',()=>{
  const initial={turn:1,field:{},sideConditions:{own:{},opponent:{}},own:[],opponent:[]},events=[{kind:'moveStarted',actorId:'A-0',moveId:'protect'},{kind:'weatherStarted',weather:'rain',remaining:5},{kind:'sideConditionApplied',side:'A',condition:'reflect',remaining:5}],frames=createTurnFrames(initial,events);
  assert.equal(frames[0].snapshot.field.weather,undefined);assert.equal(frames[1].snapshot.field.weather.id,'rain');assert.equal(frames[1].snapshot.sideConditions.own.reflect.remaining,5);assert.match(battleEventText(events[1],initial,publicV3Catalog),/Rain weather began for 5 turns/);
+ assert.match(battleEventText(events[2],initial,publicV3Catalog),/Your side gained Reflect for 5 turns/);
 });
 
 test('battle projection exposes public field state without sharing team internals',()=>{

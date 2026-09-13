@@ -9,19 +9,19 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS / WEATHER BATCH PROMOTED | Baseline có 89 move, 7 Ability, 13 item; active catalog mở 31 move/6 Ability/13 item, R6 thêm Thick Fat và Venusaurite | Mở rộng conditions theo batch; phần chưa hỗ trợ tiếp tục fail-closed |
+| R3 Mechanics Coverage | IN PROGRESS / SIDE CONDITIONS PROMOTED | Baseline có 92 move, 7 Ability, 14 item; active catalog mở 34 move/6 Ability/14 item, R6 thêm Thick Fat và Venusaurite | Mở rộng terrain theo batch; phần chưa hỗ trợ tiếp tục fail-closed |
 | R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 | Mở rộng banner/coupon sau khi có source evidence mới |
 | R6 Mega Evolution | BETA SLICE PASSED | Mega Venusaur + Venusaurite chạy Single/Double; form/stat/type/Ability/sprite, one-per-side, dynamic Speed, persistence và replay event đã nối schema 3 | Mở rộng relation/form theo batch; thêm suppression/on-entry hook khi có Mega cần chúng |
-| R7 Sprite/Move FX | CORE GATE PASSED | 31/31 move có profile/fallback, slot anchors Single/Double, per-target spread outcome, Sun/Rain layers và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
+| R7 Sprite/Move FX | CORE GATE PASSED | 34/34 move có profile/fallback, slot anchors Single/Double, per-target spread outcome, weather/side-condition layers và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **109 supported / 753 blocked** cho từng format, gồm 89 move, 7 Ability và 13 item; đây là trạng thái cố ý fail-closed, không phải 753 mechanic đã hỏng.
+Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **113 supported / 749 blocked** cho từng format, gồm 92 move, 7 Ability và 14 item; đây là trạng thái cố ý fail-closed, không phải 749 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. Schema 3 hiện chạy end-to-end từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch, Mega Venusaur và core gate R7 đã qua browser QA. Beta Slice v3 mở Sun/Rain dưới dạng lựa chọn thêm mà không đổi build mặc định; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. Schema 3 hiện chạy end-to-end từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch, Mega Venusaur và core gate R7 đã qua browser QA. Beta Slice v4 mở Sun/Rain, Tailwind và hai screen dưới dạng lựa chọn thêm mà không đổi build mặc định; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -633,3 +633,16 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Automated gate: mechanics coverage tăng lên 109/862 cho cả Single và Double; FX coverage 31/31. Test unit bao phủ duration, wrong rock, damage modifier, Speed ability, Rain Dish, expiry, replace/reset và immutability; test server xác nhận Heat Rock Sun còn 7 turn sau end-turn và Chlorophyll Speed được nhân đôi ở command kế tiếp.
 - Browser QA trên phòng local riêng: Training hiển thị đúng sáu lựa chọn Sun/Rain. Trong Single Battle, Feraligatr Speed 143 hành động trước Venusaur Speed 132 ở turn đặt nắng; weather layer/chip chỉ xuất hiện sau Sunny Day impact và còn 7T. Turn kế tiếp Chlorophyll đưa Venusaur lên Speed 264, vượt Decidueye 134; Battle Log và chip về 6T sau end-turn. Không có console warning/error.
 - Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `293/293` đều đạt.
+
+## R3-17 / Beta 3-02 — Tailwind, screens và Light Clay
+
+- Scope: condition theo side đầu tiên gồm Tailwind, Reflect và Light Screen. State nằm trong `battle.sides[side].conditions`; move handler chỉ tạo/kiểm tra condition, damage và Speed đọc state ở thời điểm resolve.
+- Tailwind: 4 turn, nhân đôi Speed của side sở hữu. Server tiếp tục xếp lại các action chưa chạy sau mỗi action; test Double hạ Speed gốc của Blastoise xuống 98, sau Tailwind thành 196 và vượt một đối thủ vốn nhanh hơn ở cùng turn.
+- Screens: Reflect chỉ giảm physical, Light Screen chỉ giảm special. Single dùng 0.5×; Double dùng fixed-point 2732/4096; critical hit bỏ qua. Breakdown ghi `sideConditionModifiers` để inspector/replay không phải suy luận từ HP.
+- Light Clay: passive snapshot `screen-duration` kéo Reflect/Light Screen từ 5 lên 8 turn và không tác động Tailwind. Dùng lại item clause hiện có.
+- Lifecycle: persistent condition dùng `remaining`, one-turn guard giữ `endTurnTimer`; một vòng cleanup chọn đúng timer nên không giảm hai lần. Recast khi condition còn hoạt động phát `moveFailed` với reason ổn định sau khi PP đã tiêu.
+- Content/presentation: `beta-slice-v4` giữ nguyên 12 default build và mở 34 moves, 6 Abilities, 14 items trước Mega. Tailwind dùng field burst; Reflect/Light Screen dùng barrier; event/log/chip đều có duration và chỉ commit sau impact.
+- Source audit: Pokémon Showdown commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/moves.ts` và `data/items.ts`; review record nằm ở `app/content-src/beta-slice-v4-review.json`.
+- Coverage tự động: 113/862 entry supported cho mỗi format; move FX 34/34. Unit/integration tests bao phủ wrong category, Single/Double modifier, critical bypass, Light Clay scope, duplicate cast, expiry, immutability và dynamic Speed cùng turn.
+- Browser QA trên room local riêng: catalog tự rebase lên Beta v4; Training cho phép lưu Tailwind, Reflect và Light Clay. Trong Double Battle, Feraligatr Speed 143 đi trước Decidueye Speed 134; Tailwind chỉ xuất hiện ở impact, sau đó Blastoise được tính lại từ Speed 130 lên 260 và vượt Decidueye địch Speed 134 ngay trong cùng turn. Battle Log ghi PP, duration 4 turn, chip còn 3T sau end-turn và browser không có warning/error.
+- Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `299/299` đều đạt.

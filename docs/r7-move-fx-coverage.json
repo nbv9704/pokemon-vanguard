@@ -1,8 +1,8 @@
 {
-  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v3-mega-beta-v1",
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v4-mega-beta-v1",
   "generatedBy": "app/scripts/generate-move-fx-coverage.mjs",
-  "moveCount": 31,
-  "coveredMoveCount": 31,
+  "moveCount": 34,
+  "coveredMoveCount": 34,
   "typePalette": [
     "normal",
     "fire",
@@ -148,6 +148,12 @@
       "type": "grass"
     },
     {
+      "moveId": "light-screen",
+      "id": "barrier",
+      "source": "override",
+      "type": "psychic"
+    },
+    {
       "moveId": "protect",
       "id": "barrier",
       "source": "override",
@@ -164,6 +170,12 @@
       "id": "field-burst",
       "source": "override",
       "type": "water"
+    },
+    {
+      "moveId": "reflect",
+      "id": "barrier",
+      "source": "override",
+      "type": "psychic"
     },
     {
       "moveId": "scale-shot",
@@ -194,6 +206,12 @@
       "id": "field-burst",
       "source": "override",
       "type": "fire"
+    },
+    {
+      "moveId": "tailwind",
+      "id": "field-burst",
+      "source": "override",
+      "type": "flying"
     },
     {
       "moveId": "taunt",

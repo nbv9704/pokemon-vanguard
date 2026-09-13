@@ -55,6 +55,8 @@ export const TEST_EVIDENCE=[
  'r3-passive-damage:double',
  'r3-weather:single',
  'r3-weather:double',
+ 'r3-side-conditions:single',
+ 'r3-side-conditions:double',
  'beta-slice-v1:single',
  'beta-slice-v1:double'
 ];

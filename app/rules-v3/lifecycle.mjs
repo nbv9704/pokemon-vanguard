@@ -87,8 +87,9 @@ export function resolveEndTurn(battle,groups,{initialEvents=[]}={}){
    if(state.endTurnTimer<=0){delete entry.unit.volatiles[volatile];events.push({kind:'volatileEnded',actorId:entry.actorId,volatile,reason:'duration'});}
   }
  }
- for(const side of ['A','B'])for(const [condition,state] of Object.entries(next.sides?.[side]?.conditions||{}))if(Number.isInteger(state?.endTurnTimer)){
-  state.endTurnTimer--;if(state.endTurnTimer<=0){delete next.sides[side].conditions[condition];events.push({kind:'sideConditionEnded',side,condition,reason:'duration'});}
+ for(const side of ['A','B'])for(const [condition,state] of Object.entries(next.sides?.[side]?.conditions||{})){
+  const timer=Number.isInteger(state?.remaining)?'remaining':Number.isInteger(state?.endTurnTimer)?'endTurnTimer':null;
+  if(timer){state[timer]--;if(state[timer]<=0){delete next.sides[side].conditions[condition];events.push({kind:'sideConditionEnded',side,condition,reason:'duration'});}}
  }
  const weather=next.field?.weather;if(weather&&Number.isInteger(weather.remaining)){
   weather.remaining--;if(weather.remaining<=0){delete next.field.weather;events.push({kind:'weatherEnded',weather:weather.id,reason:'duration'});}

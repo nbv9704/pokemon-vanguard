@@ -9,6 +9,7 @@ export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad
 export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
 export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'];
 export const WEATHER_IDS=['sun','rain'];
+export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen'];
 export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
@@ -75,6 +76,14 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='weather-heal'){
    const numerator=entry.params?.numerator,denominator=entry.params?.denominator;
    if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1||numerator>denominator)problems.push('weather-heal requires a valid positive fraction');
+  }
+  if(entry?.id==='apply-side-condition'){
+   if(!SIDE_CONDITION_IDS.includes(entry.params?.condition))problems.push('apply-side-condition requires a supported condition');
+   if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('apply-side-condition turns must be a positive integer');
+  }
+  if(entry?.id==='screen-duration'){
+   if(!Array.isArray(entry.params?.conditions)||!entry.params.conditions.length||entry.params.conditions.some(condition=>!['reflect','light-screen'].includes(condition)))problems.push('screen-duration requires supported screen conditions');
+   if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('screen-duration turns must be a positive integer');
   }
   if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);

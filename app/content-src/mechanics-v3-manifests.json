@@ -390,6 +390,9 @@
     "ally-switch": {"id":"ally-switch","targetMode":"self","priority":2,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-position-swap","hook":"onMove","order":100}],"testEvidence":{"single":["r3-position-swap:single"],"double":["r3-position-swap:double"]}},
     "sunny-day": {"id":"sunny-day","targetMode":"field","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-weather","hook":"onMove","order":100,"params":{"weather":"sun","turns":5}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
     "rain-dance": {"id":"rain-dance","targetMode":"field","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-weather","hook":"onMove","order":100,"params":{"weather":"rain","turns":5}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
+    "tailwind": {"id":"tailwind","targetMode":"userSide","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-condition","hook":"onMove","order":100,"params":{"condition":"tailwind","turns":4}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}},
+    "reflect": {"id":"reflect","targetMode":"userSide","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-condition","hook":"onMove","order":100,"params":{"condition":"reflect","turns":5}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}},
+    "light-screen": {"id":"light-screen","targetMode":"userSide","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-condition","hook":"onMove","order":100,"params":{"condition":"light-screen","turns":5}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}},
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
@@ -428,6 +431,7 @@
     "metal-coat": {"id":"metal-coat","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"steel","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "sharp-beak": {"id":"sharp-beak","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"flying","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "heat-rock": {"id":"heat-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"sun","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "damp-rock": {"id":"damp-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"rain","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}}
+    "damp-rock": {"id":"damp-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"rain","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
+    "light-clay": {"id":"light-clay","handlers":[{"id":"screen-duration","hook":"onMove","order":40,"params":{"conditions":["reflect","light-screen"],"turns":8}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}}
   }
 }

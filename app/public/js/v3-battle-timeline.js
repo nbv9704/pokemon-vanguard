@@ -98,7 +98,7 @@ export function battleEventText(event,snapshot,catalog){
    case 'terrainEnded':return `${label(event.terrain)} terrain disappeared.`;
    case 'trickRoomStarted':return `Trick Room twisted the move order${Number.isInteger(event.remaining)?` for ${event.remaining} turns`:''}.`;
    case 'trickRoomEnded':return 'Trick Room returned to normal.';
-   case 'sideConditionApplied':return `${event.side==='A'?'Your':'The opposing'} side gained ${label(event.condition)}.`;
+   case 'sideConditionApplied':return `${event.side==='A'?'Your':'The opposing'} side gained ${label(event.condition)}${Number.isInteger(event.remaining)?` for ${event.remaining} turns`:''}.`;
    case 'sideConditionEnded':return `${label(event.condition)} ended on ${event.side==='A'?'your':'the opposing'} side.`;
    case 'endTurnStarted':return 'End-of-turn effects resolved.';
    case 'turnEnded':return `Turn ${event.turn} ended.`;
