@@ -355,6 +355,8 @@ Mọi enabled move cần profile hoặc fallback rõ ràng. Sprite Pokémon gi�
 
 **Tiến độ R7-05:** timeline runner đã có scaled/cancellable wait, 1×/2× persisted setting và Skip commit authoritative snapshot. Tab background, resize và navigation dùng cùng cancel path. Battle projection/adapter/CSS đã có persistent layer contract cho weather, terrain, Trick Room và side conditions; start/end event chỉ đổi layer ở impact. Các mechanics tạo condition vẫn phải được enable và test ở R3 trước khi xuất hiện trong trận Beta.
 
+**Tiến độ R7-06:** core presentation gate đã đạt cho Beta 2. Anchor module ánh xạ actor/ally/foe/field theo đúng `activeSlot` ở Single/Double; cast và impact dùng cùng target identity từ event timeline. Spread move render track và outcome riêng cho từng target, kể cả mixed hit/miss/block/immune; drain/recoil không tạo target giả. Chế độ 2× đồng bộ cả wait timer, move primitive, fighter reaction và Mega CSS duration. Visual matrix rộng hơn trên mobile tiếp tục là regression QA khi thêm content, không còn chặn beta core hiện tại.
+
 ## 15. M6 — Private PvP
 
 - Server authoritative cho room create/join, preview, commands, replacements, surrender và result.
@@ -421,7 +423,7 @@ Ticket chỉ DONE khi có:
 2. R4.1 catalog service và promote dry-run đã hoàn tất; mọi batch mới tiếp tục phải xuất đúng slice cùng coverage/provenance.
 3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
 4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
-5. Beta 2 và Mega Venusaur đã qua browser QA. Kế tiếp mở rộng R7 move FX theo nhóm event/type, đồng thời tiếp tục R3 và thêm Mega relation theo capability có tác động lớn.
+5. Beta 2, Mega Venusaur và core R7 đã qua browser QA. Kế tiếp mở rộng R3 theo capability batch có tác động rõ, thêm Mega relation tương ứng và bổ sung FX override cùng lúc với content được promote.
 
 Tài liệu tham chiếu trong repo:
 

@@ -54,6 +54,13 @@ export function groupTurnEvents(events=[]){
  flush();return groups;
 }
 
+export function visualTargetIds(events=[],actorId){
+ const useful=new Set(['damage','moveMissed','moveBlocked','statusApplied','statStageChanged','volatileApplied','protectionApplied','sideProtectionApplied','heal']);
+ const raw=events.filter(event=>useful.has(event.kind)&&event.targetId&&!(event.kind==='damage'&&event.targetId===actorId&&['recoil','protection'].includes(event.source))).map(event=>event.targetId);
+ const nonHeal=events.filter(event=>event.kind!=='heal').some(event=>event.targetId&&raw.includes(event.targetId));
+ return [...new Set(raw.filter(id=>!nonHeal||id!==actorId))];
+}
+
 export function battleEventText(event,snapshot,catalog){
  const actor=nameOf(snapshot,event.actorId),target=nameOf(snapshot,event.targetId),move=event.moveId&&moveName(catalog,event.moveId);
  switch(event.kind){
@@ -101,7 +108,7 @@ export function battleEventText(event,snapshot,catalog){
 }
 
 export function battleLog(events=[],snapshot,catalog){
- let turn=snapshot.turn||1;
+ let turn=events.find(event=>event.kind==='turnStarted'&&event.turn)?.turn||1;
  return events.map(event=>{if(event.kind==='turnStarted'&&event.turn)turn=event.turn;const entry={id:event.id||`${turn}:${event.kind}`,turn,text:battleEventText(event,snapshot,catalog),kind:event.kind};if(event.kind==='turnEnded'&&event.turn)turn=event.turn+1;return entry;});
 }
 
@@ -110,7 +117,7 @@ export function createTurnFrames(initialSnapshot,events,{reduced=false}={}){
  for(const group of groups){
   if(['move','switch','cancelled'].includes(group.kind))action++;
   if(group.kind==='move'){
-   const [started,...effects]=group.events,context={actorId:group.actorId,moveId:group.moveId};visible=[...visible,started];frames.push({snapshot:clone(snapshot),events:[started],visibleEvents:[...visible],stage:'cast',...context,action,total,duration:reduced?0:1050});
+   const [started,...effects]=group.events,context={actorId:group.actorId,moveId:group.moveId,targetIds:visualTargetIds(effects,group.actorId)};visible=[...visible,started];frames.push({snapshot:clone(snapshot),events:[started],visibleEvents:[...visible],stage:'cast',...context,action,total,duration:reduced?0:1050});
    for(const event of effects)snapshot=applyBattleEvent(snapshot,event);visible.push(...effects);frames.push({snapshot:clone(snapshot),events:effects,visibleEvents:[...visible],stage:'impact',...context,action,total,duration:reduced?0:420});
   }else{
    for(const event of group.events)snapshot=applyBattleEvent(snapshot,event);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:reduced?0:group.kind==='mega'?1000:500});

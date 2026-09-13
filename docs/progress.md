@@ -13,7 +13,7 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 | Mở rộng banner/coupon sau khi có source evidence mới |
 | R6 Mega Evolution | BETA SLICE PASSED | Mega Venusaur + Venusaurite chạy Single/Double; form/stat/type/Ability/sprite, one-per-side, dynamic Speed, persistence và replay event đã nối schema 3 | Mở rộng relation/form theo batch; thêm suppression/on-entry hook khi có Mega cần chúng |
-| R7 Sprite/Move FX | FOUNDATION EXPANDED | 12 cặp front/back idle, Mega Venusaur front/back và ordered move/Mega FX timeline đã cache local | Mở rộng FX profiles/overrides theo move events và audit thêm Mega aliases |
+| R7 Sprite/Move FX | CORE GATE PASSED | 29/29 move có profile/fallback, slot anchors Single/Double, per-target spread outcome, field layers và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
@@ -21,7 +21,7 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. Beta 2 hiện chạy end-to-end bằng schema 3 từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch và Mega Venusaur đã qua browser QA. Kế tiếp mở rộng R7 move FX theo event profile, đồng thời thêm các batch R3/Mega form có tác động rõ đến roster; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. Beta 2 hiện chạy end-to-end bằng schema 3 từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch, Mega Venusaur và core gate R7 đã qua browser QA. Kế tiếp mở rộng R3 theo content batch có tác động rõ, bổ sung Mega relation tương ứng rồi thêm FX override cho chính các entry được promote; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -613,3 +613,12 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - CSS condition nằm riêng, có rain/sun/sand/snow, bốn terrain và Trick Room primitives. Reduced motion giữ chip/trạng thái nhưng dừng chuyển động nền.
 - Boundary: đây là presentation contract sẵn sàng cho batch mechanics; catalog Beta 2 hiện chưa enable move tạo weather/terrain nên gameplay chưa tự phát sinh các condition này.
 - Browser QA: đổi 2×, chạy turn, thấy selector bị khóa + Skip; Skip lập tức commit damage/log và trả về Command turn 2. Reload vẫn giữ 2×, field layer tồn tại, không có console error. `npm run check` pass; full suite đạt 282/282.
+
+## R7-06 — Slot anchors và per-target spread outcomes
+
+- `v3-scene-anchors.js` là nguồn tọa độ duy nhất cho actor, ally, foe và field trong Single/Double. Move FX nhận target identity từ authoritative event timeline và tạo đường bay riêng tới đúng `activeSlot` thay vì dịch chuyển mục tiêu theo chỉ số CSS.
+- Cast và impact dùng cùng target list. Drain bỏ heal event của chính người dùng khỏi danh sách mục tiêu; recoil/protection damage cũng không tạo thêm attack track về actor.
+- Mỗi mục tiêu của spread move có outcome riêng: hit, miss, blocked, immune, status hoặc heal. Root dùng `mixed` khi kết quả khác nhau, trong khi từng primitive giữ màu/chuyển động đúng kết quả của target đó.
+- Chế độ 2× giờ rút ngắn cả timer lẫn CSS duration/delay của move, hit/cast reaction và Mega FX, nên hình ảnh không còn bị frame kế tiếp cắt giữa chừng.
+- Battle Log sửa nhãn bốn sự kiện switch mở trận luôn là T1 sau khi trận đã sang turn sau.
+- Automated QA khóa tọa độ Single/Double, Giga Drain một target, recoil exclusion, mixed spread, immunity và 2× class. Browser QA Double xác nhận Water Spout có hai target track tới hai slot khác nhau, giữ `speed-2`, Battle Log theo đúng Speed và không có console warning/error.

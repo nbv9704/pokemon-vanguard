@@ -1,3 +1,5 @@
+import {sceneTracks,sceneTrackStyle} from './v3-scene-anchors.js';
+
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 
 export const V3_FX_TYPES=['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
@@ -27,9 +29,10 @@ export function moveFxProfile(move){
  return {id:move.category==='physical'?'impact':'projectile',source:'category-fallback',type:move.type||'normal'};
 }
 
-function outcomeOf(events){
+export function outcomeOf(events){
  if(events.some(event=>event.kind==='moveMissed'))return 'miss';
  if(events.some(event=>['moveBlocked','protectionApplied','sideProtectionApplied'].includes(event.kind)))return 'blocked';
+ if(events.some(event=>event.kind==='damage'&&event.effectiveness===0))return 'immune';
  if(events.some(event=>event.kind==='heal'))return events.some(event=>event.kind==='damage')?'drain':'heal';
  if(events.some(event=>['statusApplied','statStageChanged','volatileApplied'].includes(event.kind)))return 'status';
  if(events.some(event=>event.kind==='damage'))return 'hit';
@@ -38,16 +41,26 @@ function outcomeOf(events){
 }
 
 function actorSide(actorId){return String(actorId||'').startsWith('B-')?'enemy':'own';}
-function impactCount(events){const targets=new Set(events.filter(event=>event.targetId&&['damage','heal','moveMissed','moveBlocked','statusApplied','statStageChanged','volatileApplied'].includes(event.kind)).map(event=>event.targetId));return Math.max(1,Math.min(4,targets.size));}
+function targetIdsFor(playback,move){
+ if(playback.targetIds?.length)return playback.targetIds;
+ const mode=move?.actionProfile?.targetMode;
+ if(['self','userSide'].includes(mode))return [playback.actorId];
+ if(['field','foeSide'].includes(mode))return ['field'];
+ return [];
+}
+
+function targetOutcome(events,targetId){const targeted=events.filter(event=>event.targetId===targetId);return outcomeOf(targeted.length?targeted:events);}
+function overallOutcome(events,outcomes){if(events.some(event=>event.kind==='heal')&&events.some(event=>event.kind==='damage'))return 'drain';return new Set(outcomes).size>1?'mixed':outcomes[0]||outcomeOf(events);}
 
 export function renderV3BattleFx(playback,catalog){
  if(!playback)return '';
  const mega=playback.events?.find(event=>event.kind==='megaEvolved');
- if(mega)return `<div class="v3-mega-fx from-${actorSide(mega.actorId)}"><i></i><i></i><i></i><strong>MEGA EVOLUTION</strong></div>`;
+ if(mega)return `<div class="v3-mega-fx from-${actorSide(mega.actorId)}${playback.speed===2?' speed-2':''}"><i></i><i></i><i></i><strong>MEGA EVOLUTION</strong></div>`;
  if(!['cast','impact'].includes(playback.stage)||!playback.moveId)return '';
- const move=catalog.moves.find(entry=>entry.id===playback.moveId),profile=moveFxProfile(move),outcome=playback.stage==='cast'?'pending':outcomeOf(playback.events||[]),count=playback.stage==='impact'?impactCount(playback.events||[]):1,primitives=PROFILE_PRIMITIVES[profile.id]||['orb','ring','spark'];
- const marks=Array.from({length:Math.max(primitives.length,count)},(_,index)=>`<i class="fx-${primitives[index%primitives.length]}" style="--fx-index:${index};--target-index:${index%count}"></i>`).join('');
- return `<div class="v3-move-fx from-${actorSide(playback.actorId)} stage-${playback.stage} outcome-${outcome}" data-fx-profile="${profile.id}" data-fx-source="${profile.source}" data-move-type="${profile.type}" data-target-count="${count}">${marks}<strong>${escapeHtml(move?.name||playback.moveId)}</strong><span>${escapeHtml(outcome==='pending'?'Cast':outcome)}</span></div>`;
+ const move=catalog.moves.find(entry=>entry.id===playback.moveId),profile=moveFxProfile(move),events=playback.events||[],tracks=sceneTracks(playback.snapshot||{},playback.actorId,targetIdsFor(playback,move)),primitives=PROFILE_PRIMITIVES[profile.id]||['orb','ring','spark'];
+ const outcomes=tracks.map(track=>playback.stage==='cast'?'pending':targetOutcome(events,track.targetId)),outcome=playback.stage==='cast'?'pending':overallOutcome(events,outcomes);
+ const marks=tracks.flatMap((track,targetIndex)=>primitives.map((primitive,index)=>`<i class="fx-${primitive} fx-outcome-${outcomes[targetIndex]}" data-fx-target="${escapeHtml(track.targetId)}" style="${sceneTrackStyle(track)};--fx-index:${index};--target-index:${targetIndex}"></i>`)).join('');
+ return `<div class="v3-move-fx from-${actorSide(playback.actorId)} stage-${playback.stage} outcome-${outcome}${playback.speed===2?' speed-2':''}" data-fx-profile="${profile.id}" data-fx-source="${profile.source}" data-move-type="${profile.type}" data-target-count="${tracks.length}">${marks}<strong>${escapeHtml(move?.name||playback.moveId)}</strong><span>${escapeHtml(outcome==='pending'?'Cast':outcome)}</span></div>`;
 }
 
 export function v3MoveFxCoverage(moves=[]){return moves.map(move=>({moveId:move.id,...moveFxProfile(move)}));}
