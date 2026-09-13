@@ -41,7 +41,7 @@ function receiveView(next){
   finishPlayback();return;
  }
  if(previous&&router.current==='battle'&&previous.battleV3?.id===next.battleV3?.id&&next.battleV3?.turnSnapshots?.initial&&next.battleV3.events?.some(event=>event.kind==='turnStarted')){
-  V=next;announceNotice(!!previous);closeModal();draw();void v3BattleScreen.playTurn(next.battleV3,{reduced:!!settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches});return;
+  V=next;announceNotice(!!previous);closeModal();draw();void v3BattleScreen.playTurn(next.battleV3,{reduced:!!settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches,speed:settings.battleSpeed===2?2:1});return;
  }
  if(previous&&router.current==="battle"&&previous.battle&&!previous.battle.result&&next.battle?.id===previous.battle.id&&next.battle.round===previous.battle.round+1&&next.battle.eventsRound===previous.battle.round&&next.battle.events?.length){
   void playTurn(previous,next);return;
@@ -80,7 +80,7 @@ const damageInspector=new DamageInspector({fetchImpl:(...args)=>fetch(...args),g
 const recruitmentView=new RecruitmentView({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
 const v3TrainingEditor=new V3TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
 const v3TeamBuilder=new V3TeamBuilder({onChange:redrawWorkspace,sendAction:send});
-const v3BattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
+const v3BattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send,playbackSpeed:settings.battleSpeed===2?2:1,onPlaybackSpeedChange:speed=>{settings.battleSpeed=speed;browserStore.saveSettings();}});
 const v3RecruitmentView=new V3RecruitmentView({sendAction:send,createActionId:kind=>economyActionId(kind.replaceAll('.','-'))});
 const v3OverviewView=new V3OverviewView();
 trainingEditor.load().catch(error=>notify(error.message));
@@ -198,5 +198,5 @@ document.addEventListener("keydown",e=>{if(e.code==="Escape")closeModal();if(e.c
 connection.start();
 
 // Leaving/resizing the scene commits its already-saved outcome and cancels effects.
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&playback)finishPlayback();});
-window.addEventListener('resize',()=>{if(playback)finishPlayback();});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;if(playback)finishPlayback();v3BattleScreen.cancelPlayback();draw();});
+window.addEventListener('resize',()=>{if(playback)finishPlayback();if(v3BattleScreen.playback){v3BattleScreen.cancelPlayback();draw();}});

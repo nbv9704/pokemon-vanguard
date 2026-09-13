@@ -26,6 +26,15 @@ export function applyBattleEvent(snapshot,event){
   const actor=findMon(next,event.actorId),ally=findMon(next,event.allyId);
   if(actor)actor.activeSlot=event.toSlot;if(ally)ally.activeSlot=event.fromSlot;
  }
+ next.field=next.field||{};next.sideConditions=next.sideConditions||{own:{},opponent:{}};
+ if(event.kind==='weatherStarted')next.field.weather={id:event.weather,remaining:event.remaining};
+ if(event.kind==='weatherEnded')next.field.weather=null;
+ if(event.kind==='terrainStarted')next.field.terrain={id:event.terrain,remaining:event.remaining};
+ if(event.kind==='terrainEnded')next.field.terrain=null;
+ if(event.kind==='trickRoomStarted')next.field.trickRoom={remaining:event.remaining};
+ if(event.kind==='trickRoomEnded')next.field.trickRoom=null;
+ if(event.kind==='sideConditionApplied'){const side=event.side==='A'?'own':'opponent';next.sideConditions[side][event.condition]={id:event.condition,remaining:event.remaining};}
+ if(event.kind==='sideConditionEnded'){const side=event.side==='A'?'own':'opponent';delete next.sideConditions[side][event.condition];}
  return next;
 }
 
@@ -76,6 +85,14 @@ export function battleEventText(event,snapshot,catalog){
    case 'positionsSwapped':return `${actor} swapped positions with ${nameOf(snapshot,event.allyId)}.`;
    case 'powerResolved':return `${move} resolved at ${event.power} power.`;
    case 'hitCount':return `${move} hit ${event.hitCount} times.`;
+   case 'weatherStarted':return `${label(event.weather)} weather began${Number.isInteger(event.remaining)?` for ${event.remaining} turns`:''}.`;
+   case 'weatherEnded':return `${label(event.weather)} weather ended.`;
+   case 'terrainStarted':return `${label(event.terrain)} terrain appeared${Number.isInteger(event.remaining)?` for ${event.remaining} turns`:''}.`;
+   case 'terrainEnded':return `${label(event.terrain)} terrain disappeared.`;
+   case 'trickRoomStarted':return `Trick Room twisted the move order${Number.isInteger(event.remaining)?` for ${event.remaining} turns`:''}.`;
+   case 'trickRoomEnded':return 'Trick Room returned to normal.';
+   case 'sideConditionApplied':return `${event.side==='A'?'Your':'The opposing'} side gained ${label(event.condition)}.`;
+   case 'sideConditionEnded':return `${label(event.condition)} ended on ${event.side==='A'?'your':'the opposing'} side.`;
    case 'endTurnStarted':return 'End-of-turn effects resolved.';
    case 'turnEnded':return `Turn ${event.turn} ended.`;
    case 'battleEnded':return event.winner?`${event.winner==='A'?'Your team':'The opposing team'} won the battle.`:'The battle ended in a draw.';

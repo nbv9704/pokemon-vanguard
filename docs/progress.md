@@ -604,3 +604,12 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Presentation: thêm primitive CSS độc lập và palette đủ 18 hệ. Reduced motion giữ tên chiêu, outcome, HP và log nhưng tắt các vật thể chuyển động; runtime không fetch resource bên ngoài.
 - Coverage: `docs/r7-move-fx-coverage.json` được generate và verify trong `npm run check`, khóa 29/29 move cùng profile/source/type. Test riêng bao phủ cast/impact, spread, miss, block, status, heal, failed và reduced motion.
 - Browser QA local: Protect hiển thị barrier cast rồi blocked impact; Brave Bird bị chặn vẫn hiển thị rush + blocked; Giga Drain và Flip Turn đi đúng action order, Battle Log/HP cập nhật sau impact, quay về Command và không có console error. `npm run check` pass; full suite đạt 277/277.
+
+## R7-05 — Playback controls và persistent field presentation
+
+- Playback runner được tách khỏi battle screen, sở hữu scaled wait và cancellable timer. Schema 3 hỗ trợ 1×/2×, lưu lựa chọn vào browser settings, khóa selector khi turn đang chạy và cho phép Skip ngay trong mọi frame.
+- Skip, chuyển trang, ẩn tab hoặc resize đều hủy timer/FX tạm và render authoritative final snapshot đã nhận từ server; không chạy nốt callback cũ và không gửi thêm action.
+- Field adapter nhận public `field` và `sideConditions` từ battle projection. Weather, terrain, Trick Room và condition của mỗi side có layer/chip độc lập; event start/end chỉ cập nhật đúng layer tại impact commit point.
+- CSS condition nằm riêng, có rain/sun/sand/snow, bốn terrain và Trick Room primitives. Reduced motion giữ chip/trạng thái nhưng dừng chuyển động nền.
+- Boundary: đây là presentation contract sẵn sàng cho batch mechanics; catalog Beta 2 hiện chưa enable move tạo weather/terrain nên gameplay chưa tự phát sinh các condition này.
+- Browser QA: đổi 2×, chạy turn, thấy selector bị khóa + Skip; Skip lập tức commit damage/log và trả về Command turn 2. Reload vẫn giữ 2×, field layer tồn tại, không có console error. `npm run check` pass; full suite đạt 282/282.

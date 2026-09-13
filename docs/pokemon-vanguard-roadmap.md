@@ -353,6 +353,8 @@ Mọi enabled move cần profile hoặc fallback rõ ràng. Sprite Pokémon gi�
 
 **Tiến độ R7-04:** 29/29 move Beta 2 đã resolve qua registry profile/fallback và coverage report được verify tự động. Cast/impact dùng cùng move context; impact outcome lấy từ event authoritative cho hit/miss/block/status/heal/failed và spread target tracks. Palette đủ 18 hệ, reduced motion giữ caption/state. Batch còn lại của R7 tập trung persistent condition layers, playback 1×/2×/skip/cancel và matrix visual cho mobile/background tab.
 
+**Tiến độ R7-05:** timeline runner đã có scaled/cancellable wait, 1×/2× persisted setting và Skip commit authoritative snapshot. Tab background, resize và navigation dùng cùng cancel path. Battle projection/adapter/CSS đã có persistent layer contract cho weather, terrain, Trick Room và side conditions; start/end event chỉ đổi layer ở impact. Các mechanics tạo condition vẫn phải được enable và test ở R3 trước khi xuất hiện trong trận Beta.
+
 ## 15. M6 — Private PvP
 
 - Server authoritative cho room create/join, preview, commands, replacements, surrender và result.
