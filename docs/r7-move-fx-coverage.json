@@ -1,8 +1,8 @@
 {
-  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v2-mega-beta-v1",
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v3-mega-beta-v1",
   "generatedBy": "app/scripts/generate-move-fx-coverage.mjs",
-  "moveCount": 29,
-  "coveredMoveCount": 29,
+  "moveCount": 31,
+  "coveredMoveCount": 31,
   "typePalette": [
     "normal",
     "fire",
@@ -160,6 +160,12 @@
       "type": "fighting"
     },
     {
+      "moveId": "rain-dance",
+      "id": "field-burst",
+      "source": "override",
+      "type": "water"
+    },
+    {
       "moveId": "scale-shot",
       "id": "barrage",
       "source": "override",
@@ -182,6 +188,12 @@
       "id": "beam",
       "source": "override",
       "type": "psychic"
+    },
+    {
+      "moveId": "sunny-day",
+      "id": "field-burst",
+      "source": "override",
+      "type": "fire"
     },
     {
       "moveId": "taunt",

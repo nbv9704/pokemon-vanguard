@@ -388,6 +388,8 @@
     "roar": {"id":"roar","targetMode":"anyAdjacent","priority":-6,"contact":false,"bypassesProtect":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"apply-forced-switch","hook":"onMove","order":100}],"testEvidence":{"single":["r3-forced-switch:single"],"double":["r3-forced-switch:double"]}},
     "whirlwind": {"id":"whirlwind","targetMode":"anyAdjacent","priority":-6,"contact":false,"bypassesProtect":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"apply-forced-switch","hook":"onMove","order":100}],"testEvidence":{"single":["r3-forced-switch:single"],"double":["r3-forced-switch:double"]}},
     "ally-switch": {"id":"ally-switch","targetMode":"self","priority":2,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-position-swap","hook":"onMove","order":100}],"testEvidence":{"single":["r3-position-swap:single"],"double":["r3-position-swap:double"]}},
+    "sunny-day": {"id":"sunny-day","targetMode":"field","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-weather","hook":"onMove","order":100,"params":{"weather":"sun","turns":5}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
+    "rain-dance": {"id":"rain-dance","targetMode":"field","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-weather","hook":"onMove","order":100,"params":{"weather":"rain","turns":5}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
@@ -408,7 +410,10 @@
     "overgrow": {"id":"overgrow","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"grass","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "blaze": {"id":"blaze","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"fire","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "torrent": {"id":"torrent","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"water","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "swarm": {"id":"swarm","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"bug","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}}
+    "swarm": {"id":"swarm","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"bug","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "chlorophyll": {"id":"chlorophyll","handlers":[{"id":"weather-speed","hook":"modifySpeed","order":40,"params":{"weather":"sun","multiplier":2}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
+    "swift-swim": {"id":"swift-swim","handlers":[{"id":"weather-speed","hook":"modifySpeed","order":40,"params":{"weather":"rain","multiplier":2}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
+    "rain-dish": {"id":"rain-dish","handlers":[{"id":"weather-heal","hook":"endTurn","order":40,"params":{"weather":"rain","numerator":1,"denominator":16}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}}
   },
   "items": {
     "miracle-seed": {"id":"miracle-seed","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"grass","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
@@ -421,6 +426,8 @@
     "charcoal": {"id":"charcoal","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fire","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "fairy-feather": {"id":"fairy-feather","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fairy","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
     "metal-coat": {"id":"metal-coat","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"steel","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "sharp-beak": {"id":"sharp-beak","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"flying","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}}
+    "sharp-beak": {"id":"sharp-beak","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"flying","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
+    "heat-rock": {"id":"heat-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"sun","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
+    "damp-rock": {"id":"damp-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"rain","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}}
   }
 }

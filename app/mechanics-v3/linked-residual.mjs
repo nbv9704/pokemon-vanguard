@@ -1,6 +1,7 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {applyHpGroup,resolveEndTurn} from '../rules-v3/lifecycle.mjs';
 import {prepareMajorStatusEndTurn} from './major-status-residual.mjs';
+import {weatherHealingGroup} from './weather.mjs';
 
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
@@ -24,5 +25,5 @@ export function applyLinkedResiduals(battle){
 
 export function resolveMechanicsEndTurn(battle,groups=[]){
  const linked=applyLinkedResiduals(battle),major=prepareMajorStatusEndTurn(linked.battle);
- return resolveEndTurn(major.battle,[...groups,major.group],{initialEvents:[{kind:'endTurnStarted',turn:battle.turn},...linked.events]});
+ return resolveEndTurn(major.battle,[...groups,weatherHealingGroup(major.battle),major.group],{initialEvents:[{kind:'endTurnStarted',turn:battle.turn},...linked.events]});
 }

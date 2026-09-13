@@ -7,7 +7,7 @@ import {sceneAnchor,sceneTracks,sceneTrackStyle} from '../public/js/v3-scene-anc
 
 test('every enabled beta move resolves to an explicit visual profile or readable fallback',()=>{
  const coverage=v3MoveFxCoverage(publicV3Catalog.moves);
- assert.equal(coverage.length,29);
+ assert.equal(coverage.length,31);
  assert.ok(coverage.every(entry=>entry.id&&entry.source));
  assert.deepEqual(new Set(coverage.map(entry=>entry.moveId)),new Set(publicV3Catalog.moves.map(move=>move.id)));
  assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='protect')).id,'barrier');

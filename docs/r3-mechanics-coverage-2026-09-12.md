@@ -4,13 +4,13 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after the first beta-slice passive batch is:
+The current coverage after the Sun/Rain battlefield-condition batch is:
 
-- Single: 97 supported, 765 blocked.
-- Double: 97 supported, 765 blocked.
-- Supported moves: 87, ending with the R3.6 pivot/phazing/position batch.
-- Supported Abilities: Overgrow, Blaze, Torrent and Swarm.
-- Supported items: Miracle Seed, Mystic Water, Silver Powder, Dragon Fang, Muscle Band and Wise Glasses.
+- Single: 109 supported, 753 blocked.
+- Double: 109 supported, 753 blocked.
+- Supported moves: 89, now including Sunny Day and Rain Dance.
+- Supported Abilities: 7, including Chlorophyll, Swift Swim and Rain Dish.
+- Supported items: 13, including Heat Rock and Damp Rock.
 
 Every unsupported entry currently resolves to `missing-manifest`. As implementation expands, more precise reasons such as `missing-handler:<id>`, `missing-test-evidence` and `invalid-manifest:<problem>` prevent incomplete mechanics from entering a legal build.
 
@@ -48,7 +48,11 @@ Conditional callbacks reuse the variable-power pipeline for user/target status, 
 
 `passive-effects.mjs` compiles reviewed Ability/item manifests into detached effect snapshots for R4 to attach when a BattleMon is locked. `damage-hit.mjs` queries those snapshots at damage time, composes low-HP/type and held type/category multipliers in manifest order, and records every applied source in the authoritative damage breakdown. The first batch covers Overgrow/Blaze/Torrent/Swarm and six non-consumable damage items without adding move-ID branches.
 
+`weather.mjs` owns the shared Sun/Rain state and its damage, Speed, duration and healing hooks. Sunny Day and Rain Dance set one global five-turn condition; Heat Rock and Damp Rock extend only their matching weather to eight turns. Sun and Rain modify Fire/Water damage by 1.5×/0.5×, Chlorophyll and Swift Swim double effective Speed in matching weather, and Rain Dish heals 1/16 maximum HP before the weather counter expires. The server recalculates Speed from current battle state before each queued action, while the timeline applies the weather layer only after the move FX impact frame.
+
 `beta-slice.mjs` is a fail-closed content gate rather than a second legality engine. It requires exactly six unique M-A species, four distinct learnset moves per member, supported Ability/item/move coverage in both formats and unique held items. `npm run beta:validate` currently locks Venusaur, Blastoise, Beedrill, Chesnaught, Decidueye and Feraligatr: 15 unique moves, three used Abilities and six items. Blaze is supported for the next Fire roster batch but is not silently added to v1.
+
+Beta Slice v3 keeps all 12 default builds unchanged and enables reviewed optional choices through a separate `enabledContent` contract. The promoted catalog exposes 31 moves, 6 Abilities and 13 items: Venusaur can select Sunny Day, Chlorophyll and Heat Rock; Blastoise can select Rain Dance, Rain Dish and Damp Rock. Swift Swim remains mechanics-supported but fail-closed from this beta catalog because none of the 12 reviewed species has that legal relation.
 
 ## Initial move evidence
 

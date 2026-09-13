@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v2",
-  "catalogFile": "catalogs/pv-ma-2026-09-12-beta2-beta-slice-v2/catalog.json",
-  "sha256": "82aad99750a8c8187b4521ac3dfabb1ab314af325ab78afa963740c797100d2c"
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v3",
+  "catalogFile": "catalogs/pv-ma-2026-09-12-beta2-beta-slice-v3/catalog.json",
+  "sha256": "f2cd306c643f3f9273521e9ba76884cc7e99c7aa79a1dc0c8aed1f3b2150ffda"
 }

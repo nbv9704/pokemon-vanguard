@@ -8,7 +8,8 @@ export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
 export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
 export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'];
-export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
+export const WEATHER_IDS=['sun','rain'];
+export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
  const problems=[];
@@ -64,6 +65,17 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='apply-protection'&&entry.params?.blocksStatus!==undefined&&typeof entry.params.blocksStatus!=='boolean')problems.push('apply-protection blocksStatus must be boolean');
   if(entry?.id==='apply-redirection'&&!['follow-me','rage-powder'].includes(entry.params?.kind))problems.push('apply-redirection requires a supported kind');
   if(entry?.id==='apply-forced-switch'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-forced-switch requireDamage must be boolean');
+  if(entry?.id==='apply-weather'){
+   if(!WEATHER_IDS.includes(entry.params?.weather))problems.push('apply-weather requires a supported weather');
+   if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-weather turns must be a positive integer');
+  }
+  if(['weather-speed','weather-duration','weather-heal'].includes(entry?.id)&&!WEATHER_IDS.includes(entry.params?.weather))problems.push(`${entry.id} requires a supported weather`);
+  if(entry?.id==='weather-speed'&&(!Number.isFinite(entry.params?.multiplier)||entry.params.multiplier<=1))problems.push('weather-speed requires multiplier > 1');
+  if(entry?.id==='weather-duration'&&(!Number.isInteger(entry.params?.turns)||entry.params.turns<1))problems.push('weather-duration requires positive turns');
+  if(entry?.id==='weather-heal'){
+   const numerator=entry.params?.numerator,denominator=entry.params?.denominator;
+   if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1||numerator>denominator)problems.push('weather-heal requires a valid positive fraction');
+  }
   if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }

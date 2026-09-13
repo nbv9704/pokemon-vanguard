@@ -26,13 +26,13 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | BETA 2 SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-12-beta2`: scoped hash-bound approval cho 12 species/29 moves/4 Abilities/11 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS / BETA 2 SLICE LOCKED | 87 move + 4 Ability và nhóm item damage boost đã kiểm thử; catalog Beta 2 gồm 29 move/4 Ability/11 item dùng được ở cả hai format |
+| R3 Mechanics Coverage | IN PROGRESS / WEATHER BATCH PROMOTED | 109 entry nền đã kiểm thử ở cả hai format; catalog hiện có 31 move/6 Ability/13 item, gồm Sun/Rain và các hook duration/Speed/heal |
 | R4 | BETA GATE PASSED | Schema 3 chạy Home/Archive/Training/Team/Recruitment status/Guide → Preview → Battle Single/Double; Inspector migration theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 |
-| R6–R7 | R6 BETA SLICE PASSED; R7 FOUNDATION EXPANDED | Mega Venusaur chạy end-to-end với Venusaurite/Thick Fat; 12 cặp front/back idle + Mega sprite và ordered move/Mega FX timeline |
+| R6–R7 | R6 BETA SLICE PASSED; R7 CORE GATE PASSED | Mega Venusaur chạy end-to-end với Venusaurite/Thick Fat; 31/31 move có FX profile, ordered timeline và persistent Sun/Rain layer |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline logic hiện tại có 97/862 entry supported ở cả hai format. Trạng thái 765 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
+Baseline logic hiện tại có 109/862 entry supported ở cả hai format. Trạng thái 753 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -153,7 +153,7 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 ## 10. R3 — Mechanics Coverage
 
-**Trạng thái:** IN PROGRESS / BETA SLICE LOCKED. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants, protection/redirection, switching core và passive damage đã có. Tổng cộng 97 entry hiện supported trong cả hai format: 87 move, 4 Ability và 6 item.
+**Trạng thái:** IN PROGRESS / WEATHER BATCH PROMOTED. Registry, manifest schema, coverage generator, capability inventory, shared accuracy/stages, status lifecycle, damage variants, protection/redirection, switching core, passive damage và Sun/Rain đã có. Tổng cộng 109 entry nền hiện supported trong cả hai format: 89 move, 7 Ability và 13 item.
 
 ### R3.1 Direct/status damage core
 
@@ -208,6 +208,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 - Weather, terrain, rooms, screens, tailwind-like side effects, hazards và delayed effects.
 - Mỗi condition có owner/scope, start event, duration, refresh/replace rule, modifier hooks, end event và cleanup.
 - UI state phải derive từ battle state; animation overlay không giữ timer riêng.
+
+**Tiến độ:** Sun và Rain đã chạy end-to-end. Sunny Day/Rain Dance đặt condition toàn sân 5 turn; Heat Rock/Damp Rock kéo đúng weather lên 8. Damage Fire/Water dùng modifier 1.5×/0.5× trong shared hit pipeline; Chlorophyll/Swift Swim sửa effective Speed ở dynamic queue; Rain Dish hồi 1/16 max HP trong end-turn group trước khi giảm timer. Start/end event, battle log, replay snapshot, field chip/layer và cast → impact timing dùng cùng authoritative state. Terrain, room, screen, Tailwind, hazard và delayed effect tiếp tục là các batch tách biệt.
 
 ### R3.8 Ability hooks
 
@@ -423,7 +425,7 @@ Ticket chỉ DONE khi có:
 2. R4.1 catalog service và promote dry-run đã hoàn tất; mọi batch mới tiếp tục phải xuất đúng slice cùng coverage/provenance.
 3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
 4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
-5. Beta 2, Mega Venusaur và core R7 đã qua browser QA. Kế tiếp mở rộng R3 theo capability batch có tác động rõ, thêm Mega relation tương ứng và bổ sung FX override cùng lúc với content được promote.
+5. Beta 2, Mega Venusaur, core R7 và batch Sun/Rain đã qua gate tự động lẫn browser QA. Kế tiếp mở rộng R3.7 theo một condition batch có tác động rõ, ưu tiên terrain/side-speed trước hazard, và bổ sung FX override cùng lúc với content được promote.
 
 Tài liệu tham chiếu trong repo:
 

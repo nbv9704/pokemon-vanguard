@@ -9,19 +9,19 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS / BETA 2 SLICE LOCKED | Baseline có 87 move, 4 Ability, 6 item; R6 thêm Thick Fat và Venusaurite với evidence Single/Double | Mở rộng mechanics theo batch có tác động rõ; phần chưa hỗ trợ tiếp tục fail-closed |
+| R3 Mechanics Coverage | IN PROGRESS / WEATHER BATCH PROMOTED | Baseline có 89 move, 7 Ability, 13 item; active catalog mở 31 move/6 Ability/13 item, R6 thêm Thick Fat và Venusaurite | Mở rộng conditions theo batch; phần chưa hỗ trợ tiếp tục fail-closed |
 | R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 | Mở rộng banner/coupon sau khi có source evidence mới |
 | R6 Mega Evolution | BETA SLICE PASSED | Mega Venusaur + Venusaurite chạy Single/Double; form/stat/type/Ability/sprite, one-per-side, dynamic Speed, persistence và replay event đã nối schema 3 | Mở rộng relation/form theo batch; thêm suppression/on-entry hook khi có Mega cần chúng |
-| R7 Sprite/Move FX | CORE GATE PASSED | 29/29 move có profile/fallback, slot anchors Single/Double, per-target spread outcome, field layers và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
+| R7 Sprite/Move FX | CORE GATE PASSED | 31/31 move có profile/fallback, slot anchors Single/Double, per-target spread outcome, Sun/Rain layers và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **97 supported / 765 blocked** cho từng format, gồm 87 move, 4 Ability và 6 item; đây là trạng thái cố ý fail-closed, không phải 765 mechanic đã hỏng.
+Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **109 supported / 753 blocked** cho từng format, gồm 89 move, 7 Ability và 13 item; đây là trạng thái cố ý fail-closed, không phải 753 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. Beta 2 hiện chạy end-to-end bằng schema 3 từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch, Mega Venusaur và core gate R7 đã qua browser QA. Kế tiếp mở rộng R3 theo content batch có tác động rõ, bổ sung Mega relation tương ứng rồi thêm FX override cho chính các entry được promote; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. Schema 3 hiện chạy end-to-end từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch, Mega Venusaur và core gate R7 đã qua browser QA. Beta Slice v3 mở Sun/Rain dưới dạng lựa chọn thêm mà không đổi build mặc định; entry ngoài slice tiếp tục fail-closed.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 
@@ -622,3 +622,14 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Chế độ 2× giờ rút ngắn cả timer lẫn CSS duration/delay của move, hit/cast reaction và Mega FX, nên hình ảnh không còn bị frame kế tiếp cắt giữa chừng.
 - Battle Log sửa nhãn bốn sự kiện switch mở trận luôn là T1 sau khi trận đã sang turn sau.
 - Automated QA khóa tọa độ Single/Double, Giga Drain một target, recoil exclusion, mixed spread, immunity và 2× class. Browser QA Double xác nhận Water Spout có hai target track tới hai slot khác nhau, giữ `speed-2`, Battle Log theo đúng Speed và không có console warning/error.
+
+## R3-16 / Beta 3-01 — Sun/Rain battlefield conditions
+
+- Scope: mở một vertical slice condition hoàn chỉnh trước khi làm toàn bộ terrain/room/hazard. Sunny Day và Rain Dance dùng handler `apply-weather`; state duy nhất nằm ở `battle.field.weather` với source, loại weather và số turn còn lại.
+- Rules: weather mặc định 5 turn; Heat Rock chỉ kéo Sun và Damp Rock chỉ kéo Rain lên 8. Sun tăng Fire/giảm Water, Rain tăng Water/giảm Fire theo 1.5×/0.5× trong shared damage pipeline. Chlorophyll và Swift Swim nhân đôi Speed trong weather tương ứng; hàng đợi server tính lại effective Speed từ state hiện tại trước từng action. Rain Dish hồi 1/16 max HP trong end-turn group rồi timer weather mới giảm và phát `weatherEnded`.
+- Content: `beta-slice-v3` thêm `enabledContent`, cho phép promote lựa chọn đã review mà không sửa 12 build mặc định. Active catalog có 31 moves, 6 Abilities và 13 held items trước phần mở rộng Mega. Venusaur nhận Sunny Day/Chlorophyll/Heat Rock; Blastoise nhận Rain Dance/Rain Dish/Damp Rock. Swift Swim đã có mechanics evidence nhưng chưa expose vì 12 species hiện tại không có relation hợp lệ.
+- Presentation: Sunny Day/Rain Dance dùng `field-burst`; `weatherStarted` nằm trong cùng move group nên lớp trời và chip chỉ xuất hiện ở impact commit sau animation. Battle Log ghi loại weather và duration; snapshot/replay giữ condition qua turn, và chip giảm theo state authoritative.
+- Source audit: formula/duration/hook được đối chiếu ở Pokémon Showdown server commit `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, trong `data/conditions.ts` và `data/abilities.ts`. Review record nằm ở `app/content-src/beta-slice-v3-review.json`.
+- Automated gate: mechanics coverage tăng lên 109/862 cho cả Single và Double; FX coverage 31/31. Test unit bao phủ duration, wrong rock, damage modifier, Speed ability, Rain Dish, expiry, replace/reset và immutability; test server xác nhận Heat Rock Sun còn 7 turn sau end-turn và Chlorophyll Speed được nhân đôi ở command kế tiếp.
+- Browser QA trên phòng local riêng: Training hiển thị đúng sáu lựa chọn Sun/Rain. Trong Single Battle, Feraligatr Speed 143 hành động trước Venusaur Speed 132 ở turn đặt nắng; weather layer/chip chỉ xuất hiện sau Sunny Day impact và còn 7T. Turn kế tiếp Chlorophyll đưa Venusaur lên Speed 264, vượt Decidueye 134; Battle Log và chip về 6T sau end-turn. Không có console warning/error.
+- Gate hoàn tất: `npm run check`, `npm run beta:validate` và full suite `293/293` đều đạt.

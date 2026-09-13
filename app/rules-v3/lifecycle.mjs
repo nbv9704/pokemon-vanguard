@@ -90,6 +90,9 @@ export function resolveEndTurn(battle,groups,{initialEvents=[]}={}){
  for(const side of ['A','B'])for(const [condition,state] of Object.entries(next.sides?.[side]?.conditions||{}))if(Number.isInteger(state?.endTurnTimer)){
   state.endTurnTimer--;if(state.endTurnTimer<=0){delete next.sides[side].conditions[condition];events.push({kind:'sideConditionEnded',side,condition,reason:'duration'});}
  }
+ const weather=next.field?.weather;if(weather&&Number.isInteger(weather.remaining)){
+  weather.remaining--;if(weather.remaining<=0){delete next.field.weather;events.push({kind:'weatherEnded',weather:weather.id,reason:'duration'});}
+ }
  events.push({kind:'turnEnded',turn:next.turn});
  const result=checkBattleResult(next);next=result.battle;events.push(...result.events);
  if(next.phase!=='FINISHED'){
