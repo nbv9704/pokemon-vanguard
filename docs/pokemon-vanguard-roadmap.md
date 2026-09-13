@@ -351,6 +351,8 @@ Mọi enabled move cần profile hoặc fallback rõ ràng. Sprite Pokémon gi�
 
 **Gate:** 100% move được enable có profile/override/fallback đã test; không network runtime; visual event order khớp replay.
 
+**Tiến độ R7-04:** 29/29 move Beta 2 đã resolve qua registry profile/fallback và coverage report được verify tự động. Cast/impact dùng cùng move context; impact outcome lấy từ event authoritative cho hit/miss/block/status/heal/failed và spread target tracks. Palette đủ 18 hệ, reduced motion giữ caption/state. Batch còn lại của R7 tập trung persistent condition layers, playback 1×/2×/skip/cancel và matrix visual cho mobile/background tab.
+
 ## 15. M6 — Private PvP
 
 - Server authoritative cho room create/join, preview, commands, replacements, surrender và result.

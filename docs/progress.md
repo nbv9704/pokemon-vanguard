@@ -594,3 +594,13 @@ Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle 
 - Mechanics: Thick Fat dùng defender-side damage modifier 0.5 cho Fire/Ice và ghi source vào authoritative damage breakdown.
 - Presentation: command card có checkbox Mega chỉ khi stone/form hợp lệ; timeline chiếu transformation FX trước move cast, đổi front/back idle sprite đúng frame và Battle Log ghi form + Ability mới.
 - Evidence: `npm run check` pass; full suite 272/272; browser QA local đi qua Training → Venusaurite → Single Preview → Mega command và xác nhận Mega sprite, log, Thick Fat cùng command turn kế tiếp.
+
+## R7-04 — Event-driven Move FX profiles
+
+- Status: DONE cho toàn bộ 29 move đang enable trong Beta 2; persistent weather/terrain layer và playback speed/skip controls vẫn là batch R7 tiếp theo.
+- Architecture: `v3-move-fx.js` tách khỏi battle screen, chọn `move override → category fallback → minimal cue`. Profile dùng chung gồm projectile, beam, slash, rush, barrage, impact, aura, barrier, drain, seed, notes và field burst; move-specific mapping chỉ là bảng nhỏ.
+- Timing: mỗi cast frame và impact frame giữ cùng `actorId`/`moveId`. Cast chỉ chạy chuyển động, còn impact đọc event authoritative để biểu diễn hit, miss, blocked, status, heal/drain hoặc failed; HP/status vẫn chỉ đổi sau commit point của timeline.
+- Double Battle: adapter đếm target trực tiếp từ event và tạo nhiều impact track cho spread move. Hướng bay dùng side của actor; Pokémon tiếp tục chạy idle sprite và chỉ nhận cast/hit reaction.
+- Presentation: thêm primitive CSS độc lập và palette đủ 18 hệ. Reduced motion giữ tên chiêu, outcome, HP và log nhưng tắt các vật thể chuyển động; runtime không fetch resource bên ngoài.
+- Coverage: `docs/r7-move-fx-coverage.json` được generate và verify trong `npm run check`, khóa 29/29 move cùng profile/source/type. Test riêng bao phủ cast/impact, spread, miss, block, status, heal, failed và reduced motion.
+- Browser QA local: Protect hiển thị barrier cast rồi blocked impact; Brave Bird bị chặn vẫn hiển thị rush + blocked; Giga Drain và Flip Turn đi đúng action order, Battle Log/HP cập nhật sau impact, quay về Command và không có console error. `npm run check` pass; full suite đạt 277/277.

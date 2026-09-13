@@ -1,0 +1,217 @@
+{
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v2-mega-beta-v1",
+  "generatedBy": "app/scripts/generate-move-fx-coverage.mjs",
+  "moveCount": 29,
+  "coveredMoveCount": 29,
+  "typePalette": [
+    "normal",
+    "fire",
+    "water",
+    "electric",
+    "grass",
+    "ice",
+    "fighting",
+    "poison",
+    "ground",
+    "flying",
+    "psychic",
+    "bug",
+    "rock",
+    "ghost",
+    "dragon",
+    "dark",
+    "steel",
+    "fairy"
+  ],
+  "profiles": [
+    "aura",
+    "barrage",
+    "barrier",
+    "beam",
+    "drain",
+    "drain-contact",
+    "field-burst",
+    "impact",
+    "notes",
+    "orb",
+    "rush",
+    "seed",
+    "slash"
+  ],
+  "moves": [
+    {
+      "moveId": "aerial-ace",
+      "id": "slash",
+      "source": "override",
+      "type": "flying"
+    },
+    {
+      "moveId": "brave-bird",
+      "id": "rush",
+      "source": "override",
+      "type": "flying"
+    },
+    {
+      "moveId": "bullet-seed",
+      "id": "barrage",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "calm-mind",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic"
+    },
+    {
+      "moveId": "charm",
+      "id": "aura",
+      "source": "override",
+      "type": "fairy"
+    },
+    {
+      "moveId": "coaching",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "fighting"
+    },
+    {
+      "moveId": "dragon-tail",
+      "id": "rush",
+      "source": "override",
+      "type": "dragon"
+    },
+    {
+      "moveId": "drain-punch",
+      "id": "drain-contact",
+      "source": "override",
+      "type": "fighting"
+    },
+    {
+      "moveId": "draining-kiss",
+      "id": "drain",
+      "source": "override",
+      "type": "fairy"
+    },
+    {
+      "moveId": "dual-wingbeat",
+      "id": "slash",
+      "source": "override",
+      "type": "flying"
+    },
+    {
+      "moveId": "eruption",
+      "id": "field-burst",
+      "source": "override",
+      "type": "fire"
+    },
+    {
+      "moveId": "feint",
+      "id": "slash",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "flip-turn",
+      "id": "rush",
+      "source": "override",
+      "type": "water"
+    },
+    {
+      "moveId": "giga-drain",
+      "id": "drain",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "gyro-ball",
+      "id": "rush",
+      "source": "override",
+      "type": "steel"
+    },
+    {
+      "moveId": "hard-press",
+      "id": "impact",
+      "source": "override",
+      "type": "steel"
+    },
+    {
+      "moveId": "hex",
+      "id": "aura",
+      "source": "override",
+      "type": "ghost"
+    },
+    {
+      "moveId": "leech-seed",
+      "id": "seed",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "protect",
+      "id": "barrier",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "quick-guard",
+      "id": "barrier",
+      "source": "override",
+      "type": "fighting"
+    },
+    {
+      "moveId": "scale-shot",
+      "id": "barrage",
+      "source": "override",
+      "type": "dragon"
+    },
+    {
+      "moveId": "sing",
+      "id": "notes",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "spiky-shield",
+      "id": "barrier",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "stored-power",
+      "id": "beam",
+      "source": "override",
+      "type": "psychic"
+    },
+    {
+      "moveId": "taunt",
+      "id": "notes",
+      "source": "override",
+      "type": "dark"
+    },
+    {
+      "moveId": "u-turn",
+      "id": "rush",
+      "source": "override",
+      "type": "bug"
+    },
+    {
+      "moveId": "water-spout",
+      "id": "field-burst",
+      "source": "override",
+      "type": "water"
+    },
+    {
+      "moveId": "wild-charge",
+      "id": "rush",
+      "source": "override",
+      "type": "electric"
+    },
+    {
+      "moveId": "will-o-wisp",
+      "id": "orb",
+      "source": "override",
+      "type": "fire"
+    }
+  ]
+}
