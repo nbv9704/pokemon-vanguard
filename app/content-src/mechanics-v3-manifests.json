@@ -30,7 +30,10 @@
         "double": [
           "r3-direct-damage:aerial-ace-double-ally"
         ]
-      }
+      },
+      "tags": [
+        "slicing"
+      ]
     },
     "acid-armor": {
       "id": "acid-armor",
@@ -3735,7 +3738,10 @@
         "double": [
           "r3-two-turn-recharge:double"
         ]
-      }
+      },
+      "tags": [
+        "slicing"
+      ]
     },
     "hydro-cannon": {
       "id": "hydro-cannon",
@@ -4249,7 +4255,10 @@
         "double": [
           "r3-secondary-effects:double"
         ]
-      }
+      },
+      "tags": [
+        "bite"
+      ]
     },
     "liquidation": {
       "id": "liquidation",
@@ -4469,7 +4478,10 @@
         "double": [
           "r3-secondary-effects:double"
         ]
-      }
+      },
+      "tags": [
+        "pulse"
+      ]
     },
     "ice-fang": {
       "id": "ice-fang",
@@ -4517,7 +4529,10 @@
         "double": [
           "r3-secondary-effects:double"
         ]
-      }
+      },
+      "tags": [
+        "bite"
+      ]
     },
     "bulldoze": {
       "id": "bulldoze",
@@ -4561,6 +4576,68 @@
         ],
         "double": [
           "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "sandstorm": {
+      "id": "sandstorm",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-weather",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "weather": "sandstorm",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "snowscape": {
+      "id": "snowscape",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-weather",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "weather": "snow",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
         ]
       }
     }
@@ -4955,6 +5032,2298 @@
         ],
         "double": [
           "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "sand-rush": {
+      "id": "sand-rush",
+      "handlers": [
+        {
+          "id": "weather-speed",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "slush-rush": {
+      "id": "slush-rush",
+      "handlers": [
+        {
+          "id": "weather-speed",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "weather": "snow",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "ice-body": {
+      "id": "ice-body",
+      "handlers": [
+        {
+          "id": "weather-heal",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "weather": "snow",
+            "numerator": 1,
+            "denominator": 16
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "sand-force": {
+      "id": "sand-force",
+      "handlers": [
+        {
+          "id": "weather-type-damage-boost",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm",
+            "types": [
+              "rock",
+              "ground",
+              "steel"
+            ],
+            "multiplier": 1.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "sand-veil": {
+      "id": "sand-veil",
+      "handlers": [
+        {
+          "id": "weather-incoming-accuracy-modifier",
+          "hook": "modifyAccuracy",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm",
+            "multiplier": 0.8
+          }
+        },
+        {
+          "id": "weather-residual-immunity",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "snow-cloak": {
+      "id": "snow-cloak",
+      "handlers": [
+        {
+          "id": "weather-incoming-accuracy-modifier",
+          "hook": "modifyAccuracy",
+          "order": 40,
+          "params": {
+            "weather": "snow",
+            "multiplier": 0.8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "compound-eyes": {
+      "id": "compound-eyes",
+      "handlers": [
+        {
+          "id": "outgoing-accuracy-modifier",
+          "hook": "modifyAccuracy",
+          "order": 40,
+          "params": {
+            "multiplier": 1.300048828125
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "huge-power": {
+      "id": "huge-power",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "stat": "atk",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "pure-power": {
+      "id": "pure-power",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "stat": "atk",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "fur-coat": {
+      "id": "fur-coat",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifyDefense",
+          "order": 40,
+          "params": {
+            "stat": "def",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "strong-jaw": {
+      "id": "strong-jaw",
+      "handlers": [
+        {
+          "id": "move-tag-power-boost",
+          "hook": "modifyPower",
+          "order": 40,
+          "params": {
+            "tag": "bite",
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "sharpness": {
+      "id": "sharpness",
+      "handlers": [
+        {
+          "id": "move-tag-power-boost",
+          "hook": "modifyPower",
+          "order": 40,
+          "params": {
+            "tag": "slicing",
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "tough-claws": {
+      "id": "tough-claws",
+      "handlers": [
+        {
+          "id": "contact-power-boost",
+          "hook": "modifyPower",
+          "order": 40,
+          "params": {
+            "multiplier": 1.300048828125
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "mega-launcher": {
+      "id": "mega-launcher",
+      "handlers": [
+        {
+          "id": "move-tag-power-boost",
+          "hook": "modifyPower",
+          "order": 40,
+          "params": {
+            "tag": "pulse",
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "reckless": {
+      "id": "reckless",
+      "handlers": [
+        {
+          "id": "recoil-power-boost",
+          "hook": "modifyPower",
+          "order": 40,
+          "params": {
+            "multiplier": 1.199951171875
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "super-luck": {
+      "id": "super-luck",
+      "handlers": [
+        {
+          "id": "critical-ratio",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "shell-armor": {
+      "id": "shell-armor",
+      "handlers": [
+        {
+          "id": "critical-immunity",
+          "hook": "modifyDamage",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "insomnia": {
+      "id": "insomnia",
+      "handlers": [
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "sleep"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "vital-spirit": {
+      "id": "vital-spirit",
+      "handlers": [
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "sleep"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "limber": {
+      "id": "limber",
+      "handlers": [
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "paralysis"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "immunity": {
+      "id": "immunity",
+      "handlers": [
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "poison",
+              "bad-poison"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "magma-armor": {
+      "id": "magma-armor",
+      "handlers": [
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "freeze"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "adaptability": {
+      "id": "adaptability",
+      "handlers": [
+        {
+          "id": "stab-modifier",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "soundproof": {
+      "id": "soundproof",
+      "handlers": [
+        {
+          "id": "move-tag-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "tag": "sound"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "rock-head": {
+      "id": "rock-head",
+      "handlers": [
+        {
+          "id": "recoil-immunity",
+          "hook": "afterDamage",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "marvel-scale": {
+      "id": "marvel-scale",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifyDefense",
+          "order": 40,
+          "params": {
+            "stat": "def",
+            "multiplier": 1.5,
+            "requireStatus": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "multiscale": {
+      "id": "multiscale",
+      "handlers": [
+        {
+          "id": "received-damage-modifier",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "multiplier": 0.5,
+            "requireFullHp": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "solid-rock": {
+      "id": "solid-rock",
+      "handlers": [
+        {
+          "id": "received-damage-modifier",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "multiplier": 0.75,
+            "superEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "purifying-salt": {
+      "id": "purifying-salt",
+      "handlers": [
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "burn",
+              "paralysis",
+              "poison",
+              "sleep",
+              "freeze",
+              "bad-poison"
+            ]
+          }
+        },
+        {
+          "id": "received-type-damage-reduction",
+          "hook": "modifyDamage",
+          "order": 41,
+          "params": {
+            "types": [
+              "ghost"
+            ],
+            "multiplier": 0.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "hustle": {
+      "id": "hustle",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "stat": "atk",
+            "multiplier": 1.5
+          }
+        },
+        {
+          "id": "outgoing-accuracy-modifier",
+          "hook": "modifyAccuracy",
+          "order": 41,
+          "params": {
+            "multiplier": 0.8,
+            "category": "physical"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "no-guard": {
+      "id": "no-guard",
+      "handlers": [
+        {
+          "id": "always-hit",
+          "hook": "modifyAccuracy",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "guts": {
+      "id": "guts",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "stat": "atk",
+            "multiplier": 1.5,
+            "requireStatus": true
+          }
+        },
+        {
+          "id": "burn-attack-penalty-immunity",
+          "hook": "modifyDamage",
+          "order": 41
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "clear-body": {
+      "id": "clear-body",
+      "handlers": [
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "white-smoke": {
+      "id": "white-smoke",
+      "handlers": [
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "hyper-cutter": {
+      "id": "hyper-cutter",
+      "handlers": [
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {
+            "stats": [
+              "atk"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "big-pecks": {
+      "id": "big-pecks",
+      "handlers": [
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {
+            "stats": [
+              "def"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "quick-feet": {
+      "id": "quick-feet",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "stat": "spe",
+            "multiplier": 1.5,
+            "requireStatus": true
+          }
+        },
+        {
+          "id": "paralysis-speed-penalty-immunity",
+          "hook": "modifySpeed",
+          "order": 41
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "surge-surfer": {
+      "id": "surge-surfer",
+      "handlers": [
+        {
+          "id": "stat-multiplier",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "stat": "spe",
+            "multiplier": 2,
+            "terrain": "electric"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "plus": {
+      "id": "plus",
+      "handlers": [
+        {
+          "id": "ally-ability-stat-multiplier",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "stat": "spa",
+            "multiplier": 1.5,
+            "allyAbilities": [
+              "plus",
+              "minus"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "minus": {
+      "id": "minus",
+      "handlers": [
+        {
+          "id": "ally-ability-stat-multiplier",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "stat": "spa",
+            "multiplier": 1.5,
+            "allyAbilities": [
+              "plus",
+              "minus"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "telepathy": {
+      "id": "telepathy",
+      "handlers": [
+        {
+          "id": "ally-damage-immunity",
+          "hook": "beforeTarget",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "friend-guard": {
+      "id": "friend-guard",
+      "handlers": [
+        {
+          "id": "ally-damage-reduction",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "multiplier": 0.75
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "shield-dust": {
+      "id": "shield-dust",
+      "handlers": [
+        {
+          "id": "secondary-effect-immunity",
+          "hook": "beforeTarget",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "skill-link": {
+      "id": "skill-link",
+      "handlers": [
+        {
+          "id": "multi-hit-max",
+          "hook": "onMove",
+          "order": 40
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "hydration": {
+      "id": "hydration",
+      "handlers": [
+        {
+          "id": "weather-status-cure",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "weather": "rain"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave4:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave4:double"
+        ]
+      }
+    },
+    "natural-cure": {
+      "id": "natural-cure",
+      "handlers": [
+        {
+          "id": "switch-out-status-cure",
+          "hook": "onSwitchOut",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "regenerator": {
+      "id": "regenerator",
+      "handlers": [
+        {
+          "id": "switch-out-heal",
+          "hook": "onSwitchOut",
+          "order": 40,
+          "params": {
+            "numerator": 1,
+            "denominator": 3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "shed-skin": {
+      "id": "shed-skin",
+      "handlers": [
+        {
+          "id": "random-status-cure",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "chanceNumerator": 1,
+            "chanceDenominator": 3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "drizzle": {
+      "id": "drizzle",
+      "handlers": [
+        {
+          "id": "entry-weather",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "weather": "rain",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "drought": {
+      "id": "drought",
+      "handlers": [
+        {
+          "id": "entry-weather",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "weather": "sun",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "sand-stream": {
+      "id": "sand-stream",
+      "handlers": [
+        {
+          "id": "entry-weather",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "snow-warning": {
+      "id": "snow-warning",
+      "handlers": [
+        {
+          "id": "entry-weather",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "weather": "snow",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "intimidate": {
+      "id": "intimidate",
+      "handlers": [
+        {
+          "id": "entry-stat-drop",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "stat": "atk",
+            "stages": -1,
+            "scope": "opponents"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "supersweet-syrup": {
+      "id": "supersweet-syrup",
+      "handlers": [
+        {
+          "id": "entry-stat-drop",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "stat": "evasion",
+            "stages": -1,
+            "scope": "opponents",
+            "oncePerBattle": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "screen-cleaner": {
+      "id": "screen-cleaner",
+      "handlers": [
+        {
+          "id": "entry-screen-cleaner",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "curious-medicine": {
+      "id": "curious-medicine",
+      "handlers": [
+        {
+          "id": "entry-ally-stage-reset",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "hospitality": {
+      "id": "hospitality",
+      "handlers": [
+        {
+          "id": "entry-ally-heal",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "numerator": 1,
+            "denominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave5:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave5:double"
+        ]
+      }
+    },
+    "heatproof": {
+      "id": "heatproof",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "received-type-damage-reduction",
+          "hook": "modifyDamage",
+          "params": {
+            "types": [
+              "fire"
+            ],
+            "multiplier": 0.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "thick-fat": {
+      "id": "thick-fat",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "received-type-damage-reduction",
+          "hook": "modifyDamage",
+          "params": {
+            "types": [
+              "fire",
+              "ice"
+            ],
+            "multiplier": 0.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "keen-eye": {
+      "id": "keen-eye",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "params": {
+            "stats": [
+              "accuracy"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "illuminate": {
+      "id": "illuminate",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "params": {
+            "stats": [
+              "accuracy"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "water-absorb": {
+      "id": "water-absorb",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "params": {
+            "type": "water",
+            "response": "heal",
+            "numerator": 1,
+            "denominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "volt-absorb": {
+      "id": "volt-absorb",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "params": {
+            "type": "electric",
+            "response": "heal",
+            "numerator": 1,
+            "denominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "earth-eater": {
+      "id": "earth-eater",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "params": {
+            "type": "ground",
+            "response": "heal",
+            "numerator": 1,
+            "denominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "motor-drive": {
+      "id": "motor-drive",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "params": {
+            "type": "electric",
+            "response": "stat",
+            "stat": "spe",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "sap-sipper": {
+      "id": "sap-sipper",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "params": {
+            "type": "grass",
+            "response": "stat",
+            "stat": "atk",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "rough-skin": {
+      "id": "rough-skin",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "params": {
+            "response": "damage",
+            "numerator": 1,
+            "denominator": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "flame-body": {
+      "id": "flame-body",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "params": {
+            "response": "status",
+            "status": "burn",
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "static": {
+      "id": "static",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "params": {
+            "response": "status",
+            "status": "paralysis",
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "poison-point": {
+      "id": "poison-point",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "params": {
+            "response": "status",
+            "status": "poison",
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "gooey": {
+      "id": "gooey",
+      "handlers": [
+        {
+          "order": 40,
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "params": {
+            "response": "stat",
+            "stat": "spe",
+            "stages": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave6:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave6:double"
+        ]
+      }
+    },
+    "anger-point": {
+      "id": "anger-point",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "requireCritical": true,
+            "setStages": {
+              "atk": 6
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "berserk": {
+      "id": "berserk",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "thresholdCross": {
+              "numerator": 1,
+              "denominator": 2
+            },
+            "boosts": {
+              "spa": 1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "justified": {
+      "id": "justified",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "moveType": "dark",
+            "boosts": {
+              "atk": 1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "moxie": {
+      "id": "moxie",
+      "handlers": [
+        {
+          "id": "ko-stat-boost",
+          "hook": "onFaint",
+          "order": 40,
+          "params": {
+            "stat": "atk",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "sand-spit": {
+      "id": "sand-spit",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "speed-boost": {
+      "id": "speed-boost",
+      "handlers": [
+        {
+          "id": "end-turn-stat-boost",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "stat": "spe",
+            "stages": 1,
+            "skipEntryTurn": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "stamina": {
+      "id": "stamina",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "boosts": {
+              "def": 1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "sturdy": {
+      "id": "sturdy",
+      "handlers": [
+        {
+          "id": "lethal-hit-survival",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "requireFullHp": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "toxic-debris": {
+      "id": "toxic-debris",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "category": "physical",
+            "hazard": "toxic-spikes"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "water-bubble": {
+      "id": "water-bubble",
+      "handlers": [
+        {
+          "id": "received-type-damage-reduction",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "types": [
+              "fire"
+            ],
+            "multiplier": 0.5
+          }
+        },
+        {
+          "id": "major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 41,
+          "params": {
+            "statuses": [
+              "burn"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "weak-armor": {
+      "id": "weak-armor",
+      "handlers": [
+        {
+          "id": "damage-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "category": "physical",
+            "boosts": {
+              "def": -1,
+              "spe": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave7:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave7:double"
+        ]
+      }
+    },
+    "competitive": {
+      "id": "competitive",
+      "handlers": [
+        {
+          "id": "stat-drop-response",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {
+            "boosts": {
+              "spa": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "defiant": {
+      "id": "defiant",
+      "handlers": [
+        {
+          "id": "stat-drop-response",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {
+            "boosts": {
+              "atk": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "inner-focus": {
+      "id": "inner-focus",
+      "handlers": [
+        {
+          "id": "volatile-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "volatiles": [
+              "flinch"
+            ]
+          }
+        },
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 41,
+          "params": {
+            "sourceAbilities": [
+              "intimidate"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "own-tempo": {
+      "id": "own-tempo",
+      "handlers": [
+        {
+          "id": "volatile-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "volatiles": [
+              "confusion"
+            ]
+          }
+        },
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 41,
+          "params": {
+            "sourceAbilities": [
+              "intimidate"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "merciless": {
+      "id": "merciless",
+      "handlers": [
+        {
+          "id": "critical-vs-status",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "poison",
+              "bad-poison"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "poison-heal": {
+      "id": "poison-heal",
+      "handlers": [
+        {
+          "id": "status-residual-heal",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "poison",
+              "bad-poison"
+            ],
+            "numerator": 1,
+            "denominator": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "synchronize": {
+      "id": "synchronize",
+      "handlers": [
+        {
+          "id": "status-reflect",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "burn",
+              "paralysis",
+              "poison",
+              "bad-poison"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "steadfast": {
+      "id": "steadfast",
+      "handlers": [
+        {
+          "id": "flinch-stat-boost",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "stat": "spe",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave8:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave8:double"
+        ]
+      }
+    },
+    "armor-tail": {
+      "id": "armor-tail",
+      "handlers": [
+        {
+          "id": "priority-move-immunity-aura",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "queenly-majesty": {
+      "id": "queenly-majesty",
+      "handlers": [
+        {
+          "id": "priority-move-immunity-aura",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "sweet-veil": {
+      "id": "sweet-veil",
+      "handlers": [
+        {
+          "id": "ally-major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "sleep"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "corrosion": {
+      "id": "corrosion",
+      "handlers": [
+        {
+          "id": "status-type-immunity-bypass",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "poison",
+              "bad-poison"
+            ],
+            "targetTypes": [
+              "poison",
+              "steel"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "tangled-feet": {
+      "id": "tangled-feet",
+      "handlers": [
+        {
+          "id": "volatile-incoming-accuracy-modifier",
+          "hook": "modifyAccuracy",
+          "order": 40,
+          "params": {
+            "volatile": "confusion",
+            "multiplier": 0.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "dry-skin": {
+      "id": "dry-skin",
+      "handlers": [
+        {
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "type": "water",
+            "response": "heal",
+            "numerator": 1,
+            "denominator": 4
+          }
+        },
+        {
+          "id": "received-type-damage-modifier",
+          "hook": "modifyDamage",
+          "order": 41,
+          "params": {
+            "types": [
+              "fire"
+            ],
+            "multiplier": 1.25
+          }
+        },
+        {
+          "id": "weather-heal",
+          "hook": "endTurn",
+          "order": 42,
+          "params": {
+            "weather": "rain",
+            "numerator": 1,
+            "denominator": 8
+          }
+        },
+        {
+          "id": "weather-residual-damage",
+          "hook": "endTurn",
+          "order": 43,
+          "params": {
+            "weather": "sun",
+            "numerator": 1,
+            "denominator": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "flower-veil": {
+      "id": "flower-veil",
+      "handlers": [
+        {
+          "id": "ally-major-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "burn",
+              "paralysis",
+              "poison",
+              "sleep",
+              "freeze",
+              "bad-poison"
+            ],
+            "targetTypes": [
+              "grass"
+            ],
+            "otherPokemonOnly": true
+          }
+        },
+        {
+          "id": "ally-stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 41,
+          "params": {
+            "targetTypes": [
+              "grass"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave9:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave9:double"
         ]
       }
     }
@@ -5597,6 +7966,1232 @@
         ],
         "double": [
           "r3-item-hooks:double"
+        ]
+      }
+    },
+    "choice-scarf": {
+      "id": "choice-scarf",
+      "handlers": [
+        {
+          "id": "item-speed-boost",
+          "hook": "modifySpeed",
+          "order": 50,
+          "params": {
+            "multiplier": 1.5
+          }
+        },
+        {
+          "id": "item-choice-lock",
+          "hook": "onMove",
+          "order": 60,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "white-herb": {
+      "id": "white-herb",
+      "handlers": [
+        {
+          "id": "item-negative-stage-reset",
+          "hook": "afterStatChange",
+          "order": 60,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "occa-berry": {
+      "id": "occa-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "fire",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "passho-berry": {
+      "id": "passho-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "water",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "wacan-berry": {
+      "id": "wacan-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "electric",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "rindo-berry": {
+      "id": "rindo-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "grass",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "yache-berry": {
+      "id": "yache-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "ice",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "chople-berry": {
+      "id": "chople-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "fighting",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "kebia-berry": {
+      "id": "kebia-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "poison",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "shuca-berry": {
+      "id": "shuca-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "ground",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "coba-berry": {
+      "id": "coba-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "flying",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "payapa-berry": {
+      "id": "payapa-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "psychic",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "tanga-berry": {
+      "id": "tanga-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "bug",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "charti-berry": {
+      "id": "charti-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "rock",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "kasib-berry": {
+      "id": "kasib-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "ghost",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "haban-berry": {
+      "id": "haban-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "dragon",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "colbur-berry": {
+      "id": "colbur-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "dark",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "babiri-berry": {
+      "id": "babiri-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "steel",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "roseli-berry": {
+      "id": "roseli-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "fairy",
+            "multiplier": 0.5,
+            "requireSuperEffective": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "chilan-berry": {
+      "id": "chilan-berry",
+      "handlers": [
+        {
+          "id": "item-resist-hit",
+          "hook": "onDamage",
+          "order": -50,
+          "params": {
+            "type": "normal",
+            "multiplier": 0.5,
+            "requireSuperEffective": false
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "black-glasses": {
+      "id": "black-glasses",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "dark",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "hard-stone": {
+      "id": "hard-stone",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "rock",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "magnet": {
+      "id": "magnet",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "electric",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "never-melt-ice": {
+      "id": "never-melt-ice",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "ice",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "poison-barb": {
+      "id": "poison-barb",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "poison",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "silk-scarf": {
+      "id": "silk-scarf",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "normal",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "soft-sand": {
+      "id": "soft-sand",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "ground",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "spell-tag": {
+      "id": "spell-tag",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "ghost",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "twisted-spoon": {
+      "id": "twisted-spoon",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "psychic",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "expert-belt": {
+      "id": "expert-belt",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "superEffective": true,
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "wide-lens": {
+      "id": "wide-lens",
+      "handlers": [
+        {
+          "id": "item-accuracy-boost",
+          "hook": "modifyAccuracy",
+          "order": 50,
+          "params": {
+            "multiplier": 1.1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "oran-berry": {
+      "id": "oran-berry",
+      "handlers": [
+        {
+          "id": "item-threshold-heal",
+          "hook": "afterDamage",
+          "order": 50,
+          "params": {
+            "thresholdNumerator": 1,
+            "thresholdDenominator": 2,
+            "healAmount": 10
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "bright-powder": {
+      "id": "bright-powder",
+      "handlers": [
+        {
+          "id": "item-incoming-accuracy-modifier",
+          "hook": "modifyAccuracy",
+          "order": 0,
+          "params": {
+            "multiplier": 0.9
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "scope-lens": {
+      "id": "scope-lens",
+      "handlers": [
+        {
+          "id": "item-critical-ratio",
+          "hook": "onDamage",
+          "order": -20,
+          "params": {
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "focus-band": {
+      "id": "focus-band",
+      "handlers": [
+        {
+          "id": "item-survive-lethal-hit",
+          "hook": "onDamage",
+          "order": -40,
+          "params": {
+            "requireFullHp": false,
+            "chance": 0.1,
+            "consume": false
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "air-balloon": {
+      "id": "air-balloon",
+      "handlers": [
+        {
+          "id": "item-airborne",
+          "hook": "onEntry",
+          "order": 20,
+          "params": {
+            "popOnDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "big-root": {
+      "id": "big-root",
+      "handlers": [
+        {
+          "id": "item-healing-boost",
+          "hook": "afterDamage",
+          "order": 50,
+          "params": {
+            "multiplier": 1.2998046875,
+            "sources": [
+              "drain",
+              "leech-seed"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "electric-seed": {
+      "id": "electric-seed",
+      "handlers": [
+        {
+          "id": "item-terrain-seed",
+          "hook": "onEntry",
+          "order": 30,
+          "params": {
+            "terrain": "electric",
+            "stat": "def",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "grassy-seed": {
+      "id": "grassy-seed",
+      "handlers": [
+        {
+          "id": "item-terrain-seed",
+          "hook": "onEntry",
+          "order": 30,
+          "params": {
+            "terrain": "grassy",
+            "stat": "def",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "misty-seed": {
+      "id": "misty-seed",
+      "handlers": [
+        {
+          "id": "item-terrain-seed",
+          "hook": "onEntry",
+          "order": 30,
+          "params": {
+            "terrain": "misty",
+            "stat": "spd",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "psychic-seed": {
+      "id": "psychic-seed",
+      "handlers": [
+        {
+          "id": "item-terrain-seed",
+          "hook": "onEntry",
+          "order": 30,
+          "params": {
+            "terrain": "psychic",
+            "stat": "spd",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "iron-ball": {
+      "id": "iron-ball",
+      "handlers": [
+        {
+          "id": "item-speed-modifier",
+          "hook": "modifySpeed",
+          "order": 50,
+          "params": {
+            "multiplier": 0.5
+          }
+        },
+        {
+          "id": "item-grounding",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "leppa-berry": {
+      "id": "leppa-berry",
+      "handlers": [
+        {
+          "id": "item-pp-restore",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "amount": 10
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "normal-gem": {
+      "id": "normal-gem",
+      "handlers": [
+        {
+          "id": "item-one-shot-damage-boost",
+          "hook": "modifyPower",
+          "order": 50,
+          "params": {
+            "type": "normal",
+            "multiplier": 1.300048828125
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "red-card": {
+      "id": "red-card",
+      "handlers": [
+        {
+          "id": "item-force-attacker-switch",
+          "hook": "afterDamage",
+          "order": 60,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "zoom-lens": {
+      "id": "zoom-lens",
+      "handlers": [
+        {
+          "id": "item-accuracy-after-target",
+          "hook": "modifyAccuracy",
+          "order": 50,
+          "params": {
+            "multiplier": 1.199951171875
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "kings-rock": {
+      "id": "kings-rock",
+      "handlers": [
+        {
+          "id": "item-flinch-chance",
+          "hook": "afterDamage",
+          "order": 65,
+          "params": {
+            "chance": 0.1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "metronome": {
+      "id": "metronome",
+      "handlers": [
+        {
+          "id": "item-consecutive-move-power",
+          "hook": "modifyPower",
+          "order": 50,
+          "params": {
+            "increment": 0.2,
+            "maxMultiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "light-ball": {
+      "id": "light-ball",
+      "handlers": [
+        {
+          "id": "item-species-stat-modifier",
+          "hook": "modifyAttack",
+          "order": 50,
+          "params": {
+            "speciesIds": [
+              "pikachu"
+            ],
+            "stats": [
+              "atk",
+              "spa"
+            ],
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "leek": {
+      "id": "leek",
+      "handlers": [
+        {
+          "id": "item-species-critical-ratio",
+          "hook": "onDamage",
+          "order": -20,
+          "params": {
+            "speciesIds": [
+              "farfetchd",
+              "sirfetchd"
+            ],
+            "stages": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "mental-herb": {
+      "id": "mental-herb",
+      "handlers": [
+        {
+          "id": "item-volatile-cure",
+          "hook": "afterStatus",
+          "order": 60,
+          "params": {
+            "volatiles": [
+              "infatuation",
+              "taunt",
+              "torment",
+              "disable",
+              "heal-block",
+              "encore"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "quick-claw": {
+      "id": "quick-claw",
+      "handlers": [
+        {
+          "id": "item-quick-order",
+          "hook": "onTurnOrder",
+          "order": 50,
+          "params": {
+            "chance": 0.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle:single"
+        ],
+        "double": [
+          "r3-item-lifecycle:double"
+        ]
+      }
+    },
+    "icy-rock": {
+      "id": "icy-rock",
+      "handlers": [
+        {
+          "id": "weather-duration",
+          "hook": "onMove",
+          "order": 40,
+          "params": {
+            "weather": "snow",
+            "turns": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "smooth-rock": {
+      "id": "smooth-rock",
+      "handlers": [
+        {
+          "id": "weather-duration",
+          "hook": "onMove",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm",
+            "turns": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
         ]
       }
     }

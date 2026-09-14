@@ -39,6 +39,13 @@ test('schema-3 Battle UI covers landing, Double Preview and command submission',
 
 
 
+test('schema-3 command UI enforces Choice Scarf lock, releases it under Magic Room, and falls back to switching at zero PP',()=>{
+ const holder={actorId:'A-0',name:'Venusaur',speciesId:'venusaur',baseSpeciesId:'venusaur',activeSlot:0,hp:100,maxHp:100,pp:{'bullet-seed':10,'giga-drain':10},buildSnapshot:{moveIds:['bullet-seed','giga-drain'],itemId:'choice-scarf'},volatiles:{'choice-lock':{id:'choice-lock',moveId:'bullet-seed',sourceItemId:'choice-scarf'}}},reserve={actorId:'A-1',name:'Blastoise',speciesId:'blastoise',activeSlot:-1,hp:100,maxHp:100,pp:{},buildSnapshot:{moveIds:[],itemId:'none'},volatiles:{}},foe={actorId:'B-0',name:'Target',activeSlot:0,hpPercent:100},snapshot={turn:2,phase:'COMMAND',phaseRevision:2,field:{},megaUsed:{A:0},megaLimit:1,own:[holder,reserve],opponent:[foe]},screen={commands:{}};
+ screen.commands['A-0']={kind:'move',actorId:'A-0',moveId:'giga-drain',target:{side:'B',slot:0}};let html=renderV3Commands(screen,{snapshot},publicV3Catalog),lockedButton=html.match(/<button[^>]*data-move-id="giga-drain"[^>]*>/)?.[0],allowedButton=html.match(/<button[^>]*data-move-id="bullet-seed"[^>]*>/)?.[0];assert.match(lockedButton,/disabled/);assert.doesNotMatch(allowedButton,/disabled/);assert.equal(screen.commands['A-0'].moveId,'bullet-seed');
+ snapshot.field={rooms:{'magic-room':{id:'magic-room',remaining:3}}};screen.commands={};html=renderV3Commands(screen,{snapshot},publicV3Catalog);lockedButton=html.match(/<button[^>]*data-move-id="giga-drain"[^>]*>/)?.[0];assert.doesNotMatch(lockedButton,/disabled/);
+ snapshot.field={};snapshot.own[0].pp['bullet-seed']=0;screen.commands={};assert.doesNotThrow(()=>renderV3Commands(screen,{snapshot},publicV3Catalog));assert.deepEqual(screen.commands['A-0'],{kind:'switch',actorId:'A-0',toId:'A-1'});
+});
+
 test('schema-3 command UI renders charge and recharge commitments as forced actions',()=>{
  const baseMon={actorId:'A-0',name:'Venusaur',speciesId:'venusaur',baseSpeciesId:'venusaur',activeSlot:0,hp:100,maxHp:100,pp:{'solar-beam':11,protect:16},buildSnapshot:{moveIds:['solar-beam','protect'],itemId:'miracle-seed'},volatiles:{'two-turn-move':{id:'two-turn-move',moveId:'solar-beam',target:{side:'B',slot:0}}}},snapshot={turn:2,phase:'COMMAND',phaseRevision:2,megaUsed:{A:0},megaLimit:1,own:[baseMon],opponent:[{actorId:'B-0',name:'Target',activeSlot:0,hpPercent:100}]},screen={commands:{}};
  let html=renderV3Commands(screen,{snapshot},publicV3Catalog);assert.match(html,/committed action/);assert.match(html,/Solar Beam finishes charging/);assert.deepEqual(screen.commands['A-0'],{kind:'move',actorId:'A-0',moveId:'solar-beam',target:{side:'B',slot:0}});assert.doesNotMatch(html,/choose an action/);

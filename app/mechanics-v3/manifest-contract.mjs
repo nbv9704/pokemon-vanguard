@@ -8,7 +8,7 @@ export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
 export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
 export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'];
-export const WEATHER_IDS=['sun','rain'];
+export const WEATHER_IDS=['sun','rain','snow','sandstorm'];
 export const TERRAIN_IDS=['electric','grassy','misty','psychic'];
 export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen'];
 export const HAZARD_IDS=['stealth-rock','spikes','toxic-spikes'];
@@ -16,9 +16,9 @@ export const ROOM_IDS=['trick-room','wonder-room','magic-room'];
 export const DELAYED_EFFECT_IDS=['yawn','perish-song'];
 export const TWO_TURN_MOVE_KINDS=['solar-charge','semi-invulnerable'];
 export const SEMI_INVULNERABLE_MODES=['underground','underwater','airborne','vanished'];
-export const MOVE_TAG_IDS=['sound','punch','bullet'];
+export const MOVE_TAG_IDS=['sound','punch','bullet','bite','slicing','pulse'];
 export const SECONDARY_EFFECT_KINDS=['major-status','volatile-status','stat-stages'];
-export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','afterStatus','onMove','onSwitchOut','endTurn','onFaint'];
+export const HOOKS=['onEntry','beforeAction','onTurnOrder','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','afterStatus','afterStatChange','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
  const problems=[];
@@ -118,8 +118,8 @@ export function validateMechanicManifest(manifest,kind){
    if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('screen-duration turns must be a positive integer');
   }
   if(entry?.id==='apply-secondary-effects'&&kind!=='moves')problems.push('apply-secondary-effects is only valid for moves');
-  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
-  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','type-immunity-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
+  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
+  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','weather-type-damage-boost','weather-residual-immunity','weather-incoming-accuracy-modifier','volatile-incoming-accuracy-modifier','type-immunity-boost','type-immunity-response','status-type-immunity-bypass','priority-move-immunity-aura','ally-major-status-immunity','ally-stat-drop-immunity','received-type-damage-modifier','contact-response','damage-response','ko-stat-boost','end-turn-stat-boost','lethal-hit-survival','stat-drop-response','volatile-immunity','critical-vs-status','status-residual-heal','status-reflect','flinch-stat-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','stat-multiplier','outgoing-accuracy-modifier','contact-power-boost','recoil-power-boost','major-status-immunity','critical-ratio','critical-immunity','stab-modifier','recoil-immunity','received-damage-modifier','always-hit','burn-attack-penalty-immunity','stat-drop-immunity','ally-damage-immunity','ally-damage-reduction','ally-ability-stat-multiplier','secondary-effect-immunity','multi-hit-max','weather-status-cure','paralysis-speed-penalty-immunity','switch-out-status-cure','switch-out-heal','random-status-cure','entry-weather','entry-stat-drop','entry-screen-cleaner','entry-ally-stage-reset','entry-ally-heal','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);

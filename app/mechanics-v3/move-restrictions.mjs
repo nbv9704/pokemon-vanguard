@@ -1,6 +1,7 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {validateSwitchingChoice} from './switching.mjs';
 import {validateMoveCommitmentChoice} from './move-commitments.mjs';
+import {validateChoiceItemMove} from './item-hooks.mjs';
 
 const byId=(catalog,id)=>Array.isArray(catalog)?catalog.find(entry=>entry.id===id):catalog?.[id];
 
@@ -26,6 +27,7 @@ export function createMoveChoiceValidator({moves,manifests={}}){
   const move=byId(moves,action.moveId);
   if(!move)return {ok:false,code:'UNKNOWN_MOVE'};
   const volatile=validateVolatileMoveChoice(battle,action,move);if(!volatile.ok)return volatile;
+  const choice=validateChoiceItemMove(battle,action,move);if(!choice.ok)return choice;
   return validateSwitchingChoice(battle,action,manifests?.[action.moveId]);
  };
 }

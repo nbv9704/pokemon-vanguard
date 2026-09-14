@@ -6,10 +6,12 @@ export function baseDamage({level=50,power,attack,defense}){
  return Math.floor(Math.floor(Math.floor(2*level/5+2)*power*attack/defense)/50)+2;
 }
 
-export function calculateDamage({level=50,power,attack,defense,moveType,attackerTypes,defenderTypes,randomRoll=100,spread=false,weatherModifier=1,critical=false,burned=false,physical=true,otherModifiers=[]}){
+export function calculateDamage({level=50,power,attack,defense,moveType,attackerTypes,defenderTypes,typeModifier=null,randomRoll=100,spread=false,weatherModifier=1,critical=false,burned=false,physical=true,stabModifier=1.5,otherModifiers=[]}){
  if(!Number.isInteger(randomRoll)||randomRoll<85||randomRoll>100)throw new Error('randomRoll must be an integer from 85 to 100');
  if(!Array.isArray(attackerTypes)||attackerTypes.length<1||attackerTypes.length>2||new Set(attackerTypes).size!==attackerTypes.length||attackerTypes.some(type=>!CANONICAL_TYPES.includes(type)))throw new Error('attacker must have one or two distinct canonical types');
- const base=baseDamage({level,power,attack,defense}),type=typeEffectiveness(moveType,defenderTypes),stab=attackerTypes.includes(moveType)?1.5:1;
+ if(typeModifier!==null&&(typeof typeModifier!=='number'||!Number.isFinite(typeModifier)||typeModifier<0))throw new Error('typeModifier must be a non-negative finite number');
+ if(typeof stabModifier!=='number'||!Number.isFinite(stabModifier)||stabModifier<=1)throw new Error('stabModifier must be a finite number > 1');
+ const base=baseDamage({level,power,attack,defense}),type=typeModifier===null?typeEffectiveness(moveType,defenderTypes):typeModifier,stab=attackerTypes.includes(moveType)?stabModifier:1;
  const spreadModifier=spread?.75:1,criticalModifier=critical?1.5:1,burn=burned&&physical?.5:1;
  const modifiers=[weatherModifier,...otherModifiers];
  if(modifiers.some(modifier=>typeof modifier!=='number'||modifier<=0))throw new Error('damage modifiers must be positive numbers');

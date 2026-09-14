@@ -1,7 +1,8 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {VOLATILE_STATUS_IDS} from './manifest-contract.mjs';
 import {terrainVolatileBlockReason} from './terrain.mjs';
-import {resolveStatusCureItems} from './item-hooks.mjs';
+import {resolveStatusCureItems,resolveVolatileCureItems} from './item-hooks.mjs';
+import {abilityVolatileBlock} from './ability-hooks.mjs';
 
 function initialVolatileState(volatile,moveId,runtime,source){
  const state={id:volatile,sourceId:moveId};
@@ -39,10 +40,11 @@ export function applyVolatileStatus(battle,{actorId,targetId,moveId,volatile},ru
  if(reason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason}]};
  const source=['A','B'].flatMap(side=>activeUnits(next,side)).find(entry=>entry.actorId===actorId);
  if(!source)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'sourceUnavailable'}]};
+ const abilityBlock=abilityVolatileBlock(target,volatile);if(abilityBlock)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,...abilityBlock}]};
  const state=initialVolatileState(volatile,moveId,{...runtime,targetId},source);
  if(volatile==='encore'||volatile==='disable')state.moveId=target.lastMoveId;
  if(volatile==='encore')state.endsWhenMoveHasNoPp=true;
  target.volatiles[volatile]=state;
- const cured=volatile==='confusion'?resolveStatusCureItems(next,{actorIds:[targetId],trigger:`volatile-status:${moveId}:${volatile}`}):{battle:next,events:[]};
- return {battle:cured.battle,events:[{kind:'volatileApplied',actorId,targetId,moveId,volatile},...cured.events]};
+ const cured=volatile==='confusion'?resolveStatusCureItems(next,{actorIds:[targetId],trigger:`volatile-status:${moveId}:${volatile}`}):{battle:next,events:[]},herb=resolveVolatileCureItems(cured.battle,{actorIds:[targetId],trigger:`volatile-status:${moveId}:${volatile}`});
+ return {battle:herb.battle,events:[{kind:'volatileApplied',actorId,targetId,moveId,volatile},...cured.events,...herb.events]};
 }

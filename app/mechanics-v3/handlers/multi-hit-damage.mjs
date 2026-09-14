@@ -1,10 +1,12 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
 import {resolveTargets} from '../../rules-v3/targets.mjs';
 import {applyDamageHit} from '../damage-hit.mjs';
+import {abilityMaximizesMultiHit} from '../ability-hooks.mjs';
 
-export function selectHitCount(hits,nextRandom){
+export function selectHitCount(hits,nextRandom,{maximize=false}={}){
  if(Number.isInteger(hits))return hits;
  if(!Array.isArray(hits)||hits[0]!==2||hits[1]!==5)throw new Error('unsupported multi-hit range');
+ if(maximize)return hits[1];
  const roll=nextRandom();return roll<.35?2:roll<.70?3:roll<.85?4:5;
 }
 
@@ -20,11 +22,11 @@ export const multiHitDamageHandler={
   if(!targets.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],hitCounts:{},damagedTargetIds:[]},events:[{kind:'moveFailed',actorId:actor.actorId,moveId:move.id,reason:'noTarget'}]};
   let totalDamage=0;const hitCounts={},damagedTargetIds=[];
   for(const target of targets){
-   const plannedHits=selectHitCount(params.hits,runtime.nextRandom),targetId=target.actorId;let actualHits=0;
+   const plannedHits=selectHitCount(params.hits,runtime.nextRandom,{maximize:abilityMaximizesMultiHit(unitById(next,actor.actorId))}),targetId=target.actorId;let actualHits=0;
    for(let hit=1;hit<=plannedHits;hit++){
     const liveActor=unitById(next,actor.actorId);if(!liveActor||liveActor.hp<=0)break;
     const defender=unitById(next,targetId);if(!defender||defender.hp<=0)break;
-    const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move,mechanics,hit},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
+    const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move,mechanics,hit,moveItemMultiplier:payload.itemMoveMultiplier??1,moveItemId:payload.itemMoveItemId??null},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
     if(result.amount===0)break;
    }
    hitCounts[targetId]=actualHits;events.push({kind:'hitCount',actorId:actor.actorId,targetId,moveId:move.id,plannedHits,hitCount:actualHits});

@@ -14,11 +14,11 @@ function delayedState(effect,moveId,sourceActorId,turns){
  return {id:effect,sourceId:moveId,sourceActorId,remaining:turns};
 }
 
-function yawnScheduleBlockReason(battle,target){
+function yawnScheduleBlockReason(battle,target,sourceId){
  if(target.status)return {reason:'alreadyStatus'};
  if(target.volatiles?.yawn)return {reason:'alreadyDelayed'};
  if(battle.field?.terrain?.id==='electric'&&unitIsGrounded(target))return {reason:'terrainBlocked'};
- const abilityBlock=abilityStatusBlock(battle,target,'sleep');if(abilityBlock)return abilityBlock;
+ const abilityBlock=abilityStatusBlock(battle,target,'sleep',{sourceId});if(abilityBlock)return abilityBlock;
  return null;
 }
 
@@ -29,7 +29,7 @@ export function scheduleDelayedEffect(battle,{actorId,targetId,moveId,effect,tur
  if(!target||target.hp<=0)return {battle:next,applied:false,events:[{kind:'delayedEffectFailed',actorId,targetId,moveId,effect,reason:'targetUnavailable'}]};
  target.volatiles??={};
  if(effect==='yawn'){
-  const block=yawnScheduleBlockReason(next,target);
+  const block=yawnScheduleBlockReason(next,target,actorId);
   if(block)return {battle:next,applied:false,events:[{kind:'delayedEffectFailed',actorId,targetId,moveId,effect,reason:block.reason,...(block.sourceAbilityId?{sourceAbilityId:block.sourceAbilityId}:{})}]};
  }
  if(effect==='perish-song'&&target.volatiles[effect])return {battle:next,applied:false,events:[]};

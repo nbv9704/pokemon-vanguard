@@ -1,11 +1,12 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
+import {abilityIgnoresParalysisSpeedPenalty} from './ability-hooks.mjs';
 
 const prevented=(battle,actorId,status,details={})=>({cancelled:true,battle,events:[{kind:'actionPrevented',actorId,status,...details}]});
 const cured=(battle,actorId,status)=>({cancelled:false,battle,events:[{kind:'statusCured',actorId,status,reason:'naturalRecovery'}]});
 
 export function speedWithMajorStatus(speed,unit){
  if(!Number.isFinite(speed)||speed<0)throw new Error('speed must be a non-negative number');
- return unit?.status?.id==='paralysis'||unit?.status==='paralysis'?Math.floor(speed/2):speed;
+ return (unit?.status?.id==='paralysis'||unit?.status==='paralysis')&&!abilityIgnoresParalysisSpeedPenalty(unit)?Math.floor(speed/2):speed;
 }
 
 export function tryMajorStatusAction(battle,action,runtime={}){

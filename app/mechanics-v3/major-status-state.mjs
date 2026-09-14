@@ -1,7 +1,7 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {MAJOR_STATUS_IDS} from './manifest-contract.mjs';
 import {terrainMajorStatusBlockReason} from './terrain.mjs';
-import {abilityStatusBlock} from './ability-hooks.mjs';
+import {abilityStatusBlock,abilityStatusReflect,abilityStatusTypeImmunityBypass} from './ability-hooks.mjs';
 import {resolveStatusCureItems} from './item-hooks.mjs';
 
 const intrinsicImmunities={
@@ -13,13 +13,14 @@ const intrinsicImmunities={
  'bad-poison':['poison','steel']
 };
 
-export function majorStatusBlockReason(status,target,blockedTargetTypes=[],battle=null){
+export function majorStatusBlockReason(status,target,blockedTargetTypes=[],battle=null,source=null){
  if(!MAJOR_STATUS_IDS.includes(status))throw new Error(`unsupported major status: ${status}`);
  if(target.status)return 'alreadyStatus';
- const abilityReason=battle&&abilityStatusBlock(battle,target,status);if(abilityReason)return abilityReason.reason;
+ const abilityReason=battle&&abilityStatusBlock(battle,target,status,{sourceId:source?.actorId||null});if(abilityReason)return abilityReason.reason;
  const terrainReason=battle&&terrainMajorStatusBlockReason(battle,target,status);if(terrainReason)return terrainReason;
  const types=new Set(target.types||[]);
- if(intrinsicImmunities[status].some(type=>types.has(type))||blockedTargetTypes.some(type=>types.has(type)))return 'typeImmune';
+ const matchedTypes=[...new Set([...intrinsicImmunities[status],...blockedTargetTypes])].filter(type=>types.has(type));
+ if(matchedTypes.length){const bypass=source&&abilityStatusTypeImmunityBypass(source,status,target);if(!bypass||matchedTypes.some(type=>!(bypass.targetTypes||[]).includes(type)))return 'typeImmune';}
  return null;
 }
 
@@ -33,12 +34,15 @@ function initialStatusState(status,moveId,runtime){
  return state;
 }
 
-export function applyMajorStatus(battle,{actorId,targetId,moveId,status,blockedTargetTypes=[]},runtime={}){
- const next=clone(battle),target=unitById(next,targetId);
+export function applyMajorStatus(battle,{actorId,targetId,moveId,status,blockedTargetTypes=[],reflected=false},runtime={}){
+ let next=clone(battle);const target=unitById(next,targetId);
  if(!target||target.hp<=0)return {battle:next,events:[{kind:'statusFailed',actorId,targetId,moveId,status,reason:'targetUnavailable'}]};
- const abilityBlock=abilityStatusBlock(next,target,status),reason=majorStatusBlockReason(status,target,blockedTargetTypes,next);
+ const source=unitById(next,actorId),abilityBlock=abilityStatusBlock(next,target,status,{sourceId:actorId}),reason=majorStatusBlockReason(status,target,blockedTargetTypes,next,source);
  if(reason)return {battle:next,events:[{kind:'statusFailed',actorId,targetId,moveId,status,reason,...(reason==='abilityBlocked'&&abilityBlock?.sourceAbilityId?{sourceAbilityId:abilityBlock.sourceAbilityId}:{})}]};
  target.status=initialStatusState(status,moveId,runtime);
+ const events=[{kind:'statusApplied',actorId,targetId,moveId,status}];
+ const reflectEffect=!reflected&&actorId!==targetId?abilityStatusReflect(target,status):null,reflectSource=reflectEffect?unitById(next,actorId):null;
+ if(reflectEffect&&reflectSource?.hp>0){events.push({kind:'abilityTriggered',sourceId:targetId,abilityId:reflectEffect.sourceId,effectId:reflectEffect.kind,targetId:actorId,status});const applied=applyMajorStatus(next,{actorId:targetId,targetId:actorId,moveId:`ability:${reflectEffect.sourceId}`,status,reflected:true},runtime);next=applied.battle;events.push(...applied.events.map(event=>({...event,sourceAbilityId:reflectEffect.sourceId,reflected:true})));}
  const cured=resolveStatusCureItems(next,{actorIds:[targetId],trigger:`major-status:${moveId}:${status}`});
- return {battle:cured.battle,events:[{kind:'statusApplied',actorId,targetId,moveId,status},...cured.events]};
+ return {battle:cured.battle,events:[...events,...cured.events]};
 }

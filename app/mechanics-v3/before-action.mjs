@@ -3,7 +3,7 @@ import {tryMajorStatusAction} from './major-status.mjs';
 import {tryConfusionAction,tryFlinchAction} from './volatile-action.mjs';
 import {tryVolatileMoveRestriction} from './move-restrictions.mjs';
 import {abortTwoTurnMove} from './move-commitments.mjs';
-import {resolveStatusCureItems} from './item-hooks.mjs';
+import {resolveNegativeStageResetItems,resolvePpRestoreItems,resolveStatusCureItems} from './item-hooks.mjs';
 
 function cancelledResult(next,events,action,move,reason){
  if(!move)return {cancelled:true,battle:next,events};
@@ -12,7 +12,9 @@ function cancelledResult(next,events,action,move,reason){
 
 export function tryBeforeMoveConditions(battle,action,runtime={},move=null){
  let next=clone(battle);const events=[];
+ const ppRestore=resolvePpRestoreItems(next,{actorIds:[action.actorId],trigger:'before-action'});next=ppRestore.battle;events.push(...ppRestore.events);
  const itemCure=resolveStatusCureItems(next,{actorIds:[action.actorId],trigger:'before-action'});next=itemCure.battle;events.push(...itemCure.events);
+ const stageReset=resolveNegativeStageResetItems(next,{actorIds:[action.actorId],trigger:'before-action'});next=stageReset.battle;events.push(...stageReset.events);
  const status=unitById(next,action.actorId)?.status?.id||unitById(next,action.actorId)?.status;
  if(status==='sleep'||status==='freeze'){
   const result=tryMajorStatusAction(next,action,runtime);next=result.battle;events.push(...result.events);

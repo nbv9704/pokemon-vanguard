@@ -1,38 +1,47 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {calculateDamage} from '../rules-v3/damage.mjs';
-import {typeEffectiveness} from '../rules-v3/type-chart.mjs';
 import {stagedStat} from '../rules-v3/stats.mjs';
 import {passiveDamageModifiers,receivedDamageModifiers} from './passive-effects.mjs';
-import {weatherDamageModifier} from './weather.mjs';
+import {defenseWithWeather,weatherDamageModifier} from './weather.mjs';
 import {sideConditionDamageModifiers} from './side-conditions.mjs';
 import {terrainDamageModifiers} from './terrain.mjs';
 import {wonderRoomDefenseBase} from './rooms.mjs';
 import {applySemiInvulnerabilityHitEffect,semiInvulnerabilityInteraction} from './semi-invulnerability.mjs';
-import {abilityPowerModifiers,abilityStatModifiers} from './ability-hooks.mjs';
-import {applySurvivalItemToMoveDamage,resolveContactDamageItems,resolvePostDamageItems} from './item-hooks.mjs';
+import {abilityCriticalRatioStages,abilityForcesCritical,abilityIgnoresBurnAttackPenalty,abilityPowerModifiers,abilityPreventsCritical,abilityStabModifier,abilityStatModifiers,allyReceivedDamageModifiers} from './ability-hooks.mjs';
+import {resolveContactAbilityResponses} from './ability-contact.mjs';
+import {applyLethalHitSurvivalAbility,resolveDamageResponseAbilities,resolveKoAbilityEffects} from './ability-damage-response.mjs';
+import {applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,criticalChanceWithHeldItems,resolveContactDamageItems,resolvePostDamageItems,statWithHeldItems,typeEffectivenessWithHeldItems} from './item-hooks.mjs';
 
-export function applyDamageHit(battle,{actorId,targetId,move,mechanics=null,spread=false,hit=null,ignoreBurn=false},runtime){
+const pokeRound=value=>value%1>.5?Math.ceil(value):Math.floor(value);
+
+export function applyDamageHit(battle,{actorId,targetId,move,mechanics=null,spread=false,hit=null,ignoreBurn=false,moveItemMultiplier=1,moveItemId=null},runtime){
  if(typeof runtime?.nextRandom!=='function')throw new Error('damage hit requires seeded nextRandom');
  let next=clone(battle);const actor=unitById(next,actorId),defender=unitById(next,targetId);
  if(!actor||actor.hp<=0||!defender||defender.hp<=0)return {battle:next,amount:0,events:[]};
- const physical=move.category==='physical',effectiveness=typeEffectiveness(move.type,defender.types),weatherModifier=weatherDamageModifier(next,move.type);
+ const physical=move.category==='physical',effectiveness=typeEffectivenessWithHeldItems(move.type,defender,next),weatherModifier=weatherDamageModifier(next,move.type);
  if(effectiveness===0){
-  const breakdown=calculateDamage({level:next.level||50,power:move.power,attack:actor.stats[physical?'atk':'spa'],defense:defender.stats[physical?'def':'spd'],moveType:move.type,attackerTypes:actor.types,defenderTypes:defender.types,randomRoll:100,weatherModifier,physical});
+  const breakdown=calculateDamage({level:next.level||50,power:move.power,attack:actor.stats[physical?'atk':'spa'],defense:defender.stats[physical?'def':'spd'],moveType:move.type,attackerTypes:actor.types,defenderTypes:defender.types,randomRoll:100,weatherModifier,physical,typeModifier:effectiveness});
   return {battle:next,amount:0,events:[damageEvent(actor,defender,move,0,effectiveness,{...breakdown,randomApplied:false},hit)]};
  }
- const critical=runtime.nextRandom()<1/24,randomRoll=85+Math.floor(runtime.nextRandom()*16),attackKey=physical?'atk':'spa',defenseKey=physical?'def':'spd';
- const attackStage=critical&&actor.stages?.[attackKey]<0?0:actor.stages?.[attackKey]||0,defenseStage=critical&&defender.stages?.[defenseKey]>0?0:defender.stages?.[defenseKey]||0;
- const passive=passiveDamageModifiers(actor,move,next,{critical}),received=receivedDamageModifiers(defender,move,next),sideConditions=sideConditionDamageModifiers(next,defender,move,critical),terrain=terrainDamageModifiers(next,actor,defender,move),semi=semiInvulnerabilityInteraction(defender,move.id),abilityPower=abilityPowerModifiers(actor,move,mechanics),abilityStat=abilityStatModifiers(actor,attackKey,next,move),power=Math.max(1,Math.floor(abilityPower.apply(move.power)*terrain.powerModifier)),attack=abilityStat.apply(stagedStat(actor.stats[attackKey],attackStage)),damage=calculateDamage({level:next.level||50,power,attack,defense:stagedStat(wonderRoomDefenseBase(next,defender,defenseKey),defenseStage),moveType:move.type,attackerTypes:actor.types,defenderTypes:defender.types,randomRoll,spread,weatherModifier,critical,burned:!ignoreBurn&&(actor.status?.id||actor.status)==='burn',physical,otherModifiers:[...passive.values,...received.values,...sideConditions.values,...terrain.values,semi.multiplier]});damage.passiveModifiers=[...passive.applied,...received.applied];damage.abilityPowerModifiers=abilityPower.applied;damage.abilityStatModifiers=abilityStat.applied;damage.sideConditionModifiers=sideConditions.applied;damage.terrainModifiers=terrain.applied;if(terrain.powerModifier!==1)damage.terrainPowerModifier=terrain.powerModifier;if(semi.multiplier!==1)damage.semiInvulnerabilityModifier={mode:semi.mode,multiplier:semi.multiplier};
- const hpBefore=defender.hp,survival=applySurvivalItemToMoveDamage(next,{targetId:defender.actorId,damage:damage.damage,moveId:move.id});next=survival.battle;const liveDefender=unitById(next,defender.actorId),amount=Math.min(hpBefore,survival.damage);liveDefender.hp-=amount;
- if(survival.itemId)damage.itemSurvival={sourceKind:'item',sourceId:survival.itemId,originalDamage:damage.damage,adjustedDamage:amount};
- let events=[...survival.events,damageEvent(actor,{...liveDefender,hp:hpBefore},move,amount,damage.type,damage,hit,liveDefender.hp)];
+ const resistance=applyResistanceBerryToMoveDamage(next,{targetId:defender.actorId,moveType:move.type,effectiveness,moveId:move.id,hit});next=resistance.battle;
+ const liveActor=unitById(next,actorId),liveTarget=unitById(next,targetId),criticalRoll=runtime.nextRandom(),critical=!abilityPreventsCritical(liveTarget)&&(abilityForcesCritical(liveActor,liveTarget)||criticalRoll<criticalChanceWithHeldItems(liveActor,next,{baseStage:abilityCriticalRatioStages(liveActor)})),randomRoll=85+Math.floor(runtime.nextRandom()*16),attackKey=physical?'atk':'spa',defenseKey=physical?'def':'spd';
+ const attackStage=critical&&liveActor.stages?.[attackKey]<0?0:liveActor.stages?.[attackKey]||0,defenseStage=critical&&liveTarget.stages?.[defenseKey]>0?0:liveTarget.stages?.[defenseKey]||0;
+ const passive=passiveDamageModifiers(liveActor,move,next,{critical,effectiveness}),received=receivedDamageModifiers(liveTarget,move,next,{effectiveness}),allyReceived=allyReceivedDamageModifiers(next,liveTarget,liveActor),sideConditions=sideConditionDamageModifiers(next,liveTarget,move,critical),terrain=terrainDamageModifiers(next,liveActor,liveTarget,move),semi=semiInvulnerabilityInteraction(liveTarget,move.id),abilityPower=abilityPowerModifiers(liveActor,move,mechanics),abilityStat=abilityStatModifiers(liveActor,attackKey,next,move),abilityDefense=abilityStatModifiers(liveTarget,defenseKey,next,move),abilityPowerValue=abilityPower.apply(move.power),itemPowerValue=moveItemMultiplier===1?abilityPowerValue:Math.max(1,pokeRound(abilityPowerValue*moveItemMultiplier)),power=Math.max(1,Math.floor(itemPowerValue*terrain.powerModifier)),stagedAttack=stagedStat(liveActor.stats[attackKey],attackStage),attack=statWithHeldItems(abilityStat.apply(stagedAttack),liveActor,attackKey,next),baseDefense=stagedStat(wonderRoomDefenseBase(next,liveTarget,defenseKey),defenseStage),abilityDefenseValue=abilityDefense.apply(baseDefense),defense=defenseWithWeather(abilityDefenseValue,liveTarget,defenseKey,next),damage=calculateDamage({level:next.level||50,power,attack,defense,moveType:move.type,attackerTypes:liveActor.types,defenderTypes:liveTarget.types,typeModifier:effectiveness,randomRoll,spread,weatherModifier,critical,burned:!ignoreBurn&&!abilityIgnoresBurnAttackPenalty(liveActor)&&(liveActor.status?.id||liveActor.status)==='burn',physical,stabModifier:abilityStabModifier(liveActor,move),otherModifiers:[...passive.values,...received.values,...allyReceived.values,...sideConditions.values,...terrain.values,semi.multiplier,resistance.multiplier]});damage.passiveModifiers=[...passive.applied,...received.applied,...allyReceived.applied];damage.abilityPowerModifiers=abilityPower.applied;damage.abilityStatModifiers=[...abilityStat.applied,...abilityDefense.applied];damage.abilityDefenseModifiers=abilityDefense.applied;damage.sideConditionModifiers=sideConditions.applied;damage.terrainModifiers=terrain.applied;if(defense!==abilityDefenseValue)damage.weatherDefenseModifier={weather:next.field?.weather?.id,stat:defenseKey,multiplier:defense/abilityDefenseValue};if(terrain.powerModifier!==1)damage.terrainPowerModifier=terrain.powerModifier;if(semi.multiplier!==1)damage.semiInvulnerabilityModifier={mode:semi.mode,multiplier:semi.multiplier};if(resistance.itemId)damage.itemResistance={sourceKind:'item',sourceId:resistance.itemId,multiplier:resistance.multiplier};if(moveItemId&&moveItemMultiplier!==1)damage.itemMovePowerModifier={sourceKind:'item',sourceId:moveItemId,multiplier:moveItemMultiplier};
+ const hpBefore=liveTarget.hp,abilitySurvival=applyLethalHitSurvivalAbility(next,{targetId:liveTarget.actorId,damage:damage.damage,moveId:move.id,hit});next=abilitySurvival.battle;
+ const survival=applySurvivalItemToMoveDamage(next,{targetId:liveTarget.actorId,damage:abilitySurvival.damage,moveId:move.id,hit,runtime});next=survival.battle;const liveDefender=unitById(next,liveTarget.actorId),amount=Math.min(hpBefore,survival.damage);liveDefender.hp-=amount;
+ if(abilitySurvival.abilityId)damage.abilitySurvival={sourceKind:'ability',sourceId:abilitySurvival.abilityId,originalDamage:damage.damage,adjustedDamage:abilitySurvival.damage};
+ if(survival.itemId)damage.itemSurvival={sourceKind:'item',sourceId:survival.itemId,originalDamage:abilitySurvival.damage,adjustedDamage:amount};
+ let events=[...resistance.events,...abilitySurvival.events,...survival.events,damageEvent(liveActor,{...liveDefender,hp:hpBefore},move,amount,damage.type,damage,hit,liveDefender.hp)];
  if(amount>0){
-  if(liveDefender.hp>0){const aftermath=applySemiInvulnerabilityHitEffect(next,{targetId:liveDefender.actorId,moveId:move.id});next=aftermath.battle;events.push(...aftermath.events);}
-  const contact=resolveContactDamageItems(next,{attackerId:actor.actorId,targetId:liveDefender.actorId,moveId:move.id,mechanics,damage:amount,hit});next=contact.battle;events.push(...contact.events);
+  const response=resolveDamageResponseAbilities(next,{actorId:liveActor.actorId,targetId:liveDefender.actorId,move,damage:amount,hpBefore,hpAfter:liveDefender.hp,breakdown:damage});next=response.battle;events.push(...response.events);
+  const currentDefender=unitById(next,liveDefender.actorId);
+  if(currentDefender?.hp>0){const aftermath=applySemiInvulnerabilityHitEffect(next,{targetId:currentDefender.actorId,moveId:move.id});next=aftermath.battle;events.push(...aftermath.events);}
+  const abilityContact=resolveContactAbilityResponses(next,{attackerId:liveActor.actorId,targetId:liveDefender.actorId,moveId:move.id,mechanics,damage:amount,hit},runtime);next=abilityContact.battle;events.push(...abilityContact.events);
+  const contact=resolveContactDamageItems(next,{attackerId:liveActor.actorId,targetId:liveDefender.actorId,moveId:move.id,mechanics,damage:amount,hit});next=contact.battle;events.push(...contact.events);
  }
+ if(amount>0){const item=resolvePostDamageItems(next,{targetId:liveDefender.actorId,moveId:move.id,damage:amount});next=item.battle;events.push(...item.events);}
  const finalDefender=unitById(next,liveDefender.actorId);
- if(finalDefender?.hp===0)events.push({kind:'fainted',targetId:finalDefender.actorId,source:move.id});
- else if(amount>0){const item=resolvePostDamageItems(next,{targetId:liveDefender.actorId,moveId:move.id});next=item.battle;events.push(...item.events);}
+ if(finalDefender?.hp===0){const ko=resolveKoAbilityEffects(next,{actorId:liveActor.actorId,targetId:finalDefender.actorId,moveId:move.id});next=ko.battle;events.push(...ko.events,{kind:'fainted',targetId:finalDefender.actorId,source:move.id});}
  return {battle:next,amount,events};
 }
 

@@ -1,5 +1,5 @@
 import {actorAvailable,clone,reserveUnits,unitById} from '../rules-v3/battle-state.mjs';
-import {applySwitch} from '../rules-v3/lifecycle.mjs';
+import {applyMechanicsSwitch} from './switch-lifecycle.mjs';
 
 const sideOf=(battle,actorId)=>['A','B'].find(side=>battle.sides?.[side]?.roster?.some(unit=>unit.actorId===actorId));
 
@@ -17,7 +17,7 @@ export function applyPivotSwitch(battle,{side,actorId,toId,moveId,totalDamage}){
  if(!(totalDamage>0))return failed(next,actorId,moveId,'noDamage');
  if(!actor||actor.hp<=0||!actorAvailable(next,side,actorId))return failed(next,actorId,moveId,'actorUnavailable');
  if(typeof toId!=='string'||!toId)return failed(next,actorId,moveId,'missingSwitchTarget');
- const switched=applySwitch(next,side,actorId,toId);if(!switched.ok)return failed(next,actorId,moveId,'invalidSwitchTarget');
+ const switched=applyMechanicsSwitch(next,side,actorId,toId);if(!switched.ok)return failed(next,actorId,moveId,'invalidSwitchTarget');
  return {battle:switched.battle,succeeded:true,events:switched.events.map(event=>({...event,pivot:true,source:moveId}))};
 }
 
@@ -27,7 +27,7 @@ export function applyForcedSwitches(battle,{actorId,targetIds,moveId,requireDama
   if(!side||!target||target.hp<=0||!actorAvailable(next,side,targetId)){events.push({kind:'forceSwitchFailed',actorId,targetId,moveId,reason:'targetUnavailable'});continue;}
   const reserves=reserveUnits(next,side);if(!reserves.length){events.push({kind:'forceSwitchFailed',actorId,targetId,moveId,reason:'noReserve'});continue;}
   let index=0;if(reserves.length>1){if(typeof runtime.nextRandom!=='function')throw new Error('forced switch requires seeded nextRandom');index=Math.floor(runtime.nextRandom()*reserves.length);}
-  const switched=applySwitch(next,side,targetId,reserves[Math.min(index,reserves.length-1)].actorId);next=switched.battle;
+  const switched=applyMechanicsSwitch(next,side,targetId,reserves[Math.min(index,reserves.length-1)].actorId);next=switched.battle;
   events.push(...switched.events.map(event=>({...event,forced:true,source:moveId})),{kind:'forcedSwitch',actorId,targetId,moveId,toId:reserves[Math.min(index,reserves.length-1)].actorId,side});
  }
  return {battle:next,succeeded:events.some(event=>event.kind==='forcedSwitch'),events};

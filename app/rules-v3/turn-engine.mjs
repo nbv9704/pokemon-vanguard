@@ -10,7 +10,7 @@ export function validateTurnActions(battle,actions,{validateAction}={}){
  for(const action of actions){
   const key=`${action?.side}:${action?.actorId}`;
   if(!expected.includes(key)||received.has(key))return {ok:false,code:'INVALID_ACTOR'};
-  if(!['move','switch','recharge'].includes(action.kind)||!Number.isFinite(action.speed)||!Number.isInteger(action.priority??0)||(action.kind==='switch'||action.kind==='recharge')&&action.mega)return {ok:false,code:'INVALID_ACTION'};
+  if(!['move','switch','recharge'].includes(action.kind)||!Number.isFinite(action.speed)||!Number.isInteger(action.priority??0)||action.orderBoost!==undefined||(action.kind==='switch'||action.kind==='recharge')&&action.mega)return {ok:false,code:'INVALID_ACTION'};
   if(action.kind==='move'&&(typeof action.moveId!=='string'||!action.moveId))return {ok:false,code:'INVALID_MOVE'};
   if(action.kind==='recharge'&&action.moveId!==undefined)return {ok:false,code:'INVALID_RECHARGE'};
   if(action.kind==='move'&&action.switchToId!==undefined){if(typeof action.switchToId!=='string'||!action.switchToId||switchTargets[action.side].has(action.switchToId))return {ok:false,code:'INVALID_SWITCH'};switchTargets[action.side].add(action.switchToId);}
@@ -68,7 +68,7 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom}){
   if(!actorAvailable(next,action.side,action.actorId)){events.push({kind:'actionCancelled',actorId:action.actorId,reason:'actorUnavailable',speed:action.speed,priority:action.priority??0});return {suspended:false};}
   const handler=handlers?.[kind];if(typeof handler!=='function')throw new Error(`missing action handler: ${kind}`);
   const handlerInput=clone(next),handlerBefore=JSON.stringify(handlerInput),beforeEventCount=events.length;
-  const result=handler(handlerInput,clone({...action,kind}),{hasActed:actorId=>executionOrder.some(entry=>entry.actorId===actorId),nextRandom(){const roll=nextRandom(rngState);rngState=roll.rngState;return roll.value;}});
+  const result=handler(handlerInput,clone({...action,kind}),{hasActed:actorId=>executionOrder.some(entry=>entry.actorId===actorId),willMove:actorId=>(state.movePending||[]).some(entry=>entry.actorId===actorId),nextRandom(){const roll=nextRandom(rngState);rngState=roll.rngState;return roll.value;}});
   if(JSON.stringify(handlerInput)!==handlerBefore)throw new Error(`action handler mutated battle: ${kind}`);
   if(!result?.battle||!Array.isArray(result.events))throw new Error(`invalid action result: ${kind}`);
   next=clone(result.battle);events.push(...result.events);executionOrder.push({...action,kind});
@@ -100,17 +100,24 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom}){
  return {battle:next,events,executionOrder,rngState,suspended:false};
 }
 
-export function resolveActionQueue(battle,actions,handlers,{trickRoom=false,isTrickRoom,getSpeed=(_battle,action)=>action.speed,validateAction}={}){
+export function resolveActionQueue(battle,actions,handlers,{trickRoom=false,isTrickRoom,getSpeed=(_battle,action)=>action.speed,validateAction,prepareTurnOrder}={}){
  if(battle.phase!=='RESOLVE')return {ok:false,code:'WRONG_PHASE'};
  if(battle.pendingResolution)return {ok:false,code:'RESOLUTION_ALREADY_SUSPENDED'};
  const valid=validateTurnActions(battle,actions,{validateAction});if(!valid.ok)return valid;
- const input=JSON.stringify(battle),prepared=prepareTurnActions(actions,battle.rngState),state={
-  switchPending:prepared.actions.filter(action=>action.kind==='switch'),
-  megaPending:prepared.actions.filter(action=>action.kind==='move'&&action.mega),
-  movePending:prepared.actions.filter(action=>action.kind==='move'||action.kind==='recharge'),
-  executionOrder:[],rngState:prepared.rngState,trickRoom:trickRoom===true,
+ const input=JSON.stringify(battle),prepared=prepareTurnActions(actions,battle.rngState);let next=clone(battle),preparedActions=prepared.actions,rngState=prepared.rngState,orderEvents=[];
+ if(typeof prepareTurnOrder==='function'){
+  const battleInput=clone(next),actionsInput=clone(preparedActions),battleBefore=JSON.stringify(battleInput),actionsBefore=JSON.stringify(actionsInput),result=prepareTurnOrder(battleInput,actionsInput,{nextRandom(){const roll=nextRandom(rngState);rngState=roll.rngState;return roll.value;}});
+  if(JSON.stringify(battleInput)!==battleBefore||JSON.stringify(actionsInput)!==actionsBefore)throw new Error('prepareTurnOrder mutated its input');
+  if(!result?.battle||!Array.isArray(result.actions)||!Array.isArray(result.events))throw new Error('invalid prepareTurnOrder result');
+  next=clone(result.battle);preparedActions=clone(result.actions);orderEvents=clone(result.events);
+ }
+ const state={
+  switchPending:preparedActions.filter(action=>action.kind==='switch'),
+  megaPending:preparedActions.filter(action=>action.kind==='move'&&action.mega),
+  movePending:preparedActions.filter(action=>action.kind==='move'||action.kind==='recharge'),
+  executionOrder:[],rngState,trickRoom:trickRoom===true,
  };
- const next=clone(battle),initialEvents=[{kind:'turnStarted',turn:next.turn}],continued=continueActionQueue(next,state,handlers,{getSpeed,isTrickRoom}),committed=commitEvents(continued.battle,[...initialEvents,...continued.events]);
+ const initialEvents=[{kind:'turnStarted',turn:next.turn},...orderEvents],continued=continueActionQueue(next,state,handlers,{getSpeed,isTrickRoom}),committed=commitEvents(continued.battle,[...initialEvents,...continued.events]);
  if(JSON.stringify(battle)!==input)throw new Error('resolveActionQueue mutated its input');
  return {ok:true,queue:continued.executionOrder,suspended:continued.suspended,...committed};
 }

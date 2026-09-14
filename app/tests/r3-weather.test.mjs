@@ -5,9 +5,9 @@ import {applyDamageHit,applyWeather,compilePassiveEffects,createHookRegistry,cre
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
 const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
-const moves=Object.fromEntries(allMoves.filter(move=>['sunny-day','rain-dance'].includes(move.id)).map(move=>[move.id,move]));
+const moves=Object.fromEntries(allMoves.filter(move=>['sunny-day','rain-dance','sandstorm','snowscape'].includes(move.id)).map(move=>[move.id,move]));
 const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0});
-const unit=(actorId,overrides={})=>({actorId,types:['normal'],hp:160,maxHp:160,stats:{hp:160,atk:100,def:100,spa:100,spd:100,spe:100},pp:{'sunny-day':8,'rain-dance':8},status:null,volatiles:{},stages:stages(),passiveEffects:[],...overrides});
+const unit=(actorId,overrides={})=>({actorId,types:['normal'],hp:160,maxHp:160,stats:{hp:160,atk:100,def:100,spa:100,spd:100,spe:100},pp:{'sunny-day':8,'rain-dance':8,'sandstorm':16,'snowscape':16},status:null,volatiles:{},stages:stages(),passiveEffects:[],...overrides});
 function fixture(format='single'){
  const count=format==='double'?2:1,a=[unit('a1'),unit('a2')],b=[unit('b1'),unit('b2')];
  return {id:`weather-${format}`,format,level:50,phase:'RESOLVE',turn:1,activeCount:count,rngState:1,field:{},sides:{A:{active:a.slice(0,count).map(entry=>entry.actorId),roster:a,conditions:{}},B:{active:b.slice(0,count).map(entry=>entry.actorId),roster:b,conditions:{}}}};
@@ -47,4 +47,22 @@ test('r3-weather:double one field condition affects both sides and resets its du
  const result=resolveMove(battle,{kind:'move',side:'B',actorId:'b1',moveId:'rain-dance'},{});
  assert.deepEqual(result.battle.field.weather,{id:'rain',remaining:8,sourceActorId:'b1',sourceMoveId:'rain-dance'});assert.equal(result.events.at(-1).weather,'rain');
  const direct=applyWeather(result.battle,{actorId:'a1',moveId:'sunny-day',weather:'sun'});assert.equal(direct.battle.field.weather.id,'sun');assert.equal(result.battle.field.weather.id,'rain');
+});
+
+
+test('Snow and Sandstorm use shared duration rocks plus canonical defensive field modifiers',()=>{
+ const snow=fixture();snow.sides.A.roster[0].passiveEffects=compilePassiveEffects({itemId:'icy-rock',manifests});
+ const snowed=resolveMove(snow,{kind:'move',side:'A',actorId:'a1',moveId:'snowscape'},{});assert.equal(snowed.battle.field.weather.id,'snow');assert.equal(snowed.battle.field.weather.remaining,8);assert.equal(snowed.events.at(-1).sourceItemId,'icy-rock');
+ const sand=fixture();sand.sides.A.roster[0].passiveEffects=compilePassiveEffects({itemId:'smooth-rock',manifests});
+ const sanded=resolveMove(sand,{kind:'move',side:'A',actorId:'a1',moveId:'sandstorm'},{});assert.equal(sanded.battle.field.weather.id,'sandstorm');assert.equal(sanded.battle.field.weather.remaining,8);assert.equal(sanded.events.at(-1).sourceItemId,'smooth-rock');
+ const physical={id:'physical-hit',type:'normal',category:'physical',power:90},special={id:'special-hit',type:'water',category:'special',power:90},runtime={nextRandom:()=>.999};
+ const plainIce=fixture();plainIce.sides.B.roster[0].types=['ice'];const snowIce=structuredClone(plainIce);snowIce.field.weather={id:'snow',remaining:5};
+ const plainPhysical=applyDamageHit(plainIce,{actorId:'a1',targetId:'b1',move:physical},runtime).events.find(event=>event.kind==='damage'),snowPhysical=applyDamageHit(snowIce,{actorId:'a1',targetId:'b1',move:physical},runtime).events.find(event=>event.kind==='damage');assert.ok(snowPhysical.amount<plainPhysical.amount);assert.equal(snowPhysical.breakdown.weatherDefenseModifier.weather,'snow');assert.equal(snowPhysical.breakdown.weatherDefenseModifier.stat,'def');
+ const plainRock=fixture();plainRock.sides.B.roster[0].types=['rock'];const sandRock=structuredClone(plainRock);sandRock.field.weather={id:'sandstorm',remaining:5};
+ const plainSpecial=applyDamageHit(plainRock,{actorId:'a1',targetId:'b1',move:special},runtime).events.find(event=>event.kind==='damage'),sandSpecial=applyDamageHit(sandRock,{actorId:'a1',targetId:'b1',move:special},runtime).events.find(event=>event.kind==='damage');assert.ok(sandSpecial.amount<plainSpecial.amount);assert.equal(sandSpecial.breakdown.weatherDefenseModifier.weather,'sandstorm');assert.equal(sandSpecial.breakdown.weatherDefenseModifier.stat,'spd');
+});
+
+test('Sandstorm residual damages only non Rock/Ground/Steel active units and ticks before expiry',()=>{
+ const battle=fixture('double');battle.phase='END_TURN';battle.field.weather={id:'sandstorm',remaining:1};battle.sides.A.roster[0].types=['normal'];battle.sides.A.roster[1].types=['rock'];battle.sides.B.roster[0].types=['ground'];battle.sides.B.roster[1].types=['steel'];
+ const result=resolveMechanicsEndTurn(battle),weatherDamage=result.events.filter(event=>event.kind==='damage'&&event.source==='weather-residual-damage');assert.deepEqual(weatherDamage.map(event=>event.targetId),['a1']);assert.equal(weatherDamage[0].amount,10);assert.equal(result.battle.field.weather,undefined);assert.ok(result.events.some(event=>event.kind==='weatherEnded'&&event.weather==='sandstorm'));
 });

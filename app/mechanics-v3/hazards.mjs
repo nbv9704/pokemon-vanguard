@@ -4,16 +4,17 @@ import {typeEffectiveness} from '../rules-v3/type-chart.mjs';
 import {HAZARD_IDS} from './manifest-contract.mjs';
 import {applyMajorStatus} from './major-status.mjs';
 import {unitIsGrounded} from './terrain.mjs';
-import {resolveHpThresholdItems} from './item-hooks.mjs';
+import {resolveEntryItems,resolveHpThresholdItems} from './item-hooks.mjs';
+import {resolveEntryAbilities} from './ability-lifecycle.mjs';
 const MAX_LAYERS={'stealth-rock':1,spikes:3,'toxic-spikes':2};
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
 function sideOf(battle,actorId){return ['A','B'].find(side=>battle.sides?.[side]?.roster?.some(unit=>unit.actorId===actorId))||null;}
 
-export function applyHazard(battle,{actorId,moveId,hazard}){
+export function applyHazard(battle,{actorId,moveId,hazard,allowFainted=false}){
  if(!HAZARD_IDS.includes(hazard))throw new Error(`unsupported hazard: ${hazard}`);
  const next=clone(battle),sourceSide=sideOf(next,actorId),actor=unitById(next,actorId);
- if(!sourceSide||!actor||actor.hp<=0)return {battle:next,applied:false,events:[{kind:'moveFailed',actorId,moveId,reason:'actorUnavailable'}]};
+ if(!sourceSide||!actor||(!allowFainted&&actor.hp<=0))return {battle:next,applied:false,events:[{kind:'moveFailed',actorId,moveId,reason:'actorUnavailable'}]};
  const side=otherSide(sourceSide);next.sides[side].conditions??={};
  const existing=next.sides[side].conditions[hazard],maxLayers=MAX_LAYERS[hazard];
  if(existing?.layers>=maxLayers)return {battle:next,applied:false,events:[{kind:'moveFailed',actorId,moveId,reason:'hazardMaxLayers',hazard,layers:existing.layers,maxLayers,side}]};
@@ -26,11 +27,11 @@ export function applyHazard(battle,{actorId,moveId,hazard}){
  return {battle:next,applied:true,events:[{kind:'hazardApplied',actorId,moveId,side,hazard,layers:state.layers,maxLayers}]};
 }
 
-function hazardDamage(unit,hazard,layers){
+function hazardDamage(battle,unit,hazard,layers){
  const limit=maxHp(unit);
  if(hazard==='stealth-rock')return {amount:Math.max(1,Math.floor(limit*typeEffectiveness('rock',unit.types)/8)),effectiveness:typeEffectiveness('rock',unit.types)};
  if(hazard==='spikes'){
-  if(!unitIsGrounded(unit))return {amount:0,effectiveness:1};
+  if(!unitIsGrounded(unit,battle))return {amount:0,effectiveness:1};
   const fractions={1:[1,8],2:[1,6],3:[1,4]},[numerator,denominator]=fractions[layers]||fractions[3];
   return {amount:Math.max(1,Math.floor(limit*numerator/denominator)),effectiveness:1};
  }
@@ -38,7 +39,7 @@ function hazardDamage(unit,hazard,layers){
 }
 
 function resolveToxicSpikes(next,unit,state,entry,events){
- if(!unitIsGrounded(unit))return next;
+ if(!unitIsGrounded(unit,next))return next;
  if((unit.types||[]).includes('poison')){
   delete next.sides[entry.side].conditions['toxic-spikes'];
   events.push({kind:'hazardRemoved',actorId:unit.actorId,targetId:unit.actorId,side:entry.side,hazard:'toxic-spikes',layers:state.layers||1,reason:'poison-type-absorption'});
@@ -52,7 +53,7 @@ function resolveToxicSpikes(next,unit,state,entry,events){
 }
 
 export function resolveEntryHazards(battle,switchEvents=[]){
- let next=clone(battle);const events=[];
+ let next=clone(battle);const events=[],entryAbilities=resolveEntryAbilities(next,switchEvents);next=entryAbilities.battle;events.push(...entryAbilities.events);const entryItems=resolveEntryItems(next,switchEvents);next=entryItems.battle;events.push(...entryItems.events);
  for(const entry of switchEvents||[]){
   if(entry?.kind!=='switchIn'||!entry.actorId||!entry.side)continue;
   const entrant=unitById(next,entry.actorId);if(!entrant||entrant.hp<=0)continue;
@@ -60,7 +61,7 @@ export function resolveEntryHazards(battle,switchEvents=[]){
   for(const state of hazards){
    const unit=unitById(next,entry.actorId);if(!unit||unit.hp<=0)break;
    if(state.id==='toxic-spikes'){next=resolveToxicSpikes(next,unit,state,entry,events);continue;}
-   const {amount,effectiveness}=hazardDamage(unit,state.id,state.layers||1);if(amount<=0)continue;
+   const {amount,effectiveness}=hazardDamage(next,unit,state.id,state.layers||1);if(amount<=0)continue;
    events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:state.id,layers:state.layers||1,amount,effectiveness});
    const applied=applyHpGroup(next,[{actorId:unit.actorId,delta:-amount}],state.id);next=applied.battle;
    events.push(...applied.events.map(event=>({...event,hazard:state.id,layers:state.layers||1,effectiveness:event.kind==='damage'?effectiveness:event.effectiveness})));

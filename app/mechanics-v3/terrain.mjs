@@ -9,11 +9,10 @@ const terrainTypeBoosts={electric:'electric',grassy:'grass',psychic:'psychic'};
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 const effectFor=(unit,kind,battle)=>(unit?.passiveEffects||[]).find(effect=>passiveEffectActive(effect,battle,unit)&&effect.kind===kind);
 
-// Grounding is intentionally scoped to mechanics currently supported by the beta.
-// Flying types and the already-modelled airborne volatiles are not terrain-affected.
-// Levitate/Air Balloon/Gravity-style overrides remain fail-closed until their own batches.
-export function unitIsGrounded(unit){
+export function unitIsGrounded(unit,battle=null){
  if(!unit)return false;
+ if(effectFor(unit,'item-grounding',battle))return true;
+ if(effectFor(unit,'item-airborne',battle))return false;
  if(unit.volatiles?.['magnet-rise']||unit.volatiles?.telekinesis)return false;
  return !(unit.types||[]).includes('flying');
 }
@@ -32,27 +31,27 @@ export function applyTerrain(battle,{actorId,moveId,terrain,defaultTurns=5}){
 
 export function terrainDamageModifiers(battle,attacker,defender,move){
  const terrain=battle.field?.terrain?.id,values=[],applied=[],boostedType=terrainTypeBoosts[terrain];
- if(boostedType===move.type&&unitIsGrounded(attacker)){
+ if(boostedType===move.type&&unitIsGrounded(attacker,battle)){
   const multiplier=5325/4096;values.push(multiplier);applied.push({sourceKind:'terrain',sourceId:terrain,kind:`grounded-${boostedType}-boost`,multiplier});
  }
- if(terrain==='misty'&&move.type==='dragon'&&unitIsGrounded(defender)){
+ if(terrain==='misty'&&move.type==='dragon'&&unitIsGrounded(defender,battle)){
   const multiplier=.5;values.push(multiplier);applied.push({sourceKind:'terrain',sourceId:'misty',kind:'grounded-dragon-reduction',multiplier});
  }
- return {values,applied,powerModifier:terrain==='grassy'&&unitIsGrounded(defender)&&quakeLikeMoves.has(move.id)?.5:1};
+ return {values,applied,powerModifier:terrain==='grassy'&&unitIsGrounded(defender,battle)&&quakeLikeMoves.has(move.id)?.5:1};
 }
 
 export function terrainHealingGroup(battle){
  const changes=[];
  if(battle.field?.terrain?.id!=='grassy')return {id:'terrain-healing',changes};
  for(const side of ['A','B'])for(const {unit} of activeUnits(battle,side)){
-  if(!unitIsGrounded(unit)||unit.hp>=maxHp(unit))continue;
+  if(!unitIsGrounded(unit,battle)||unit.hp>=maxHp(unit))continue;
   changes.push({actorId:unit.actorId,delta:Math.max(1,Math.floor(maxHp(unit)/16))});
  }
  return {id:'terrain-healing',changes};
 }
 
 export function terrainMajorStatusBlockReason(battle,target,status){
- if(!unitIsGrounded(target))return null;
+ if(!unitIsGrounded(target,battle))return null;
  const terrain=battle.field?.terrain?.id;
  if(terrain==='misty'||(terrain==='electric'&&status==='sleep'))return 'terrainBlocked';
  return null;
@@ -60,12 +59,12 @@ export function terrainMajorStatusBlockReason(battle,target,status){
 
 export function terrainPriorityBlockReason(battle,{actorId,targetRef,mechanics}){
  if(battle.field?.terrain?.id!=='psychic'||(mechanics?.priority||0)<=0.1)return null;
- const target=unitById(battle,targetRef?.actorId);if(!target||!unitIsGrounded(target))return null;
+ const target=unitById(battle,targetRef?.actorId);if(!target||!unitIsGrounded(target,battle))return null;
  const actorSide=['A','B'].find(side=>(battle.sides?.[side]?.roster||[]).some(unit=>unit.actorId===actorId));
  if(!actorSide||targetRef?.side===actorSide)return null;
  return 'psychicTerrain';
 }
 
 export function terrainVolatileBlockReason(battle,target,volatile){
- return volatile==='confusion'&&battle.field?.terrain?.id==='misty'&&unitIsGrounded(target)?'terrainBlocked':null;
+ return volatile==='confusion'&&battle.field?.terrain?.id==='misty'&&unitIsGrounded(target,battle)?'terrainBlocked':null;
 }

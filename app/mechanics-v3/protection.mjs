@@ -1,6 +1,8 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {applyMajorStatus} from './major-status.mjs';
-import {resolveHpThresholdItems} from './item-hooks.mjs';
+import {resolveHpThresholdItems,resolveNegativeStageResetItems} from './item-hooks.mjs';
+import {abilityStatDropBlock} from './ability-hooks.mjs';
+import {resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
 
 export function applyProtect(battle,{actorId,moveId,retaliation=null,blocksStatus=true},runtime={}){
  const next=clone(battle),actor=unitById(next,actorId);
@@ -41,8 +43,12 @@ export function resolveProtectionBlock(battle,{targetRef,actorId,move,mechanics}
   if(actor.hp===0)events.push({kind:'fainted',targetId:actor.actorId,source:protect.sourceId});
   else{const threshold=resolveHpThresholdItems(next,{actorIds:[actor.actorId],trigger:`protection:${protect.sourceId}`});next=threshold.battle;events.push(...threshold.events);}
  }else if(protect.retaliation==='lower-attack'){
-  const before=actor.stages?.atk||0,after=Math.max(-6,before-1);actor.stages??={};actor.stages.atk=after;
-  events.push({kind:'statStageChanged',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',before,after,requestedDelta:-1,appliedDelta:after-before,reason:after===before?'stageLimit':null});
+  const block=abilityStatDropBlock(actor,{battle:next,sourceId:target.actorId,stat:'atk',requestedDelta:-1});
+  if(block)events.push({kind:'statStageBlocked',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',requestedDelta:-1,...block});
+  else{const before=actor.stages?.atk||0,after=Math.max(-6,before-1);actor.stages??={};actor.stages.atk=after;
+   const change={kind:'statStageChanged',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',before,after,requestedDelta:-1,appliedDelta:after-before,reason:after===before?'stageLimit':null};events.push(change);
+   const response=resolveStatDropResponseAbilities(next,{sourceId:target.actorId,targetId:actor.actorId,changes:[change],trigger:'protection'});next=response.battle;events.push(...response.events);
+   const reset=resolveNegativeStageResetItems(next,{actorIds:[actor.actorId],trigger:`protection:${protect.sourceId}:stat-change`});next=reset.battle;events.push(...reset.events);}
  }else if(protect.retaliation==='poison'){
   const applied=applyMajorStatus(next,{actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,status:'poison'},runtime);next=applied.battle;events.push(...applied.events);
  }

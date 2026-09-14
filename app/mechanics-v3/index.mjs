@@ -19,11 +19,15 @@ export {applyRedirection} from './redirection-state.mjs';
 export {applyPivotSwitchHandler} from './handlers/apply-pivot-switch.mjs';
 export {applyForcedSwitchHandler} from './handlers/apply-forced-switch.mjs';
 export {applyPivotSwitch,applyForcedSwitches,applyPositionSwap,validateSwitchingChoice} from './switching.mjs';
+export {applyMechanicsSwitch,resolveSwitchOutAbilities} from './switch-lifecycle.mjs';
+export {resolveEntryAbilities} from './ability-lifecycle.mjs';
+export {resolveContactAbilityResponses} from './ability-contact.mjs';
+export {resolveDamageResponseAbilities,resolveKoAbilityEffects,applyLethalHitSurvivalAbility,resolveEndTurnAbilityStageBoosts} from './ability-damage-response.mjs';
 export {applyPositionSwapHandler} from './handlers/apply-position-swap.mjs';
 export {heldDamageBoostHandler,lowHpTypeBoostHandler,receivedTypeDamageReductionHandler} from './handlers/passive-damage-modifiers.mjs';
 export {megaStoneHandler} from './handlers/mega-stone.mjs';
 export {compilePassiveEffects,passiveDamageModifiers,receivedDamageModifiers,passiveEffectActive} from './passive-effects.mjs';
-export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveStatusCureItems} from './item-hooks.mjs';
+export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,revealHeldItem,heldItemHasEffect,typeEffectivenessWithHeldItems,applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveStatusCureItems,resolveVolatileCureItems,resolveNegativeStageResetItems,resolveTerrainSeedItems,resolvePpRestoreItems,resolveEntryItems,prepareOneShotMoveDamageItem,prepareConsecutiveMoveItem,prepareTurnOrderItems,resolveFlinchItems,resolveReactiveSwitchItems,speedWithHeldItems,statWithHeldItems,accuracyWithHeldItems,healingWithHeldItems,criticalChanceWithHeldItems,validateChoiceItemMove,applyChoiceItemMoveLock} from './item-hooks.mjs';
 export {validateBetaSlice} from './beta-slice.mjs';
 export {applyProtect,applySideGuard,breakProtection,isProtectedTarget,protectionBlockReason,resolveProtectionBlock} from './protection.mjs';
 export {spendPpHandler} from './handlers/spend-pp.mjs';
@@ -33,7 +37,7 @@ export {applyMajorStatusHandler} from './handlers/apply-major-status.mjs';
 export {applyVolatileStatusHandler} from './handlers/apply-volatile-status.mjs';
 export {MAJOR_STATUSES,applyMajorStatus,majorStatusBlockReason,majorStatusEndTurnGroup,majorStatusTurnOptions,prepareMajorStatusEndTurn,resolveMajorStatusEndTurn,speedWithMajorStatus,tryMajorStatusAction} from './major-status.mjs';
 export {HANDLER_DEFINITIONS} from './handlers/index.mjs';
-export {applyWeather,weatherDamageModifier,weatherHealingGroup,speedWithWeather} from './weather.mjs';
+export {applyWeather,weatherDamageModifier,weatherHealingGroup,weatherResidualDamageGroup,defenseWithWeather,speedWithWeather} from './weather.mjs';
 export {applyTerrain,terrainDamageModifiers,terrainHealingGroup,terrainMajorStatusBlockReason,terrainPriorityBlockReason,terrainVolatileBlockReason,unitIsGrounded} from './terrain.mjs';
 export {applySideCondition,sideConditionDamageModifiers,speedWithSideConditions} from './side-conditions.mjs';
 export {applyHazard,resolveEntryHazards} from './hazards.mjs';
@@ -60,4 +64,6 @@ export {applyRechargeHandler} from './handlers/apply-recharge.mjs';
 
 export {SEMI_INVULNERABLE_MODES as SEMI_INVULNERABILITY_MODES,semiInvulnerableState,semiInvulnerabilityInteraction,applySemiInvulnerabilityHitEffect} from './semi-invulnerability.mjs';
 
-export {modifyMoveByAbility,resolveTargetAbilityBlock,abilityPowerModifiers,abilityStatModifiers,abilityStatusBlock,abilityWeatherResidualDamageGroup} from './ability-hooks.mjs';
+export {modifyMoveByAbility,resolveTargetAbilityBlock,abilityPowerModifiers,abilityStatModifiers,abilityIncomingAccuracyModifier,abilityStatusBlock,abilityWeatherResidualDamageGroup} from './ability-hooks.mjs';
+
+export {effectiveBattleSpeed} from './speed.mjs';
