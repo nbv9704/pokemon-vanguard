@@ -58,23 +58,41 @@ export function applyReplacements(battle,choicesBySide){
   const valid=validateReplacements(next,side,choicesBySide[side]||[]);if(!valid.ok)return valid;
   for(const choice of valid.choices.sort((a,b)=>a.slot-b.slot)){next.sides[side].active[choice.slot]=choice.actorId;events.push({kind:'switchIn',actorId:choice.actorId,side,slot:choice.slot,replacement:true});}
  }
- next.phase='ENTRY';next.phaseRevision=(next.phaseRevision||0)+1;next.turn++;
+ next.phase='ENTRY';next.phaseRevision=(next.phaseRevision||0)+1;if(!next.pendingResolution)next.turn++;
  const committed=commitEvents(next,events);return {ok:true,...committed};
 }
 
 export function completeEntry(battle,events=[]){
  if(battle.phase!=='ENTRY')return {ok:false,code:'WRONG_PHASE'};
- const next=clone(battle);next.phase='COMMAND';next.phaseRevision=(next.phaseRevision||0)+1;
- return {ok:true,...commitEvents(next,events)};
+ let next=clone(battle);const output=[...events],result=checkBattleResult(next);next=result.battle;output.push(...result.events);
+ if(next.phase!=='FINISHED'){
+  const resume=!!next.pendingResolution,needsReplacement=['A','B'].some(side=>replacementRequirements(next,side).count>0);
+  next.phase=needsReplacement?'REPLACE':resume?'RESOLVE':'COMMAND';next.phaseRevision=(next.phaseRevision||0)+1;
+  if(needsReplacement)output.push({kind:'entryReplacementRequired',turn:next.turn,resume});
+  else if(resume)output.push({kind:'entryCompleted',turn:next.turn,resume:true});
+ }
+ return {ok:true,...commitEvents(next,output)};
 }
 
-export function resolveEndTurn(battle,groups,{initialEvents=[]}={}){
+export function resolveEndTurn(battle,groups,{initialEvents=[],afterEachGroup=null,afterGroups=null,afterTimers=null}={}){
  if(battle.phase!=='END_TURN')return {ok:false,code:'WRONG_PHASE'};
  if(!Array.isArray(initialEvents))throw new Error('initial end-turn events must be an array');
  let next=clone(battle);const events=clone(initialEvents),groupIds=new Set();
  for(const group of groups||[]){
   if(!group?.id||groupIds.has(group.id)||!Array.isArray(group.changes))throw new Error('end-turn groups require unique ids and change arrays');groupIds.add(group.id);
   const applied=applyHpGroup(next,group.changes,group.id);next=applied.battle;events.push(...applied.events);
+  if(afterEachGroup){
+   const input=clone(next),before=JSON.stringify(input),result=afterEachGroup(input,{groupId:group.id,events:clone(applied.events)});
+   if(JSON.stringify(input)!==before)throw new Error('afterEachGroup mutated battle');
+   if(!result?.battle||!Array.isArray(result.events))throw new Error('invalid afterEachGroup result');
+   next=clone(result.battle);events.push(...clone(result.events));
+  }
+ }
+ if(afterGroups){
+  const input=clone(next),before=JSON.stringify(input),result=afterGroups(input);
+  if(JSON.stringify(input)!==before)throw new Error('afterGroups mutated battle');
+  if(!result?.battle||!Array.isArray(result.events))throw new Error('invalid afterGroups result');
+  next=clone(result.battle);events.push(...clone(result.events));
  }
  for(const side of ['A','B'])for(const entry of activeUnits(next,side,{includeFainted:true})){
   if(entry.unit.volatiles?.redirection)delete entry.unit.volatiles.redirection;
@@ -91,8 +109,21 @@ export function resolveEndTurn(battle,groups,{initialEvents=[]}={}){
   const timer=Number.isInteger(state?.remaining)?'remaining':Number.isInteger(state?.endTurnTimer)?'endTurnTimer':null;
   if(timer){state[timer]--;if(state[timer]<=0){delete next.sides[side].conditions[condition];events.push({kind:'sideConditionEnded',side,condition,reason:'duration'});}}
  }
+ const terrain=next.field?.terrain;if(terrain&&Number.isInteger(terrain.remaining)){
+  terrain.remaining--;if(terrain.remaining<=0){delete next.field.terrain;events.push({kind:'terrainEnded',terrain:terrain.id,reason:'duration'});}
+ }
+ for(const [room,state] of Object.entries(next.field?.rooms||{}))if(Number.isInteger(state?.remaining)){
+  state.remaining--;if(state.remaining<=0){delete next.field.rooms[room];events.push({kind:'roomEnded',room,reason:'duration'});}
+ }
+ if(next.field?.rooms&&!Object.keys(next.field.rooms).length)delete next.field.rooms;
  const weather=next.field?.weather;if(weather&&Number.isInteger(weather.remaining)){
   weather.remaining--;if(weather.remaining<=0){delete next.field.weather;events.push({kind:'weatherEnded',weather:weather.id,reason:'duration'});}
+ }
+ if(afterTimers){
+  const input=clone(next),before=JSON.stringify(input),result=afterTimers(input);
+  if(JSON.stringify(input)!==before)throw new Error('afterTimers mutated battle');
+  if(!result?.battle||!Array.isArray(result.events))throw new Error('invalid afterTimers result');
+  next=clone(result.battle);events.push(...clone(result.events));
  }
  events.push({kind:'turnEnded',turn:next.turn});
  const result=checkBattleResult(next);next=result.battle;events.push(...result.events);

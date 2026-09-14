@@ -1,5 +1,7 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {VOLATILE_STATUS_IDS} from './manifest-contract.mjs';
+import {terrainVolatileBlockReason} from './terrain.mjs';
+import {resolveStatusCureItems} from './item-hooks.mjs';
 
 function initialVolatileState(volatile,moveId,runtime,source){
  const state={id:volatile,sourceId:moveId};
@@ -31,6 +33,7 @@ export function applyVolatileStatus(battle,{actorId,targetId,moveId,volatile},ru
  if(!target||target.hp<=0)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'targetUnavailable'}]};
  target.volatiles=target.volatiles||{};
  if(volatile==='leech-seed'&&(target.types||[]).includes('grass'))return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'typeImmune'}]};
+ const terrainReason=terrainVolatileBlockReason(next,target,volatile);if(terrainReason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:terrainReason}]};
  if(target.volatiles[volatile])return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'alreadyVolatile'}]};
  const reason=bindingFailure(volatile,target);
  if(reason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason}]};
@@ -40,5 +43,6 @@ export function applyVolatileStatus(battle,{actorId,targetId,moveId,volatile},ru
  if(volatile==='encore'||volatile==='disable')state.moveId=target.lastMoveId;
  if(volatile==='encore')state.endsWhenMoveHasNoPp=true;
  target.volatiles[volatile]=state;
- return {battle:next,events:[{kind:'volatileApplied',actorId,targetId,moveId,volatile}]};
+ const cured=volatile==='confusion'?resolveStatusCureItems(next,{actorIds:[targetId],trigger:`volatile-status:${moveId}:${volatile}`}):{battle:next,events:[]};
+ return {battle:cured.battle,events:[{kind:'volatileApplied',actorId,targetId,moveId,volatile},...cured.events]};
 }

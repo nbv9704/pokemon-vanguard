@@ -9,19 +9,236 @@ Roadmap hiện hành: `docs/pokemon-vanguard-roadmap.md`. `ROADMAP.md` chỉ cò
 | R0 Rebaseline | DONE | Khóa tên Pokémon Vanguard, local-first, English UI, không rarity, M-A trước, Single/Double, 66/32 Stat Points và schema snapshot | Không |
 | R1 M-A Data | BETA SLICE REVIEWED / FULL REVIEW PENDING | Candidate `pv-ma-2026-09-11`: 213 species/forms, 516 move, 180 Ability, 166 item; scoped review đã khóa hash và relation cho beta v1 | Review phần còn lại theo từng content batch; không coi scoped approval là approval toàn candidate |
 | R2 Battle Rules | DONE AS SHADOW CONTRACT | 18 hệ, đơn/song hệ, level-50 stats, damage core, target Single/Double, switch → Mega → move, dynamic speed, faint/replacement/end-turn và deterministic replay | Chưa nối vào runtime schema 2; R3 cung cấp mechanic handlers, R4 mới chuyển runtime |
-| R3 Mechanics Coverage | IN PROGRESS / SIDE CONDITIONS PROMOTED | Baseline có 92 move, 7 Ability, 14 item; active catalog mở 34 move/6 Ability/14 item, R6 thêm Thick Fat và Venusaurite | Mở rộng terrain theo batch; phần chưa hỗ trợ tiếp tục fail-closed |
+| R3 Mechanics Coverage | IN PROGRESS / ITEM HOOKS WAVE 2 COMPLETE | Baseline có 127 move, 17 Ability, 25 item; active Beta v16 có 65 move/16 Ability/25 item, R6 thêm Thick Fat và Venusaurite | R3.9 Item Hooks Wave 3: post-damage owner/source family, ưu tiên Life Orb + Rocky Helmet + Shell Bell; Choice lock và Light Metal tiếp tục ở ticket riêng |
 | R4 Training/Team UI | BETA GATE PASSED | Catalog, migration/save, Home/Archive/Training/Team/Recruitment status/Guide và Preview/AI/Battle schema 3 đã chạy end-to-end | Mở rộng Inspector theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 | Mở rộng banner/coupon sau khi có source evidence mới |
 | R6 Mega Evolution | BETA SLICE PASSED | Mega Venusaur + Venusaurite chạy Single/Double; form/stat/type/Ability/sprite, one-per-side, dynamic Speed, persistence và replay event đã nối schema 3 | Mở rộng relation/form theo batch; thêm suppression/on-entry hook khi có Mega cần chúng |
-| R7 Sprite/Move FX | CORE GATE PASSED | 34/34 move có profile/fallback, slot anchors Single/Double, per-target spread outcome, weather/side-condition layers và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
+| R7 Sprite/Move FX | CORE GATE PASSED | 65/65 move có profile/fallback, slot anchors Single/Double, per-target spread/secondary outcome, weather/terrain/side-condition/hazard/room/delayed/commitment/semi-invulnerable presentation và playback 1×/2×/Skip | Chạy visual matrix rộng hơn trên mobile; thêm override khi content batch mới được promote |
 | M6 PvP | BLOCKED BY R4–R7 | Server-authoritative room flow cũ là nền tham khảo | Version negotiation, hidden information, reconnect, clocks và replay trên schema 3 |
 | M7 Ranked | BLOCKED BY M6 | Chưa triển khai | Identity, queue, season/rating, anti-duplicate settlement, audit và vận hành |
 
-Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **113 supported / 749 blocked** cho từng format, gồm 92 move, 7 Ability và 14 item; đây là trạng thái cố ý fail-closed, không phải 749 mechanic đã hỏng.
+Baseline R3 hiện tại: candidate M-A validate thành công và replay/battle invariants vẫn deterministic. Coverage hiện tại là **169 supported / 693 blocked** cho từng format, gồm 127 move, 17 Ability và 25 item; đây là trạng thái cố ý fail-closed, không phải 693 mechanic đã hỏng.
 
 ### Quyết định kế tiếp
 
-Ưu tiên **beta loop trước full coverage**. Schema 3 hiện chạy end-to-end từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double; Roster Ranch, Mega Venusaur và core gate R7 đã qua browser QA. Beta Slice v4 mở Sun/Rain, Tailwind và hai screen dưới dạng lựa chọn thêm mà không đổi build mặc định; entry ngoài slice tiếp tục fail-closed.
+Ưu tiên **beta loop trước full coverage**. Schema 3 hiện chạy end-to-end từ Recruitment → Training → Team → Preview → Battle cho cả Single/Double. Beta Slice v16 là active catalog: R3-31 đã mở rộng shared held-item state thành status-cure consumable family và promote Lum/Cheri/Chesto/Pecha/Rawst/Aspear/Persim Berry. Coverage hiện 169/862 mỗi format và R7 FX 65/65. Ticket kế tiếp tiếp tục **R3.9 Item Hooks Wave 3**, ưu tiên post-damage owner/source family với Life Orb + Rocky Helmet + Shell Bell; Choice lock giữ riêng vì cần command-legality/switch-reset contract, còn Light Metal vẫn chờ canonical weight data.
+
+## Integration 14/09/2026 — Merge patch chain R3-18 → R3-31
+
+- Đã audit và gộp tuần tự 13 changed-files bundle từ Beta Slice v5 đến v16. Mỗi mốc catalog được chạy `npm run check` và full suite trước khi nhận patch kế tiếp; test count tăng từ 299 lên 424 trước phần sửa integration.
+- Bundle R3-19 không có trong thư mục người dùng cung cấp, nhưng R3-21 đã phụ thuộc export Psychic Terrain của nó. Contract thiếu được truy vết từ snapshot tích lũy R3-24; bản cuối dùng nguyên implementation terrain hoàn chỉnh của snapshot sau và qua toàn bộ terrain/protection/hazard regression.
+- `npm run check` cũ dài 8.170 ký tự và vượt giới hạn command line Windows khi R3-27 nối thêm source. Đã thay danh sách `node --check` thủ công bằng `scripts/check-source-syntax.mjs`, duyệt cùng các source tree theo từng process và hiện kiểm 183 file.
+- Browser QA dùng room local biệt lập `patch-merge-v16-qa`: catalog rebase đúng v16; Training hiện đúng move/Ability/item theo relation; lưu được Feraligatr với Sheer Force + Waterfall + Lum Berry; Team Builder và Single Preview giữ đúng build; turn thật chạy sang turn 2, FX/HP/PP theo authoritative timeline và console không có warning/error.
+- QA browser phát hiện `abilityTriggered` đang rơi xuống fallback `AbilityTriggered.`. Formatter và regression test đã được bổ sung cho Ability hooks cùng các event status/volatile/protection/switch/replacement mới, nên Battle Log hiện ghi rõ ví dụ “Feraligatr's Sheer Force boosted Waterfall and suppressed 1 secondary effect.”
+- Gate tích hợp cuối: `npm run check`, `npm run beta:validate`, candidate/inventory/coverage generators và full suite **425/425** đều đạt; Single/Double coverage = **169/862**, Move FX = **65/65**.
+
+
+
+## R3-31 / Beta 3-14 — Item Hooks Wave 2: status-cure consumable family
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: mở rộng shared held-item state/event contract của R3-30 bằng hook `afterStatus` rồi promote bảy item Champions đã review: `Lum Berry`, `Cheri Berry`, `Chesto Berry`, `Pecha Berry`, `Rawst Berry`, `Aspear Berry`, `Persim Berry`. Default builds không đổi; item mới chỉ mở như Training choices.
+- Cure contract: Cheri/Chesto/Pecha/Rawst/Aspear chỉ consume khi holder thật sự có status tương ứng; Pecha xử lý cả poison và bad poison. Persim chỉ chữa confusion. Lum có thể xóa đồng thời một major status và confusion bằng **một** activation/consume receipt; wrong-status holder không reveal/consume item. Major-status và confusion application đều gọi cùng authoritative status-cure resolver nên Toxic Spikes, Yawn và secondary status effects thừa hưởng hành vi mà không hard-code move/hazard.
+- Suppression/lifecycle: Magic Room giữ berry bị suppress mà không reveal/consume. Khi Magic Room hết duration ở end-turn hoặc bị recast để tắt, resolver chạy ngay để cure trước action gate kế tiếp. `before-action` vẫn có fallback cho snapshot/restart cũ, bảo đảm eligible berry không để sleep/freeze/paralysis/confusion gate chạy trước item.
+- Replay/state: activation tiếp tục dùng `itemRevealed` → `itemActivated` → `itemConsumed`, shared activation receipt và consumed state của R3-30 nên restart/replay không cure lần hai. Runtime schema-3 Single/Double compile item từ active catalog thật; opponent projection chỉ thấy identity sau reveal.
+- Content: Active base catalog = **Beta Slice v16, 12 Pokémon / 65 move / 16 Ability / 25 item**; Mega runtime = **65 move / 17 Ability / 26 item**. Move catalog không đổi nên R7 FX vẫn **65/65**.
+- Coverage: **169 supported / 693 blocked** mỗi format; breakdown = **127 move / 17 Ability / 25 item**. Coverage tăng đúng +7 reviewed item, không suy diễn Choice lock, damage/recoil item, item loss/swap/steal hay Heavy-Duty Boots.
+- Validation: dedicated Item Hooks mechanics **20/20**, schema-3/catalog runtime **11/11**, broad status/volatile/secondary/Yawn/hazard/room/item regression **92/92**; `npm run check` pass; `npm run beta:validate` pass; full suite **424/424** pass, 0 fail/skip/todo.
+- Boundary/next: Item Hooks Wave 3 ưu tiên **post-damage owner/source family** vì Champions candidate hiện có `Life Orb` (power + recoil), `Rocky Helmet` (contact retaliation) và `Shell Bell` (heal from actual damage). `Choice Scarf`/choice-lock tách ticket riêng vì phải nối command legality + switch reset; item loss/swap/steal, Heavy-Duty Boots và Light Metal vẫn fail-closed.
+- Source cross-check: Champions candidate là nguồn availability/description cho bảy berries; Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/items.ts`) được dùng để cross-check trigger/cure/consume semantics.
+
+
+## R3-30 / Beta 3-13 — Item Hooks Wave 1: recovery, consumable và survival
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: xây shared held-item state/event contract rồi promote ba item Champions đã review: `Leftovers`, `Sitrus Berry`, `Focus Sash`. Default builds không đổi; item mới chỉ mở như Training choices. `itemState` giữ `heldItemId`, `consumed`, `revealed`, activation count và idempotent activation receipt để restart/replay không kích hoạt lại consumable.
+- Lifecycle: `Leftovers` hồi 1/16 max HP ở end-turn trước major poison/burn residual. `Sitrus Berry` dùng shared HP-threshold update ở <= 1/2 HP, hồi 1/4 max HP rồi consume; trigger đã nối sau direct/fixed move damage, entry hazard, recoil, confusion self-hit, protection retaliation, Leech Seed và giữa các supported end-turn residual groups để Berry không bị trì hoãn tới sau cumulative KO. `Focus Sash` chỉ can thiệp lethal **move** damage khi holder đang full HP, gồm cả normal damage và fixed-damage move, giữ 1 HP rồi consume; hazard/recoil/residual không kích Sash. Miss/immunity/zero-damage/faint-before-threshold không kích hoạt consumable.
+- Suppression/backward compatibility: Magic Room suppress item hooks mà không reveal/consume. Passive item cũ cũng đi qua shared current-owner check. Battle snapshot cũ chưa có `itemState` được infer item owner từ immutable build/passive snapshot, tránh regression khi restart/migration; consumed state mới vẫn là authoritative khi đã tồn tại.
+- Privacy/replay: item lần đầu activation phát `itemRevealed`, sau đó `itemActivated`, và consumable phát `itemConsumed`. Opponent/AI projection không thấy unrevealed item; sau reveal chỉ expose public item identity + consumed flag. JSON restart giữ consumption/receipt; cùng activation key là idempotent và không heal/survive lần hai. Playback reducer/log theo đúng event stream này.
+- Content: Active base catalog = **Beta Slice v15, 12 Pokémon / 65 move / 16 Ability / 18 item**; Mega runtime = **65 move / 17 Ability / 19 item**. Move catalog không đổi nên R7 FX vẫn **65/65**.
+- Coverage: **162 supported / 700 blocked** mỗi format; breakdown = **127 move / 17 Ability / 18 item**. Chỉ ba reviewed item làm coverage tăng; Choice/status-cure/item-loss/swap/steal family chưa được suy diễn.
+- Validation: dedicated Item Hooks mechanics **14/14**, schema-3 item runtime **5/5**, item playback/runtime bundle **15/15**, focused HP/status/hazard/protection/recoil/fixed/residual regression **55/55**; backward-compatible snapshot inference giữ các passive item cũ hoạt động; `npm run check` pass; `npm run beta:validate` pass; full suite **415/415** pass, 0 fail/skip/todo.
+- Boundary/next: Item Hooks Wave 2 ưu tiên status-cure consumable family (`Lum Berry` và các status-specific berries đã có trong Champions candidate) trên shared consume/reveal contract. Choice lock, Life Orb/Rocky Helmet, item loss/swap/steal và Heavy-Duty Boots tiếp tục fail-closed cho tới batch riêng. `Light Metal` vẫn chờ canonical species weight data.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/items.ts`) cho Leftovers 1/16 end-turn recovery, Sitrus threshold/heal/consume và Focus Sash full-HP lethal survival/consume; PokéBase candidate tiếp tục là source Champions cho item availability.
+
+
+## R3-29 / Beta 3-12 — Secondary-effect framework + Sheer Force
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: xây shared damaging-secondary framework và promote `Sheer Force` cho Feraligatr cùng 9 move M-A thật: `Waterfall`, `Crunch`, `Liquidation`, `Ice Punch`, `Body Slam`, `Rock Slide`, `Water Pulse`, `Ice Fang`, `Bulldoze`. Default builds không đổi; các move mới chỉ mở như Training choices đã review.
+- Secondary lifecycle: secondary handler chỉ chạy sau successful damage trên từng `damagedTargetId`; miss, Protect, immunity, zero damage hoặc target không còn hợp lệ không tiêu secondary RNG. Chance roll độc lập theo từng effect/target; 100% effect không tiêu chance RNG. Shared resolver hỗ trợ major status, volatile status và stat-stage delta, tái dùng type/status immunity, stage clamp và seeded RNG hiện có.
+- Spread/data contract: `allAdjacent` được nhận diện là spread giống `allAdjacentFoes` khi có nhiều target nên Bulldoze dùng 0.75× trong Double; secondary chỉ áp lên ally/foe thực sự nhận damage, không bao giờ áp ngược user. Manifest validate kind/chance/status/volatile/boosts và bắt buộc handler `apply-secondary-effects`, giữ fail-closed nếu khai báo thiếu hoặc lệch.
+- Sheer Force: shared Ability hook nhận diện move có `secondaryEffects`, tăng base power theo `5325/4096` và đánh dấu `secondaryEffectsSuppressed` trước secondary phase. Ability event ghi số secondary bị triệt; suppressed secondary không tiêu RNG. Move không có secondary không được boost. Runtime Single/Double factory compile Sheer Force từ active catalog thật.
+- Content/presentation: Active base catalog = **Beta Slice v14, 12 Pokémon / 65 move / 16 Ability / 15 item**; Mega runtime = **65 move / 17 Ability / 16 item**. Chín move mới có explicit FX override phù hợp và R7 coverage = **65/65**.
+- Coverage: **159 supported / 703 blocked** mỗi format; breakdown = **127 move / 17 Ability / 15 item**. Chỉ 9 reviewed moves + Sheer Force làm coverage tăng; Light Metal và Ability family chưa review không được suy diễn.
+- Validation: secondary mechanics **9/9**, schema-3 secondary runtime **2/2**, broad status/stage/protection/terrain/damage/Ability/catalog/FX regression **94/94**; `npm run check` pass; `npm run beta:validate` pass; full suite **395/395** pass, 0 fail/skip/todo.
+- Boundary/next: `Light Metal` tiếp tục fail-closed vì candidate M-A chưa có canonical species weight. Ability suppression/copy/swap/replace giữ blocked. Ticket kế tiếp là **R3.9 Item Hooks Wave 1**: xây item owner/consume/reveal/idempotent event + restart/replay contract trước, sau đó ưu tiên recovery/consumable/survival candidates có trong Champions như Leftovers, Sitrus Berry và Focus Sash sau source audit.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/abilities.ts`, `data/moves.ts`) cho Sheer Force base-power/secondary suppression và secondary definitions; PokéBase candidate tiếp tục là source Champions cho PP/learnset/Ability relation.
+
+
+## R3-28 / Beta 3-11 — Ability Hooks Wave 1
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: xây shared Ability-hook layer theo explicit phase và promote 9 relation M-A thật trong 12 Pokémon beta: `Solar Power`, `Leaf Guard`, `Flash Fire`, `Sniper`, `Technician`, `Iron Fist`, `Bulletproof`, `Long Reach`, `Liquid Voice`. Default builds không đổi. `Hyper Voice` được promote cho Primarina để Liquid Voice có damaging sound interaction thực trong active catalog.
+- Hook ordering: move transform chạy trước target resolution; target Ability immunity chạy sau semi-invulnerability/protection gate nhưng trước accuracy RNG; base-power/stat/final-damage hooks tách phase; weather/status/end-turn hooks dùng authoritative battle lifecycle. Không dựa vào object insertion order.
+- Data contract: manifest move tags `sound/punch/bullet` được validate fail-closed. Liquid Voice đổi sound-tagged move sang Water; Long Reach xóa contact trước retaliation; Bulletproof chặn bullet-tagged move trước accuracy; Iron Fist/Technician/Sniper dùng shared damage modifier phases thay vì move-ID branches.
+- Weather/status hooks: Solar Power tăng SpA 1.5× trong Sun và mất 1/8 max HP cuối lượt; Leaf Guard chặn major status/Yawn trong Sun; Flash Fire miễn nhiễm Fire, lưu activation state và tăng Fire offense 1.5× sau activation. Ability hooks không bị Magic Room suppress vì Room chỉ suppress item passives.
+- Runtime/content: schema-3 Single/Double factory compile các Ability mới từ catalog thật; Liquid Voice + Hyper Voice có runtime integration riêng. Active base catalog = **Beta Slice v13, 12 Pokémon / 56 move / 15 Ability / 15 item**; Mega runtime = **56 move / 16 Ability / 16 item**; R7 FX = **56/56**.
+- Coverage: **149 supported / 713 blocked** mỗi format; breakdown = **118 move / 16 Ability / 15 item**. Chỉ Hyper Voice + 9 reviewed Ability làm coverage tăng; Ability ngoài Wave 1 không được suy diễn.
+- Validation: Ability hook unit **9/9**, schema-3 runtime **2/2**, targeted status/delayed regression sạch; `npm run check` pass; `npm run beta:validate` pass; full suite **386/386** pass, 0 fail/skip/todo.
+- Boundary/next: relation beta còn lại đáng kể là `Sheer Force` và `Light Metal`. Ticket kế tiếp là **secondary-effect framework + Sheer Force**; Light Metal tiếp tục fail-closed vì candidate M-A hiện không có canonical species weight field để chứng minh weight mechanics. Ability suppression/copy/swap/replace vẫn chờ family riêng.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/abilities.ts`, battle action ordering) cho các hook modifier/immunity/status/weather/tag behavior; PokéBase candidate tiếp tục là source relation Champions.
+
+
+## R3-27 / Beta 3-10 — Semi-invulnerable two-turn family
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: mở rộng shared move-commitment core cho `Dig`, `Fly`, `Dive`, `Phantom Force`; cả bốn đều có relation M-A thật trong 12 Pokémon beta và default builds không đổi. Semi-invulnerable state nằm trong authoritative `two-turn-move` volatile, không phải UI flag.
+- Shared lifecycle: lượt preparation tiêu PP một lần, khóa move + target slot, gắn mode `underground/airborne/underwater/vanished`; lượt release clear state trước khi resolve hit và không tiêu PP lần hai. Ordinary targeted moves bị `check-accuracy` loại ra trước Protect/accuracy RNG khi target đang ở mode không thể chạm tới. Switch/interruption tiếp tục dùng commitment cleanup chung.
+- Hit-through exceptions: Dig nhận `Earthquake/Magnitude` và hai move này nhận 2× modifier; Dive nhận `Surf/Whirlpool` và 2×; Fly nhận Gust/Twister/Sky Uppercut/Thunder/Hurricane/Smack Down/Thousand Arrows, riêng Gust/Twister 2×. `Smack Down` cắt Fly commitment sau hit sống sót. Các exception move chưa active vẫn chỉ tồn tại trong resolver/test fixture, không tự được promote.
+- Phantom Force: vanish phase không bị ordinary move chạm tới; release dùng manifest `bypassesProtect` + shared `break-protection` nên phá Protect trước damage. Không suy diễn thêm Gravity/Bounce/Sky Drop hay secondary grounding effects chưa review.
+- Runtime/UI/presentation: schema-3 Single/Double auto-lock forced release và giữ PP một lần; Battle Log phân biệt burrow/dive/fly/vanish, unreachable miss và Smack Down interruption; bốn move có FX profile.
+- Content: Active base catalog = **Beta Slice v12, 12 Pokémon / 55 move / 6 Ability / 15 item**; Mega runtime = **55 move / 7 Ability / 16 item**; R7 FX = **55/55**.
+- Coverage: **139 supported / 723 blocked** mỗi format; breakdown = **117 move / 7 Ability / 15 item**. Chỉ bốn reviewed moves tăng support; hit-through fixtures không làm coverage xanh giả.
+- Validation: semi-invulnerable core **5/5**, schema-3 runtime **4/4**, presentation regression có dedicated log assertion; `npm run check` pass; `npm run beta:validate` pass; full suite **375/375** pass, 0 fail/skip/todo.
+- Boundary/next: R3.7 battlefield/move-lifecycle foundation đã đủ cho beta slice hiện tại; ticket kế tiếp chuyển sang **R3.8 Ability hooks**. Candidate beta có nhiều relation thật để mở theo family như Solar Power/Rain Dish/Leaf Guard/Flash Fire/Sniper/Technician/Iron Fist/Bulletproof/Long Reach/Liquid Voice, nhưng từng Ability chỉ được promote sau khi shared hook ordering và interaction evidence được khóa.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/moves.ts`) cho semi-invulnerable callbacks, hit-through/double-damage exceptions và Phantom Force Protect bypass; PokéBase candidate giữ Champions PP/learnset relation.
+
+
+## R3-26 / Beta 3-09 — Charge/recharge family + seven reviewed moves
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: xây shared move-commitment contract rồi promote bảy relation M-A thật: `Solar Beam`, `Solar Blade`, `Hydro Cannon`, `Frenzy Plant`, `Blast Burn`, `Hyper Beam`, `Giga Impact`; 12 default builds không đổi. `Dig/Fly/Dive/Phantom Force` chưa promote vì semi-invulnerability và hit-through exceptions cần batch riêng.
+- Charge lifecycle: lượt chuẩn bị tiêu PP một lần, lưu move + target slot trên Pokémon và khóa lựa chọn kế tiếp; lượt release không tiêu PP lần hai. Sun bỏ preparation cho Solar Beam/Solar Blade; Rain hiện có giảm released power còn 1/2. Sleep/freeze/flinch/restriction/confusion/paralysis chặn release sẽ clear commitment thay vì giữ charge sai. Switch cleanup dùng volatile lifecycle chung.
+- Recharge lifecycle: năm recharge move chỉ tạo `must-recharge` sau khi thực sự gây damage; miss/protection/immunity không tạo commitment. Lượt kế tiếp schema-3 tự normalize thành `recharge`, không được Mega/switch/pivot trong committed action, tiêu 0 PP và vẫn cho đồng đội Double thực hiện action bình thường.
+- Runtime/UI/presentation: turn engine nhận action kind `recharge` trong cùng dynamic ordering path với move; schema-3 Single/Double khóa charge release và Double recharge; command UI hiện forced-action panel thay vì move/switch controls. Battle Log có prepare/release/abort, PP-skip, weather power modification, recharge-required/recharge-turn; bảy move có FX override.
+- Content: Active base catalog = **Beta Slice v11, 12 Pokémon / 51 move / 6 Ability / 15 item**; Mega runtime = **51 move / 7 Ability / 16 item**; R7 FX = **51/51**.
+- Coverage: **135 supported / 727 blocked** mỗi format; breakdown = **113 move / 7 Ability / 15 item**. Chỉ bảy reviewed moves tăng support; semi-invulnerable/two-turn variants chưa được suy diễn.
+- Validation: charge/recharge core + runtime **9/9**, command UI/FX targeted regression **21/21**; `npm run check` pass; `npm run beta:validate` pass; full suite **365/365** pass, 0 fail/skip/todo.
+- Boundary/next: ticket kế tiếp là semi-invulnerable two-turn family. Candidate beta có relation thật: Charizard/Blastoise/Typhlosion/Feraligatr/Infernape/Chesnaught → Dig, Charizard → Fly, Blastoise/Feraligatr/Primarina → Dive, Decidueye → Phantom Force. Phải khóa untargetable state, move-specific hit-through/double-damage exceptions và Protect interaction trước promotion.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/moves.ts`, `data/conditions.ts`) cho charge state, Sun skip, weather power modifier và `mustrecharge`; PokéBase candidate giữ Champions PP/learnset relation.
+
+## R3-25 / Beta 3-08 — Delayed-effect family + Yawn + Perish Song
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 14/09/2026
+- Scope lớn: thêm shared delayed-effect scheduler và promote hai relation M-A thật: Blastoise → `Yawn`, Primarina → `Perish Song`; default builds không đổi. Future Sight-style delayed attacks, Soundproof/Baton Pass transfer semantics, two-turn và recharge vẫn fail-closed.
+- Scheduler/lifecycle: delayed state được lưu trên Pokémon affected, không ở UI; end-turn resolve sau weather/status/residual HP groups nhưng trước ordinary condition expiry. Seeded status resolution cập nhật authoritative RNG; Pokémon đã faint trước scheduler bị skip; switch-out dùng cleanup volatile hiện có nên không để state delayed bám sang replacement.
+- Yawn: schedule 2 residual steps; Protect/status hiện có/grounded Electric Terrain chặn ngay lúc cast; Misty Terrain không chặn schedule nhưng shared major-status rule được re-check khi resolve Sleep. Single/Double đều dùng cùng handler.
+- Perish Song: mỗi active Pokémon chưa có counter nhận initial count 4, giảm cuối chính lượt dùng xuống 3 rồi 2 → 1 → faint ở 0; faint không đi qua damage pipeline. Recast không reset counter đang tồn tại; switch xóa counter và replacement không kế thừa.
+- Runtime/presentation: schema-3 test khóa Yawn Single/Double, Perish Song decrement và switch cleanup; Battle Log có schedule/tick/resolve text; `Yawn`/`Perish Song` dùng `notes` FX và delayed scheduling được render như status outcome/target track.
+- Content: Active base catalog = **Beta Slice v10, 12 Pokémon / 44 move / 6 Ability / 15 item**; Mega runtime = **44 move / 7 Ability / 16 item**; R7 FX = **44/44**.
+- Coverage: **128 supported / 734 blocked** mỗi format; breakdown = **106 move / 7 Ability / 15 item**. Chỉ Yawn/Perish Song tăng coverage; scheduler không tự đánh dấu Future Sight/two-turn/recharge là supported.
+- Validation: delayed core **8/8**, schema-3 delayed runtime **3/3**, catalog/UI/FX targeted gate **22/22**; `npm run check` pass; `npm run beta:validate` pass; full suite **355/355** pass, 0 fail/skip/todo.
+- Boundary/next: ticket kế tiếp là shared two-turn/recharge foundation, ưu tiên relation thật trong beta và khóa charge/skip/recharge/action-prevention lifecycle trước khi promote thêm content.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43` (`data/moves.ts`) cho Yawn/Perish Song; scoped Champions candidate giữ learnset relation và PP.
+
+## R3-24 / Beta 3-07 — Room family core + Wonder Room
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 13/09/2026
+- Scope lớn: hoàn thiện shared Room family cho `Trick Room`, `Wonder Room`, `Magic Room`; chỉ promote `Wonder Room` cho Primarina trong Beta Slice v9 vì đây là relation M-A thật trong 12 Pokémon beta. Trick/Magic Room giữ mechanics-supported nhưng content-blocked.
+- Shared lifecycle: `field.rooms` cho phép nhiều Room độc lập cùng tồn tại, mỗi Room 5 turn; dùng lại cùng Room tiêu PP rồi tắt chính Room đó thay vì refresh. End-turn giảm timer riêng và phát generic `roomStarted/roomEnded` để replay/UI derive state.
+- Trick Room core: manifest priority `-7`; turn engine re-read Room state trước mỗi action ranking nên các actor chưa hành động đảo Speed order ngay khi Room thay đổi mà vẫn giữ RNG/tie keys. Suspend/resume replacement tiếp tục dùng cùng dynamic callback.
+- Wonder Room core: physical/special damage đổi Defense/Sp. Def **base stat trước stage modifier của stat được yêu cầu**, đúng contract Showdown; critical-stage bypass tiếp tục dùng shared damage path.
+- Magic Room core: suppress mọi held-item passive hiện có trong Room (damage boost/reduction, Light Clay, weather rocks, Terrain Extender) nhưng không suppress Ability passive. Mega evolution eligibility không bị gộp vào passive-item suppression.
+- Presentation/content: field adapter render nhiều Room layer/chip đồng thời; Battle Log có start/end/toggle text; Wonder Room dùng `field-burst` FX. Active base catalog = **Beta Slice v9, 12 Pokémon / 42 move / 6 Ability / 15 item**; Mega runtime = **42 move / 7 Ability / 16 item**; R7 FX = **42/42**.
+- Coverage: **126 supported / 736 blocked** mỗi format; breakdown = **104 move / 7 Ability / 15 item**. Trick/Wonder/Magic Room đều có Single/Double evidence, nhưng legality vẫn tách riêng khỏi mechanics coverage.
+- Validation: Room core **7/7**, schema-3 runtime **2/2**, UI/FX **18/18**, broad rules/weather/terrain/screens/passive regression **54/54**; `npm run check` pass; `npm run beta:validate` pass; full suite **343/343** pass, 0 fail/skip/todo.
+- Boundary/next: Persistent Ability extension, specialized offensive-defense-stat moves và các item mechanics chưa implemented không được suy diễn. Ticket kế tiếp là delayed-effect scheduler foundation; Blastoise → Yawn có relation thật và là candidate ưu tiên để khóa delayed sleep/lifecycle trước khi mở Perish Song hoặc two-turn/recharge families.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/moves.ts` cho Room duration/recast/priority và `sim/pokemon.ts` cho Trick Room Speed inversion + Wonder Room defensive-stat swap; PokéBase candidate tiếp tục là nguồn Champions cho PP và Primarina learnset relation.
+
+
+## R3-23 / Beta 3-06 — Toxic Spikes vertical slice
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 13/09/2026
+- Scope: promote Toxic Spikes cho Beedrill dưới dạng optional Training choice; 12 default build không đổi. Shared hazard state mở layer cap riêng thay vì species/UI special-case.
+- Entry contract: Toxic Spikes có tối đa 2 layer. Grounded entrant nhận `poison` ở 1 layer và `bad-poison` ở 2 layer qua shared major-status pipeline, nên existing status, Steel immunity và Misty Terrain đều giữ cùng authoritative block rules. Flying/airborne target bỏ qua.
+- Absorption/order: grounded Poison-type xóa toàn bộ Toxic Spikes trước status application và phát `hazardRemoved(reason=poison-type-absorption)` để replay/UI cập nhật đúng. Hazard vẫn giữ stable creation order; test khóa chuỗi Toxic Spikes → Stealth Rock KO → replacement → apply lại Toxic Spikes mà không tăng turn sai.
+- Cleanup/presentation: Rapid Spin và Defog thêm Toxic Spikes vào explicit Showdown order `Spikes → Toxic Spikes → Stealth Rock`. Side chip hiển thị layer `×2`; Battle Log phân biệt poison/bad-poison trigger và Poison-type absorption; Toxic Spikes dùng `field-burst` FX.
+- Content/runtime: active base catalog = **Beta Slice v8, 12 Pokémon / 41 move / 6 Ability / 15 item**; Mega runtime = 41 move / 7 Ability / 16 item. Mechanics coverage = **123 supported / 739 blocked** mỗi format; breakdown = **101 move / 7 Ability / 15 item**. R7 Move FX = **41/41**.
+- Validation: targeted status/terrain/hazard/replacement/catalog/FX regression **92/92** pass; `npm run check` pass; `npm run beta:validate` pass; full exact suite **333/333** pass, 0 fail/skip/todo. Candidate promotion giữ hash-bound evidence và Beedrill → Toxic Spikes relation thật.
+- Boundary/next: Heavy-Duty Boots không có trong candidate, Magic Guard không có relation trong beta roster, Sticky Web/Court Change cũng không có relation trong 12 Pokémon hiện tại. Hazard family vì vậy dừng fail-closed tại đây; ticket kế tiếp nên quay lại R3.7 room/field family, ưu tiên move có relation thật (Primarina hiện có Wonder Room) sau source/interaction audit.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/moves.ts` Toxic Spikes và cleanup lists; PokéBase candidate là nguồn Champions cho PP và Beedrill learnset relation.
+
+
+## R3-22 / Beta 3-05 — Rapid Spin + Defog hazard cleanup
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 13/09/2026
+- Scope: promote Rapid Spin cho Blastoise và Defog cho Decidueye/Scizor dưới dạng optional Training choices; default builds không đổi. Cleanup được đặt trong shared mechanics handler thay vì hard-code theo species/UI.
+- Rapid Spin: chỉ cleanup sau một damaging hit hợp lệ; xóa Leech Seed trên user, xóa Stealth Rock/Spikes ở side của user và sau đó +1 Speed. Protect, immunity hoặc zero-damage path không được cleanup/boost miễn phí. Partial trapping vẫn fail-closed vì chưa có state contract tương ứng.
+- Defog: sau target/protection resolution, hạ Evasion mục tiêu 1 stage, xóa Reflect/Light Screen ở target side, xóa Stealth Rock/Spikes ở cả hai side và clear active Terrain. Tailwind không bị xóa. Evasion đã ở -6 không làm cleanup thất bại.
+- Ordering/fail-closed: hazard cleanup dùng explicit order Spikes → Stealth Rock cho supported subset, phát `hazardRemoved`, `sideConditionEnded`, `terrainEnded` để replay/UI derive state. Handler reject cleanup mode không khai báo thay vì fallback ngầm. Toxic Spikes/Sticky Web, Aurora Veil/Safeguard/Mist, Court Change và partial trapping chưa được claim.
+- Content/runtime: active base catalog lên Beta Slice v7 = **12 Pokémon / 40 move / 6 Ability / 15 item**; Mega extension runtime = 40 move / 7 Ability / 16 item. Mechanics coverage tăng **120 → 122 supported / 740 blocked** mỗi format; breakdown = **100 move / 7 Ability / 15 item**. R7 Move FX = **40/40**.
+- Validation: targeted hazards/screens/terrain/runtime regression **44/44** pass; `npm run check` pass; `npm run beta:validate` pass; full `npm test` đạt **327/327**, 0 fail/skip/todo. Candidate promotion vẫn hash-bound và default builds không đổi.
+- Boundary/next: Heavy-Duty Boots không có trong candidate hiện tại, Magic Guard không có relation trong 12-species beta. Toxic Spikes có relation thật với Beedrill nên là hazard ticket kế tiếp; chỉ promote khi poison-on-entry, Poison-type absorption, grounded gating, replacement chain và cleanup interaction được test đầy đủ. Sticky Web tiếp tục fail-closed cho tới khi có content relation/review phù hợp.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`; Rapid Spin dùng successful-hit cleanup + Speed boost, Defog dùng target evasion drop + screens/hazards/terrain cleanup. PokéBase candidate tiếp tục là nguồn Champions cho PP/content relation.
+
+
+## R3-21 / Beta 3-04 — Stealth Rock + Spikes hazard vertical slice
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 13/09/2026
+- Scope: promote hai entry hazard có relation thật trong roster beta: Chesnaught → Spikes và Infernape → Stealth Rock. Default builds giữ nguyên; hai move là optional Training choices qua `enabledContent`.
+- Side state: Stealth Rock có tối đa một layer; Spikes stack tối đa ba layer. Duplicate/max-layer cast vẫn tiêu PP rồi phát `moveFailed(hazardMaxLayers)`. Side condition lưu source và stable creation order để SwitchIn effects resolve theo cùng effect-order contract thay vì object insertion ngẫu nhiên.
+- Entry damage: Stealth Rock gây `floor(maxHP × Rock effectiveness / 8)`, minimum 1 khi có damage. Spikes chỉ đánh grounded target và dùng `1/8`, `1/6`, `1/4` max HP cho 1/2/3 layer. Flying và airborne volatile đã support bỏ qua Spikes; Stealth Rock vẫn đi qua type chart.
+- Shared lifecycle: `turn-engine` gọi một entry-effects resolver chung cho manual switch, pivot và forced switch; schema-3 replacement flow cũng dùng đúng resolver đó trước `completeEntry`. Nếu hazard KO entrant giữa lượt, R3-20 suspend pending queue → `REPLACE`; replacement mới lại ăn hazard và có thể yêu cầu replacement lần nữa mà turn không tăng; khi có entrant sống, queue deterministic resume.
+- Presentation: Battle Log có `hazardApplied`, `hazardTriggered`, `entryReplacementRequired`; side-condition chip hiển thị layer (`×2`, `×3`); Stealth Rock/Spikes dùng `field-burst` FX. R7 coverage = **38/38**.
+- Content/runtime: active base catalog lên Beta Slice v6 = **12 Pokémon / 38 move / 6 Ability / 15 item**; Mega extension runtime = 38 move / 7 Ability / 16 item. Mechanics coverage tăng **118 → 120 supported / 742 blocked** mỗi format; breakdown = **98 move / 7 Ability / 15 item**.
+- Validation: targeted hazard/core/server/switch regression pass; `npm run check` pass; `npm run beta:validate` pass; full `npm test` đạt **321/321**, 0 fail/skip/todo. Candidate review giữ hash-bound promotion và default builds không đổi.
+- Boundary: Heavy-Duty Boots, Magic Guard, Rapid Spin/Defog/Court Change, Toxic Spikes/Sticky Web và Levitate/Air Balloon/Gravity/Smack Down/Ingrain chưa được claim. Kế tiếp review hazard-cleanup vertical slice, ưu tiên Rapid Spin/Defog vì Blastoise/Decidueye có relation trong roster beta nhưng chỉ promote sau khi clear-order, side scope và secondary effects có contract/test đầy đủ.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`; `data/moves.ts` cho layer/formula và `sim/battle.ts` xác nhận các SwitchIn side-condition tie được resolve theo creation `effectOrder`.
+
+
+## R3-20 — Mid-turn replacement suspend/resume
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; không thay đổi active Beta Slice v5 hay mechanics coverage.
+- Ngày: 13/09/2026
+- Scope: đóng dependency lifecycle của R3.6 trước khi mở entry hazards. Khi một action có `switchIn` và Pokémon vừa vào sân bị KO trong cùng action (ví dụ future hazard damage), authoritative queue dừng ngay sau action đó, mở `REPLACE`, rồi tiếp tục đúng các action chưa chạy sau replacement/entry. KO do move thông thường không mở mid-turn replacement và vẫn dùng end-turn replacement hiện hành.
+- Determinism: battle snapshot giữ `pendingResolution` gồm ba phần queue còn lại (switch/Mega/move), execution history, RNG state, tie keys và Trick Room flag. Resume không prepare/reroll queue lần hai; dynamic Speed vẫn được tính lại trên state mới cho từng action còn chờ.
+- Turn lifecycle: replacement giữa lượt không tăng `turn`; `applyReplacements` chuyển `REPLACE → ENTRY`, `completeEntry` nhận biết suspended resolution và chuyển `ENTRY → RESOLVE`; chỉ sau queue còn lại + end-turn mới sang turn tiếp theo. `turnSuspended`, `entryCompleted(resume=true)` và `turnResumed` làm mốc replay/log rõ ràng.
+- Server: `battleV3.replacements` tự resume authoritative queue và chạy end-turn nếu queue kết thúc; nếu một future entry effect lại tạo KO replacement khác, engine có thể trả về `REPLACE` lần nữa mà không làm mất pending queue. `lastTurn.initial` vẫn giữ snapshot đầu turn và final snapshot chỉ chốt sau continuation.
+- Tests: R3 switching test thêm Single suspend/resume, Double byte-deterministic pending order và negative ordinary-KO case; schema-3 integration test xác nhận action `battleV3.replacements` resume queue, clear pending state và chỉ tăng turn đúng một lần sau end-turn.
+- Validation: targeted lifecycle/switching/server tests pass; `npm run check` pass; `npm run beta:validate` pass với Beta Slice v5 = 12 Pokémon / 36 move / 6 Ability / 15 item; full `npm test` đạt **312/312**, 0 fail/skip/todo.
+- Boundary: batch này chưa implement Stealth Rock/Spikes và không claim on-entry ordering của hazard/Ability/item cụ thể. Kế tiếp là hazard vertical slice dùng contract suspend/resume này, kèm source review, damage/order tests, Single/Double và entry-KO replacement chain.
+- Design provenance: đây là Vanguard authoritative-engine contract nhằm bảo toàn deterministic turn resolution/replay; không tuyên bố clone exact UI timing của Pokémon Champions khi Champions không công bố engine internals.
+
+## R3-19 — Electric + Psychic Terrain mechanics closure
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; active Beta Slice v5 intentionally unchanged.
+- Ngày: 13/09/2026
+- Scope: hoàn tất hai terrain còn lại ở shared mechanics layer thay vì promote content không có relation trong roster beta. Candidate hiện không có Electric Terrain/Psychic Terrain relation cho 12 species active, vì vậy hai move được supported trong M-A coverage nhưng không đưa vào Beta Slice v5.
+- Electric Terrain: field-global 5 turn, Terrain Extender kéo lên 8; grounded Electric move dùng modifier fixed-point `5325/4096`; grounded target không thể nhận Sleep mới. Major status khác không bị chặn và airborne target không chịu terrain effect. Yawn vẫn fail-closed vì bản thân Yawn chưa có supported volatile contract.
+- Psychic Terrain: field-global 5/8 turn; grounded Psychic move dùng `5325/4096`; priority effect `> 0.1` nhắm grounded foe bị chặn trước accuracy/protection resolution. Self/ally target và airborne target được miễn; `bypassesProtect` (ví dụ Feint) không vượt Psychic Terrain vì đây không phải Protect.
+- Grounding boundary không đổi: Flying type và Magnet Rise/Telekinesis được coi airborne; Levitate/Air Balloon/Gravity/Smack Down/Ingrain vẫn chưa được claim.
+- Presentation: Electric/Psychic Terrain đã có `field-burst` override và dùng generic authoritative terrain layer sẵn có. Active FX coverage vẫn **36/36** vì hai move chưa nằm trong Beta Slice v5.
+- Coverage: M-A tăng **116 → 118 supported / 744 blocked** ở cả Single và Double; breakdown = **96 move / 7 Ability / 15 item**. Active base catalog vẫn 12 Pokémon / 36 move / 6 Ability / 15 item; Mega extension runtime vẫn 36 move / 7 Ability / 16 item.
+- Validation: `npm run check` pass; `npm run beta:validate` pass và vẫn khóa Beta Slice v5 = 12 Pokémon / 36 move / 6 Ability / 15 item; targeted Terrain/Protection/Status/Beta regression đạt 28/28; exact full `npm test` file list với Node `--test-force-exit` đạt **308/308**, 0 fail/skip/todo; R7 FX test xác nhận override Electric/Psychic dùng `field-burst`.
+- Hazard dependency: Stealth Rock/Spikes có relation thật trong beta, nhưng chưa mở ở batch này. Nếu entry hazard KO Pokémon ngay khi manual/pivot/forced switch đưa nó vào sân giữa lượt, engine cần suspend action queue → replacement window → resume deterministic. R3.6 hiện chưa có contract đó, nên hazard tiếp tục blocked thay vì triển khai nửa vời.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/moves.ts`; Electric Terrain xác nhận 5/8 turn, Sleep gate và `5325/4096`, Psychic Terrain xác nhận priority gate, ally/airborne exemptions và `5325/4096`.
+
+## R3-18 / Beta 3-03 — Grassy + Misty Terrain vertical slice
+
+- Status: IMPLEMENTED / AUTOMATED GATE PASSED; cumulative Beta v16 browser QA passed after integration.
+- Ngày: 13/09/2026
+- Scope: promote đúng một terrain batch có relation thật trong 12-Pokémon beta: Grassy Terrain cho Venusaur/Meganium/Chesnaught/Decidueye, Misty Terrain cho Primarina và held item Terrain Extender. Electric/Psychic Terrain chưa promote để không khai báo hỗ trợ giả cho sleep/priority/grounding interactions chưa có hook.
+- Lifecycle: terrain là condition field-global, mặc định 5 turn; Terrain Extender kéo terrain do holder tạo lên 8 turn; cast lại cùng terrain thất bại sau PP spend, terrain khác thay thế condition cũ bằng `terrainEnded(reason=replaced)` rồi `terrainStarted`; expiry phát `terrainEnded(reason=duration)`.
+- Grassy Terrain: grounded Grass move dùng modifier Showdown fixed-point `5325/4096`; Earthquake/Bulldoze/Magnitude giảm power còn 1/2 khi target grounded; active grounded Pokémon hồi `1/16` max HP ở end turn trước khi timer giảm.
+- Misty Terrain: grounded target không nhận major status hoặc confusion; Dragon damage vào grounded target giảm `0.5×`.
+- Grounding boundary của batch: Flying type và volatile Magnet Rise/Telekinesis được coi airborne. Levitate, Air Balloon, Gravity, Smack Down/Ingrain và các grounding override khác chưa được enable nên tiếp tục fail-closed cho batch tương ứng.
+- Runtime/content: active base catalog lên Beta Slice v5 = 12 Pokémon / 36 move / 6 Ability / 15 item; Mega extension runtime = 36 move / 7 Ability / 16 item. Default builds không đổi. `beta:validate` pass.
+- Coverage: M-A tăng từ 113 → **116 supported / 746 blocked** ở cả Single và Double; breakdown = 94 move / 7 Ability / 15 item. Move FX tăng **36/36**, Grassy/Misty dùng `field-burst`; terrain layer và Battle Log lấy `terrainStarted/terrainEnded` từ authoritative timeline.
+- Validation: targeted terrain/content/catalog/FX/UI tests pass; `npm run check` pass; exact full `npm test` file list chạy với Node `--test-force-exit` đạt **306/306**, 0 fail/skip/todo. `pokemon:validate`, `mechanics:inventory`, `mechanics:coverage` và `beta:validate` đều pass; suite vẫn gồm seeded 1,000-battle deterministic simulation.
+- Browser QA: được bao phủ trong lượt integration Beta v16 trên local server; catalog, Training choices, Team Builder, Team Preview, battle animation và ordered Battle Log đều tải đúng, không có console warning/error.
+- Source cross-check: Pokémon Showdown server commit khóa `aa17ca0fac8bc5605df673bd8774c2d0e91efa43`, `data/moves.ts` + `data/items.ts`; PokéBase candidate tiếp tục là nguồn Champions cho availability/relations/display values.
 
 ## M0-01 — Baseline và bảo vệ dữ liệu
 

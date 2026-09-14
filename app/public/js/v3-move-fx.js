@@ -9,8 +9,8 @@ const OVERRIDES={
  'drain-punch':'drain-contact','draining-kiss':'drain','dual-wingbeat':'slash','eruption':'field-burst',
  'feint':'slash','flip-turn':'rush','giga-drain':'drain','gyro-ball':'rush','hard-press':'impact',
  'hex':'aura','leech-seed':'seed','protect':'barrier','quick-guard':'barrier','scale-shot':'barrage',
- 'sing':'notes','spiky-shield':'barrier','stored-power':'beam','taunt':'notes','u-turn':'rush',
- 'light-screen':'barrier','rain-dance':'field-burst','reflect':'barrier','sunny-day':'field-burst','tailwind':'field-burst','water-spout':'field-burst','wild-charge':'rush','will-o-wisp':'orb'
+ 'sing':'notes','yawn':'notes','perish-song':'notes','hyper-voice':'notes','waterfall':'rush','crunch':'rush','liquidation':'rush','ice-punch':'impact','body-slam':'impact','rock-slide':'field-burst','water-pulse':'orb','ice-fang':'rush','bulldoze':'field-burst','dig':'rush','fly':'rush','dive':'rush','phantom-force':'aura','solar-beam':'beam','solar-blade':'slash','hydro-cannon':'beam','frenzy-plant':'impact','blast-burn':'field-burst','hyper-beam':'beam','giga-impact':'rush','spiky-shield':'barrier','stored-power':'beam','taunt':'notes','u-turn':'rush',
+ 'defog':'field-burst','magic-room':'field-burst','trick-room':'field-burst','wonder-room':'field-burst','electric-terrain':'field-burst','grassy-terrain':'field-burst','light-screen':'barrier','misty-terrain':'field-burst','psychic-terrain':'field-burst','spikes':'field-burst','toxic-spikes':'field-burst','stealth-rock':'field-burst','rain-dance':'field-burst','rapid-spin':'rush','reflect':'barrier','sunny-day':'field-burst','tailwind':'field-burst','water-spout':'field-burst','wild-charge':'rush','will-o-wisp':'orb'
 };
 
 const SELF_TARGETS=new Set(['self','userSide','field','foeSide']);
@@ -34,7 +34,7 @@ export function outcomeOf(events){
  if(events.some(event=>['moveBlocked','protectionApplied','sideProtectionApplied'].includes(event.kind)))return 'blocked';
  if(events.some(event=>event.kind==='damage'&&event.effectiveness===0))return 'immune';
  if(events.some(event=>event.kind==='heal'))return events.some(event=>event.kind==='damage')?'drain':'heal';
- if(events.some(event=>['statusApplied','statStageChanged','volatileApplied'].includes(event.kind)))return 'status';
+ if(events.some(event=>['statusApplied','statStageChanged','volatileApplied','delayedEffectScheduled','twoTurnMovePrepared','rechargeRequired'].includes(event.kind)))return 'status';
  if(events.some(event=>event.kind==='damage'))return 'hit';
  if(events.some(event=>['moveFailed','protectionFailed'].includes(event.kind)))return 'failed';
  return 'resolved';

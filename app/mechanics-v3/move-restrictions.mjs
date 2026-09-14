@@ -1,5 +1,6 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {validateSwitchingChoice} from './switching.mjs';
+import {validateMoveCommitmentChoice} from './move-commitments.mjs';
 
 const byId=(catalog,id)=>Array.isArray(catalog)?catalog.find(entry=>entry.id===id):catalog?.[id];
 
@@ -20,6 +21,7 @@ export function tryVolatileMoveRestriction(battle,action,move){
 
 export function createMoveChoiceValidator({moves,manifests={}}){
  return (battle,action)=>{
+  const commitment=validateMoveCommitmentChoice(battle,action);if(!commitment.ok)return commitment;
   if(action.kind!=='move')return {ok:true};
   const move=byId(moves,action.moveId);
   if(!move)return {ok:false,code:'UNKNOWN_MOVE'};

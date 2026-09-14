@@ -1,6 +1,8 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
 import {resolveTargets} from '../../rules-v3/targets.mjs';
 import {resolveProtectionBlock} from '../protection.mjs';
+import {semiInvulnerabilityInteraction} from '../semi-invulnerability.mjs';
+import {resolveTargetAbilityBlock} from '../ability-hooks.mjs';
 
 const clampStage=value=>Math.max(-6,Math.min(6,value));
 
@@ -21,7 +23,9 @@ export const checkAccuracyHandler={
   const hitTargetIds=[],events=[];
   for(const targetRef of targets){
    const target=unitById(next,targetRef.actorId);if(!target||target.hp<=0)continue;
+   const semi=target.actorId===actor.actorId?{active:false,blocked:false}:semiInvulnerabilityInteraction(target,move.id);if(semi.blocked){events.push({kind:'moveMissed',actorId:actor.actorId,targetId:target.actorId,moveId:move.id,reason:'semiInvulnerable',semiInvulnerable:semi.mode});continue;}
    const protection=target.actorId===actor.actorId?null:resolveProtectionBlock(next,{targetRef,actorId:actor.actorId,move,mechanics},runtime);if(protection?.blocked){next=protection.battle;events.push(...protection.events);continue;}
+   const abilityBlock=target.actorId===actor.actorId?null:resolveTargetAbilityBlock(next,{actorId:actor.actorId,targetId:target.actorId,move,mechanics});if(abilityBlock?.blocked){next=abilityBlock.battle;events.push(...abilityBlock.events);continue;}
    const alwaysHits=(params.alwaysHitsForUserTypes||[]).some(type=>(actor.types||[]).includes(type));
    const chance=alwaysHits?null:effectiveAccuracy(move.accuracy,actor.stages?.accuracy||0,target.stages?.evasion||0);
    const hit=chance===null||chance>=100||(typeof runtime.nextRandom==='function'&&runtime.nextRandom()<chance/100);

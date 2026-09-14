@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS,resolveMechanicsEndTurn} from '../mechanics-v3/index.mjs';
-import {resolveActionQueue,validateTurnActions} from '../rules-v3/index.mjs';
+import {applyHpGroup,applyReplacements,applySwitch,completeEntry,resolveActionQueue,resumeActionQueue,validateTurnActions} from '../rules-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8')).moves;
 const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-11/normalized/moves.json',import.meta.url),'utf8'));
@@ -75,3 +75,32 @@ test('Ally Switch consecutive attempts use the independent 1, 1/3 and 1/9 chain'
 });
 
 function endTurn(battle){const state=structuredClone(battle);state.phase='END_TURN';return resolveMechanicsEndTurn(state).battle;}
+
+test('R3.6 entry KO suspends a Single turn for replacement and resumes the exact pending queue',()=>{
+ const battle=fixture(),actions=[{kind:'switch',side:'A',actorId:'a1',toId:'a2',priority:6,speed:100},action('B','b1','late-hit',{side:'A',slot:0},{priority:0,speed:90})],seen=[];
+ const handlers={
+  switch:(state,queued)=>{const switched=applySwitch(state,queued.side,queued.actorId,queued.toId),ko=applyHpGroup(switched.battle,[{actorId:queued.toId,delta:-200}],'entry-hazard');return {battle:ko.battle,events:[...switched.events,...ko.events]};},
+  move:(state,queued,runtime)=>{seen.push({actorId:queued.actorId,roll:runtime.nextRandom()});return {battle:state,events:[{kind:'pendingMoveResolved',actorId:queued.actorId}]};},
+ };
+ const first=resolveActionQueue(battle,actions,handlers);assert.equal(first.ok,true);assert.equal(first.suspended,true);assert.equal(first.battle.phase,'REPLACE');assert.equal(first.battle.turn,1);assert.equal(first.events.some(event=>event.kind==='turnSuspended'),true);assert.equal(first.events.some(event=>event.kind==='pendingMoveResolved'),false);assert.equal(seen.length,0);
+ const replaced=applyReplacements(first.battle,{A:[{slot:0,actorId:'a3'}],B:[]});assert.equal(replaced.ok,true);assert.equal(replaced.battle.phase,'ENTRY');assert.equal(replaced.battle.turn,1);
+ const entered=completeEntry(replaced.battle);assert.equal(entered.battle.phase,'RESOLVE');assert.equal(entered.battle.turn,1);
+ const resumed=resumeActionQueue(entered.battle,handlers);assert.equal(resumed.ok,true);assert.equal(resumed.suspended,false);assert.equal(resumed.battle.phase,'END_TURN');assert.equal(resumed.battle.turn,1);assert.equal(resumed.events[0].kind,'turnResumed');assert.equal(resumed.events.some(event=>event.kind==='pendingMoveResolved'),true);assert.equal(seen.length,1);
+});
+
+test('R3.6 entry KO suspension is deterministic in Double and preserves remaining actor opportunities',()=>{
+ const makeActions=()=>[
+  {kind:'switch',side:'A',actorId:'a1',toId:'a3',priority:6,speed:110},
+  action('A','a2','a-follow',{side:'B',slot:0},{priority:0,speed:95}),
+  action('B','b1','b-fast',{side:'A',slot:0},{priority:0,speed:105}),
+  action('B','b2','b-slow',{side:'A',slot:1},{priority:0,speed:85}),
+ ];
+ const handlers={switch:(state,queued)=>{const switched=applySwitch(state,queued.side,queued.actorId,queued.toId),ko=applyHpGroup(switched.battle,[{actorId:queued.toId,delta:-200}],'entry-hazard');return {battle:ko.battle,events:[...switched.events,...ko.events]};},move:(state,queued,runtime)=>({battle:state,events:[{kind:'pendingMoveResolved',actorId:queued.actorId,roll:runtime.nextRandom()}]})};
+ const run=()=>{const first=resolveActionQueue(fixture('double'),makeActions(),handlers),replaced=applyReplacements(first.battle,{A:[{slot:0,actorId:'a4'}],B:[]}),entered=completeEntry(replaced.battle),resumed=resumeActionQueue(entered.battle,handlers);return {first,replaced,entered,resumed};};
+ const one=run(),two=run();assert.deepEqual(one,two);assert.equal(one.first.battle.phase,'REPLACE');assert.deepEqual(one.resumed.events.filter(event=>event.kind==='pendingMoveResolved').map(event=>event.actorId),['b1','a2','b2']);assert.equal(one.resumed.battle.phase,'END_TURN');
+});
+
+test('ordinary move KO does not open the mid-turn replacement window',()=>{
+ const battle=fixture(),actions=[action('A','a1','ko-hit',{side:'B',slot:0},{priority:0,speed:110}),action('B','b1','late-hit',{side:'A',slot:0},{priority:0,speed:90})],handlers={move:(state,queued)=>{if(queued.moveId!=='ko-hit')return {battle:state,events:[{kind:'unexpectedMove',actorId:queued.actorId}]};const ko=applyHpGroup(state,[{actorId:'b1',delta:-200}],'move-ko');return {battle:ko.battle,events:ko.events};}};
+ const result=resolveActionQueue(battle,actions,handlers);assert.equal(result.ok,true);assert.equal(result.suspended,false);assert.equal(result.battle.phase,'END_TURN');assert.equal(result.events.some(event=>event.kind==='turnSuspended'),false);assert.equal(result.events.some(event=>event.kind==='actionCancelled'&&event.actorId==='b1'),true);
+});

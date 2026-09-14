@@ -7,11 +7,19 @@ import {sceneAnchor,sceneTracks,sceneTrackStyle} from '../public/js/v3-scene-anc
 
 test('every enabled beta move resolves to an explicit visual profile or readable fallback',()=>{
  const coverage=v3MoveFxCoverage(publicV3Catalog.moves);
- assert.equal(coverage.length,34);
+ assert.equal(coverage.length,65);
  assert.ok(coverage.every(entry=>entry.id&&entry.source));
  assert.deepEqual(new Set(coverage.map(entry=>entry.moveId)),new Set(publicV3Catalog.moves.map(move=>move.id)));
  assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='protect')).id,'barrier');
  assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='water-spout')).id,'field-burst');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='grassy-terrain')).id,'field-burst');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='misty-terrain')).id,'field-burst');
+ assert.equal(moveFxProfile({id:'electric-terrain',type:'electric',category:'status'}).id,'field-burst');assert.equal(moveFxProfile({id:'psychic-terrain',type:'psychic',category:'status'}).id,'field-burst');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='spikes')).id,'field-burst');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='toxic-spikes')).id,'field-burst');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='stealth-rock')).id,'field-burst');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='rapid-spin')).id,'rush');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='defog')).id,'field-burst');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='wonder-room')).id,'field-burst');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='yawn')).id,'notes');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='perish-song')).id,'notes');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='hyper-voice')).id,'notes');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='waterfall')).id,'rush');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='rock-slide')).id,'field-burst');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='water-pulse')).id,'orb');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='bulldoze')).id,'field-burst');
+ assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='solar-beam')).id,'beam');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='solar-blade')).id,'slash');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='hydro-cannon')).id,'beam');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='giga-impact')).id,'rush');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='dig')).id,'rush');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='fly')).id,'rush');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='dive')).id,'rush');assert.equal(moveFxProfile(publicV3Catalog.moves.find(move=>move.id==='phantom-force')).id,'aura');
 });
 
 test('FX palette covers all eighteen battle types and every active move type',()=>{
@@ -70,4 +78,27 @@ test('reduced motion preserves cast and impact snapshots while removing waits',(
  assert.deepEqual(frames.map(frame=>frame.stage),['cast','impact']);
  assert.deepEqual(frames.map(frame=>frame.duration),[0,0]);
  assert.equal(frames[0].snapshot.opponent[0].hpPercent,100);assert.equal(frames[1].snapshot.opponent[0].hpPercent,72);
+});
+
+
+test('delayed effects render status outcomes, target tracks, and readable battle log text',()=>{
+ const snapshot={format:'single',own:[{actorId:'A-0',name:'Blastoise',activeSlot:0}],opponent:[{actorId:'B-0',name:'Target',activeSlot:0}]},events=[{kind:'delayedEffectScheduled',actorId:'A-0',targetId:'B-0',moveId:'yawn',effect:'yawn',remaining:2}];
+ assert.deepEqual(visualTargetIds(events,'A-0'),['B-0']);assert.match(renderV3BattleFx({stage:'impact',snapshot,actorId:'A-0',moveId:'yawn',targetIds:['B-0'],events},publicV3Catalog),/outcome-status/);
+ const log=battleLog([{kind:'turnStarted',turn:1},...events,{kind:'delayedEffectTick',targetId:'B-0',effect:'yawn',remaining:1},{kind:'delayedEffectScheduled',actorId:'A-0',targetId:'B-0',moveId:'perish-song',effect:'perish-song',remaining:4,count:4},{kind:'delayedEffectTick',targetId:'B-0',effect:'perish-song',remaining:3,count:3},{kind:'delayedEffectResolved',targetId:'B-0',effect:'perish-song'}],snapshot,publicV3Catalog).map(entry=>entry.text).join(' | ');
+ assert.match(log,/grew drowsy/);assert.match(log,/perish count of 4/);assert.match(log,/perish count fell to 3/);assert.match(log,/perish count reached 0/);
+});
+
+test('semi-invulnerable commitments keep readable prepared, miss, and interruption log text',()=>{
+ const snapshot={turn:1,format:'single',own:[{actorId:'A-0',name:'Charizard',activeSlot:0}],opponent:[{actorId:'B-0',name:'Target',activeSlot:0}]};
+ const log=battleLog([
+  {kind:'turnStarted',turn:1},
+  {kind:'moveStarted',actorId:'A-0',moveId:'fly'},
+  {kind:'twoTurnMovePrepared',actorId:'A-0',moveId:'fly',semiInvulnerable:'airborne'},
+  {kind:'moveStarted',actorId:'B-0',moveId:'tackle'},
+  {kind:'moveMissed',actorId:'B-0',targetId:'A-0',moveId:'tackle',reason:'semiInvulnerable',semiInvulnerable:'airborne'},
+  {kind:'twoTurnMoveAborted',actorId:'A-0',moveId:'fly',reason:'hitBySmackDown',sourceMoveId:'smack-down'},
+ ],snapshot,publicV3Catalog).map(entry=>entry.text).join(' | ');
+ assert.match(log,/flew out of reach with Fly/);
+ assert.match(log,/could not reach Charizard while it was Airborne/);
+ assert.match(log,/interrupted by Smack Down/);
 });

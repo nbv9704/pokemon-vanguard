@@ -1,7 +1,9 @@
-export {CONTENT_KINDS,BATTLE_FORMATS,BATTLE_STAGES,MAJOR_STATUS_IDS,VOLATILE_STATUS_IDS,VARIABLE_POWER_FORMULAS,WEATHER_IDS,SIDE_CONDITION_IDS,HOOKS,validateMechanicManifest} from './manifest-contract.mjs';
+export {CONTENT_KINDS,BATTLE_FORMATS,BATTLE_STAGES,MAJOR_STATUS_IDS,VOLATILE_STATUS_IDS,VARIABLE_POWER_FORMULAS,WEATHER_IDS,TERRAIN_IDS,SIDE_CONDITION_IDS,HAZARD_IDS,ROOM_IDS,DELAYED_EFFECT_IDS,TWO_TURN_MOVE_KINDS,SEMI_INVULNERABLE_MODES,MOVE_TAG_IDS,SECONDARY_EFFECT_KINDS,HOOKS,validateMechanicManifest} from './manifest-contract.mjs';
 export {createHookRegistry,dispatchHook} from './registry.mjs';
 export {validateManifestCatalog,coverageForEntry,buildMechanicsCoverage} from './coverage.mjs';
 export {directDamageHandler} from './handlers/direct-damage.mjs';
+export {applySecondaryEffectsHandler} from './handlers/apply-secondary-effects.mjs';
+export {applySecondaryEffects} from './secondary-effects.mjs';
 export {applyDamageHit} from './damage-hit.mjs';
 export {multiHitDamageHandler,selectHitCount} from './handlers/multi-hit-damage.mjs';
 export {applyRecoilHandler} from './handlers/apply-recoil.mjs';
@@ -20,7 +22,8 @@ export {applyPivotSwitch,applyForcedSwitches,applyPositionSwap,validateSwitching
 export {applyPositionSwapHandler} from './handlers/apply-position-swap.mjs';
 export {heldDamageBoostHandler,lowHpTypeBoostHandler,receivedTypeDamageReductionHandler} from './handlers/passive-damage-modifiers.mjs';
 export {megaStoneHandler} from './handlers/mega-stone.mjs';
-export {compilePassiveEffects,passiveDamageModifiers,receivedDamageModifiers} from './passive-effects.mjs';
+export {compilePassiveEffects,passiveDamageModifiers,receivedDamageModifiers,passiveEffectActive} from './passive-effects.mjs';
+export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveHpThresholdItems,resolveEndTurnItems,resolveStatusCureItems} from './item-hooks.mjs';
 export {validateBetaSlice} from './beta-slice.mjs';
 export {applyProtect,applySideGuard,breakProtection,isProtectedTarget,protectionBlockReason,resolveProtectionBlock} from './protection.mjs';
 export {spendPpHandler} from './handlers/spend-pp.mjs';
@@ -31,7 +34,13 @@ export {applyVolatileStatusHandler} from './handlers/apply-volatile-status.mjs';
 export {MAJOR_STATUSES,applyMajorStatus,majorStatusBlockReason,majorStatusEndTurnGroup,majorStatusTurnOptions,prepareMajorStatusEndTurn,resolveMajorStatusEndTurn,speedWithMajorStatus,tryMajorStatusAction} from './major-status.mjs';
 export {HANDLER_DEFINITIONS} from './handlers/index.mjs';
 export {applyWeather,weatherDamageModifier,weatherHealingGroup,speedWithWeather} from './weather.mjs';
+export {applyTerrain,terrainDamageModifiers,terrainHealingGroup,terrainMajorStatusBlockReason,terrainPriorityBlockReason,terrainVolatileBlockReason,unitIsGrounded} from './terrain.mjs';
 export {applySideCondition,sideConditionDamageModifiers,speedWithSideConditions} from './side-conditions.mjs';
+export {applyHazard,resolveEntryHazards} from './hazards.mjs';
+export {applyRoom,roomActive,roomState,wonderRoomDefenseBase} from './rooms.mjs';
+export {applyRoomHandler} from './handlers/apply-room.mjs';
+export {DELAYED_EFFECT_IDS as DELAYED_EFFECTS,scheduleDelayedEffect,scheduleDelayedEffectForActive,resolveDelayedEffectsEndTurn} from './delayed-effects.mjs';
+export {scheduleDelayedEffectHandler} from './handlers/schedule-delayed-effect.mjs';
 export {createMoveActionHandler} from './move-action.mjs';
 export {TEST_EVIDENCE} from './test-evidence.mjs';
 export {buildMoveCapabilityInventory,reviewSignalsForMove} from './capability-inventory.mjs';
@@ -41,3 +50,14 @@ export {tryBeforeMoveConditions} from './before-action.mjs';
 export {createMoveChoiceValidator,tryVolatileMoveRestriction,validateVolatileMoveChoice} from './move-restrictions.mjs';
 export {recordLastMove} from './move-history.mjs';
 export {applyLinkedResiduals,resolveMechanicsEndTurn} from './linked-residual.mjs';
+
+export {resolveDefogCleanup,resolveRapidSpinCleanup} from './field-cleanup.mjs';
+
+export {twoTurnMoveState,mustRechargeState,validateMoveCommitmentChoice,abortTwoTurnMove,resolveRechargeAction} from './move-commitments.mjs';
+export {prepareTwoTurnMoveHandler} from './handlers/prepare-two-turn-move.mjs';
+export {modifyChargePowerHandler} from './handlers/modify-charge-power.mjs';
+export {applyRechargeHandler} from './handlers/apply-recharge.mjs';
+
+export {SEMI_INVULNERABLE_MODES as SEMI_INVULNERABILITY_MODES,semiInvulnerableState,semiInvulnerabilityInteraction,applySemiInvulnerabilityHitEffect} from './semi-invulnerability.mjs';
+
+export {modifyMoveByAbility,resolveTargetAbilityBlock,abilityPowerModifiers,abilityStatModifiers,abilityStatusBlock,abilityWeatherResidualDamageGroup} from './ability-hooks.mjs';

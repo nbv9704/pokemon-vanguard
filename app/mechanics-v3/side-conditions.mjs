@@ -1,8 +1,9 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
+import {passiveEffectActive} from './passive-effects.mjs';
 
 export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen'];
-const maxScreenTurns=(unit,condition,defaultTurns)=>{
- const effect=(unit?.passiveEffects||[]).find(entry=>entry.kind==='screen-duration'&&entry.conditions?.includes(condition));
+const maxScreenTurns=(battle,unit,condition,defaultTurns)=>{
+ const effect=(unit?.passiveEffects||[]).find(entry=>passiveEffectActive(entry,battle,unit)&&entry.kind==='screen-duration'&&entry.conditions?.includes(condition));
  return {remaining:effect?.turns||defaultTurns,sourceItemId:effect?.sourceId};
 };
 
@@ -16,7 +17,7 @@ export function applySideCondition(battle,{actorId,moveId,condition,defaultTurns
  if(!side||!actor||actor.hp<=0)return {battle:next,applied:false,events:[{kind:'moveFailed',actorId,moveId,reason:'actorUnavailable'}]};
  next.sides[side].conditions??={};
  if(next.sides[side].conditions[condition])return {battle:next,applied:false,events:[{kind:'moveFailed',actorId,moveId,reason:'sideConditionAlreadyActive',condition}]};
- const duration=maxScreenTurns(actor,condition,defaultTurns);
+ const duration=maxScreenTurns(next,actor,condition,defaultTurns);
  next.sides[side].conditions[condition]={id:condition,remaining:duration.remaining,sourceActorId:actorId,sourceMoveId:moveId};
  return {battle:next,applied:true,events:[{kind:'sideConditionApplied',actorId,moveId,side,condition,remaining:duration.remaining,...(duration.sourceItemId?{sourceItemId:duration.sourceItemId}:{})}]};
 }

@@ -4,6 +4,9 @@ const activeOwn=snapshot=>snapshot.own.filter(mon=>mon.activeSlot>=0&&mon.hp>0).
 const reserves=snapshot=>snapshot.own.filter(mon=>mon.activeSlot<0&&mon.hp>0);
 
 function defaultMove(screen,snapshot,mon,catalog,index){
+ const recharge=mon.volatiles?.['must-recharge'],charge=mon.volatiles?.['two-turn-move'];
+ if(recharge){screen.commands[mon.actorId]={kind:'recharge',actorId:mon.actorId};return;}
+ if(charge){screen.commands[mon.actorId]={kind:'move',actorId:mon.actorId,moveId:charge.moveId,...(charge.target?{target:charge.target}:{})};return;}
  const available=reserves(snapshot),reserveIds=new Set(available.map(entry=>entry.actorId)),existing=screen.commands[mon.actorId],existingMove=existing?.kind==='move'&&catalog.moves.find(entry=>entry.id===existing.moveId),automatic=existingMove&&automaticTargets.has(existingMove.actionProfile.targetMode),targetAlive=automatic||snapshot.opponent.some(entry=>entry.activeSlot===existing?.target?.slot&&entry.hpPercent>0);
  if(existing?.kind==='switch'&&!reserveIds.has(existing.toId))delete screen.commands[mon.actorId];
  else if(existingMove&&((mon.pp[existingMove.id]||0)<=0||!targetAlive||existingMove.actionProfile.requiresPivotTarget&&!reserveIds.has(existing.switchToId)))delete screen.commands[mon.actorId];
@@ -26,7 +29,10 @@ function megaChoice(mon,command,snapshot,catalog){
 }
 
 function commandPanel(screen,snapshot,mon,catalog,index){
- defaultMove(screen,snapshot,mon,catalog,index);const command=screen.commands[mon.actorId],foes=snapshot.opponent.filter(entry=>entry.activeSlot>=0&&entry.hpPercent>0),targetOptions=foes.map(foe=>`<option value="${foe.activeSlot}">${esc(foe.name)} · slot ${foe.activeSlot+1}</option>`).join(''),reserveOptions=reserves(snapshot).map(entry=>`<option value="${entry.actorId}">${esc(entry.name)} · ${Math.round(entry.hp/entry.maxHp*100)}%</option>`).join('');
+ defaultMove(screen,snapshot,mon,catalog,index);const command=screen.commands[mon.actorId],recharge=mon.volatiles?.['must-recharge'],charge=mon.volatiles?.['two-turn-move'];
+ if(recharge)return `<section class="panel v3-forced-action"><h3>${esc(mon.name)} — recharging</h3><p>${esc(catalog.moves.find(entry=>entry.id===recharge.moveId)?.name||recharge.moveId)} requires this turn to recharge. No move or switch can be selected.</p></section>`;
+ if(charge){const move=catalog.moves.find(entry=>entry.id===charge.moveId);return `<section class="panel v3-forced-action"><h3>${esc(mon.name)} — committed action</h3><p>${esc(move?.name||charge.moveId)} finishes charging and attacks this turn. The original target slot stays locked.</p></section>`;}
+ const foes=snapshot.opponent.filter(entry=>entry.activeSlot>=0&&entry.hpPercent>0),targetOptions=foes.map(foe=>`<option value="${foe.activeSlot}">${esc(foe.name)} · slot ${foe.activeSlot+1}</option>`).join(''),reserveOptions=reserves(snapshot).map(entry=>`<option value="${entry.actorId}">${esc(entry.name)} · ${Math.round(entry.hp/entry.maxHp*100)}%</option>`).join('');
  return `<section class="panel"><h3>${esc(mon.name)} — choose an action</h3><div class="v2-moves">${moveCards(mon,command,catalog)}</div>${megaChoice(mon,command,snapshot,catalog)}<label>Target<select data-v3-target="${mon.actorId}" ${command.kind==='switch'?'disabled':''}>${targetOptions}</select></label><label>Switch Mon<select data-v3-switch="${mon.actorId}"><option value="">Use selected move</option>${reserveOptions}</select></label></section>`;
 }
 

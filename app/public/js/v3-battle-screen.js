@@ -60,7 +60,7 @@ export class V3BattleScreen{
   if(action==='surrender')this.send({type:'battleV3.surrender'});if(action==='new'){this.dismissedId=view.id;this.onChange();}return true;
  }
  selectMove(el,view,catalog){
-  const actorId=el.dataset.actorId,move=catalog.moves.find(entry=>entry.id===el.dataset.moveId),snapshot=view.snapshot,index=snapshot.own.filter(mon=>mon.activeSlot>=0&&mon.hp>0).findIndex(mon=>mon.actorId===actorId),reserves=snapshot.own.filter(mon=>mon.activeSlot<0&&mon.hp>0),automatic=['self','userSide','field','allAdjacentFoes','allAdjacent','foeSide'].includes(move.actionProfile.targetMode),mega=this.commands[actorId]?.mega===true;
+  const actorId=el.dataset.actorId,mon=view.snapshot.own.find(entry=>entry.actorId===actorId);if(mon?.volatiles?.['must-recharge']||mon?.volatiles?.['two-turn-move'])return;const move=catalog.moves.find(entry=>entry.id===el.dataset.moveId),snapshot=view.snapshot,index=snapshot.own.filter(mon=>mon.activeSlot>=0&&mon.hp>0).findIndex(mon=>mon.actorId===actorId),reserves=snapshot.own.filter(mon=>mon.activeSlot<0&&mon.hp>0),automatic=['self','userSide','field','allAdjacentFoes','allAdjacent','foeSide'].includes(move.actionProfile.targetMode),mega=this.commands[actorId]?.mega===true;
   this.commands[actorId]={kind:'move',actorId,moveId:move.id,...(mega?{mega:true}:{}),...(automatic?{}:{target:{side:'B',slot:0}}),...(move.actionProfile.requiresPivotTarget&&reserves[index]?{switchToId:reserves[index].actorId}:{})};this.onChange();
  }
  handleInput(target){

@@ -1,0 +1,292 @@
+{
+  "schemaVersion": 3,
+  "id": "beta-slice-v5",
+  "snapshotId": "pv-ma-2026-09-12-beta2",
+  "regulationSet": "m-a",
+  "formats": [
+    "single",
+    "double"
+  ],
+  "starterTeamSpeciesIds": [
+    "venusaur",
+    "blastoise",
+    "beedrill",
+    "chesnaught",
+    "decidueye",
+    "feraligatr"
+  ],
+  "recruitment": {
+    "sourceBannerId": "regular-roster-m-a",
+    "sourcePullCount": 10,
+    "lineupSize": 10,
+    "cycleDurationMs": 79200000,
+    "trialDurationMs": 604800000,
+    "permanentCostCoins": 1600,
+    "permanentCostTickets": 1,
+    "refreshCostCoins": 350,
+    "paidRefreshLimitPerCycle": 3
+  },
+  "team": [
+    {
+      "speciesId": "venusaur",
+      "abilityId": "overgrow",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "bullet-seed",
+        "giga-drain",
+        "leech-seed",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "blastoise",
+      "abilityId": "torrent",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "flip-turn",
+        "water-spout",
+        "gyro-ball",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "beedrill",
+      "abilityId": "swarm",
+      "itemId": "silver-powder",
+      "moveIds": [
+        "u-turn",
+        "dual-wingbeat",
+        "giga-drain",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "chesnaught",
+      "abilityId": "overgrow",
+      "itemId": "muscle-band",
+      "moveIds": [
+        "bullet-seed",
+        "drain-punch",
+        "leech-seed",
+        "spiky-shield"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 2,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "decidueye",
+      "abilityId": "overgrow",
+      "itemId": "wise-glasses",
+      "moveIds": [
+        "bullet-seed",
+        "brave-bird",
+        "hex",
+        "u-turn"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "feraligatr",
+      "abilityId": "torrent",
+      "itemId": "dragon-fang",
+      "moveIds": [
+        "flip-turn",
+        "dragon-tail",
+        "scale-shot",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "charizard",
+      "abilityId": "blaze",
+      "itemId": "sharp-beak",
+      "moveIds": [
+        "aerial-ace",
+        "dragon-tail",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "meganium",
+      "abilityId": "overgrow",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "giga-drain",
+        "leech-seed",
+        "charm",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "typhlosion",
+      "abilityId": "blaze",
+      "itemId": "charcoal",
+      "moveIds": [
+        "eruption",
+        "wild-charge",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "scizor",
+      "abilityId": "swarm",
+      "itemId": "metal-coat",
+      "moveIds": [
+        "u-turn",
+        "dual-wingbeat",
+        "hard-press",
+        "quick-guard"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "infernape",
+      "abilityId": "blaze",
+      "itemId": "black-belt",
+      "moveIds": [
+        "drain-punch",
+        "coaching",
+        "feint",
+        "taunt"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "primarina",
+      "abilityId": "torrent",
+      "itemId": "fairy-feather",
+      "moveIds": [
+        "draining-kiss",
+        "stored-power",
+        "calm-mind",
+        "sing"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    }
+  ],
+  "enabledContent": {
+    "moveIds": [
+      "sunny-day",
+      "rain-dance",
+      "tailwind",
+      "reflect",
+      "light-screen",
+      "grassy-terrain",
+      "misty-terrain"
+    ],
+    "abilityIds": [
+      "chlorophyll",
+      "rain-dish"
+    ],
+    "itemIds": [
+      "heat-rock",
+      "damp-rock",
+      "light-clay",
+      "terrain-extender"
+    ]
+  }
+}

@@ -9,5 +9,5 @@ export {BATTLE_PHASES,FORMAT_ACTIVE_COUNT,validateBattleSnapshot,createBattleSna
 export {commitEvents} from './events.mjs';
 export {selectRedirection} from './redirection.mjs';
 export {applyHpGroup,checkBattleResult,replacementRequirements,validateReplacements,applySwitch,applyReplacements,completeEntry,resolveEndTurn} from './lifecycle.mjs';
-export {validateTurnActions,resolveActionQueue} from './turn-engine.mjs';
+export {validateTurnActions,resolveActionQueue,resumeActionQueue} from './turn-engine.mjs';
 export {replayBattle,verifyDeterministicReplay} from './replay.mjs';

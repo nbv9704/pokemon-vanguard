@@ -9,8 +9,16 @@ export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad
 export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed'];
 export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'];
 export const WEATHER_IDS=['sun','rain'];
+export const TERRAIN_IDS=['electric','grassy','misty','psychic'];
 export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen'];
-export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','onMove','onSwitchOut','endTurn','onFaint'];
+export const HAZARD_IDS=['stealth-rock','spikes','toxic-spikes'];
+export const ROOM_IDS=['trick-room','wonder-room','magic-room'];
+export const DELAYED_EFFECT_IDS=['yawn','perish-song'];
+export const TWO_TURN_MOVE_KINDS=['solar-charge','semi-invulnerable'];
+export const SEMI_INVULNERABLE_MODES=['underground','underwater','airborne','vanished'];
+export const MOVE_TAG_IDS=['sound','punch','bullet'];
+export const SECONDARY_EFFECT_KINDS=['major-status','volatile-status','stat-stages'];
+export const HOOKS=['onEntry','beforeAction','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','afterStatus','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
  const problems=[];
@@ -71,12 +79,36 @@ export function validateMechanicManifest(manifest,kind){
    if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-weather turns must be a positive integer');
   }
   if(['weather-speed','weather-duration','weather-heal'].includes(entry?.id)&&!WEATHER_IDS.includes(entry.params?.weather))problems.push(`${entry.id} requires a supported weather`);
+  if(entry?.id==='apply-terrain'){
+   if(!TERRAIN_IDS.includes(entry.params?.terrain))problems.push('apply-terrain requires a supported terrain');
+   if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-terrain turns must be a positive integer');
+  }
+  if(entry?.id==='terrain-duration'&&(!Number.isInteger(entry.params?.turns)||entry.params.turns<1))problems.push('terrain-duration requires positive turns');
   if(entry?.id==='weather-speed'&&(!Number.isFinite(entry.params?.multiplier)||entry.params.multiplier<=1))problems.push('weather-speed requires multiplier > 1');
   if(entry?.id==='weather-duration'&&(!Number.isInteger(entry.params?.turns)||entry.params.turns<1))problems.push('weather-duration requires positive turns');
   if(entry?.id==='weather-heal'){
    const numerator=entry.params?.numerator,denominator=entry.params?.denominator;
    if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1||numerator>denominator)problems.push('weather-heal requires a valid positive fraction');
   }
+  if(entry?.id==='apply-hazard'&&!HAZARD_IDS.includes(entry.params?.hazard))problems.push('apply-hazard requires a supported hazard');
+  if(entry?.id==='apply-room'){
+   if(!ROOM_IDS.includes(entry.params?.room))problems.push('apply-room requires a supported room');
+   if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-room turns must be a positive integer');
+  }
+  if(entry?.id==='prepare-two-turn-move'){
+   if(!TWO_TURN_MOVE_KINDS.includes(entry.params?.kind))problems.push('prepare-two-turn-move requires a supported kind');
+   if(entry.params?.sunSkipsCharge!==undefined&&typeof entry.params.sunSkipsCharge!=='boolean')problems.push('prepare-two-turn-move sunSkipsCharge must be boolean');
+   if(entry.params?.kind==='semi-invulnerable'&&!SEMI_INVULNERABLE_MODES.includes(entry.params?.semiInvulnerable))problems.push('prepare-two-turn-move requires a supported semiInvulnerable mode');
+   if(entry.params?.kind!=='semi-invulnerable'&&entry.params?.semiInvulnerable!==undefined)problems.push('prepare-two-turn-move semiInvulnerable requires semi-invulnerable kind');
+  }
+  if(entry?.id==='modify-charge-power'&&entry.params?.rainMultiplier!==0.5)problems.push('modify-charge-power currently requires rainMultiplier 0.5');
+  if(entry?.id==='apply-recharge'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-recharge requireDamage must be boolean');
+  if(entry?.id==='schedule-delayed-effect'){
+   if(!DELAYED_EFFECT_IDS.includes(entry.params?.effect))problems.push('schedule-delayed-effect requires a supported effect');
+   if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('schedule-delayed-effect turns must be a positive integer');
+   if(entry.params?.scope!==undefined&&entry.params.scope!=='all-active')problems.push('schedule-delayed-effect scope must be all-active when provided');
+  }
+  if(entry?.id==='cleanup-battlefield-effects'&&!['rapid-spin','defog'].includes(entry.params?.mode))problems.push('cleanup-battlefield-effects requires a supported mode');
   if(entry?.id==='apply-side-condition'){
    if(!SIDE_CONDITION_IDS.includes(entry.params?.condition))problems.push('apply-side-condition requires a supported condition');
    if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('apply-side-condition turns must be a positive integer');
@@ -85,7 +117,9 @@ export function validateMechanicManifest(manifest,kind){
    if(!Array.isArray(entry.params?.conditions)||!entry.params.conditions.length||entry.params.conditions.some(condition=>!['reflect','light-screen'].includes(condition)))problems.push('screen-duration requires supported screen conditions');
    if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('screen-duration turns must be a positive integer');
   }
-  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
+  if(entry?.id==='apply-secondary-effects'&&kind!=='moves')problems.push('apply-secondary-effects is only valid for moves');
+  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
+  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','type-immunity-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);
@@ -93,7 +127,33 @@ export function validateMechanicManifest(manifest,kind){
   if(!TARGET_MODES.includes(manifest.targetMode))problems.push('move targetMode is required');
   if(!Number.isInteger(manifest.priority))problems.push('move priority must be an integer');
   if(typeof manifest.contact!=='boolean')problems.push('move contact must be boolean');
+  if(manifest.tags!==undefined&&(!Array.isArray(manifest.tags)||new Set(manifest.tags).size!==manifest.tags.length||manifest.tags.some(tag=>!MOVE_TAG_IDS.includes(tag))))problems.push('move tags must contain distinct supported tags');
+  if(manifest.secondaryEffects!==undefined){
+   if(!Array.isArray(manifest.secondaryEffects)||!manifest.secondaryEffects.length)problems.push('move secondaryEffects must be a non-empty array when provided');
+   else for(const [index,effect] of manifest.secondaryEffects.entries())problems.push(...validateSecondaryEffect(effect).map(problem=>`secondaryEffects[${index}] ${problem}`));
+   if(!(manifest.handlers||[]).some(handler=>handler.id==='apply-secondary-effects'))problems.push('move secondaryEffects require apply-secondary-effects handler');
+  }
+  if((manifest.handlers||[]).some(handler=>handler.id==='apply-secondary-effects')&&!Array.isArray(manifest.secondaryEffects))problems.push('apply-secondary-effects requires move secondaryEffects');
   if(manifest.bypassesProtect!==undefined&&typeof manifest.bypassesProtect!=='boolean')problems.push('move bypassesProtect must be boolean');
+ }
+ return problems;
+}
+
+
+function validateSecondaryEffect(effect){
+ const problems=[];
+ if(!effect||typeof effect!=='object'||Array.isArray(effect))return ['must be an object'];
+ if(!SECONDARY_EFFECT_KINDS.includes(effect.kind))problems.push(`has unsupported kind: ${effect.kind}`);
+ if(!Number.isInteger(effect.chance)||effect.chance<1||effect.chance>100)problems.push('chance must be an integer from 1 to 100');
+ if(effect.kind==='major-status'){
+  if(!MAJOR_STATUS_IDS.includes(effect.status))problems.push(`has unsupported major status: ${effect.status}`);
+  if(effect.blockedTargetTypes!==undefined&&(!Array.isArray(effect.blockedTargetTypes)||new Set(effect.blockedTargetTypes).size!==effect.blockedTargetTypes.length||effect.blockedTargetTypes.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('blockedTargetTypes must contain distinct canonical types');
+ }
+ if(effect.kind==='volatile-status'&&!VOLATILE_STATUS_IDS.includes(effect.volatile))problems.push(`has unsupported volatile status: ${effect.volatile}`);
+ if(effect.kind==='stat-stages'){
+  const boosts=effect.boosts,values=boosts&&typeof boosts==='object'&&!Array.isArray(boosts)?Object.entries(boosts):[];
+  if(!values.length)problems.push('stat-stages requires boosts');
+  for(const [stat,delta] of values){if(!BATTLE_STAGES.includes(stat))problems.push(`has unknown battle stage: ${stat}`);if(!Number.isInteger(delta)||delta===0||delta<-6||delta>6)problems.push(`has invalid stage delta for ${stat}`);}
  }
  return problems;
 }

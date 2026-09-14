@@ -1,5 +1,6 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {applyMajorStatus} from './major-status.mjs';
+import {resolveHpThresholdItems} from './item-hooks.mjs';
 
 export function applyProtect(battle,{actorId,moveId,retaliation=null,blocksStatus=true},runtime={}){
  const next=clone(battle),actor=unitById(next,actorId);
@@ -38,6 +39,7 @@ export function resolveProtectionBlock(battle,{targetRef,actorId,move,mechanics}
   const hpBefore=actor.hp,amount=Math.min(hpBefore,Math.max(1,Math.floor(actor.maxHp/8)));actor.hp-=amount;
   events.push({kind:'damage',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,hpBefore,hpAfter:actor.hp,amount,source:'protection'});
   if(actor.hp===0)events.push({kind:'fainted',targetId:actor.actorId,source:protect.sourceId});
+  else{const threshold=resolveHpThresholdItems(next,{actorIds:[actor.actorId],trigger:`protection:${protect.sourceId}`});next=threshold.battle;events.push(...threshold.events);}
  }else if(protect.retaliation==='lower-attack'){
   const before=actor.stages?.atk||0,after=Math.max(-6,before-1);actor.stages??={};actor.stages.atk=after;
   events.push({kind:'statStageChanged',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',before,after,requestedDelta:-1,appliedDelta:after-before,reason:after===before?'stageLimit':null});

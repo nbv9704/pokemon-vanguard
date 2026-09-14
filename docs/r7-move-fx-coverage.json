@@ -1,8 +1,8 @@
 {
-  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v4-mega-beta-v1",
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v16-mega-beta-v1",
   "generatedBy": "app/scripts/generate-move-fx-coverage.mjs",
-  "moveCount": 34,
-  "coveredMoveCount": 34,
+  "moveCount": 65,
+  "coveredMoveCount": 65,
   "typePalette": [
     "normal",
     "fire",
@@ -46,10 +46,28 @@
       "type": "flying"
     },
     {
+      "moveId": "blast-burn",
+      "id": "field-burst",
+      "source": "override",
+      "type": "fire"
+    },
+    {
+      "moveId": "body-slam",
+      "id": "impact",
+      "source": "override",
+      "type": "normal"
+    },
+    {
       "moveId": "brave-bird",
       "id": "rush",
       "source": "override",
       "type": "flying"
+    },
+    {
+      "moveId": "bulldoze",
+      "id": "field-burst",
+      "source": "override",
+      "type": "ground"
     },
     {
       "moveId": "bullet-seed",
@@ -74,6 +92,30 @@
       "id": "orb",
       "source": "category-fallback",
       "type": "fighting"
+    },
+    {
+      "moveId": "crunch",
+      "id": "rush",
+      "source": "override",
+      "type": "dark"
+    },
+    {
+      "moveId": "defog",
+      "id": "field-burst",
+      "source": "override",
+      "type": "flying"
+    },
+    {
+      "moveId": "dig",
+      "id": "rush",
+      "source": "override",
+      "type": "ground"
+    },
+    {
+      "moveId": "dive",
+      "id": "rush",
+      "source": "override",
+      "type": "water"
     },
     {
       "moveId": "dragon-tail",
@@ -118,8 +160,32 @@
       "type": "water"
     },
     {
+      "moveId": "fly",
+      "id": "rush",
+      "source": "override",
+      "type": "flying"
+    },
+    {
+      "moveId": "frenzy-plant",
+      "id": "impact",
+      "source": "override",
+      "type": "grass"
+    },
+    {
       "moveId": "giga-drain",
       "id": "drain",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "giga-impact",
+      "id": "rush",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "grassy-terrain",
+      "id": "field-burst",
       "source": "override",
       "type": "grass"
     },
@@ -142,6 +208,36 @@
       "type": "ghost"
     },
     {
+      "moveId": "hydro-cannon",
+      "id": "beam",
+      "source": "override",
+      "type": "water"
+    },
+    {
+      "moveId": "hyper-beam",
+      "id": "beam",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "hyper-voice",
+      "id": "notes",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "ice-fang",
+      "id": "rush",
+      "source": "override",
+      "type": "ice"
+    },
+    {
+      "moveId": "ice-punch",
+      "id": "impact",
+      "source": "override",
+      "type": "ice"
+    },
+    {
       "moveId": "leech-seed",
       "id": "seed",
       "source": "override",
@@ -152,6 +248,30 @@
       "id": "barrier",
       "source": "override",
       "type": "psychic"
+    },
+    {
+      "moveId": "liquidation",
+      "id": "rush",
+      "source": "override",
+      "type": "water"
+    },
+    {
+      "moveId": "misty-terrain",
+      "id": "field-burst",
+      "source": "override",
+      "type": "fairy"
+    },
+    {
+      "moveId": "perish-song",
+      "id": "notes",
+      "source": "override",
+      "type": "normal"
+    },
+    {
+      "moveId": "phantom-force",
+      "id": "aura",
+      "source": "override",
+      "type": "ghost"
     },
     {
       "moveId": "protect",
@@ -172,10 +292,22 @@
       "type": "water"
     },
     {
+      "moveId": "rapid-spin",
+      "id": "rush",
+      "source": "override",
+      "type": "normal"
+    },
+    {
       "moveId": "reflect",
       "id": "barrier",
       "source": "override",
       "type": "psychic"
+    },
+    {
+      "moveId": "rock-slide",
+      "id": "field-burst",
+      "source": "override",
+      "type": "rock"
     },
     {
       "moveId": "scale-shot",
@@ -190,10 +322,34 @@
       "type": "normal"
     },
     {
+      "moveId": "solar-beam",
+      "id": "beam",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "solar-blade",
+      "id": "slash",
+      "source": "override",
+      "type": "grass"
+    },
+    {
+      "moveId": "spikes",
+      "id": "field-burst",
+      "source": "override",
+      "type": "ground"
+    },
+    {
       "moveId": "spiky-shield",
       "id": "barrier",
       "source": "override",
       "type": "grass"
+    },
+    {
+      "moveId": "stealth-rock",
+      "id": "field-burst",
+      "source": "override",
+      "type": "rock"
     },
     {
       "moveId": "stored-power",
@@ -220,14 +376,32 @@
       "type": "dark"
     },
     {
+      "moveId": "toxic-spikes",
+      "id": "field-burst",
+      "source": "override",
+      "type": "poison"
+    },
+    {
       "moveId": "u-turn",
       "id": "rush",
       "source": "override",
       "type": "bug"
     },
     {
+      "moveId": "water-pulse",
+      "id": "orb",
+      "source": "override",
+      "type": "water"
+    },
+    {
       "moveId": "water-spout",
       "id": "field-burst",
+      "source": "override",
+      "type": "water"
+    },
+    {
+      "moveId": "waterfall",
+      "id": "rush",
       "source": "override",
       "type": "water"
     },
@@ -242,6 +416,18 @@
       "id": "orb",
       "source": "override",
       "type": "fire"
+    },
+    {
+      "moveId": "wonder-room",
+      "id": "field-burst",
+      "source": "override",
+      "type": "psychic"
+    },
+    {
+      "moveId": "yawn",
+      "id": "notes",
+      "source": "override",
+      "type": "normal"
     }
   ]
 }

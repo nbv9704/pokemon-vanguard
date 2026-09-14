@@ -7,431 +7,5523 @@
       "priority": 0,
       "contact": true,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "deal-direct-damage", "hook": "onMove", "order": 100}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
       ],
       "testEvidence": {
-        "single": ["r3-direct-damage:aerial-ace-single"],
-        "double": ["r3-direct-damage:aerial-ace-double-ally"]
+        "single": [
+          "r3-direct-damage:aerial-ace-single"
+        ],
+        "double": [
+          "r3-direct-damage:aerial-ace-double-ally"
+        ]
       }
     },
     "acid-armor": {
-      "id": "acid-armor", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "acid-armor",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": 2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": 2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "agility": {
-      "id": "agility", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "agility",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spe": 2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spe": 2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "amnesia": {
-      "id": "amnesia", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "amnesia",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spd": 2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spd": 2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "aromatic-mist": {
-      "id": "aromatic-mist", "targetMode": "adjacentAlly", "priority": 0, "contact": false, "redirectable": false,
+      "id": "aromatic-mist",
+      "targetMode": "adjacentAlly",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spd": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spd": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:ally-single-failure"], "double": ["r3-stat-stages:ally-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:ally-single-failure"
+        ],
+        "double": [
+          "r3-stat-stages:ally-double"
+        ]
+      }
     },
     "bulk-up": {
-      "id": "bulk-up", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "bulk-up",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 1, "def": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": 1,
+              "def": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "calm-mind": {
-      "id": "calm-mind", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "calm-mind",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spa": 1, "spd": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spa": 1,
+              "spd": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "coaching": {
-      "id": "coaching", "targetMode": "adjacentAlly", "priority": 0, "contact": false, "redirectable": false,
+      "id": "coaching",
+      "targetMode": "adjacentAlly",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 1, "def": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": 1,
+              "def": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:ally-single-failure"], "double": ["r3-stat-stages:ally-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:ally-single-failure"
+        ],
+        "double": [
+          "r3-stat-stages:ally-double"
+        ]
+      }
     },
     "cosmic-power": {
-      "id": "cosmic-power", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "cosmic-power",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": 1, "spd": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": 1,
+              "spd": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "cotton-guard": {
-      "id": "cotton-guard", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "cotton-guard",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": 3}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": 3
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-stat-stages:self-single"], "double": ["r3-stat-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-stat-stages:self-single"
+        ],
+        "double": [
+          "r3-stat-stages:self-double"
+        ]
+      }
     },
     "baby-doll-eyes": {
-      "id": "baby-doll-eyes", "targetMode": "adjacentFoe", "priority": 1, "contact": false,
+      "id": "baby-doll-eyes",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "charm": {
-      "id": "charm", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "charm",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "coil": {
-      "id": "coil", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "coil",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 1, "def": 1, "accuracy": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": 1,
+              "def": 1,
+              "accuracy": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:self-single"], "double": ["r3-accuracy-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:self-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:self-double"
+        ]
+      }
     },
     "confide": {
-      "id": "confide", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "confide",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spa": -1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spa": -1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "double-team": {
-      "id": "double-team", "targetMode": "self", "priority": 0, "contact": false,
+      "id": "double-team",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"evasion": 1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "evasion": 1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:self-single"], "double": ["r3-accuracy-stages:self-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:self-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:self-double"
+        ]
+      }
     },
     "fake-tears": {
-      "id": "fake-tears", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "fake-tears",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spd": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spd": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "feather-dance": {
-      "id": "feather-dance", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "feather-dance",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "noble-roar": {
-      "id": "noble-roar", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "noble-roar",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": -1, "spa": -1}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -1,
+              "spa": -1
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "scary-face": {
-      "id": "scary-face", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "scary-face",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spe": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spe": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "screech": {
-      "id": "screech", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "screech",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"def": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:target-single"], "double": ["r3-accuracy-stages:target-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:target-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:target-double"
+        ]
+      }
     },
     "string-shot": {
-      "id": "string-shot", "targetMode": "allAdjacentFoes", "priority": 0, "contact": false, "redirectable": false,
+      "id": "string-shot",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spe": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spe": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:spread-single"], "double": ["r3-accuracy-stages:spread-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:spread-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:spread-double"
+        ]
+      }
     },
     "sweet-scent": {
-      "id": "sweet-scent", "targetMode": "allAdjacentFoes", "priority": 0, "contact": false, "redirectable": false,
+      "id": "sweet-scent",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"evasion": -2}}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "evasion": -2
+            }
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-accuracy-stages:spread-single"], "double": ["r3-accuracy-stages:spread-double"]}
+      "testEvidence": {
+        "single": [
+          "r3-accuracy-stages:spread-single"
+        ],
+        "double": [
+          "r3-accuracy-stages:spread-double"
+        ]
+      }
     },
     "glare": {
-      "id": "glare", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "glare",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "paralysis"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "paralysis"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-major-status:single"
+        ],
+        "double": [
+          "r3-major-status:double"
+        ]
+      }
     },
     "poison-powder": {
-      "id": "poison-powder", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "poison-powder",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "poison", "blockedTargetTypes": ["grass"]}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "poison",
+            "blockedTargetTypes": [
+              "grass"
+            ]
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-major-status:single"
+        ],
+        "double": [
+          "r3-major-status:double"
+        ]
+      }
     },
     "stun-spore": {
-      "id": "stun-spore", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "stun-spore",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "paralysis", "blockedTargetTypes": ["grass"]}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "paralysis",
+            "blockedTargetTypes": [
+              "grass"
+            ]
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-major-status:single"
+        ],
+        "double": [
+          "r3-major-status:double"
+        ]
+      }
     },
     "thunder-wave": {
-      "id": "thunder-wave", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "thunder-wave",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "paralysis", "blockedTargetTypes": ["ground"]}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "paralysis",
+            "blockedTargetTypes": [
+              "ground"
+            ]
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-major-status:single"
+        ],
+        "double": [
+          "r3-major-status:double"
+        ]
+      }
     },
     "will-o-wisp": {
-      "id": "will-o-wisp", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "will-o-wisp",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "burn"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "burn"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-major-status:single"], "double": ["r3-major-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-major-status:single"
+        ],
+        "double": [
+          "r3-major-status:double"
+        ]
+      }
     },
     "hypnosis": {
-      "id": "hypnosis", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "hypnosis",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "sleep"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "sleep"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-advanced-status:single"
+        ],
+        "double": [
+          "r3-advanced-status:double"
+        ]
+      }
     },
     "sing": {
-      "id": "sing", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "sing",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "sleep"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "sleep"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-advanced-status:single"
+        ],
+        "double": [
+          "r3-advanced-status:double"
+        ]
+      },
+      "tags": [
+        "sound"
+      ]
     },
     "sleep-powder": {
-      "id": "sleep-powder", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "sleep-powder",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "sleep", "blockedTargetTypes": ["grass"]}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "sleep",
+            "blockedTargetTypes": [
+              "grass"
+            ]
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-advanced-status:single"
+        ],
+        "double": [
+          "r3-advanced-status:double"
+        ]
+      }
     },
     "toxic": {
-      "id": "toxic", "targetMode": "adjacentFoe", "priority": 0, "contact": false,
+      "id": "toxic",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90, "params": {"alwaysHitsForUserTypes": ["poison"]}},
-        {"id": "apply-major-status", "hook": "onMove", "order": 120, "params": {"status": "bad-poison"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90,
+          "params": {
+            "alwaysHitsForUserTypes": [
+              "poison"
+            ]
+          }
+        },
+        {
+          "id": "apply-major-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "status": "bad-poison"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-advanced-status:single"], "double": ["r3-advanced-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-advanced-status:single"
+        ],
+        "double": [
+          "r3-advanced-status:double"
+        ]
+      }
     },
     "confuse-ray": {
-      "id": "confuse-ray", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "confuse-ray",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "confusion"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "confusion"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-volatile-status:single"
+        ],
+        "double": [
+          "r3-volatile-status:double"
+        ]
+      }
     },
     "flatter": {
-      "id": "flatter", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "flatter",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"spa": 1}}},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "confusion"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spa": 1
+            }
+          }
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "confusion"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-volatile-status:single"
+        ],
+        "double": [
+          "r3-volatile-status:double"
+        ]
+      }
     },
     "swagger": {
-      "id": "swagger", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "swagger",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-stat-stages", "hook": "onMove", "order": 110, "params": {"boosts": {"atk": 2}}},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "confusion"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": 2
+            }
+          }
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "confusion"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-volatile-status:single"], "double": ["r3-volatile-status:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-volatile-status:single"
+        ],
+        "double": [
+          "r3-volatile-status:double"
+        ]
+      }
     },
     "taunt": {
-      "id": "taunt", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "taunt",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "taunt"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "taunt"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-move-lock:single"], "double": ["r3-move-lock:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-move-lock:single"
+        ],
+        "double": [
+          "r3-move-lock:double"
+        ]
+      }
     },
     "encore": {
-      "id": "encore", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "encore",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "encore"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "encore"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-move-lock:single"], "double": ["r3-move-lock:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-move-lock:single"
+        ],
+        "double": [
+          "r3-move-lock:double"
+        ]
+      }
     },
     "disable": {
-      "id": "disable", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "disable",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "disable"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "disable"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-move-lock:single"], "double": ["r3-move-lock:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-move-lock:single"
+        ],
+        "double": [
+          "r3-move-lock:double"
+        ]
+      }
     },
     "leech-seed": {
-      "id": "leech-seed", "targetMode": "anyAdjacent", "priority": 0, "contact": false,
+      "id": "leech-seed",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "apply-volatile-status", "hook": "onMove", "order": 120, "params": {"volatile": "leech-seed"}}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "volatile": "leech-seed"
+          }
+        }
       ],
-      "testEvidence": {"single": ["r3-linked-residual:single"], "double": ["r3-linked-residual:double"]}
+      "testEvidence": {
+        "single": [
+          "r3-linked-residual:single"
+        ],
+        "double": [
+          "r3-linked-residual:double"
+        ]
+      }
     },
-    "bullet-seed": {"id":"bullet-seed","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-multi-hit-damage","hook":"onMove","order":100,"params":{"hits":[2,5]}}],"testEvidence":{"single":["r3-multi-hit:single"],"double":["r3-multi-hit:double"]}},
-    "rock-blast": {"id":"rock-blast","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-multi-hit-damage","hook":"onMove","order":100,"params":{"hits":[2,5]}}],"testEvidence":{"single":["r3-multi-hit:single"],"double":["r3-multi-hit:double"]}},
-    "icicle-spear": {"id":"icicle-spear","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-multi-hit-damage","hook":"onMove","order":100,"params":{"hits":[2,5]}}],"testEvidence":{"single":["r3-multi-hit:single"],"double":["r3-multi-hit:double"]}},
-    "dual-wingbeat": {"id":"dual-wingbeat","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-multi-hit-damage","hook":"onMove","order":100,"params":{"hits":2}}],"testEvidence":{"single":["r3-multi-hit:single"],"double":["r3-multi-hit:double"]}},
-    "double-edge": {"id":"double-edge","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-recoil","hook":"onMove","order":130,"params":{"numerator":33,"denominator":100}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "brave-bird": {"id":"brave-bird","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-recoil","hook":"onMove","order":130,"params":{"numerator":33,"denominator":100}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "wild-charge": {"id":"wild-charge","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-recoil","hook":"onMove","order":130,"params":{"numerator":1,"denominator":4}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "head-smash": {"id":"head-smash","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-recoil","hook":"onMove","order":130,"params":{"numerator":1,"denominator":2}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "giga-drain": {"id":"giga-drain","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-drain","hook":"onMove","order":130,"params":{"numerator":1,"denominator":2}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "drain-punch": {"id":"drain-punch","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-drain","hook":"onMove","order":130,"params":{"numerator":1,"denominator":2}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "draining-kiss": {"id":"draining-kiss","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-drain","hook":"onMove","order":130,"params":{"numerator":3,"denominator":4}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "horn-leech": {"id":"horn-leech","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-drain","hook":"onMove","order":130,"params":{"numerator":1,"denominator":2}}],"testEvidence":{"single":["r3-recoil-drain:single"],"double":["r3-recoil-drain:double"]}},
-    "night-shade": {"id":"night-shade","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-fixed-damage","hook":"onMove","order":100,"params":{"formula":"user-level"}}],"testEvidence":{"single":["r3-fixed-damage:single"],"double":["r3-fixed-damage:double"]}},
-    "seismic-toss": {"id":"seismic-toss","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-fixed-damage","hook":"onMove","order":100,"params":{"formula":"user-level"}}],"testEvidence":{"single":["r3-fixed-damage:single"],"double":["r3-fixed-damage:double"]}},
-    "super-fang": {"id":"super-fang","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-fixed-damage","hook":"onMove","order":100,"params":{"formula":"target-current-fraction","denominator":2}}],"testEvidence":{"single":["r3-fixed-damage:single"],"double":["r3-fixed-damage:double"]}},
-    "flail": {"id":"flail","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"low-user-hp"}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "reversal": {"id":"reversal","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"low-user-hp"}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "electro-ball": {"id":"electro-ball","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"faster-user"}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "gyro-ball": {"id":"gyro-ball","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"slower-user"}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "eruption": {"id":"eruption","targetMode":"allAdjacentFoes","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"user-hp-proportional","basePower":150}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "water-spout": {"id":"water-spout","targetMode":"allAdjacentFoes","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"user-hp-proportional","basePower":150}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "stored-power": {"id":"stored-power","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"positive-stages","basePower":20}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "power-trip": {"id":"power-trip","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"positive-stages","basePower":20}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "last-respects": {"id":"last-respects","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"fainted-allies","basePower":50}}],"testEvidence":{"single":["r3-variable-power:single"],"double":["r3-variable-power:double"]}},
-    "facade": {"id":"facade","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"user-status-non-sleep","basePower":70}}],"testEvidence":{"single":["r3-condition-power:single"],"double":["r3-condition-power:double"]}},
-    "hex": {"id":"hex","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"target-status","basePower":65}}],"testEvidence":{"single":["r3-condition-power:single"],"double":["r3-condition-power:double"]}},
-    "venoshock": {"id":"venoshock","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"target-poison","basePower":65}}],"testEvidence":{"single":["r3-condition-power:single"],"double":["r3-condition-power:double"]}},
-    "hard-press": {"id":"hard-press","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"target-hp-proportional","basePower":100}}],"testEvidence":{"single":["r3-condition-power:single"],"double":["r3-condition-power:double"]}},
-    "fickle-beam": {"id":"fickle-beam","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-variable-power-damage","hook":"onMove","order":100,"params":{"formula":"random-double","basePower":80}}],"testEvidence":{"single":["r3-condition-power:single"],"double":["r3-condition-power:double"]}},
-    "scale-shot": {"id":"scale-shot","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-multi-hit-damage","hook":"onMove","order":100,"params":{"hits":[2,5]}},{"id":"apply-stat-stages","hook":"onMove","order":110,"params":{"boosts":{"def":-1,"spe":1},"target":"self","requireDamage":true}}],"testEvidence":{"single":["r3-multi-hit-self:single"],"double":["r3-multi-hit-self:double"]}},
-    "protect": {"id":"protect","targetMode":"self","priority":4,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-protection","hook":"onMove","order":100}],"testEvidence":{"single":["r3-protection:single"],"double":["r3-protection:double"]}},
-    "detect": {"id":"detect","targetMode":"self","priority":4,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-protection","hook":"onMove","order":100}],"testEvidence":{"single":["r3-protection:single"],"double":["r3-protection:double"]}},
-    "wide-guard": {"id":"wide-guard","targetMode":"userSide","priority":3,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-protection","hook":"onMove","order":100,"params":{"guard":"wide-guard"}}],"testEvidence":{"single":["r3-side-protection:single"],"double":["r3-side-protection:double"]}},
-    "quick-guard": {"id":"quick-guard","targetMode":"userSide","priority":3,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-protection","hook":"onMove","order":100,"params":{"guard":"quick-guard"}}],"testEvidence":{"single":["r3-side-protection:single"],"double":["r3-side-protection:double"]}},
-    "spiky-shield": {"id":"spiky-shield","targetMode":"self","priority":4,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-protection","hook":"onMove","order":100,"params":{"retaliation":"spiky-damage"}}],"testEvidence":{"single":["r3-protection-retaliation:single"],"double":["r3-protection-retaliation:double"]}},
-    "kings-shield": {"id":"kings-shield","targetMode":"self","priority":4,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-protection","hook":"onMove","order":100,"params":{"retaliation":"lower-attack","blocksStatus":false}}],"testEvidence":{"single":["r3-protection-retaliation:single"],"double":["r3-protection-retaliation:double"]}},
-    "baneful-bunker": {"id":"baneful-bunker","targetMode":"self","priority":4,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-protection","hook":"onMove","order":100,"params":{"retaliation":"poison"}}],"testEvidence":{"single":["r3-protection-retaliation:single"],"double":["r3-protection-retaliation:double"]}},
-    "feint": {"id":"feint","targetMode":"anyAdjacent","priority":2,"contact":false,"bypassesProtect":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"break-protection","hook":"onMove","order":80},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100}],"testEvidence":{"single":["r3-break-protection:single"],"double":["r3-break-protection:double"]}},
-    "follow-me": {"id":"follow-me","targetMode":"self","priority":2,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-redirection","hook":"onMove","order":100,"params":{"kind":"follow-me"}}],"testEvidence":{"single":["r3-redirection:single"],"double":["r3-redirection:double"]}},
-    "rage-powder": {"id":"rage-powder","targetMode":"self","priority":2,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-redirection","hook":"onMove","order":100,"params":{"kind":"rage-powder"}}],"testEvidence":{"single":["r3-redirection:single"],"double":["r3-redirection:double"]}},
-    "u-turn": {"id":"u-turn","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-pivot-switch","hook":"onMove","order":120}],"testEvidence":{"single":["r3-pivot-switch:single"],"double":["r3-pivot-switch:double"]}},
-    "volt-switch": {"id":"volt-switch","targetMode":"anyAdjacent","priority":0,"contact":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-pivot-switch","hook":"onMove","order":120}],"testEvidence":{"single":["r3-pivot-switch:single"],"double":["r3-pivot-switch:double"]}},
-    "flip-turn": {"id":"flip-turn","targetMode":"anyAdjacent","priority":0,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-pivot-switch","hook":"onMove","order":120}],"testEvidence":{"single":["r3-pivot-switch:single"],"double":["r3-pivot-switch:double"]}},
-    "circle-throw": {"id":"circle-throw","targetMode":"anyAdjacent","priority":-6,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-forced-switch","hook":"onMove","order":120,"params":{"requireDamage":true}}],"testEvidence":{"single":["r3-forced-switch:single"],"double":["r3-forced-switch:double"]}},
-    "dragon-tail": {"id":"dragon-tail","targetMode":"anyAdjacent","priority":-6,"contact":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"deal-direct-damage","hook":"onMove","order":100},{"id":"apply-forced-switch","hook":"onMove","order":120,"params":{"requireDamage":true}}],"testEvidence":{"single":["r3-forced-switch:single"],"double":["r3-forced-switch:double"]}},
-    "roar": {"id":"roar","targetMode":"anyAdjacent","priority":-6,"contact":false,"bypassesProtect":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"apply-forced-switch","hook":"onMove","order":100}],"testEvidence":{"single":["r3-forced-switch:single"],"double":["r3-forced-switch:double"]}},
-    "whirlwind": {"id":"whirlwind","targetMode":"anyAdjacent","priority":-6,"contact":false,"bypassesProtect":true,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"check-accuracy","hook":"onMove","order":90},{"id":"apply-forced-switch","hook":"onMove","order":100}],"testEvidence":{"single":["r3-forced-switch:single"],"double":["r3-forced-switch:double"]}},
-    "ally-switch": {"id":"ally-switch","targetMode":"self","priority":2,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-position-swap","hook":"onMove","order":100}],"testEvidence":{"single":["r3-position-swap:single"],"double":["r3-position-swap:double"]}},
-    "sunny-day": {"id":"sunny-day","targetMode":"field","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-weather","hook":"onMove","order":100,"params":{"weather":"sun","turns":5}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "rain-dance": {"id":"rain-dance","targetMode":"field","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-weather","hook":"onMove","order":100,"params":{"weather":"rain","turns":5}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "tailwind": {"id":"tailwind","targetMode":"userSide","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-condition","hook":"onMove","order":100,"params":{"condition":"tailwind","turns":4}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}},
-    "reflect": {"id":"reflect","targetMode":"userSide","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-condition","hook":"onMove","order":100,"params":{"condition":"reflect","turns":5}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}},
-    "light-screen": {"id":"light-screen","targetMode":"userSide","priority":0,"contact":false,"redirectable":false,"handlers":[{"id":"spend-pp","hook":"onTryMove","order":10},{"id":"apply-side-condition","hook":"onMove","order":100,"params":{"condition":"light-screen","turns":5}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}},
+    "bullet-seed": {
+      "id": "bullet-seed",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-multi-hit:single"
+        ],
+        "double": [
+          "r3-multi-hit:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ]
+    },
+    "rock-blast": {
+      "id": "rock-blast",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-multi-hit:single"
+        ],
+        "double": [
+          "r3-multi-hit:double"
+        ]
+      }
+    },
+    "icicle-spear": {
+      "id": "icicle-spear",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-multi-hit:single"
+        ],
+        "double": [
+          "r3-multi-hit:double"
+        ]
+      }
+    },
+    "dual-wingbeat": {
+      "id": "dual-wingbeat",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-multi-hit:single"
+        ],
+        "double": [
+          "r3-multi-hit:double"
+        ]
+      }
+    },
+    "double-edge": {
+      "id": "double-edge",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recoil",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 33,
+            "denominator": 100
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "brave-bird": {
+      "id": "brave-bird",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recoil",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 33,
+            "denominator": 100
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "wild-charge": {
+      "id": "wild-charge",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recoil",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 1,
+            "denominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "head-smash": {
+      "id": "head-smash",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recoil",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 1,
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "giga-drain": {
+      "id": "giga-drain",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-drain",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 1,
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "drain-punch": {
+      "id": "drain-punch",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-drain",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 1,
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "draining-kiss": {
+      "id": "draining-kiss",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-drain",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 3,
+            "denominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "horn-leech": {
+      "id": "horn-leech",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-drain",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 1,
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-recoil-drain:single"
+        ],
+        "double": [
+          "r3-recoil-drain:double"
+        ]
+      }
+    },
+    "night-shade": {
+      "id": "night-shade",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-level"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-fixed-damage:single"
+        ],
+        "double": [
+          "r3-fixed-damage:double"
+        ]
+      }
+    },
+    "seismic-toss": {
+      "id": "seismic-toss",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-level"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-fixed-damage:single"
+        ],
+        "double": [
+          "r3-fixed-damage:double"
+        ]
+      }
+    },
+    "super-fang": {
+      "id": "super-fang",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-current-fraction",
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-fixed-damage:single"
+        ],
+        "double": [
+          "r3-fixed-damage:double"
+        ]
+      }
+    },
+    "flail": {
+      "id": "flail",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "low-user-hp"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "reversal": {
+      "id": "reversal",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "low-user-hp"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "electro-ball": {
+      "id": "electro-ball",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "faster-user"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "gyro-ball": {
+      "id": "gyro-ball",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "slower-user"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "eruption": {
+      "id": "eruption",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-hp-proportional",
+            "basePower": 150
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "water-spout": {
+      "id": "water-spout",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-hp-proportional",
+            "basePower": 150
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "stored-power": {
+      "id": "stored-power",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "positive-stages",
+            "basePower": 20
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "power-trip": {
+      "id": "power-trip",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "positive-stages",
+            "basePower": 20
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "last-respects": {
+      "id": "last-respects",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "fainted-allies",
+            "basePower": 50
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-variable-power:single"
+        ],
+        "double": [
+          "r3-variable-power:double"
+        ]
+      }
+    },
+    "facade": {
+      "id": "facade",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-status-non-sleep",
+            "basePower": 70
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-condition-power:single"
+        ],
+        "double": [
+          "r3-condition-power:double"
+        ]
+      }
+    },
+    "hex": {
+      "id": "hex",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-status",
+            "basePower": 65
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-condition-power:single"
+        ],
+        "double": [
+          "r3-condition-power:double"
+        ]
+      }
+    },
+    "venoshock": {
+      "id": "venoshock",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-poison",
+            "basePower": 65
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-condition-power:single"
+        ],
+        "double": [
+          "r3-condition-power:double"
+        ]
+      }
+    },
+    "hard-press": {
+      "id": "hard-press",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-hp-proportional",
+            "basePower": 100
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-condition-power:single"
+        ],
+        "double": [
+          "r3-condition-power:double"
+        ]
+      }
+    },
+    "fickle-beam": {
+      "id": "fickle-beam",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "random-double",
+            "basePower": 80
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-condition-power:single"
+        ],
+        "double": [
+          "r3-condition-power:double"
+        ]
+      }
+    },
+    "scale-shot": {
+      "id": "scale-shot",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": -1,
+              "spe": 1
+            },
+            "target": "self",
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-multi-hit-self:single"
+        ],
+        "double": [
+          "r3-multi-hit-self:double"
+        ]
+      }
+    },
+    "protect": {
+      "id": "protect",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-protection",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-protection:single"
+        ],
+        "double": [
+          "r3-protection:double"
+        ]
+      }
+    },
+    "detect": {
+      "id": "detect",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-protection",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-protection:single"
+        ],
+        "double": [
+          "r3-protection:double"
+        ]
+      }
+    },
+    "wide-guard": {
+      "id": "wide-guard",
+      "targetMode": "userSide",
+      "priority": 3,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-side-protection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "guard": "wide-guard"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-side-protection:single"
+        ],
+        "double": [
+          "r3-side-protection:double"
+        ]
+      }
+    },
+    "quick-guard": {
+      "id": "quick-guard",
+      "targetMode": "userSide",
+      "priority": 3,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-side-protection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "guard": "quick-guard"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-side-protection:single"
+        ],
+        "double": [
+          "r3-side-protection:double"
+        ]
+      }
+    },
+    "spiky-shield": {
+      "id": "spiky-shield",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-protection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "retaliation": "spiky-damage"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-protection-retaliation:single"
+        ],
+        "double": [
+          "r3-protection-retaliation:double"
+        ]
+      }
+    },
+    "kings-shield": {
+      "id": "kings-shield",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-protection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "retaliation": "lower-attack",
+            "blocksStatus": false
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-protection-retaliation:single"
+        ],
+        "double": [
+          "r3-protection-retaliation:double"
+        ]
+      }
+    },
+    "baneful-bunker": {
+      "id": "baneful-bunker",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-protection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "retaliation": "poison"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-protection-retaliation:single"
+        ],
+        "double": [
+          "r3-protection-retaliation:double"
+        ]
+      }
+    },
+    "feint": {
+      "id": "feint",
+      "targetMode": "anyAdjacent",
+      "priority": 2,
+      "contact": false,
+      "bypassesProtect": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "break-protection",
+          "hook": "onMove",
+          "order": 80
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-break-protection:single"
+        ],
+        "double": [
+          "r3-break-protection:double"
+        ]
+      }
+    },
+    "follow-me": {
+      "id": "follow-me",
+      "targetMode": "self",
+      "priority": 2,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-redirection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "kind": "follow-me"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-redirection:single"
+        ],
+        "double": [
+          "r3-redirection:double"
+        ]
+      }
+    },
+    "rage-powder": {
+      "id": "rage-powder",
+      "targetMode": "self",
+      "priority": 2,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-redirection",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "kind": "rage-powder"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-redirection:single"
+        ],
+        "double": [
+          "r3-redirection:double"
+        ]
+      }
+    },
+    "u-turn": {
+      "id": "u-turn",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-pivot-switch",
+          "hook": "onMove",
+          "order": 120
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-pivot-switch:single"
+        ],
+        "double": [
+          "r3-pivot-switch:double"
+        ]
+      }
+    },
+    "volt-switch": {
+      "id": "volt-switch",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-pivot-switch",
+          "hook": "onMove",
+          "order": 120
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-pivot-switch:single"
+        ],
+        "double": [
+          "r3-pivot-switch:double"
+        ]
+      }
+    },
+    "flip-turn": {
+      "id": "flip-turn",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-pivot-switch",
+          "hook": "onMove",
+          "order": 120
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-pivot-switch:single"
+        ],
+        "double": [
+          "r3-pivot-switch:double"
+        ]
+      }
+    },
+    "circle-throw": {
+      "id": "circle-throw",
+      "targetMode": "anyAdjacent",
+      "priority": -6,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-forced-switch",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-forced-switch:single"
+        ],
+        "double": [
+          "r3-forced-switch:double"
+        ]
+      }
+    },
+    "dragon-tail": {
+      "id": "dragon-tail",
+      "targetMode": "anyAdjacent",
+      "priority": -6,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-forced-switch",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-forced-switch:single"
+        ],
+        "double": [
+          "r3-forced-switch:double"
+        ]
+      }
+    },
+    "roar": {
+      "id": "roar",
+      "targetMode": "anyAdjacent",
+      "priority": -6,
+      "contact": false,
+      "bypassesProtect": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-forced-switch",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-forced-switch:single"
+        ],
+        "double": [
+          "r3-forced-switch:double"
+        ]
+      }
+    },
+    "whirlwind": {
+      "id": "whirlwind",
+      "targetMode": "anyAdjacent",
+      "priority": -6,
+      "contact": false,
+      "bypassesProtect": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-forced-switch",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-forced-switch:single"
+        ],
+        "double": [
+          "r3-forced-switch:double"
+        ]
+      }
+    },
+    "ally-switch": {
+      "id": "ally-switch",
+      "targetMode": "self",
+      "priority": 2,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-position-swap",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-position-swap:single"
+        ],
+        "double": [
+          "r3-position-swap:double"
+        ]
+      }
+    },
+    "sunny-day": {
+      "id": "sunny-day",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-weather",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "weather": "sun",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "rain-dance": {
+      "id": "rain-dance",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-weather",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "weather": "rain",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "electric-terrain": {
+      "id": "electric-terrain",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-terrain",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "terrain": "electric",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-terrain:single"
+        ],
+        "double": [
+          "r3-terrain:double"
+        ]
+      }
+    },
+    "grassy-terrain": {
+      "id": "grassy-terrain",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-terrain",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "terrain": "grassy",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-terrain:single"
+        ],
+        "double": [
+          "r3-terrain:double"
+        ]
+      }
+    },
+    "misty-terrain": {
+      "id": "misty-terrain",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-terrain",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "terrain": "misty",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-terrain:single"
+        ],
+        "double": [
+          "r3-terrain:double"
+        ]
+      }
+    },
+    "psychic-terrain": {
+      "id": "psychic-terrain",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-terrain",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "terrain": "psychic",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-terrain:single"
+        ],
+        "double": [
+          "r3-terrain:double"
+        ]
+      }
+    },
+    "spikes": {
+      "id": "spikes",
+      "targetMode": "foeSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-hazard",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hazard": "spikes"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-hazards:single"
+        ],
+        "double": [
+          "r3-hazards:double"
+        ]
+      }
+    },
+    "stealth-rock": {
+      "id": "stealth-rock",
+      "targetMode": "foeSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-hazard",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hazard": "stealth-rock"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-hazards:single"
+        ],
+        "double": [
+          "r3-hazards:double"
+        ]
+      }
+    },
+    "toxic-spikes": {
+      "id": "toxic-spikes",
+      "targetMode": "foeSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-hazard",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hazard": "toxic-spikes"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-hazards:single"
+        ],
+        "double": [
+          "r3-hazards:double"
+        ]
+      }
+    },
+    "rapid-spin": {
+      "id": "rapid-spin",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "cleanup-battlefield-effects",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "mode": "rapid-spin"
+          }
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 140,
+          "params": {
+            "boosts": {
+              "spe": 1
+            },
+            "target": "self",
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-hazard-cleanup:single"
+        ],
+        "double": [
+          "r3-hazard-cleanup:double"
+        ]
+      }
+    },
+    "defog": {
+      "id": "defog",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "evasion": -1
+            }
+          }
+        },
+        {
+          "id": "cleanup-battlefield-effects",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "mode": "defog"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-hazard-cleanup:single"
+        ],
+        "double": [
+          "r3-hazard-cleanup:double"
+        ]
+      }
+    },
+    "tailwind": {
+      "id": "tailwind",
+      "targetMode": "userSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-side-condition",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "condition": "tailwind",
+            "turns": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-side-conditions:single"
+        ],
+        "double": [
+          "r3-side-conditions:double"
+        ]
+      }
+    },
+    "reflect": {
+      "id": "reflect",
+      "targetMode": "userSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-side-condition",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "condition": "reflect",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-side-conditions:single"
+        ],
+        "double": [
+          "r3-side-conditions:double"
+        ]
+      }
+    },
+    "light-screen": {
+      "id": "light-screen",
+      "targetMode": "userSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-side-condition",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "condition": "light-screen",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-side-conditions:single"
+        ],
+        "double": [
+          "r3-side-conditions:double"
+        ]
+      }
+    },
+    "trick-room": {
+      "id": "trick-room",
+      "targetMode": "field",
+      "priority": -7,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-room",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "room": "trick-room",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-rooms:single"
+        ],
+        "double": [
+          "r3-rooms:double"
+        ]
+      }
+    },
+    "wonder-room": {
+      "id": "wonder-room",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-room",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "room": "wonder-room",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-rooms:single"
+        ],
+        "double": [
+          "r3-rooms:double"
+        ]
+      }
+    },
+    "magic-room": {
+      "id": "magic-room",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-room",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "room": "magic-room",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-rooms:single"
+        ],
+        "double": [
+          "r3-rooms:double"
+        ]
+      }
+    },
+    "yawn": {
+      "id": "yawn",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "schedule-delayed-effect",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "effect": "yawn",
+            "turns": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-delayed-effects:single"
+        ],
+        "double": [
+          "r3-delayed-effects:double"
+        ]
+      }
+    },
+    "perish-song": {
+      "id": "perish-song",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "schedule-delayed-effect",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "effect": "perish-song",
+            "turns": 4,
+            "scope": "all-active"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-delayed-effects:single"
+        ],
+        "double": [
+          "r3-delayed-effects:double"
+        ]
+      },
+      "tags": [
+        "sound"
+      ]
+    },
+    "solar-beam": {
+      "id": "solar-beam",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "prepare-two-turn-move",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "kind": "solar-charge",
+            "sunSkipsCharge": true
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "modify-charge-power",
+          "hook": "onMove",
+          "order": 95,
+          "params": {
+            "rainMultiplier": 0.5
+          }
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "solar-blade": {
+      "id": "solar-blade",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "prepare-two-turn-move",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "kind": "solar-charge",
+            "sunSkipsCharge": true
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "modify-charge-power",
+          "hook": "onMove",
+          "order": 95,
+          "params": {
+            "rainMultiplier": 0.5
+          }
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "hydro-cannon": {
+      "id": "hydro-cannon",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recharge",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "frenzy-plant": {
+      "id": "frenzy-plant",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recharge",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "blast-burn": {
+      "id": "blast-burn",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recharge",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "hyper-beam": {
+      "id": "hyper-beam",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recharge",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "giga-impact": {
+      "id": "giga-impact",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recharge",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-two-turn-recharge:single"
+        ],
+        "double": [
+          "r3-two-turn-recharge:double"
+        ]
+      }
+    },
+    "dig": {
+      "id": "dig",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "prepare-two-turn-move",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "kind": "semi-invulnerable",
+            "semiInvulnerable": "underground"
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-semi-invulnerable:single"
+        ],
+        "double": [
+          "r3-semi-invulnerable:double"
+        ]
+      }
+    },
+    "fly": {
+      "id": "fly",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "prepare-two-turn-move",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "kind": "semi-invulnerable",
+            "semiInvulnerable": "airborne"
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-semi-invulnerable:single"
+        ],
+        "double": [
+          "r3-semi-invulnerable:double"
+        ]
+      }
+    },
+    "dive": {
+      "id": "dive",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "prepare-two-turn-move",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "kind": "semi-invulnerable",
+            "semiInvulnerable": "underwater"
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-semi-invulnerable:single"
+        ],
+        "double": [
+          "r3-semi-invulnerable:double"
+        ]
+      }
+    },
+    "phantom-force": {
+      "id": "phantom-force",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "bypassesProtect": true,
+      "handlers": [
+        {
+          "id": "prepare-two-turn-move",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "kind": "semi-invulnerable",
+            "semiInvulnerable": "vanished"
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "break-protection",
+          "hook": "onMove",
+          "order": 80
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-semi-invulnerable:single"
+        ],
+        "double": [
+          "r3-semi-invulnerable:double"
+        ]
+      }
+    },
     "tackle": {
       "id": "tackle",
       "targetMode": "adjacentFoe",
       "priority": 0,
       "contact": true,
       "handlers": [
-        {"id": "spend-pp", "hook": "onTryMove", "order": 10},
-        {"id": "check-accuracy", "hook": "onMove", "order": 90},
-        {"id": "deal-direct-damage", "hook": "onMove", "order": 100}
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
       ],
       "testEvidence": {
-        "single": ["r3-direct-damage:tackle-single-immunity"],
-        "double": ["r3-direct-damage:tackle-double-redirection"]
+        "single": [
+          "r3-direct-damage:tackle-single-immunity"
+        ],
+        "double": [
+          "r3-direct-damage:tackle-double-redirection"
+        ]
+      }
+    },
+    "hyper-voice": {
+      "id": "hyper-voice",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "waterfall": {
+      "id": "waterfall",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 20,
+          "volatile": "flinch"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "crunch": {
+      "id": "crunch",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 20,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "liquidation": {
+      "id": "liquidation",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 20,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "ice-punch": {
+      "id": "ice-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "freeze"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "body-slam": {
+      "id": "body-slam",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 30,
+          "status": "paralysis"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "rock-slide": {
+      "id": "rock-slide",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 30,
+          "volatile": "flinch"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "water-pulse": {
+      "id": "water-pulse",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 20,
+          "volatile": "confusion"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "ice-fang": {
+      "id": "ice-fang",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "freeze"
+        },
+        {
+          "kind": "volatile-status",
+          "chance": 10,
+          "volatile": "flinch"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    },
+    "bulldoze": {
+      "id": "bulldoze",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spe": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
       }
     }
   },
   "abilities": {
-    "overgrow": {"id":"overgrow","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"grass","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "blaze": {"id":"blaze","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"fire","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "torrent": {"id":"torrent","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"water","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "swarm": {"id":"swarm","handlers":[{"id":"low-hp-type-boost","hook":"modifyDamage","order":40,"params":{"type":"bug","hpDenominator":3,"multiplier":1.5}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "chlorophyll": {"id":"chlorophyll","handlers":[{"id":"weather-speed","hook":"modifySpeed","order":40,"params":{"weather":"sun","multiplier":2}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "swift-swim": {"id":"swift-swim","handlers":[{"id":"weather-speed","hook":"modifySpeed","order":40,"params":{"weather":"rain","multiplier":2}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "rain-dish": {"id":"rain-dish","handlers":[{"id":"weather-heal","hook":"endTurn","order":40,"params":{"weather":"rain","numerator":1,"denominator":16}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}}
+    "overgrow": {
+      "id": "overgrow",
+      "handlers": [
+        {
+          "id": "low-hp-type-boost",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "type": "grass",
+            "hpDenominator": 3,
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "blaze": {
+      "id": "blaze",
+      "handlers": [
+        {
+          "id": "low-hp-type-boost",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "type": "fire",
+            "hpDenominator": 3,
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "torrent": {
+      "id": "torrent",
+      "handlers": [
+        {
+          "id": "low-hp-type-boost",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "type": "water",
+            "hpDenominator": 3,
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "swarm": {
+      "id": "swarm",
+      "handlers": [
+        {
+          "id": "low-hp-type-boost",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "type": "bug",
+            "hpDenominator": 3,
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "chlorophyll": {
+      "id": "chlorophyll",
+      "handlers": [
+        {
+          "id": "weather-speed",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "weather": "sun",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "swift-swim": {
+      "id": "swift-swim",
+      "handlers": [
+        {
+          "id": "weather-speed",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "weather": "rain",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "rain-dish": {
+      "id": "rain-dish",
+      "handlers": [
+        {
+          "id": "weather-heal",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "weather": "rain",
+            "numerator": 1,
+            "denominator": 16
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "solar-power": {
+      "id": "solar-power",
+      "handlers": [
+        {
+          "id": "weather-stat-boost",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "weather": "sun",
+            "stat": "spa",
+            "multiplier": 1.5
+          }
+        },
+        {
+          "id": "weather-residual-damage",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "weather": "sun",
+            "numerator": 1,
+            "denominator": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "leaf-guard": {
+      "id": "leaf-guard",
+      "handlers": [
+        {
+          "id": "weather-status-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "weather": "sun",
+            "statuses": [
+              "burn",
+              "paralysis",
+              "poison",
+              "sleep",
+              "freeze",
+              "bad-poison"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "flash-fire": {
+      "id": "flash-fire",
+      "handlers": [
+        {
+          "id": "type-immunity-boost",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "type": "fire",
+            "stateKey": "flash-fire",
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "sniper": {
+      "id": "sniper",
+      "handlers": [
+        {
+          "id": "critical-damage-boost",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "technician": {
+      "id": "technician",
+      "handlers": [
+        {
+          "id": "base-power-threshold-boost",
+          "hook": "modifyPower",
+          "order": 30,
+          "params": {
+            "maxPower": 60,
+            "multiplier": 1.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "iron-fist": {
+      "id": "iron-fist",
+      "handlers": [
+        {
+          "id": "move-tag-power-boost",
+          "hook": "modifyPower",
+          "order": 23,
+          "params": {
+            "tag": "punch",
+            "multiplier": 1.199951171875
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "bulletproof": {
+      "id": "bulletproof",
+      "handlers": [
+        {
+          "id": "move-tag-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "tag": "bullet"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "long-reach": {
+      "id": "long-reach",
+      "handlers": [
+        {
+          "id": "remove-contact",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "liquid-voice": {
+      "id": "liquid-voice",
+      "handlers": [
+        {
+          "id": "move-type-by-tag",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "tag": "sound",
+            "type": "water"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks:single"
+        ],
+        "double": [
+          "r3-ability-hooks:double"
+        ]
+      }
+    },
+    "sheer-force": {
+      "id": "sheer-force",
+      "handlers": [
+        {
+          "id": "secondary-effect-power-boost",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "multiplier": 1.300048828125
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-secondary-effects:single"
+        ],
+        "double": [
+          "r3-secondary-effects:double"
+        ]
+      }
+    }
   },
   "items": {
-    "miracle-seed": {"id":"miracle-seed","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"grass","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "mystic-water": {"id":"mystic-water","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"water","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "silver-powder": {"id":"silver-powder","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"bug","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "dragon-fang": {"id":"dragon-fang","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"dragon","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "muscle-band": {"id":"muscle-band","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"physical","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "wise-glasses": {"id":"wise-glasses","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"category":"special","multiplier":1.1}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "black-belt": {"id":"black-belt","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fighting","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "charcoal": {"id":"charcoal","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fire","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "fairy-feather": {"id":"fairy-feather","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"fairy","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "metal-coat": {"id":"metal-coat","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"steel","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "sharp-beak": {"id":"sharp-beak","handlers":[{"id":"held-damage-boost","hook":"modifyDamage","order":50,"params":{"type":"flying","multiplier":1.2}}],"testEvidence":{"single":["r3-passive-damage:single"],"double":["r3-passive-damage:double"]}},
-    "heat-rock": {"id":"heat-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"sun","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "damp-rock": {"id":"damp-rock","handlers":[{"id":"weather-duration","hook":"onMove","order":40,"params":{"weather":"rain","turns":8}}],"testEvidence":{"single":["r3-weather:single"],"double":["r3-weather:double"]}},
-    "light-clay": {"id":"light-clay","handlers":[{"id":"screen-duration","hook":"onMove","order":40,"params":{"conditions":["reflect","light-screen"],"turns":8}}],"testEvidence":{"single":["r3-side-conditions:single"],"double":["r3-side-conditions:double"]}}
+    "miracle-seed": {
+      "id": "miracle-seed",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "grass",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "mystic-water": {
+      "id": "mystic-water",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "water",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "silver-powder": {
+      "id": "silver-powder",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "bug",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "dragon-fang": {
+      "id": "dragon-fang",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "dragon",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "muscle-band": {
+      "id": "muscle-band",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "category": "physical",
+            "multiplier": 1.1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "wise-glasses": {
+      "id": "wise-glasses",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "category": "special",
+            "multiplier": 1.1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "black-belt": {
+      "id": "black-belt",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "fighting",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "charcoal": {
+      "id": "charcoal",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "fire",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "fairy-feather": {
+      "id": "fairy-feather",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "fairy",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "metal-coat": {
+      "id": "metal-coat",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "steel",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "sharp-beak": {
+      "id": "sharp-beak",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "type": "flying",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-passive-damage:single"
+        ],
+        "double": [
+          "r3-passive-damage:double"
+        ]
+      }
+    },
+    "heat-rock": {
+      "id": "heat-rock",
+      "handlers": [
+        {
+          "id": "weather-duration",
+          "hook": "onMove",
+          "order": 40,
+          "params": {
+            "weather": "sun",
+            "turns": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "damp-rock": {
+      "id": "damp-rock",
+      "handlers": [
+        {
+          "id": "weather-duration",
+          "hook": "onMove",
+          "order": 40,
+          "params": {
+            "weather": "rain",
+            "turns": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-weather:single"
+        ],
+        "double": [
+          "r3-weather:double"
+        ]
+      }
+    },
+    "light-clay": {
+      "id": "light-clay",
+      "handlers": [
+        {
+          "id": "screen-duration",
+          "hook": "onMove",
+          "order": 40,
+          "params": {
+            "conditions": [
+              "reflect",
+              "light-screen"
+            ],
+            "turns": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-side-conditions:single"
+        ],
+        "double": [
+          "r3-side-conditions:double"
+        ]
+      }
+    },
+    "terrain-extender": {
+      "id": "terrain-extender",
+      "handlers": [
+        {
+          "id": "terrain-duration",
+          "hook": "onMove",
+          "order": 40,
+          "params": {
+            "turns": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-terrain:single"
+        ],
+        "double": [
+          "r3-terrain:double"
+        ]
+      }
+    },
+    "leftovers": {
+      "id": "leftovers",
+      "handlers": [
+        {
+          "id": "item-end-turn-heal",
+          "hook": "endTurn",
+          "order": 50,
+          "params": {
+            "numerator": 1,
+            "denominator": 16
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "sitrus-berry": {
+      "id": "sitrus-berry",
+      "handlers": [
+        {
+          "id": "item-threshold-heal",
+          "hook": "afterDamage",
+          "order": 50,
+          "params": {
+            "thresholdNumerator": 1,
+            "thresholdDenominator": 2,
+            "healNumerator": 1,
+            "healDenominator": 4
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "focus-sash": {
+      "id": "focus-sash",
+      "handlers": [
+        {
+          "id": "item-survive-lethal-hit",
+          "hook": "onDamage",
+          "order": -40,
+          "params": {
+            "requireFullHp": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "lum-berry": {
+      "id": "lum-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "burn",
+              "paralysis",
+              "poison",
+              "sleep",
+              "freeze",
+              "bad-poison"
+            ],
+            "confusion": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "cheri-berry": {
+      "id": "cheri-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "paralysis"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "chesto-berry": {
+      "id": "chesto-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "sleep"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "pecha-berry": {
+      "id": "pecha-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "poison",
+              "bad-poison"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "rawst-berry": {
+      "id": "rawst-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "burn"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "aspear-berry": {
+      "id": "aspear-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "statuses": [
+              "freeze"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "persim-berry": {
+      "id": "persim-berry",
+      "handlers": [
+        {
+          "id": "item-status-cure",
+          "hook": "afterStatus",
+          "order": 40,
+          "params": {
+            "confusion": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    }
   }
 }

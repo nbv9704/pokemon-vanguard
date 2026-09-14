@@ -1,6 +1,7 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {baseDamage} from '../rules-v3/damage.mjs';
 import {stagedStat} from '../rules-v3/stats.mjs';
+import {resolveHpThresholdItems} from './item-hooks.mjs';
 
 function confusionDamage(unit,runtime,level){
  const attack=stagedStat(unit.stats.atk,unit.stages?.atk||0),defense=stagedStat(unit.stats.def,unit.stages?.def||0);
@@ -16,7 +17,7 @@ export function tryFlinchAction(battle,action){
 }
 
 export function tryConfusionAction(battle,action,runtime={}){
- const next=clone(battle),unit=unitById(next,action.actorId),volatiles=unit?.volatiles||{};
+ let next=clone(battle);const unit=unitById(next,action.actorId),volatiles=unit?.volatiles||{};
  if(!volatiles.confusion)return {cancelled:false,battle:next,events:[]};
  volatiles.confusion.timer--;
  if(volatiles.confusion.timer<=0){delete volatiles.confusion;return {cancelled:false,battle:next,events:[{kind:'volatileEnded',actorId:action.actorId,volatile:'confusion',reason:'naturalRecovery'}]};}
@@ -26,6 +27,7 @@ export function tryConfusionAction(battle,action,runtime={}){
  const breakdown=confusionDamage(unit,runtime,next.level||50),hpBefore=unit.hp,amount=Math.min(hpBefore,breakdown.damage);unit.hp-=amount;
  events.push({kind:'damage',actorId:action.actorId,targetId:action.actorId,moveId:'confusion',hpBefore,hpAfter:unit.hp,amount,breakdown});
  if(unit.hp===0)events.push({kind:'fainted',targetId:action.actorId,source:'confusion'});
+ else{const threshold=resolveHpThresholdItems(next,{actorIds:[action.actorId],trigger:'confusion'});next=threshold.battle;events.push(...threshold.events);}
  events.push({kind:'actionPrevented',actorId:action.actorId,status:'confusion'});
  return {cancelled:true,battle:next,events};
 }

@@ -1,0 +1,29 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {v3Catalog} from '../server/v3-catalog.mjs';
+import {createV3BetaProgression} from '../server/v3-progression.mjs';
+import {applyV3BattleAction} from '../server/v3-battle-actions.mjs';
+
+function startWithSpecies(speciesId,moveIds,{mode='single',seed=1451}={}){
+ const progression=createV3BetaProgression(v3Catalog),existing=progression.builds.find(entry=>entry.monId===`v3-mon-${speciesId}`);let build=existing;
+ if(!build){const species=v3Catalog.speciesById[speciesId],defaults=species.defaultBuild,mon={monId:`v3-mon-${speciesId}`,speciesId,ownership:'permanent'};progression.mons.push(mon);build={buildId:`v3-build-${speciesId}`,monId:mon.monId,name:defaults.name,natureId:defaults.natureId,statPoints:structuredClone(defaults.statPoints),moveIds:[...defaults.moveIds],abilityId:defaults.abilityId,itemId:defaults.itemId,revision:1};progression.builds.push(build);}
+ build.moveIds=[...moveIds];const others=progression.teams[0].buildIds.filter(id=>id!==build.buildId);progression.teams[0].buildIds=[build.buildId,...others.slice(0,5)];
+ let state={schemaVersion:3,seed,progressionV3:progression},result=applyV3BattleAction(state,{type:'battleV3.preview.start',mode,difficulty:'normal'},v3Catalog);assert.equal(result.ok,true);state=result.state;const pick=mode==='double'?4:3;result=applyV3BattleAction(state,{type:'battleV3.preview.lock',buildIds:progression.teams[0].buildIds.slice(0,pick)},v3Catalog);assert.equal(result.ok,true);state=result.state;
+ const battle=state.battleV3.battle,actor=battle.sides.A.roster.find(unit=>unit.actorId===battle.sides.A.active[0]);assert.equal(actor.speciesId,speciesId);actor.stats.spe=999;actor.stages.accuracy=6;
+ for(const foeId of battle.sides.B.active){const foe=battle.sides.B.roster.find(unit=>unit.actorId===foeId);foe.buildSnapshot.moveIds=['tailwind'];foe.pp={tailwind:24};}
+ if(mode==='double'){const ally=battle.sides.A.roster.find(unit=>unit.actorId===battle.sides.A.active[1]);ally.buildSnapshot.moveIds=['protect'];ally.pp={protect:16};}
+ return state;
+}
+function command(state,commands){const battle=state.battleV3.battle;return applyV3BattleAction(state,{type:'battleV3.commands',phaseRevision:battle.phaseRevision,commands},v3Catalog);}
+
+for(const mode of ['single','double'])test(`schema-3 ${mode} locks Solar Beam across turns and spends PP only on preparation`,()=>{
+ let state=startWithSpecies('venusaur',['solar-beam','protect','giga-drain','leech-seed'],{mode,seed:1457}),battle=state.battleV3.battle,actorId=battle.sides.A.active[0],targetId=battle.sides.B.active[0],targetRef={side:'B',slot:0},actor=battle.sides.A.roster.find(unit=>unit.actorId===actorId),initialPp=actor.pp['solar-beam'],initialHp=battle.sides.B.roster.find(unit=>unit.actorId===targetId).hp;
+ const first=[{kind:'move',actorId,moveId:'solar-beam',target:targetRef}];if(mode==='double')first.push({kind:'move',actorId:battle.sides.A.active[1],moveId:'protect'});let result=command(state,first);assert.equal(result.ok,true);state=result.state;battle=state.battleV3.battle;actor=battle.sides.A.roster.find(unit=>unit.actorId===actorId);assert.equal(actor.volatiles['two-turn-move']?.moveId,'solar-beam');assert.equal(actor.pp['solar-beam'],initialPp-1);assert.equal(battle.sides.B.roster.find(unit=>unit.actorId===targetId).hp,initialHp);assert.ok(state.battleV3.lastEvents.some(event=>event.kind==='twoTurnMovePrepared'));
+ const second=[{kind:'move',actorId,moveId:'protect'}];if(mode==='double')second.push({kind:'move',actorId:battle.sides.A.active[1],moveId:'protect'});result=command(state,second);assert.equal(result.ok,true);state=result.state;battle=state.battleV3.battle;actor=battle.sides.A.roster.find(unit=>unit.actorId===actorId);assert.equal(actor.volatiles['two-turn-move'],undefined);assert.equal(actor.pp['solar-beam'],initialPp-1);assert.ok(battle.sides.B.roster.find(unit=>unit.actorId===targetId).hp<initialHp);assert.ok(state.battleV3.lastEvents.some(event=>event.kind==='twoTurnMoveReleased'));assert.ok(state.battleV3.lastEvents.some(event=>event.kind==='ppSpendSkipped'));
+});
+
+test('schema-3 recharge command is automatic after Hydro Cannon and the ally still acts in Double',()=>{
+ let state=startWithSpecies('blastoise',['hydro-cannon','protect','water-spout','flip-turn'],{mode:'double',seed:1471}),battle=state.battleV3.battle,actorId=battle.sides.A.active[0],allyId=battle.sides.A.active[1],targetId=battle.sides.B.active[0],initialPp=battle.sides.A.roster.find(unit=>unit.actorId===actorId).pp['hydro-cannon'];
+ let result=command(state,[{kind:'move',actorId,moveId:'hydro-cannon',target:{side:'B',slot:0}},{kind:'move',actorId:allyId,moveId:'protect'}]);assert.equal(result.ok,true);state=result.state;battle=state.battleV3.battle;let actor=battle.sides.A.roster.find(unit=>unit.actorId===actorId);assert.equal(actor.volatiles['must-recharge']?.moveId,'hydro-cannon');assert.equal(actor.pp['hydro-cannon'],initialPp-1);assert.ok(state.battleV3.lastEvents.some(event=>event.kind==='rechargeRequired'));
+ const hpBefore=battle.sides.B.roster.find(unit=>unit.actorId===targetId).hp;result=command(state,[{kind:'move',actorId,moveId:'protect'},{kind:'move',actorId:allyId,moveId:'protect'}]);assert.equal(result.ok,true);state=result.state;battle=state.battleV3.battle;actor=battle.sides.A.roster.find(unit=>unit.actorId===actorId);assert.equal(actor.volatiles['must-recharge'],undefined);assert.equal(actor.pp['hydro-cannon'],initialPp-1);assert.equal(battle.sides.B.roster.find(unit=>unit.actorId===targetId).hp,hpBefore);assert.ok(state.battleV3.lastEvents.some(event=>event.kind==='rechargeTurn'&&event.actorId===actorId));assert.ok(state.battleV3.lastEvents.some(event=>event.kind==='moveStarted'&&event.actorId===allyId&&event.moveId==='protect'));
+});
