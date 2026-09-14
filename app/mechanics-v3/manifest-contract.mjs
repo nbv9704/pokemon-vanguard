@@ -118,8 +118,8 @@ export function validateMechanicManifest(manifest,kind){
    if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('screen-duration turns must be a positive integer');
   }
   if(entry?.id==='apply-secondary-effects'&&kind!=='moves')problems.push('apply-secondary-effects is only valid for moves');
-  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
-  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','type-immunity-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
+  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
+  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','type-immunity-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);

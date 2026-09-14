@@ -6,3 +6,6 @@ export const itemEndTurnHealHandler=declaration('item-end-turn-heal',['endTurn']
 export const itemThresholdHealHandler=declaration('item-threshold-heal',['afterDamage']);
 export const itemSurviveLethalHitHandler=declaration('item-survive-lethal-hit',['onDamage']);
 export const itemStatusCureHandler=declaration('item-status-cure',['afterStatus']);
+export const itemPostMoveRecoilHandler=declaration('item-post-move-recoil',['afterDamage']);
+export const itemContactRetaliationHandler=declaration('item-contact-retaliation',['afterDamage']);
+export const itemDamageHealHandler=declaration('item-damage-heal',['afterDamage']);

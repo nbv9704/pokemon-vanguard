@@ -26,13 +26,13 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | BETA 2 SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-12-beta2`: scoped hash-bound approval cho 12 species/29 moves/4 Abilities/11 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS / ITEM HOOKS WAVE 2 COMPLETE | 169 entry nền đã kiểm thử ở cả hai format; active Beta v16 có 65 move/16 Ability/25 item, recovery/survival + status-cure consumable item state đã promote |
+| R3 Mechanics Coverage | IN PROGRESS / ITEM HOOKS WAVE 3 COMPLETE | 172 entry nền đã kiểm thử ở cả hai format; active Beta v17 có 65 move/16 Ability/28 item, post-damage owner/source item family đã promote |
 | R4 | BETA GATE PASSED | Schema 3 chạy Home/Archive/Training/Team/Recruitment status/Guide → Preview → Battle Single/Double; Inspector migration theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 |
 | R6–R7 | R6 BETA SLICE PASSED; R7 CORE GATE PASSED | Mega Venusaur chạy end-to-end với Venusaurite/Thick Fat; 65/65 move có FX profile, ordered timeline và persistent/delayed/commitment/semi-invulnerable/secondary presentation |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline logic hiện tại có 169/862 entry supported ở cả hai format. Trạng thái 693 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
+Baseline logic hiện tại có 172/862 entry supported ở cả hai format. Trạng thái 690 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -257,6 +257,8 @@ Trước khi R4 kích hoạt, chạy lại fixture trong `docs/r2-battle-rules-r
 
 **Tiến độ Item Hooks Wave 2 (R3-31 / Beta 3-14):** Shared item contract thêm hook `afterStatus` và promote `Lum Berry`, `Cheri Berry`, `Chesto Berry`, `Pecha Berry`, `Rawst Berry`, `Aspear Berry`, `Persim Berry`. Resolver đọc authoritative held-item owner/state rồi chỉ consume khi major status/confusion khớp; Pecha chữa poison + bad poison, Persim chỉ confusion, còn Lum có thể chữa major status + confusion trong một activation receipt. Status application từ direct move, secondary, Yawn/Toxic Spikes đều tái dùng cùng resolver. Magic Room suppress berry mà không reveal/consume; natural expiry hoặc same-Room recast-off chạy cure ngay trước action gate tiếp theo. Runtime Single/Double, restart receipt và public reveal semantics đều dùng state/event contract của Wave 1. Active base = 12 Pokémon / 65 move / 16 Ability / 25 item; Mega runtime = 65 move / 17 Ability / 26 item; coverage = **169/862** mỗi format = 127 move / 17 Ability / 25 item; R7 FX = **65/65**; full suite **424/424** pass. Wave 3 ưu tiên post-damage owner/source family (`Life Orb`, `Rocky Helmet`, `Shell Bell`) vì cả ba đã có Champions candidate; Choice lock tách riêng vì cần command legality + switch-reset contract. Item loss/swap/steal, Heavy-Duty Boots và Light Metal vẫn fail-closed.
 
+**Tiến độ Item Hooks Wave 3 (R3-32 / Beta 3-15):** Shared post-damage pipeline promote `Life Orb`, `Rocky Helmet`, `Shell Bell` từ candidate thật. Life Orb dùng generic all-damaging modifier 5324/4096 rồi recoil 1/10 max HP ở after-move phase; Sheer Force giữ damage boost nhưng suppress recoil và force-switch move cũng bỏ qua AfterMoveSecondarySelf-style hook. Rocky Helmet gây 1/6 max HP attacker cho mỗi damaging contact hit, vẫn kích nếu holder faint từ hit đó, dùng contact state sau Long Reach và cũng chạy cho fixed-damage contact move. Shell Bell hồi 1/8 aggregate actual move damage một lần sau move. Shared generic after-move item resolver chạy order 145, trước pivot/forced switch order 150; Magic Room và authoritative reveal/activation state tiếp tục được tái dùng. Active base = 12 Pokémon / 65 move / 16 Ability / 28 item; Mega runtime = 65 move / 17 Ability / 29 item; coverage = **172/862** mỗi format = 127 move / 17 Ability / 28 item; R7 FX = **65/65**; full suite tích hợp **438/438** pass. Wave 4 ưu tiên `Choice Scarf` + choice-lock command legality/switch-reset vì snapshot beta2 chỉ có Choice Scarf trong Choice family; White Herb là ticket consumable stat-reset riêng. Item loss/swap/steal, Heavy-Duty Boots và Light Metal vẫn fail-closed.
+
 **Tiến độ beta trước Wave 1:** `held-damage-boost` đã mở bốn item tăng hệ 1.2× và Muscle Band/Wise Glasses tăng category 1.1×. Item Clause được kiểm ở beta gate.
 
 ### R3.10 M-A closure
@@ -457,7 +459,7 @@ Ticket chỉ DONE khi có:
 2. R4.1 catalog service và promote dry-run đã hoàn tất; mọi batch mới tiếp tục phải xuất đúng slice cùng coverage/provenance.
 3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
 4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
-5. Beta v16 đã gộp đủ terrain, mid-turn replacement, hazards/cleanup, Room family, delayed effects, charge/recharge, semi-invulnerability, Ability Hooks Wave 1, damaging secondaries + Sheer Force và hai Item Hook wave. Cumulative browser QA đã chạy thành công trên local server, gồm catalog rebase, Training, Team Builder, Team Preview, battle timeline và console sạch. Ticket tiếp theo là Item Hooks Wave 3 cho Life Orb, Rocky Helmet và Shell Bell; Choice lock tách riêng vì cần command-legality/switch-reset contract, còn content ngoài relation đã review tiếp tục fail-closed.
+5. Beta v17 đã gộp đủ terrain, replacement, hazards/cleanup, Room, delayed/two-turn/semi-invulnerable, Ability Hooks Waves 1–2 và Item Hooks Waves 1–3. Cumulative browser QA đã xác nhận catalog rebase, Training, Team Preview, battle timeline và Life Orb activation/recoil với console sạch. Ticket kế tiếp là Choice Scarf command-legality + switch-reset; White Herb tách thành consumable stat-reset riêng, còn content ngoài relation đã review tiếp tục fail-closed.
 
 Tài liệu tham chiếu trong repo:
 

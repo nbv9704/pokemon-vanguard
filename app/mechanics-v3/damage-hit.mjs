@@ -9,7 +9,7 @@ import {terrainDamageModifiers} from './terrain.mjs';
 import {wonderRoomDefenseBase} from './rooms.mjs';
 import {applySemiInvulnerabilityHitEffect,semiInvulnerabilityInteraction} from './semi-invulnerability.mjs';
 import {abilityPowerModifiers,abilityStatModifiers} from './ability-hooks.mjs';
-import {applySurvivalItemToMoveDamage,resolvePostDamageItems} from './item-hooks.mjs';
+import {applySurvivalItemToMoveDamage,resolveContactDamageItems,resolvePostDamageItems} from './item-hooks.mjs';
 
 export function applyDamageHit(battle,{actorId,targetId,move,mechanics=null,spread=false,hit=null,ignoreBurn=false},runtime){
  if(typeof runtime?.nextRandom!=='function')throw new Error('damage hit requires seeded nextRandom');
@@ -26,8 +26,13 @@ export function applyDamageHit(battle,{actorId,targetId,move,mechanics=null,spre
  const hpBefore=defender.hp,survival=applySurvivalItemToMoveDamage(next,{targetId:defender.actorId,damage:damage.damage,moveId:move.id});next=survival.battle;const liveDefender=unitById(next,defender.actorId),amount=Math.min(hpBefore,survival.damage);liveDefender.hp-=amount;
  if(survival.itemId)damage.itemSurvival={sourceKind:'item',sourceId:survival.itemId,originalDamage:damage.damage,adjustedDamage:amount};
  let events=[...survival.events,damageEvent(actor,{...liveDefender,hp:hpBefore},move,amount,damage.type,damage,hit,liveDefender.hp)];
- if(liveDefender.hp===0)events.push({kind:'fainted',targetId:liveDefender.actorId,source:move.id});
- else if(amount>0){const aftermath=applySemiInvulnerabilityHitEffect(next,{targetId:liveDefender.actorId,moveId:move.id});next=aftermath.battle;events.push(...aftermath.events);const item=resolvePostDamageItems(next,{targetId:liveDefender.actorId,moveId:move.id});next=item.battle;events.push(...item.events);}
+ if(amount>0){
+  if(liveDefender.hp>0){const aftermath=applySemiInvulnerabilityHitEffect(next,{targetId:liveDefender.actorId,moveId:move.id});next=aftermath.battle;events.push(...aftermath.events);}
+  const contact=resolveContactDamageItems(next,{attackerId:actor.actorId,targetId:liveDefender.actorId,moveId:move.id,mechanics,damage:amount,hit});next=contact.battle;events.push(...contact.events);
+ }
+ const finalDefender=unitById(next,liveDefender.actorId);
+ if(finalDefender?.hp===0)events.push({kind:'fainted',targetId:finalDefender.actorId,source:move.id});
+ else if(amount>0){const item=resolvePostDamageItems(next,{targetId:liveDefender.actorId,moveId:move.id});next=item.battle;events.push(...item.events);}
  return {battle:next,amount,events};
 }
 

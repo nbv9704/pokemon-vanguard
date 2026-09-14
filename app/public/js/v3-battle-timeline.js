@@ -93,8 +93,11 @@ export function battleEventText(event,snapshot,catalog){
    case 'rechargeRequired':return `${actor} must recharge after ${move}.`;
    case 'rechargeTurn':return `${actor} recharged after ${moveName(catalog,event.moveId)}.`;
    case 'rechargeFailed':return `${actor} could not recharge: ${label(event.reason)}.`;
-   case 'damage':return `${target} lost ${hpChange(event)}.${effectiveness(event.effectiveness)}`;
-   case 'heal':return `${target} recovered ${hpChange(event)}.`;
+   case 'damage':
+    if(event.reason==='post-move-recoil'&&event.itemId)return `${target} lost ${hpChange(event)} to ${label(event.itemId)} recoil.`;
+    if(event.reason==='contact-retaliation'&&event.itemId)return `${target} lost ${hpChange(event)} from ${actor}'s ${label(event.itemId)}.`;
+    return `${target} lost ${hpChange(event)}.${effectiveness(event.effectiveness)}`;
+   case 'heal':return event.reason==='damage-recovery'&&event.itemId?`${target} recovered ${hpChange(event)} with ${label(event.itemId)}.`:`${target} recovered ${hpChange(event)}.`;
    case 'itemRevealed':return `${nameOf(snapshot,event.sourceId)} revealed ${label(event.itemId)}.`;
    case 'itemActivated':return `${nameOf(snapshot,event.sourceId)}'s ${label(event.itemId)} activated.`;
    case 'itemConsumed':return `${nameOf(snapshot,event.sourceId)} consumed ${label(event.itemId)}.`;

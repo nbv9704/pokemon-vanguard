@@ -23,7 +23,7 @@ export {applyPositionSwapHandler} from './handlers/apply-position-swap.mjs';
 export {heldDamageBoostHandler,lowHpTypeBoostHandler,receivedTypeDamageReductionHandler} from './handlers/passive-damage-modifiers.mjs';
 export {megaStoneHandler} from './handlers/mega-stone.mjs';
 export {compilePassiveEffects,passiveDamageModifiers,receivedDamageModifiers,passiveEffectActive} from './passive-effects.mjs';
-export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveHpThresholdItems,resolveEndTurnItems,resolveStatusCureItems} from './item-hooks.mjs';
+export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveStatusCureItems} from './item-hooks.mjs';
 export {validateBetaSlice} from './beta-slice.mjs';
 export {applyProtect,applySideGuard,breakProtection,isProtectedTarget,protectionBlockReason,resolveProtectionBlock} from './protection.mjs';
 export {spendPpHandler} from './handlers/spend-pp.mjs';

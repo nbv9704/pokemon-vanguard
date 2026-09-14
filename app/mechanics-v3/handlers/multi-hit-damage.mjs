@@ -22,6 +22,7 @@ export const multiHitDamageHandler={
   for(const target of targets){
    const plannedHits=selectHitCount(params.hits,runtime.nextRandom),targetId=target.actorId;let actualHits=0;
    for(let hit=1;hit<=plannedHits;hit++){
+    const liveActor=unitById(next,actor.actorId);if(!liveActor||liveActor.hp<=0)break;
     const defender=unitById(next,targetId);if(!defender||defender.hp<=0)break;
     const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move,mechanics,hit},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
     if(result.amount===0)break;

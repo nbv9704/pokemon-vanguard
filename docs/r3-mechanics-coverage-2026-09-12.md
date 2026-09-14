@@ -4,13 +4,13 @@
 
 The M-A candidate contains 862 mechanics-bearing entries: 516 moves, 180 Abilities and 166 items. The coverage generator evaluates every entry independently for Single and Double battles.
 
-The current coverage after Item Hooks Wave 2 is:
+The current coverage after Item Hooks Wave 3 is:
 
-- Single: 169 supported, 693 blocked.
-- Double: 169 supported, 693 blocked.
+- Single: 172 supported, 690 blocked.
+- Double: 172 supported, 690 blocked.
 - Supported moves: 127, including weather, screens, all four Terrain cores, hazards/cleanup, Trick/Wonder/Magic Room, Yawn/Perish Song, the charge/recharge family, the reviewed Dig/Fly/Dive/Phantom Force semi-invulnerable family, Hyper Voice and nine reviewed damaging-secondary moves.
 - Supported Abilities: 17, including the existing low-HP/weather passives plus Solar Power, Leaf Guard, Flash Fire, Sniper, Technician, Iron Fist, Bulletproof, Long Reach, Liquid Voice and Sheer Force.
-- Supported items: 25, including Heat Rock, Damp Rock, Light Clay, Terrain Extender, Leftovers, Sitrus Berry, Focus Sash and the seven reviewed status-cure berries (Lum/Cheri/Chesto/Pecha/Rawst/Aspear/Persim).
+- Supported items: 28, including Heat Rock, Damp Rock, Light Clay, Terrain Extender, Leftovers, Sitrus Berry, Focus Sash, the seven reviewed status-cure berries (Lum/Cheri/Chesto/Pecha/Rawst/Aspear/Persim), plus Life Orb, Rocky Helmet and Shell Bell.
 
 Every unsupported entry currently resolves to `missing-manifest`. As implementation expands, more precise reasons such as `missing-handler:<id>`, `missing-test-evidence` and `invalid-manifest:<problem>` prevent incomplete mechanics from entering a legal build.
 
@@ -50,7 +50,7 @@ Conditional callbacks reuse the variable-power pipeline for user/target status, 
 
 `ability-hooks.mjs` extends those compiled Ability declarations across explicit battle phases instead of move-ID branches. Move transforms run before target resolution, target immunities run before accuracy RNG, damage hooks are separated into base-power/stat/final-damage stages, and weather/status/end-turn hooks share authoritative field lifecycle. Wave 1 covers Solar Power, Leaf Guard, Flash Fire, Sniper, Technician, Iron Fist, Bulletproof, Long Reach and Liquid Voice. Validated `sound`, `punch` and `bullet` move tags are the data contract for tag-sensitive hooks.
 
-`item-hooks.mjs` owns authoritative held-item activation state: current owner, consumed/revealed flags, activation count and idempotent receipts survive replay/restart. Wave 1 covers Leftovers, Sitrus Berry and Focus Sash across end-turn recovery, HP-threshold consumption and full-HP lethal move survival. Wave 2 adds the generic `afterStatus` cure hook for Lum/Cheri/Chesto/Pecha/Rawst/Aspear/Persim Berry; status application paths call the same resolver, while Magic Room suppresses activation without consuming/revealing and expiry/recast-off rechecks immediately. Public projections expose item identity only after authoritative reveal.
+`item-hooks.mjs` owns authoritative held-item activation state: current owner, consumed/revealed flags, activation count and idempotent receipts survive replay/restart. Wave 1 covers Leftovers, Sitrus Berry and Focus Sash across end-turn recovery, HP-threshold consumption and full-HP lethal move survival. Wave 2 adds the generic `afterStatus` cure hook for Lum/Cheri/Chesto/Pecha/Rawst/Aspear/Persim Berry; status application paths call the same resolver, while Magic Room suppresses activation without consuming/revealing and expiry/recast-off rechecks immediately. Wave 3 adds Life Orb, Rocky Helmet and Shell Bell through shared post-damage hooks: aggregate after-move owner effects resolve after native recoil/drain/recharge but before switch handlers, while contact retaliation stays per-hit inside ordinary/fixed damage resolution so holder-faint and multi-hit behavior remain authoritative. Public projections expose item identity only after authoritative reveal.
 
 `weather.mjs` owns the shared Sun/Rain state and its damage, Speed, duration and healing hooks. Sunny Day and Rain Dance set one global five-turn condition; Heat Rock and Damp Rock extend only their matching weather to eight turns. Sun and Rain modify Fire/Water damage by 1.5×/0.5×, Chlorophyll and Swift Swim double effective Speed in matching weather, and Rain Dish heals 1/16 maximum HP before the weather counter expires. The server recalculates Speed from current battle state before each queued action, while the timeline applies the weather layer only after the move FX impact frame.
 

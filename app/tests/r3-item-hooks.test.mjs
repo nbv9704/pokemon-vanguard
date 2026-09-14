@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {activateHeldItem,applyDamageHit,applyMajorStatus,applyVolatileStatus,compilePassiveEffects,createHeldItemState,resolveEntryHazards,resolveMechanicsEndTurn,resolveProtectionBlock,tryConfusionAction} from '../mechanics-v3/index.mjs';
+import {activateHeldItem,applyDamageHit,applyMajorStatus,applyVolatileStatus,compilePassiveEffects,createHeldItemState,resolveAfterMoveItems,resolveEntryHazards,resolveMechanicsEndTurn,resolveProtectionBlock,tryConfusionAction} from '../mechanics-v3/index.mjs';
 import {applyRecoilHandler} from '../mechanics-v3/handlers/apply-recoil.mjs';
 import {fixedDamageHandler} from '../mechanics-v3/handlers/fixed-damage.mjs';
 import {applyRoomHandler} from '../mechanics-v3/handlers/apply-room.mjs';
@@ -132,4 +132,51 @@ test('recasting Magic Room off immediately releases suppressed status berries',(
  const field={rooms:{'magic-room':{id:'magic-room',remaining:4}}},battle=fixture('single',{targetItem:'persim-berry',field}),target=battle.sides.B.roster[0];target.volatiles.confusion={id:'confusion',timer:3};
  const result=applyRoomHandler.run({battle,payload:{action:{actorId:'a1'},move:{id:'magic-room'}},params:{room:'magic-room',turns:5}}),after=result.battle.sides.B.roster[0];
  assert.equal(result.payload.roomToggledOff,true);assert.equal(after.volatiles.confusion,undefined);assert.equal(after.itemState.consumed,true);assert.ok(result.events.some(event=>event.kind==='roomEnded'&&event.reason==='recast'));assert.ok(result.events.some(event=>event.kind==='volatileEnded'&&event.itemId==='persim-berry'));
+});
+
+
+test('Life Orb boosts all damaging moves, then recoils 1/10 max HP once after a damaging move',()=>{
+ const battle=fixture('single'),actor=battle.sides.A.roster[0];actor.buildSnapshot.itemId='life-orb';actor.itemState=createHeldItemState('life-orb');actor.passiveEffects=compilePassiveEffects({itemId:'life-orb',manifests});
+ const hit=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:move('life-orb-hit',60),mechanics:{contact:true}},maxRoll),damage=hit.events.find(event=>event.kind==='damage'&&event.moveId==='life-orb-hit');
+ assert.ok(damage.breakdown.passiveModifiers.some(effect=>effect.sourceId==='life-orb'&&effect.kind==='held-damage-boost'));
+ const before=hit.battle.sides.A.roster[0].hp,afterMove=resolveAfterMoveItems(hit.battle,{actorId:'a1',move:move('life-orb-hit',60),mechanics:{handlers:[]},totalDamage:hit.amount}),after=afterMove.battle.sides.A.roster[0];
+ assert.equal(before-after.hp,16);assert.equal(after.itemState.consumed,false);assert.equal(after.itemState.revealed,true);assert.equal(after.itemState.activationCount,1);assert.ok(afterMove.events.some(event=>event.kind==='damage'&&event.itemId==='life-orb'&&event.reason==='post-move-recoil'));
+});
+
+test('Shell Bell heals 1/8 of aggregate move damage and does not reveal at full HP',()=>{
+ let battle=fixture('single'),actor=battle.sides.A.roster[0];actor.buildSnapshot.itemId='shell-bell';actor.itemState=createHeldItemState('shell-bell');actor.passiveEffects=compilePassiveEffects({itemId:'shell-bell',manifests});actor.hp=100;
+ let result=resolveAfterMoveItems(battle,{actorId:'a1',move:move('shell-bell-hit'),mechanics:{handlers:[]},totalDamage:80}),after=result.battle.sides.A.roster[0];assert.equal(after.hp,110);assert.equal(after.itemState.revealed,true);assert.ok(result.events.some(event=>event.kind==='heal'&&event.itemId==='shell-bell'&&event.amount===10));
+ battle=fixture('single');const full=battle.sides.A.roster[0];full.buildSnapshot.itemId='shell-bell';full.itemState=createHeldItemState('shell-bell');full.passiveEffects=compilePassiveEffects({itemId:'shell-bell',manifests});result=resolveAfterMoveItems(battle,{actorId:'a1',move:move('shell-bell-full'),mechanics:{handlers:[]},totalDamage:80});assert.equal(result.battle.sides.A.roster[0].itemState.revealed,false);assert.ok(!result.events.some(event=>event.kind.startsWith('item')));
+});
+
+test('Rocky Helmet damages a contact attacker by 1/6 max HP for each actual hit and can activate as its holder faints',()=>{
+ let battle=fixture('single',{targetItem:'rocky-helmet'}),result=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:move('contact-one',20),mechanics:{contact:true},hit:1},maxRoll);assert.equal(result.battle.sides.A.roster[0].hp,134);assert.equal(result.battle.sides.B.roster[0].itemState.revealed,true);assert.equal(result.battle.sides.B.roster[0].itemState.activationCount,1);
+ result=applyDamageHit(result.battle,{actorId:'a1',targetId:'b1',move:move('contact-one',20),mechanics:{contact:true},hit:2},maxRoll);assert.equal(result.battle.sides.A.roster[0].hp,108);assert.equal(result.battle.sides.B.roster[0].itemState.activationCount,2);
+ battle=fixture('single',{targetItem:'rocky-helmet',targetHp:1});battle.sides.A.roster[0].hp=20;result=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:move('contact-ko',60),mechanics:{contact:true}},maxRoll);assert.equal(result.battle.sides.B.roster[0].hp,0);assert.equal(result.battle.sides.A.roster[0].hp,0);assert.ok(result.events.some(event=>event.kind==='itemActivated'&&event.itemId==='rocky-helmet'));assert.ok(result.events.some(event=>event.kind==='fainted'&&event.targetId==='a1'));
+});
+
+test('Rocky Helmet respects contact removal and can trigger the attacker Sitrus Berry after retaliation',()=>{
+ let battle=fixture('single',{targetItem:'rocky-helmet'}),result=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:move('long-reach-fixture',20),mechanics:{contact:false}},maxRoll);assert.equal(result.battle.sides.A.roster[0].hp,160);assert.equal(result.battle.sides.B.roster[0].itemState.revealed,false);
+ battle=fixture('single',{targetItem:'rocky-helmet'});const actor=battle.sides.A.roster[0];actor.buildSnapshot.itemId='sitrus-berry';actor.itemState=createHeldItemState('sitrus-berry');actor.passiveEffects=compilePassiveEffects({itemId:'sitrus-berry',manifests});actor.hp=90;result=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:move('helmet-threshold',20),mechanics:{contact:true}},maxRoll);assert.equal(result.battle.sides.A.roster[0].hp,104);assert.equal(result.battle.sides.A.roster[0].itemState.consumed,true);assert.ok(result.events.some(event=>event.kind==='heal'&&event.source==='sitrus-berry'));
+});
+
+test('Magic Room suppresses Life Orb, Rocky Helmet, and Shell Bell without revealing them',()=>{
+ const field={rooms:{'magic-room':{id:'magic-room',remaining:4}}};let battle=fixture('single',{targetItem:'rocky-helmet',field}),actor=battle.sides.A.roster[0];actor.buildSnapshot.itemId='life-orb';actor.itemState=createHeldItemState('life-orb');actor.passiveEffects=compilePassiveEffects({itemId:'life-orb',manifests});
+ let hit=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:move('magic-room-contact',60),mechanics:{contact:true}},maxRoll);assert.equal(hit.battle.sides.A.roster[0].hp,160);assert.equal(hit.battle.sides.A.roster[0].itemState.revealed,false);assert.equal(hit.battle.sides.B.roster[0].itemState.revealed,false);let after=resolveAfterMoveItems(hit.battle,{actorId:'a1',move:move('magic-room-contact',60),mechanics:{handlers:[]},totalDamage:hit.amount});assert.equal(after.battle.sides.A.roster[0].hp,160);assert.equal(after.battle.sides.A.roster[0].itemState.revealed,false);
+ battle=fixture('single',{field});actor=battle.sides.A.roster[0];actor.buildSnapshot.itemId='shell-bell';actor.itemState=createHeldItemState('shell-bell');actor.passiveEffects=compilePassiveEffects({itemId:'shell-bell',manifests});actor.hp=100;after=resolveAfterMoveItems(battle,{actorId:'a1',move:move('magic-room-heal'),mechanics:{handlers:[]},totalDamage:80});assert.equal(after.battle.sides.A.roster[0].hp,100);assert.equal(after.battle.sides.A.roster[0].itemState.revealed,false);
+});
+
+test('Sheer Force and forced-switch moves suppress AfterMoveSecondarySelf-style Life Orb recoil and Shell Bell recovery',()=>{
+ for(const itemId of ['life-orb','shell-bell']){
+  let battle=fixture('single'),actor=battle.sides.A.roster[0];actor.buildSnapshot.itemId=itemId;actor.itemState=createHeldItemState(itemId);actor.passiveEffects=compilePassiveEffects({itemId,manifests});actor.hp=100;
+  let result=resolveAfterMoveItems(battle,{actorId:'a1',move:move('sheer-force-fixture'),mechanics:{handlers:[],secondaryEffectsSuppressed:true},totalDamage:80});assert.equal(result.battle.sides.A.roster[0].hp,100);assert.equal(result.battle.sides.A.roster[0].itemState.revealed,false);
+  result=resolveAfterMoveItems(battle,{actorId:'a1',move:move('force-switch-fixture'),mechanics:{handlers:[{id:'apply-forced-switch'}]},totalDamage:80});assert.equal(result.battle.sides.A.roster[0].hp,100);assert.equal(result.battle.sides.A.roster[0].itemState.revealed,false);
+ }
+});
+
+
+test('Rocky Helmet also retaliates against supported contact fixed-damage moves but not non-contact fixed damage',()=>{
+ let battle=fixture('single',{targetItem:'rocky-helmet'}),fixedMove={id:'seismic-toss-fixture',type:'fighting',category:'physical'},mechanics={targetMode:'adjacentFoe',redirectable:true,contact:true},payload={action:{side:'A',actorId:'a1',target:{side:'B',slot:0}},move:fixedMove,mechanics};
+ let result=fixedDamageHandler.run({battle,payload,params:{formula:'user-level'}});assert.equal(result.battle.sides.A.roster[0].hp,134);assert.equal(result.battle.sides.B.roster[0].itemState.revealed,true);assert.ok(result.events.some(event=>event.kind==='damage'&&event.itemId==='rocky-helmet'));
+ battle=fixture('single',{targetItem:'rocky-helmet'});fixedMove={...fixedMove,id:'non-contact-fixed-fixture'};mechanics={...mechanics,contact:false};payload={...payload,move:fixedMove,mechanics};result=fixedDamageHandler.run({battle,payload,params:{formula:'user-level'}});assert.equal(result.battle.sides.A.roster[0].hp,160);assert.equal(result.battle.sides.B.roster[0].itemState.revealed,false);
 });

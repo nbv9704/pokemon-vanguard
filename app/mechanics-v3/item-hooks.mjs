@@ -32,8 +32,8 @@ function ensureItemState(unit){
  return unit.itemState;
 }
 
-export function activateHeldItem(battle,{actorId,itemId,reason,consume=false,activationKey=null}){
- const next=clone(battle),unit=unitById(next,actorId);if(!unit||unit.hp<=0)return {battle:next,applied:false,events:[]};
+export function activateHeldItem(battle,{actorId,itemId,reason,consume=false,activationKey=null,allowFainted=false}){
+ const next=clone(battle),unit=unitById(next,actorId);if(!unit||(!allowFainted&&unit.hp<=0))return {battle:next,applied:false,events:[]};
  const state=ensureItemState(unit),effect={sourceKind:'item',sourceId:itemId};
  if(!heldItemEffectActive(unit,effect,next))return {battle:next,applied:false,events:[]};
  if(activationKey&&state.lastActivationKey===activationKey)return {battle:next,applied:false,idempotent:true,events:[]};
@@ -64,6 +64,40 @@ export function resolveHpThresholdItems(battle,{actorIds=null,trigger='state-upd
 }
 
 export function resolvePostDamageItems(battle,{targetId,moveId}){return resolveHpThresholdItems(battle,{actorIds:[targetId],trigger:`move:${moveId}`});}
+
+export function resolveContactDamageItems(battle,{attackerId,targetId,moveId,mechanics,damage,hit=null}={}){
+ let next=clone(battle);const events=[];
+ if(!Number.isInteger(damage)||damage<=0||mechanics?.contact!==true)return {battle:next,events};
+ const holder=unitById(next,targetId),attacker=unitById(next,attackerId);if(!holder||!attacker||attacker.hp<=0)return {battle:next,events};
+ const effect=itemEffects(holder,'item-contact-retaliation',next)[0];if(!effect)return {battle:next,events};
+ const activationKey=`contact:${next.turn}:${targetId}:${attackerId}:${moveId}:${hit??'single'}:${holder.hp}:${attacker.hp}`;
+ const activated=activateHeldItem(next,{actorId:targetId,itemId:effect.sourceId,reason:'contact-retaliation',activationKey,allowFainted:true});next=activated.battle;events.push(...activated.events);if(!activated.applied)return {battle:next,events};
+ const source=unitById(next,targetId),liveAttacker=unitById(next,attackerId);if(!source||!liveAttacker||liveAttacker.hp<=0)return {battle:next,events};
+ const numerator=effect.numerator??1,denominator=effect.denominator??6,amount=Math.max(1,Math.floor(maxHp(liveAttacker)*numerator/denominator)),damaged=applyHpGroup(next,[{actorId:liveAttacker.actorId,delta:-amount}],effect.sourceId);next=damaged.battle;
+ events.push(...damaged.events.map(event=>event.kind==='damage'?{...event,actorId:source.actorId,itemId:effect.sourceId,reason:'contact-retaliation'}:event));
+ const after=unitById(next,liveAttacker.actorId);if(after?.hp>0){const threshold=resolveHpThresholdItems(next,{actorIds:[after.actorId],trigger:`contact-item:${effect.sourceId}`});next=threshold.battle;events.push(...threshold.events);}
+ return {battle:next,events};
+}
+
+export function resolveAfterMoveItems(battle,{actorId,move,mechanics,totalDamage=0}={}){
+ let next=clone(battle);const events=[];
+ const forceSwitch=mechanics?.handlers?.some(handler=>handler?.id==='apply-forced-switch');
+ if(!actorId||!move||!Number.isInteger(totalDamage)||totalDamage<=0||move.category==='status'||mechanics?.secondaryEffectsSuppressed===true||forceSwitch)return {battle:next,events};
+ const actor=unitById(next,actorId);if(!actor||actor.hp<=0)return {battle:next,events};
+ for(const effect of (actor.passiveEffects||[]).filter(effect=>effect?.sourceKind==='item'&&['item-damage-heal','item-post-move-recoil'].includes(effect.kind)&&heldItemEffectActive(actor,effect,next))){
+  const current=unitById(next,actorId);if(!current||current.hp<=0)break;
+  if(effect.kind==='item-damage-heal'){
+   if(current.hp>=maxHp(current))continue;
+   const activated=activateHeldItem(next,{actorId,itemId:effect.sourceId,reason:'damage-recovery',activationKey:`after-move:${next.turn}:${actorId}:${move.id}:${effect.sourceId}:${totalDamage}:heal`});next=activated.battle;events.push(...activated.events);if(!activated.applied)continue;
+   const holder=unitById(next,actorId),numerator=effect.numerator??1,denominator=effect.denominator??8,amount=Math.max(1,Math.floor(totalDamage*numerator/denominator)),healed=applyHpGroup(next,[{actorId,delta:amount}],effect.sourceId);next=healed.battle;events.push(...healed.events.map(event=>event.kind==='heal'?{...event,actorId,itemId:effect.sourceId,reason:'damage-recovery',moveId:move.id}:event));
+   continue;
+  }
+  const activated=activateHeldItem(next,{actorId,itemId:effect.sourceId,reason:'post-move-recoil',activationKey:`after-move:${next.turn}:${actorId}:${move.id}:${effect.sourceId}:${totalDamage}:recoil`});next=activated.battle;events.push(...activated.events);if(!activated.applied)continue;
+  const holder=unitById(next,actorId);if(!holder||holder.hp<=0)continue;
+  const numerator=effect.numerator??1,denominator=effect.denominator??10,amount=Math.max(1,Math.floor(maxHp(holder)*numerator/denominator)),damaged=applyHpGroup(next,[{actorId,delta:-amount}],effect.sourceId);next=damaged.battle;events.push(...damaged.events.map(event=>event.kind==='damage'?{...event,actorId,targetId:actorId,itemId:effect.sourceId,reason:'post-move-recoil',moveId:move.id}:event));
+ }
+ return {battle:next,events};
+}
 
 function statusId(unit){return unit?.status?.id||unit?.status||null;}
 

@@ -18,7 +18,8 @@ export function createMoveActionHandler({moves,manifests,registry,beforeAction=t
   const abilityEvents=modified.applied.filter(effect=>['move-type-by-tag','secondary-effect-power-boost'].includes(effect.kind)).map(effect=>({kind:'abilityTriggered',sourceId:action.actorId,abilityId:effect.sourceId,effectId:effect.kind,moveId:move.id,...(effect.fromType?{fromType:effect.fromType,toType:effect.toType}:{}),...(effect.suppressedSecondaries?{suppressedSecondaries:effect.suppressedSecondaries}:{} )}));
   const tried=dispatchHook(registry,{hook:'onTryMove',battle:gate.battle,invocations:mechanics.handlers,payload:{action,move,mechanics},runtime});
   if(tried.payload.cancelled){const stopped=tried.payload.recordLastMove?recordLastMove(tried.battle,action.actorId,move.id):tried.battle;return {battle:stopped,events:[...gate.events,started,...abilityEvents,...tried.events]};}
-  const result=dispatchHook(registry,{hook:'onMove',battle:tried.battle,invocations:mechanics.handlers,payload:tried.payload,runtime});
+  const onMoveInvocations=[...mechanics.handlers,{id:'resolve-after-move-items',hook:'onMove',order:145}];
+  const result=dispatchHook(registry,{hook:'onMove',battle:tried.battle,invocations:onMoveInvocations,payload:tried.payload,runtime});
   return {battle:recordLastMove(result.battle,action.actorId,move.id),events:[...gate.events,started,...abilityEvents,...tried.events,...result.events]};
  };
 }

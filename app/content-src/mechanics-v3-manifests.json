@@ -2761,7 +2761,7 @@
         {
           "id": "apply-pivot-switch",
           "hook": "onMove",
-          "order": 120
+          "order": 150
         }
       ],
       "testEvidence": {
@@ -2797,7 +2797,7 @@
         {
           "id": "apply-pivot-switch",
           "hook": "onMove",
-          "order": 120
+          "order": 150
         }
       ],
       "testEvidence": {
@@ -2833,7 +2833,7 @@
         {
           "id": "apply-pivot-switch",
           "hook": "onMove",
-          "order": 120
+          "order": 150
         }
       ],
       "testEvidence": {
@@ -2869,7 +2869,7 @@
         {
           "id": "apply-forced-switch",
           "hook": "onMove",
-          "order": 120,
+          "order": 150,
           "params": {
             "requireDamage": true
           }
@@ -2908,7 +2908,7 @@
         {
           "id": "apply-forced-switch",
           "hook": "onMove",
-          "order": 120,
+          "order": 150,
           "params": {
             "requireDamage": true
           }
@@ -5513,6 +5513,81 @@
           "order": 40,
           "params": {
             "confusion": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "life-orb": {
+      "id": "life-orb",
+      "handlers": [
+        {
+          "id": "held-damage-boost",
+          "hook": "modifyDamage",
+          "order": 50,
+          "params": {
+            "allDamaging": true,
+            "multiplier": 1.2998046875
+          }
+        },
+        {
+          "id": "item-post-move-recoil",
+          "hook": "afterDamage",
+          "order": 60,
+          "params": {
+            "numerator": 1,
+            "denominator": 10
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "rocky-helmet": {
+      "id": "rocky-helmet",
+      "handlers": [
+        {
+          "id": "item-contact-retaliation",
+          "hook": "afterDamage",
+          "order": 50,
+          "params": {
+            "numerator": 1,
+            "denominator": 6
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-hooks:single"
+        ],
+        "double": [
+          "r3-item-hooks:double"
+        ]
+      }
+    },
+    "shell-bell": {
+      "id": "shell-bell",
+      "handlers": [
+        {
+          "id": "item-damage-heal",
+          "hook": "afterDamage",
+          "order": 50,
+          "params": {
+            "numerator": 1,
+            "denominator": 8
           }
         }
       ],

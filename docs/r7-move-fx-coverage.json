@@ -1,5 +1,5 @@
 {
-  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v16-mega-beta-v1",
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v17-mega-beta-v1",
   "generatedBy": "app/scripts/generate-move-fx-coverage.mjs",
   "moveCount": 65,
   "coveredMoveCount": 65,

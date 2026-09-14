@@ -62,12 +62,15 @@ test('Room events update independent room layers and Battle Log text',()=>{
 
 
 test('item reveal, activation and consume events update playback state and Battle Log text',()=>{
- const initial={turn:1,field:{},sideConditions:{own:{},opponent:{}},own:[],opponent:[{actorId:'B-0',name:'Primarina',activeSlot:0}]};
+ const initial={turn:1,field:{},sideConditions:{own:{},opponent:{}},own:[{actorId:'A-0',name:'Venusaur',activeSlot:0}],opponent:[{actorId:'B-0',name:'Primarina',activeSlot:0}]};
  let state=applyBattleEvent(initial,{kind:'itemRevealed',sourceId:'B-0',itemId:'sitrus-berry'});assert.equal(state.opponent[0].revealedItemId,'sitrus-berry');assert.equal(state.opponent[0].itemConsumed,undefined);
  state=applyBattleEvent(state,{kind:'itemConsumed',sourceId:'B-0',itemId:'sitrus-berry'});assert.equal(state.opponent[0].itemConsumed,true);
  assert.match(battleEventText({kind:'itemRevealed',sourceId:'B-0',itemId:'sitrus-berry'},initial,publicV3Catalog),/Primarina revealed Sitrus Berry/);
  assert.match(battleEventText({kind:'itemActivated',sourceId:'B-0',itemId:'sitrus-berry'},initial,publicV3Catalog),/Primarina's Sitrus Berry activated/);
  assert.match(battleEventText({kind:'itemConsumed',sourceId:'B-0',itemId:'sitrus-berry'},initial,publicV3Catalog),/Primarina consumed Sitrus Berry/);
+ assert.equal(battleEventText({kind:'damage',actorId:'A-0',targetId:'A-0',amount:15,itemId:'life-orb',reason:'post-move-recoil'},initial,publicV3Catalog),'Venusaur lost 15 HP to Life Orb recoil.');
+ assert.equal(battleEventText({kind:'damage',actorId:'B-0',targetId:'A-0',amount:26,itemId:'rocky-helmet',reason:'contact-retaliation'},initial,publicV3Catalog),"Venusaur lost 26 HP from Primarina's Rocky Helmet.");
+ assert.equal(battleEventText({kind:'heal',actorId:'A-0',targetId:'A-0',amount:12,itemId:'shell-bell',reason:'damage-recovery'},initial,publicV3Catalog),'Venusaur recovered 12 HP with Shell Bell.');
 });
 
 test('Battle Log explains ability hooks and lifecycle failures without raw event names',()=>{
