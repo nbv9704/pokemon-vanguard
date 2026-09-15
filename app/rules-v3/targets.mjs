@@ -19,11 +19,11 @@ export function legalTargets(battle,{side,actorId,targetMode}){
  return [{scope:'field'}];
 }
 
-export function resolveTargets(battle,request,{redirectable=true}={}){
+export function resolveTargets(battle,request,{redirectable=true,move=null,typeRedirectionOrder=null}={}){
  const targets=legalTargets(battle,request);
  if(['self','allAdjacentFoes','allAdjacent','userSide','foeSide','field'].includes(request.targetMode))return targets;
  const selected=targets.find(entry=>entry.side===request.target?.side&&entry.slot===request.target?.slot);
  if(!selected)return [];
- const redirected=redirectable?selectRedirection(battle,{...request,selected}):null;
+ const redirected=redirectable?selectRedirection(battle,{...request,selected,move,typeRedirectionOrder}):null;
  return [redirected||selected];
 }

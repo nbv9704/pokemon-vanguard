@@ -1,5 +1,5 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
-import {abilityIgnoresParalysisSpeedPenalty} from './ability-hooks.mjs';
+import {abilityIgnoresParalysisSpeedPenalty,abilitySleepCounterRate} from './ability-hooks.mjs';
 
 const prevented=(battle,actorId,status,details={})=>({cancelled:true,battle,events:[{kind:'actionPrevented',actorId,status,...details}]});
 const cured=(battle,actorId,status)=>({cancelled:false,battle,events:[{kind:'statusCured',actorId,status,reason:'naturalRecovery'}]});
@@ -12,7 +12,8 @@ export function speedWithMajorStatus(speed,unit){
 export function tryMajorStatusAction(battle,action,runtime={}){
  const next=clone(battle),unit=unitById(next,action.actorId),status=unit?.status?.id||unit?.status;
  if(status==='sleep'){
-  const remaining=unit.status.turnsRemaining??0;
+  const remaining=unit.status.turnsRemaining??0,rate=abilitySleepCounterRate(unit);
+  if(rate>1&&remaining>0){const after=Math.max(0,remaining-rate);unit.status.turnsRemaining=after;if(after<=0){unit.status=null;return cured(next,action.actorId,status);}return prevented(next,action.actorId,status,{turnsRemaining:after});}
   if(remaining>0){unit.status.turnsRemaining=remaining-1;return prevented(next,action.actorId,status,{turnsRemaining:remaining-1});}
   unit.status=null;return cured(next,action.actorId,status);
  }

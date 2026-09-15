@@ -1,5 +1,5 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
-import {resolveTargets} from '../../rules-v3/targets.mjs';
+import {resolveTargets} from '../targets.mjs';
 import {applyDamageHit} from '../damage-hit.mjs';
 
 export const directDamageHandler={
@@ -10,7 +10,7 @@ export const directDamageHandler={
   if(!actor||actor.hp<=0)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],damagedTargetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'actorUnavailable'}]};
   const targets=payload.accuracyResolved
    ?(payload.hitTargetIds||[]).map(actorId=>({actorId}))
-   :resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false});
+   :resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false,move});
   if(payload.accuracyResolved&&!payload.resolvedTargetIds?.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],damagedTargetIds:[]},events:[]};
   if(payload.accuracyResolved&&!targets.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],damagedTargetIds:[]},events:[]};
   if(!targets.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],damagedTargetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'noTarget'}]};
@@ -19,7 +19,7 @@ export const directDamageHandler={
    const defender=unitById(next,targetRef.actorId);if(!defender||defender.hp<=0)continue;
    if(!payload.accuracyResolved&&move.accuracy!==null&&move.accuracy<100&&runtime.nextRandom()>=move.accuracy/100){events.push({kind:'moveMissed',actorId:actor.actorId,targetId:defender.actorId,moveId:move.id});continue;}
    const result=applyDamageHit(next,{actorId:actor.actorId,targetId:defender.actorId,move,mechanics,spread:['allAdjacentFoes','allAdjacent'].includes(mechanics.targetMode)&&(payload.resolvedTargetIds?.length||targets.length)>1,moveItemMultiplier:payload.itemMoveMultiplier??1,moveItemId:payload.itemMoveItemId??null},runtime);
-   next=result.battle;totalDamage+=result.amount;if(result.amount>0)damagedTargetIds.push(defender.actorId);events.push(...result.events);
+   next=result.battle;totalDamage+=result.amount;if(result.amount>0&&!result.substituteAbsorbed)damagedTargetIds.push(defender.actorId);events.push(...result.events);
   }
   return {battle:next,payload:{...payload,totalDamage,targetIds:targets.map(target=>target.actorId),damagedTargetIds:[...new Set(damagedTargetIds)]},events};
  }

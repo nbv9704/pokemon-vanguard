@@ -1,8 +1,9 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {applyMajorStatus} from './major-status.mjs';
 import {resolveHpThresholdItems,resolveNegativeStageResetItems} from './item-hooks.mjs';
-import {abilityStatDropBlock} from './ability-hooks.mjs';
-import {resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
+import {abilityPreventsIndirectDamage,abilityStatDropBlock} from './ability-hooks.mjs';
+import {resolveOpponentStatGainCopyAbilities,resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
+import {abilityStageChange} from './ability-stage-change.mjs';
 
 export function applyProtect(battle,{actorId,moveId,retaliation=null,blocksStatus=true},runtime={}){
  const next=clone(battle),actor=unitById(next,actorId);
@@ -38,16 +39,18 @@ export function resolveProtectionBlock(battle,{targetRef,actorId,move,mechanics}
  const events=[{kind:'moveBlocked',actorId,targetId:targetRef.actorId,moveId:move.id,reason,protectionId:protect?.sourceId||reason}];
  if(reason!=='protect'||!mechanics.contact||!actor||actor.hp<=0||!protect?.retaliation)return {battle:next,blocked:true,events};
  if(protect.retaliation==='spiky-damage'){
+  const indirectGuard=abilityPreventsIndirectDamage(actor);if(indirectGuard){events.push({kind:'abilityTriggered',sourceId:actor.actorId,abilityId:indirectGuard.sourceId,effectId:indirectGuard.kind,trigger:`protection:${protect.sourceId}`});return {battle:next,blocked:true,events};}
   const hpBefore=actor.hp,amount=Math.min(hpBefore,Math.max(1,Math.floor(actor.maxHp/8)));actor.hp-=amount;
   events.push({kind:'damage',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,hpBefore,hpAfter:actor.hp,amount,source:'protection'});
   if(actor.hp===0)events.push({kind:'fainted',targetId:actor.actorId,source:protect.sourceId});
   else{const threshold=resolveHpThresholdItems(next,{actorIds:[actor.actorId],trigger:`protection:${protect.sourceId}`});next=threshold.battle;events.push(...threshold.events);}
  }else if(protect.retaliation==='lower-attack'){
-  const block=abilityStatDropBlock(actor,{battle:next,sourceId:target.actorId,stat:'atk',requestedDelta:-1});
-  if(block)events.push({kind:'statStageBlocked',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',requestedDelta:-1,...block});
-  else{const before=actor.stages?.atk||0,after=Math.max(-6,before-1);actor.stages??={};actor.stages.atk=after;
-   const change={kind:'statStageChanged',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',before,after,requestedDelta:-1,appliedDelta:after-before,reason:after===before?'stageLimit':null};events.push(change);
-   const response=resolveStatDropResponseAbilities(next,{sourceId:target.actorId,targetId:actor.actorId,changes:[change],trigger:'protection'});next=response.battle;events.push(...response.events);
+  const changed=abilityStageChange(actor,-1),requestedDelta=changed.requestedDelta;if(changed.sourceAbilityId)events.push({kind:'abilityTriggered',sourceId:actor.actorId,abilityId:changed.sourceAbilityId,effectId:changed.effectId,trigger:'stat-change'});
+  const block=abilityStatDropBlock(actor,{battle:next,sourceId:target.actorId,stat:'atk',requestedDelta});
+  if(block)events.push({kind:'statStageBlocked',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',requestedDelta,...block});
+  else{const before=actor.stages?.atk||0,after=Math.max(-6,Math.min(6,before+requestedDelta));actor.stages??={};actor.stages.atk=after;
+   const change={kind:'statStageChanged',actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,stat:'atk',before,after,requestedDelta,originalRequestedDelta:changed.originalRequestedDelta,appliedDelta:after-before,reason:after===before?'stageLimit':null};events.push(change);
+   const response=resolveStatDropResponseAbilities(next,{sourceId:target.actorId,targetId:actor.actorId,changes:[change],trigger:'protection'});next=response.battle;events.push(...response.events);const copied=resolveOpponentStatGainCopyAbilities(next,{targetId:actor.actorId,changes:[change],trigger:'protection'});next=copied.battle;events.push(...copied.events);
    const reset=resolveNegativeStageResetItems(next,{actorIds:[actor.actorId],trigger:`protection:${protect.sourceId}:stat-change`});next=reset.battle;events.push(...reset.events);}
  }else if(protect.retaliation==='poison'){
   const applied=applyMajorStatus(next,{actorId:target.actorId,targetId:actor.actorId,moveId:protect.sourceId,status:'poison'},runtime);next=applied.battle;events.push(...applied.events);

@@ -4640,6 +4640,5520 @@
           "r3-weather:double"
         ]
       }
+    },
+    "substitute": {
+      "id": "substitute",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-substitute",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "safeguard": {
+      "id": "safeguard",
+      "targetMode": "userSide",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-side-condition",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "condition": "safeguard",
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "transform": {
+      "id": "transform",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "redirectable": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-transform",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave17:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave17:double"
+        ]
+      }
+    },
+    "aura-wheel": {
+      "id": "aura-wheel",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "redirectable": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-form-dependent-move",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "typeBySpecies": {
+              "morpeko": "electric",
+              "morpeko-hangry": "dark"
+            }
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "target": "self",
+            "boosts": {
+              "spe": 1
+            },
+            "requireDamage": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave17:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave17:double"
+        ]
+      }
+    },
+    "accelerock": {
+      "id": "accelerock",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "aqua-jet": {
+      "id": "aqua-jet",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "bullet-punch": {
+      "id": "bullet-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "extreme-speed": {
+      "id": "extreme-speed",
+      "targetMode": "adjacentFoe",
+      "priority": 2,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "jet-punch": {
+      "id": "jet-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "mach-punch": {
+      "id": "mach-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "quick-attack": {
+      "id": "quick-attack",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "shadow-sneak": {
+      "id": "shadow-sneak",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "vacuum-wave": {
+      "id": "vacuum-wave",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "aqua-tail": {
+      "id": "aqua-tail",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "aura-sphere": {
+      "id": "aura-sphere",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "bullet",
+        "pulse"
+      ]
+    },
+    "boomburst": {
+      "id": "boomburst",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false,
+      "tags": [
+        "sound"
+      ]
+    },
+    "brutal-swing": {
+      "id": "brutal-swing",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "cut": {
+      "id": "cut",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "slicing"
+      ]
+    },
+    "dazzling-gleam": {
+      "id": "dazzling-gleam",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "dragon-claw": {
+      "id": "dragon-claw",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "slicing"
+      ]
+    },
+    "dragon-pulse": {
+      "id": "dragon-pulse",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "pulse"
+      ]
+    },
+    "drill-peck": {
+      "id": "drill-peck",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "high-horsepower": {
+      "id": "high-horsepower",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "hydro-pump": {
+      "id": "hydro-pump",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "mega-kick": {
+      "id": "mega-kick",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "megahorn": {
+      "id": "megahorn",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "petal-blizzard": {
+      "id": "petal-blizzard",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "power-gem": {
+      "id": "power-gem",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "power-whip": {
+      "id": "power-whip",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "seed-bomb": {
+      "id": "seed-bomb",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ]
+    },
+    "shadow-punch": {
+      "id": "shadow-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "shock-wave": {
+      "id": "shock-wave",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "smart-strike": {
+      "id": "smart-strike",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "x-scissor": {
+      "id": "x-scissor",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "slicing"
+      ]
+    },
+    "dragon-dance": {
+      "id": "dragon-dance",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": 1,
+              "spe": 1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "iron-defense": {
+      "id": "iron-defense",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "nasty-plot": {
+      "id": "nasty-plot",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spa": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "quiver-dance": {
+      "id": "quiver-dance",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spa": 1,
+              "spd": 1,
+              "spe": 1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "rock-polish": {
+      "id": "rock-polish",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spe": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "shell-smash": {
+      "id": "shell-smash",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": -1,
+              "spd": -1,
+              "atk": 2,
+              "spa": 2,
+              "spe": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "shelter": {
+      "id": "shelter",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "def": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "swords-dance": {
+      "id": "swords-dance",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": 2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "eerie-impulse": {
+      "id": "eerie-impulse",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spa": -2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "metal-sound": {
+      "id": "metal-sound",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "spd": -2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "sound"
+      ]
+    },
+    "tearful-look": {
+      "id": "tearful-look",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -1,
+              "spa": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "bypassesProtect": true
+    },
+    "tickle": {
+      "id": "tickle",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -1,
+              "def": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "acid-spray": {
+      "id": "acid-spray",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spd": -2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ]
+    },
+    "apple-acid": {
+      "id": "apple-acid",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "bitter-malice": {
+      "id": "bitter-malice",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "atk": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "breaking-swipe": {
+      "id": "breaking-swipe",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "atk": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "bug-buzz": {
+      "id": "bug-buzz",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "sound"
+      ]
+    },
+    "chilling-water": {
+      "id": "chilling-water",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "atk": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "crush-claw": {
+      "id": "crush-claw",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 50,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "slicing"
+      ]
+    },
+    "earth-power": {
+      "id": "earth-power",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "electroweb": {
+      "id": "electroweb",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spe": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "energy-ball": {
+      "id": "energy-ball",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ]
+    },
+    "fire-lash": {
+      "id": "fire-lash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "flash-cannon": {
+      "id": "flash-cannon",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "focus-blast": {
+      "id": "focus-blast",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ]
+    },
+    "iron-tail": {
+      "id": "iron-tail",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 30,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "low-sweep": {
+      "id": "low-sweep",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spe": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "lumina-crash": {
+      "id": "lumina-crash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spd": -2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "lunge": {
+      "id": "lunge",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "atk": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "moonblast": {
+      "id": "moonblast",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spa": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "mud-shot": {
+      "id": "mud-shot",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spe": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "mud-slap": {
+      "id": "mud-slap",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "accuracy": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "muddy-water": {
+      "id": "muddy-water",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 30,
+          "boosts": {
+            "accuracy": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "mystical-fire": {
+      "id": "mystical-fire",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spa": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "night-daze": {
+      "id": "night-daze",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 40,
+          "boosts": {
+            "accuracy": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "play-rough": {
+      "id": "play-rough",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "atk": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "pounce": {
+      "id": "pounce",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spe": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "psychic": {
+      "id": "psychic",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "razor-shell": {
+      "id": "razor-shell",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 50,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "slicing"
+      ]
+    },
+    "rock-smash": {
+      "id": "rock-smash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 50,
+          "boosts": {
+            "def": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "rock-tomb": {
+      "id": "rock-tomb",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spe": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "shadow-ball": {
+      "id": "shadow-ball",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 20,
+          "boosts": {
+            "spd": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ]
+    },
+    "skitter-smack": {
+      "id": "skitter-smack",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spa": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "snarl": {
+      "id": "snarl",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spa": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false,
+      "tags": [
+        "sound"
+      ]
+    },
+    "struggle-bug": {
+      "id": "struggle-bug",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "spa": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      },
+      "redirectable": false
+    },
+    "trop-kick": {
+      "id": "trop-kick",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "boosts": {
+            "atk": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave18:double"
+        ]
+      }
+    },
+    "discharge": {
+      "id": "discharge",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 30,
+          "status": "paralysis"
+        }
+      ]
+    },
+    "fire-blast": {
+      "id": "fire-blast",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "burn"
+        }
+      ]
+    },
+    "fire-fang": {
+      "id": "fire-fang",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "bite"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "burn"
+        },
+        {
+          "kind": "volatile-status",
+          "chance": 10,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "fire-punch": {
+      "id": "fire-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "burn"
+        }
+      ]
+    },
+    "flamethrower": {
+      "id": "flamethrower",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "burn"
+        }
+      ]
+    },
+    "gunk-shot": {
+      "id": "gunk-shot",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 30,
+          "status": "poison"
+        }
+      ]
+    },
+    "heat-wave": {
+      "id": "heat-wave",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "burn"
+        }
+      ]
+    },
+    "ice-beam": {
+      "id": "ice-beam",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "freeze"
+        }
+      ]
+    },
+    "inferno": {
+      "id": "inferno",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 100,
+          "status": "burn"
+        }
+      ]
+    },
+    "lava-plume": {
+      "id": "lava-plume",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 30,
+          "status": "burn"
+        }
+      ]
+    },
+    "nuzzle": {
+      "id": "nuzzle",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 100,
+          "status": "paralysis"
+        }
+      ]
+    },
+    "poison-fang": {
+      "id": "poison-fang",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "bite"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 50,
+          "status": "bad-poison"
+        }
+      ]
+    },
+    "poison-jab": {
+      "id": "poison-jab",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 30,
+          "status": "poison"
+        }
+      ]
+    },
+    "sludge-bomb": {
+      "id": "sludge-bomb",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 30,
+          "status": "poison"
+        }
+      ]
+    },
+    "sludge-wave": {
+      "id": "sludge-wave",
+      "targetMode": "allAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "poison"
+        }
+      ]
+    },
+    "thunder-fang": {
+      "id": "thunder-fang",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "bite"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "paralysis"
+        },
+        {
+          "kind": "volatile-status",
+          "chance": 10,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "thunder-punch": {
+      "id": "thunder-punch",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "paralysis"
+        }
+      ]
+    },
+    "thunder-shock": {
+      "id": "thunder-shock",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "paralysis"
+        }
+      ]
+    },
+    "thunderbolt": {
+      "id": "thunderbolt",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 10,
+          "status": "paralysis"
+        }
+      ]
+    },
+    "zap-cannon": {
+      "id": "zap-cannon",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "bullet"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 100,
+          "status": "paralysis"
+        }
+      ]
+    },
+    "air-slash": {
+      "id": "air-slash",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "slicing"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 30,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "astonish": {
+      "id": "astonish",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 30,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "bite": {
+      "id": "bite",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "bite"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 30,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "dark-pulse": {
+      "id": "dark-pulse",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "pulse"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 20,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "dragon-rush": {
+      "id": "dragon-rush",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 20,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "extrasensory": {
+      "id": "extrasensory",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 10,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "icicle-crash": {
+      "id": "icicle-crash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 30,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "iron-head": {
+      "id": "iron-head",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 20,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "mountain-gale": {
+      "id": "mountain-gale",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 30,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "zen-headbutt": {
+      "id": "zen-headbutt",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 20,
+          "volatile": "flinch"
+        }
+      ]
+    },
+    "bone-rush": {
+      "id": "bone-rush",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "pin-missile": {
+      "id": "pin-missile",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "tail-slap": {
+      "id": "tail-slap",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "water-shuriken": {
+      "id": "water-shuriken",
+      "targetMode": "adjacentFoe",
+      "priority": 1,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": [
+              2,
+              5
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "wave-crash": {
+      "id": "wave-crash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recoil",
+          "hook": "onMove",
+          "order": 130,
+          "params": {
+            "numerator": 33,
+            "denominator": 100
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "armor-cannon": {
+      "id": "armor-cannon",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "def": -1,
+              "spd": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "clanging-scales": {
+      "id": "clanging-scales",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "def": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "sound"
+      ]
+    },
+    "close-combat": {
+      "id": "close-combat",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "def": -1,
+              "spd": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "draco-meteor": {
+      "id": "draco-meteor",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "spa": -2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "hammer-arm": {
+      "id": "hammer-arm",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "spe": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "headlong-rush": {
+      "id": "headlong-rush",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "def": -1,
+              "spd": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "ice-hammer": {
+      "id": "ice-hammer",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "spe": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ]
+    },
+    "leaf-storm": {
+      "id": "leaf-storm",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "spa": -2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "overheat": {
+      "id": "overheat",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "spa": -2
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "superpower": {
+      "id": "superpower",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "target": "self",
+            "requireDamage": true,
+            "boosts": {
+              "atk": -1,
+              "def": -1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      }
+    },
+    "ancient-power": {
+      "id": "ancient-power",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "target": "self",
+          "boosts": {
+            "atk": 1,
+            "def": 1,
+            "spa": 1,
+            "spd": 1,
+            "spe": 1
+          }
+        }
+      ]
+    },
+    "aqua-step": {
+      "id": "aqua-step",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "target": "self",
+          "boosts": {
+            "spe": 1
+          }
+        }
+      ]
+    },
+    "charge-beam": {
+      "id": "charge-beam",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 70,
+          "target": "self",
+          "boosts": {
+            "spa": 1
+          }
+        }
+      ]
+    },
+    "fiery-dance": {
+      "id": "fiery-dance",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 50,
+          "target": "self",
+          "boosts": {
+            "spa": 1
+          }
+        }
+      ]
+    },
+    "flame-charge": {
+      "id": "flame-charge",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "target": "self",
+          "boosts": {
+            "spe": 1
+          }
+        }
+      ]
+    },
+    "meteor-mash": {
+      "id": "meteor-mash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "punch"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 20,
+          "target": "self",
+          "boosts": {
+            "atk": 1
+          }
+        }
+      ]
+    },
+    "psyshield-bash": {
+      "id": "psyshield-bash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "target": "self",
+          "boosts": {
+            "def": 1
+          }
+        }
+      ]
+    },
+    "steel-wing": {
+      "id": "steel-wing",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 10,
+          "target": "self",
+          "boosts": {
+            "def": 1
+          }
+        }
+      ]
+    },
+    "torch-song": {
+      "id": "torch-song",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "tags": [
+        "sound"
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "target": "self",
+          "boosts": {
+            "spa": 1
+          }
+        }
+      ]
+    },
+    "trailblaze": {
+      "id": "trailblaze",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave19:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave19:double"
+        ]
+      },
+      "secondaryEffects": [
+        {
+          "kind": "stat-stages",
+          "chance": 100,
+          "target": "self",
+          "boosts": {
+            "spe": 1
+          }
+        }
+      ]
     }
   },
   "abilities": {
@@ -7324,6 +12838,1479 @@
         ],
         "double": [
           "r3-ability-hooks-wave9:double"
+        ]
+      }
+    },
+    "aroma-veil": {
+      "id": "aroma-veil",
+      "handlers": [
+        {
+          "id": "ally-volatile-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "volatiles": [
+              "taunt",
+              "encore",
+              "disable"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "klutz": {
+      "id": "klutz",
+      "handlers": [
+        {
+          "id": "held-item-suppression",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "levitate": {
+      "id": "levitate",
+      "handlers": [
+        {
+          "id": "grounding-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "pixilate": {
+      "id": "pixilate",
+      "handlers": [
+        {
+          "id": "move-type-conversion",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "fromType": "normal",
+            "toType": "fairy",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "refrigerate": {
+      "id": "refrigerate",
+      "handlers": [
+        {
+          "id": "move-type-conversion",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "fromType": "normal",
+            "toType": "ice",
+            "multiplier": 1.2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "poison-touch": {
+      "id": "poison-touch",
+      "handlers": [
+        {
+          "id": "outgoing-secondary-effect",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "contactOnly": true,
+            "chance": 0.3,
+            "status": "poison"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "stench": {
+      "id": "stench",
+      "handlers": [
+        {
+          "id": "outgoing-secondary-effect",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "chance": 0.1,
+            "volatile": "flinch",
+            "skipIfMoveAlreadyHas": "flinch"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "quick-draw": {
+      "id": "quick-draw",
+      "handlers": [
+        {
+          "id": "turn-order-modifier",
+          "hook": "onTurnOrder",
+          "order": 40,
+          "params": {
+            "orderBoost": 1,
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "unnerve": {
+      "id": "unnerve",
+      "handlers": [
+        {
+          "id": "opponent-berry-suppression",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "scrappy": {
+      "id": "scrappy",
+      "handlers": [
+        {
+          "id": "type-immunity-bypass",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "attackTypes": [
+              "normal",
+              "fighting"
+            ],
+            "targetTypes": [
+              "ghost"
+            ]
+          }
+        },
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 41,
+          "params": {
+            "sourceAbilities": [
+              "intimidate"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "harvest": {
+      "id": "harvest",
+      "handlers": [
+        {
+          "id": "end-turn-berry-restore",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "chance": 0.5,
+            "weatherGuarantee": "sun"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "healer": {
+      "id": "healer",
+      "handlers": [
+        {
+          "id": "end-turn-ally-status-cure",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "unburden": {
+      "id": "unburden",
+      "handlers": [
+        {
+          "id": "item-loss-speed-boost",
+          "hook": "modifySpeed",
+          "order": 40,
+          "params": {
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "gale-wings": {
+      "id": "gale-wings",
+      "handlers": [
+        {
+          "id": "turn-order-modifier",
+          "hook": "onTurnOrder",
+          "order": 40,
+          "params": {
+            "priorityDelta": 1,
+            "types": [
+              "flying"
+            ],
+            "requireFullHp": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "prankster": {
+      "id": "prankster",
+      "handlers": [
+        {
+          "id": "turn-order-modifier",
+          "hook": "onTurnOrder",
+          "order": 40,
+          "params": {
+            "priorityDelta": 1,
+            "categories": [
+              "status"
+            ],
+            "blockedTargetTypes": [
+              "dark"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "stall": {
+      "id": "stall",
+      "handlers": [
+        {
+          "id": "turn-order-modifier",
+          "hook": "onTurnOrder",
+          "order": 40,
+          "params": {
+            "orderBoost": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave10:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave10:double"
+        ]
+      }
+    },
+    "aftermath": {
+      "id": "aftermath",
+      "handlers": [
+        {
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "response": "damage",
+            "numerator": 1,
+            "denominator": 4,
+            "requireHolderFainted": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "analytic": {
+      "id": "analytic",
+      "handlers": [
+        {
+          "id": "late-move-power-boost",
+          "hook": "modifyPower",
+          "order": 40,
+          "params": {
+            "multiplier": 1.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "cheek-pouch": {
+      "id": "cheek-pouch",
+      "handlers": [
+        {
+          "id": "berry-consumption-heal",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "numerator": 1,
+            "denominator": 3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "cloud-nine": {
+      "id": "cloud-nine",
+      "handlers": [
+        {
+          "id": "weather-suppression",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "cursed-body": {
+      "id": "cursed-body",
+      "handlers": [
+        {
+          "id": "damage-response-disable",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "early-bird": {
+      "id": "early-bird",
+      "handlers": [
+        {
+          "id": "sleep-counter-rate",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "rate": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "electromorphosis": {
+      "id": "electromorphosis",
+      "handlers": [
+        {
+          "id": "damage-charge-type",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "type": "electric",
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "frisk": {
+      "id": "frisk",
+      "handlers": [
+        {
+          "id": "entry-item-reveal",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "mirror-armor": {
+      "id": "mirror-armor",
+      "handlers": [
+        {
+          "id": "stat-drop-reflect",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "moody": {
+      "id": "moody",
+      "handlers": [
+        {
+          "id": "end-turn-random-stat-shift",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "stats": [
+              "atk",
+              "def",
+              "spa",
+              "spd",
+              "spe"
+            ],
+            "raise": 2,
+            "lower": -1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "oblivious": {
+      "id": "oblivious",
+      "handlers": [
+        {
+          "id": "volatile-immunity",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "volatiles": [
+              "taunt"
+            ]
+          }
+        },
+        {
+          "id": "stat-drop-immunity",
+          "hook": "afterStatChange",
+          "order": 41,
+          "params": {
+            "sourceAbilities": [
+              "intimidate"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "overcoat": {
+      "id": "overcoat",
+      "handlers": [
+        {
+          "id": "weather-residual-immunity",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {
+            "weather": "sandstorm"
+          }
+        },
+        {
+          "id": "move-tag-immunity",
+          "hook": "beforeTarget",
+          "order": 41,
+          "params": {
+            "tag": "powder"
+          }
+        },
+        {
+          "id": "redirection-immunity",
+          "hook": "beforeTarget",
+          "order": 42,
+          "params": {
+            "kinds": [
+              "rage-powder"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "pressure": {
+      "id": "pressure",
+      "handlers": [
+        {
+          "id": "target-pp-pressure",
+          "hook": "onTryMove",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "protean": {
+      "id": "protean",
+      "handlers": [
+        {
+          "id": "pre-move-type-change",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "oncePerSwitch": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "stalwart": {
+      "id": "stalwart",
+      "handlers": [
+        {
+          "id": "redirection-bypass",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "supreme-overlord": {
+      "id": "supreme-overlord",
+      "handlers": [
+        {
+          "id": "entry-fainted-ally-power-boost",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "increment": 0.1,
+            "maxCount": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave11:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave11:double"
+        ]
+      }
+    },
+    "contrary": {
+      "id": "contrary",
+      "handlers": [
+        {
+          "id": "stat-change-inversion",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave12:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave12:double"
+        ]
+      }
+    },
+    "damp": {
+      "id": "damp",
+      "handlers": [
+        {
+          "id": "global-move-block",
+          "hook": "onTryMove",
+          "order": 40,
+          "params": {
+            "moveIds": [
+              "explosion",
+              "mind-blown",
+              "misty-explosion",
+              "self-destruct"
+            ],
+            "blockContactFaintResponse": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave12:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave12:double"
+        ]
+      }
+    },
+    "lightning-rod": {
+      "id": "lightning-rod",
+      "handlers": [
+        {
+          "id": "type-redirection",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {
+            "types": [
+              "electric"
+            ]
+          }
+        },
+        {
+          "id": "type-immunity-response",
+          "hook": "beforeTarget",
+          "order": 41,
+          "params": {
+            "type": "electric",
+            "response": "stat",
+            "stat": "spa",
+            "stages": 1
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave12:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave12:double"
+        ]
+      }
+    },
+    "opportunist": {
+      "id": "opportunist",
+      "handlers": [
+        {
+          "id": "opponent-stat-gain-copy",
+          "hook": "afterStatChange",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave12:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave12:double"
+        ]
+      }
+    },
+    "ripen": {
+      "id": "ripen",
+      "handlers": [
+        {
+          "id": "berry-effect-multiplier",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave12:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave12:double"
+        ]
+      }
+    },
+    "unaware": {
+      "id": "unaware",
+      "handlers": [
+        {
+          "id": "opponent-stage-ignore",
+          "hook": "modifyAttack",
+          "order": 40,
+          "params": {
+            "whenAttacking": [
+              "def",
+              "spd",
+              "evasion"
+            ],
+            "whenDefending": [
+              "atk",
+              "def",
+              "spa",
+              "accuracy"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave12:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave12:double"
+        ]
+      }
+    },
+    "cud-chew": {
+      "id": "cud-chew",
+      "handlers": [
+        {
+          "id": "berry-replay",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "gluttony": {
+      "id": "gluttony",
+      "handlers": [
+        {
+          "id": "berry-threshold-modifier",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "numerator": 1,
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "magician": {
+      "id": "magician",
+      "handlers": [
+        {
+          "id": "item-steal-on-hit",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "pickpocket": {
+      "id": "pickpocket",
+      "handlers": [
+        {
+          "id": "item-steal-on-contact",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "pickup": {
+      "id": "pickup",
+      "handlers": [
+        {
+          "id": "end-turn-item-pickup",
+          "hook": "endTurn",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "sticky-hold": {
+      "id": "sticky-hold",
+      "handlers": [
+        {
+          "id": "held-item-removal-immunity",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "symbiosis": {
+      "id": "symbiosis",
+      "handlers": [
+        {
+          "id": "ally-item-pass",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave13:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave13:double"
+        ]
+      }
+    },
+    "trace": {
+      "id": "trace",
+      "handlers": [
+        {
+          "id": "entry-ability-copy",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave14:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave14:double"
+        ]
+      }
+    },
+    "receiver": {
+      "id": "receiver",
+      "handlers": [
+        {
+          "id": "ally-faint-ability-copy",
+          "hook": "onFaint",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave14:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave14:double"
+        ]
+      }
+    },
+    "mummy": {
+      "id": "mummy",
+      "handlers": [
+        {
+          "id": "contact-ability-replace",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "replacementAbilityId": "mummy"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave14:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave14:double"
+        ]
+      }
+    },
+    "wandering-spirit": {
+      "id": "wandering-spirit",
+      "handlers": [
+        {
+          "id": "contact-ability-swap",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave14:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave14:double"
+        ]
+      }
+    },
+    "anticipation": {
+      "id": "anticipation",
+      "handlers": [
+        {
+          "id": "entry-danger-sense",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave15:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave15:double"
+        ]
+      }
+    },
+    "magic-guard": {
+      "id": "magic-guard",
+      "handlers": [
+        {
+          "id": "indirect-damage-immunity",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave15:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave15:double"
+        ]
+      }
+    },
+    "mold-breaker": {
+      "id": "mold-breaker",
+      "handlers": [
+        {
+          "id": "opponent-ability-bypass",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "magic-bounce": {
+      "id": "magic-bounce",
+      "handlers": [
+        {
+          "id": "status-move-reflect",
+          "hook": "beforeTarget",
+          "order": 40,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "infiltrator": {
+      "id": "infiltrator",
+      "handlers": [
+        {
+          "id": "side-condition-bypass",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "conditions": [
+              "reflect",
+              "light-screen",
+              "safeguard",
+              "substitute"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "forecast": {
+      "id": "forecast",
+      "handlers": [
+        {
+          "id": "field-type-change",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "field": "weather",
+            "types": {
+              "sun": "fire",
+              "rain": "water",
+              "snow": "ice"
+            },
+            "defaultTypes": [
+              "normal"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "mimicry": {
+      "id": "mimicry",
+      "handlers": [
+        {
+          "id": "field-type-change",
+          "hook": "onEntry",
+          "order": 40,
+          "params": {
+            "field": "terrain",
+            "types": {
+              "electric": "electric",
+              "grassy": "grass",
+              "misty": "fairy",
+              "psychic": "psychic"
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "disguise": {
+      "id": "disguise",
+      "handlers": [
+        {
+          "id": "disguise-shield",
+          "hook": "modifyDamage",
+          "order": 40,
+          "params": {
+            "breakNumerator": 1,
+            "breakDenominator": 8
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "stance-change": {
+      "id": "stance-change",
+      "handlers": [
+        {
+          "id": "stance-form-change",
+          "hook": "beforeAction",
+          "order": 40,
+          "params": {
+            "attackForm": {
+              "speciesId": "aegislash-blade",
+              "name": "Aegislash (Blade)",
+              "spriteKey": "aegislash-blade",
+              "types": [
+                "steel",
+                "ghost"
+              ],
+              "baseStats": {
+                "hp": 60,
+                "atk": 140,
+                "def": 50,
+                "spa": 140,
+                "spd": 50,
+                "spe": 60
+              }
+            },
+            "shieldForm": {
+              "speciesId": "aegislash-shield",
+              "name": "Aegislash (Shield)",
+              "spriteKey": "aegislash-shield",
+              "types": [
+                "steel",
+                "ghost"
+              ],
+              "baseStats": {
+                "hp": 60,
+                "atk": 50,
+                "def": 140,
+                "spa": 50,
+                "spd": 140,
+                "spe": 60
+              }
+            },
+            "shieldMoveIds": [
+              "kings-shield"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave16:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave16:double"
+        ]
+      }
+    },
+    "imposter": {
+      "id": "imposter",
+      "handlers": [
+        {
+          "id": "entry-transform",
+          "hook": "onEntry",
+          "order": 5
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave17:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave17:double"
+        ]
+      }
+    },
+    "illusion": {
+      "id": "illusion",
+      "handlers": [
+        {
+          "id": "entry-illusion",
+          "hook": "onEntry",
+          "order": 5
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave17:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave17:double"
+        ]
+      }
+    },
+    "hunger-switch": {
+      "id": "hunger-switch",
+      "handlers": [
+        {
+          "id": "end-turn-form-toggle",
+          "hook": "endTurn",
+          "order": 80,
+          "params": {
+            "forms": {
+              "morpeko": {
+                "speciesId": "morpeko-hangry",
+                "name": "Morpeko (Hangry)",
+                "spriteKey": "morpeko-hangry",
+                "types": [
+                  "electric",
+                  "dark"
+                ],
+                "baseStats": {
+                  "hp": 58,
+                  "atk": 95,
+                  "def": 58,
+                  "spa": 70,
+                  "spd": 58,
+                  "spe": 97
+                }
+              },
+              "morpeko-hangry": {
+                "speciesId": "morpeko",
+                "name": "Morpeko",
+                "spriteKey": "morpeko",
+                "types": [
+                  "electric",
+                  "dark"
+                ],
+                "baseStats": {
+                  "hp": 58,
+                  "atk": 95,
+                  "def": 58,
+                  "spa": 70,
+                  "spd": 58,
+                  "spe": 97
+                }
+              }
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave17:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave17:double"
+        ]
+      }
+    },
+    "zero-to-hero": {
+      "id": "zero-to-hero",
+      "handlers": [
+        {
+          "id": "switch-out-form-change",
+          "hook": "onSwitchOut",
+          "order": 40,
+          "params": {
+            "fromSpeciesIds": [
+              "palafin"
+            ],
+            "form": {
+              "speciesId": "palafin-hero",
+              "name": "Palafin (Hero)",
+              "spriteKey": "palafin-hero",
+              "types": [
+                "water"
+              ],
+              "baseStats": {
+                "hp": 100,
+                "atk": 160,
+                "def": 97,
+                "spa": 106,
+                "spd": 87,
+                "spe": 100
+              }
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave17:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave17:double"
         ]
       }
     }

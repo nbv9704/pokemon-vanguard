@@ -61,7 +61,7 @@ function finishResolution(next,events,rngState){
  return next;
 }
 
-function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom}){
+function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom,afterAction}){
  let next=clone(battle),rngState=state.rngState,executionOrder=clone(state.executionOrder||[]),events=[];
  const ranked=entries=>dynamicRank(next,entries,{trickRoom:typeof isTrickRoom==='function'?isTrickRoom(clone(next))===true:state.trickRoom===true,getSpeed});
  const execute=(action,kind=action.kind)=>{
@@ -79,6 +79,7 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom}){
    if(!entryResult?.battle||!Array.isArray(entryResult.events))throw new Error('invalid entry handler result');
    next=clone(entryResult.battle);events.push(...entryResult.events);
   }
+  if(typeof afterAction==='function'){const actionEvents=events.slice(beforeEventCount),input=clone(next),before=JSON.stringify(input),post=afterAction(input,clone(actionEvents));if(JSON.stringify(input)!==before)throw new Error('afterAction mutated battle');if(!post?.battle||!Array.isArray(post.events))throw new Error('invalid afterAction result');next=clone(post.battle);events.push(...clone(post.events));}
   const outcome=checkBattleResult(next);next=outcome.battle;events.push(...outcome.events);
   const actionEvents=events.slice(beforeEventCount);
   return {suspended:next.phase!=='FINISHED'&&entryKoRequiresReplacement(next,actionEvents)};
@@ -100,7 +101,7 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom}){
  return {battle:next,events,executionOrder,rngState,suspended:false};
 }
 
-export function resolveActionQueue(battle,actions,handlers,{trickRoom=false,isTrickRoom,getSpeed=(_battle,action)=>action.speed,validateAction,prepareTurnOrder}={}){
+export function resolveActionQueue(battle,actions,handlers,{trickRoom=false,isTrickRoom,getSpeed=(_battle,action)=>action.speed,validateAction,prepareTurnOrder,afterAction}={}){
  if(battle.phase!=='RESOLVE')return {ok:false,code:'WRONG_PHASE'};
  if(battle.pendingResolution)return {ok:false,code:'RESOLUTION_ALREADY_SUSPENDED'};
  const valid=validateTurnActions(battle,actions,{validateAction});if(!valid.ok)return valid;
@@ -117,16 +118,16 @@ export function resolveActionQueue(battle,actions,handlers,{trickRoom=false,isTr
   movePending:preparedActions.filter(action=>action.kind==='move'||action.kind==='recharge'),
   executionOrder:[],rngState,trickRoom:trickRoom===true,
  };
- const initialEvents=[{kind:'turnStarted',turn:next.turn},...orderEvents],continued=continueActionQueue(next,state,handlers,{getSpeed,isTrickRoom}),committed=commitEvents(continued.battle,[...initialEvents,...continued.events]);
+ const initialEvents=[{kind:'turnStarted',turn:next.turn},...orderEvents],continued=continueActionQueue(next,state,handlers,{getSpeed,isTrickRoom,afterAction}),committed=commitEvents(continued.battle,[...initialEvents,...continued.events]);
  if(JSON.stringify(battle)!==input)throw new Error('resolveActionQueue mutated its input');
  return {ok:true,queue:continued.executionOrder,suspended:continued.suspended,...committed};
 }
 
-export function resumeActionQueue(battle,handlers,{getSpeed=(_battle,action)=>action.speed,isTrickRoom}={}){
+export function resumeActionQueue(battle,handlers,{getSpeed=(_battle,action)=>action.speed,isTrickRoom,afterAction}={}){
  if(battle.phase!=='RESOLVE')return {ok:false,code:'WRONG_PHASE'};
  if(!battle.pendingResolution)return {ok:false,code:'NO_SUSPENDED_RESOLUTION'};
  const input=JSON.stringify(battle),state=clone(battle.pendingResolution),working=clone(battle);delete working.pendingResolution;
- const continued=continueActionQueue(working,state,handlers,{getSpeed,isTrickRoom}),events=[{kind:'turnResumed',turn:working.turn},...continued.events],committed=commitEvents(continued.battle,events);
+ const continued=continueActionQueue(working,state,handlers,{getSpeed,isTrickRoom,afterAction}),events=[{kind:'turnResumed',turn:working.turn},...continued.events],committed=commitEvents(continued.battle,events);
  if(JSON.stringify(battle)!==input)throw new Error('resumeActionQueue mutated its input');
  return {ok:true,queue:continued.executionOrder,suspended:continued.suspended,...committed};
 }

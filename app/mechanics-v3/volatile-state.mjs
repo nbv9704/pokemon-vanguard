@@ -2,7 +2,8 @@ import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {VOLATILE_STATUS_IDS} from './manifest-contract.mjs';
 import {terrainVolatileBlockReason} from './terrain.mjs';
 import {resolveStatusCureItems,resolveVolatileCureItems} from './item-hooks.mjs';
-import {abilityVolatileBlock} from './ability-hooks.mjs';
+import {abilitySideConditionBypass,abilityVolatileBlock} from './ability-hooks.mjs';
+import {actorSide} from './side-conditions.mjs';
 
 function initialVolatileState(volatile,moveId,runtime,source){
  const state={id:volatile,sourceId:moveId};
@@ -28,19 +29,20 @@ function bindingFailure(volatile,target){
  return null;
 }
 
-export function applyVolatileStatus(battle,{actorId,targetId,moveId,volatile},runtime={}){
+export function applyVolatileStatus(battle,{actorId,targetId,moveId,volatile,ignoreTargetAbility=false},runtime={}){
  if(!VOLATILE_STATUS_IDS.includes(volatile))throw new Error(`unsupported volatile status: ${volatile}`);
  const next=clone(battle),target=unitById(next,targetId);
  if(!target||target.hp<=0)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'targetUnavailable'}]};
  target.volatiles=target.volatiles||{};
  if(volatile==='leech-seed'&&(target.types||[]).includes('grass'))return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'typeImmune'}]};
  const terrainReason=terrainVolatileBlockReason(next,target,volatile);if(terrainReason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:terrainReason}]};
+ const sourceSide=actorSide(next,actorId),targetSide=actorSide(next,targetId),sourceUnit=unitById(next,actorId);if(actorId!==targetId&&sourceSide&&targetSide&&sourceSide!==targetSide&&next.sides?.[targetSide]?.conditions?.safeguard&&!abilitySideConditionBypass(sourceUnit,'safeguard'))return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'safeguard'}]};
  if(target.volatiles[volatile])return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'alreadyVolatile'}]};
  const reason=bindingFailure(volatile,target);
  if(reason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason}]};
  const source=['A','B'].flatMap(side=>activeUnits(next,side)).find(entry=>entry.actorId===actorId);
  if(!source)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'sourceUnavailable'}]};
- const abilityBlock=abilityVolatileBlock(target,volatile);if(abilityBlock)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,...abilityBlock}]};
+ const abilityBlock=ignoreTargetAbility?null:abilityVolatileBlock(target,volatile,next);if(abilityBlock)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,...abilityBlock}]};
  const state=initialVolatileState(volatile,moveId,{...runtime,targetId},source);
  if(volatile==='encore'||volatile==='disable')state.moveId=target.lastMoveId;
  if(volatile==='encore')state.endsWhenMoveHasNoPp=true;

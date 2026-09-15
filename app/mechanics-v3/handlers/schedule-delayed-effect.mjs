@@ -1,5 +1,5 @@
 import {activeUnits,clone,unitById} from '../../rules-v3/battle-state.mjs';
-import {resolveTargets} from '../../rules-v3/targets.mjs';
+import {resolveTargets} from '../targets.mjs';
 import {scheduleDelayedEffect,scheduleDelayedEffectForActive} from '../delayed-effects.mjs';
 
 export const scheduleDelayedEffectHandler={
@@ -13,7 +13,7 @@ export const scheduleDelayedEffectHandler={
   }
   const targets=payload.accuracyResolved
    ?(payload.hitTargetIds||[]).map(actorId=>({actorId}))
-   :resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false});
+   :resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false,move});
   if(payload.accuracyResolved&&!payload.resolvedTargetIds?.length)return {battle:next,payload:{...payload,targetIds:[]},events:[]};
   if(payload.accuracyResolved&&!targets.length)return {battle:next,payload:{...payload,targetIds:[]},events:[]};
   if(!targets.length)return {battle:next,payload:{...payload,targetIds:[]},events:[{kind:'moveFailed',actorId:actor.actorId,moveId:move.id,reason:'noTarget'}]};

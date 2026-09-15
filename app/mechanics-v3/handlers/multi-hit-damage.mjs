@@ -1,5 +1,5 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
-import {resolveTargets} from '../../rules-v3/targets.mjs';
+import {resolveTargets} from '../targets.mjs';
 import {applyDamageHit} from '../damage-hit.mjs';
 import {abilityMaximizesMultiHit} from '../ability-hooks.mjs';
 
@@ -16,7 +16,7 @@ export const multiHitDamageHandler={
   if(typeof runtime.nextRandom!=='function')throw new Error('deal-multi-hit-damage requires seeded nextRandom');
   let next=clone(battle);const {action,move,mechanics}=payload,actor=unitById(next,action.actorId),events=[];
   if(!actor||actor.hp<=0)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],hitCounts:{},damagedTargetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'actorUnavailable'}]};
-  const targets=payload.accuracyResolved?(payload.hitTargetIds||[]).map(actorId=>({actorId})):resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false});
+  const targets=payload.accuracyResolved?(payload.hitTargetIds||[]).map(actorId=>({actorId})):resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false,move});
   if(payload.accuracyResolved&&!payload.resolvedTargetIds?.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],hitCounts:{},damagedTargetIds:[]},events:[]};
   if(payload.accuracyResolved&&!targets.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],hitCounts:{},damagedTargetIds:[]},events:[]};
   if(!targets.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],hitCounts:{},damagedTargetIds:[]},events:[{kind:'moveFailed',actorId:actor.actorId,moveId:move.id,reason:'noTarget'}]};
@@ -26,8 +26,8 @@ export const multiHitDamageHandler={
    for(let hit=1;hit<=plannedHits;hit++){
     const liveActor=unitById(next,actor.actorId);if(!liveActor||liveActor.hp<=0)break;
     const defender=unitById(next,targetId);if(!defender||defender.hp<=0)break;
-    const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move,mechanics,hit,moveItemMultiplier:payload.itemMoveMultiplier??1,moveItemId:payload.itemMoveItemId??null},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
-    if(result.amount===0)break;
+    const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move,mechanics,hit,moveItemMultiplier:payload.itemMoveMultiplier??1,moveItemId:payload.itemMoveItemId??null},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0&&!result.substituteAbsorbed)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
+    if(result.amount===0&&!result.disguiseShielded)break;
    }
    hitCounts[targetId]=actualHits;events.push({kind:'hitCount',actorId:actor.actorId,targetId,moveId:move.id,plannedHits,hitCount:actualHits});
   }

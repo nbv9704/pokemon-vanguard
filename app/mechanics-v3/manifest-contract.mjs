@@ -1,6 +1,6 @@
 import {TARGET_MODES} from '../rules-v3/targets.mjs';
 import {CANONICAL_TYPES} from '../rules-v3/type-chart.mjs';
-import {validatePassiveHandler} from './passive-effects.mjs';
+import {validatePassiveHandler} from './passive-handler-validation.mjs';
 
 export const CONTENT_KINDS=['moves','abilities','items'];
 export const BATTLE_FORMATS=['single','double'];
@@ -10,13 +10,13 @@ export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable
 export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double'];
 export const WEATHER_IDS=['sun','rain','snow','sandstorm'];
 export const TERRAIN_IDS=['electric','grassy','misty','psychic'];
-export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen'];
+export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen','safeguard'];
 export const HAZARD_IDS=['stealth-rock','spikes','toxic-spikes'];
 export const ROOM_IDS=['trick-room','wonder-room','magic-room'];
 export const DELAYED_EFFECT_IDS=['yawn','perish-song'];
 export const TWO_TURN_MOVE_KINDS=['solar-charge','semi-invulnerable'];
 export const SEMI_INVULNERABLE_MODES=['underground','underwater','airborne','vanished'];
-export const MOVE_TAG_IDS=['sound','punch','bullet','bite','slicing','pulse'];
+export const MOVE_TAG_IDS=['sound','punch','bullet','bite','slicing','pulse','powder'];
 export const SECONDARY_EFFECT_KINDS=['major-status','volatile-status','stat-stages'];
 export const HOOKS=['onEntry','beforeAction','onTurnOrder','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','afterStatus','afterStatChange','onMove','onSwitchOut','endTurn','onFaint'];
 
@@ -109,6 +109,9 @@ export function validateMechanicManifest(manifest,kind){
    if(entry.params?.scope!==undefined&&entry.params.scope!=='all-active')problems.push('schedule-delayed-effect scope must be all-active when provided');
   }
   if(entry?.id==='cleanup-battlefield-effects'&&!['rapid-spin','defog'].includes(entry.params?.mode))problems.push('cleanup-battlefield-effects requires a supported mode');
+  if(entry?.id==='apply-transform'&&Object.keys(entry.params||{}).length)problems.push('apply-transform does not accept params');
+  if(entry?.id==='prepare-form-dependent-move'){const mapping=entry.params?.typeBySpecies;if(!mapping||typeof mapping!=='object'||Array.isArray(mapping)||!Object.keys(mapping).length||Object.values(mapping).some(type=>!CANONICAL_TYPES.includes(type)))problems.push('prepare-form-dependent-move requires canonical typeBySpecies mappings');}
+  if(entry?.id==='apply-substitute'&&Object.keys(entry.params||{}).length)problems.push('apply-substitute does not accept params');
   if(entry?.id==='apply-side-condition'){
    if(!SIDE_CONDITION_IDS.includes(entry.params?.condition))problems.push('apply-side-condition requires a supported condition');
    if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('apply-side-condition turns must be a positive integer');
@@ -119,7 +122,7 @@ export function validateMechanicManifest(manifest,kind){
   }
   if(entry?.id==='apply-secondary-effects'&&kind!=='moves')problems.push('apply-secondary-effects is only valid for moves');
   if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
-  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','weather-type-damage-boost','weather-residual-immunity','weather-incoming-accuracy-modifier','volatile-incoming-accuracy-modifier','type-immunity-boost','type-immunity-response','status-type-immunity-bypass','priority-move-immunity-aura','ally-major-status-immunity','ally-stat-drop-immunity','received-type-damage-modifier','contact-response','damage-response','ko-stat-boost','end-turn-stat-boost','lethal-hit-survival','stat-drop-response','volatile-immunity','critical-vs-status','status-residual-heal','status-reflect','flinch-stat-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','stat-multiplier','outgoing-accuracy-modifier','contact-power-boost','recoil-power-boost','major-status-immunity','critical-ratio','critical-immunity','stab-modifier','recoil-immunity','received-damage-modifier','always-hit','burn-attack-penalty-immunity','stat-drop-immunity','ally-damage-immunity','ally-damage-reduction','ally-ability-stat-multiplier','secondary-effect-immunity','multi-hit-max','weather-status-cure','paralysis-speed-penalty-immunity','switch-out-status-cure','switch-out-heal','random-status-cure','entry-weather','entry-stat-drop','entry-screen-cleaner','entry-ally-stage-reset','entry-ally-heal','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
+  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','weather-type-damage-boost','weather-residual-immunity','weather-incoming-accuracy-modifier','volatile-incoming-accuracy-modifier','type-immunity-boost','type-immunity-response','status-type-immunity-bypass','priority-move-immunity-aura','ally-major-status-immunity','ally-volatile-immunity','ally-stat-drop-immunity','held-item-suppression','grounding-immunity','move-type-conversion','outgoing-secondary-effect','turn-order-modifier','opponent-berry-suppression','type-immunity-bypass','end-turn-berry-restore','end-turn-ally-status-cure','item-loss-speed-boost','late-move-power-boost','berry-consumption-heal','weather-suppression','damage-response-disable','sleep-counter-rate','damage-charge-type','entry-item-reveal','stat-drop-reflect','end-turn-random-stat-shift','redirection-immunity','target-pp-pressure','pre-move-type-change','redirection-bypass','entry-fainted-ally-power-boost','stat-change-inversion','global-move-block','type-redirection','side-condition-bypass','opponent-stat-gain-copy','berry-effect-multiplier','opponent-stage-ignore','entry-ability-copy','ally-faint-ability-copy','contact-ability-replace','contact-ability-swap','indirect-damage-immunity','entry-danger-sense','opponent-ability-bypass','status-move-reflect','field-type-change','disguise-shield','stance-form-change','entry-transform','entry-illusion','end-turn-form-toggle','switch-out-form-change','received-type-damage-modifier','contact-response','damage-response','ko-stat-boost','end-turn-stat-boost','lethal-hit-survival','stat-drop-response','volatile-immunity','critical-vs-status','status-residual-heal','status-reflect','flinch-stat-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','stat-multiplier','outgoing-accuracy-modifier','contact-power-boost','recoil-power-boost','major-status-immunity','critical-ratio','critical-immunity','stab-modifier','recoil-immunity','received-damage-modifier','always-hit','burn-attack-penalty-immunity','stat-drop-immunity','ally-damage-immunity','ally-damage-reduction','ally-ability-stat-multiplier','secondary-effect-immunity','multi-hit-max','weather-status-cure','paralysis-speed-penalty-immunity','switch-out-status-cure','switch-out-heal','random-status-cure','entry-weather','entry-stat-drop','entry-screen-cleaner','entry-ally-stage-reset','entry-ally-heal','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);
@@ -145,6 +148,8 @@ function validateSecondaryEffect(effect){
  if(!effect||typeof effect!=='object'||Array.isArray(effect))return ['must be an object'];
  if(!SECONDARY_EFFECT_KINDS.includes(effect.kind))problems.push(`has unsupported kind: ${effect.kind}`);
  if(!Number.isInteger(effect.chance)||effect.chance<1||effect.chance>100)problems.push('chance must be an integer from 1 to 100');
+ if(effect.target!==undefined&&effect.target!=='self')problems.push('target must be self when provided');
+ if(effect.target==='self'&&effect.kind!=='stat-stages')problems.push('self secondary effects currently require stat-stages');
  if(effect.kind==='major-status'){
   if(!MAJOR_STATUS_IDS.includes(effect.status))problems.push(`has unsupported major status: ${effect.status}`);
   if(effect.blockedTargetTypes!==undefined&&(!Array.isArray(effect.blockedTargetTypes)||new Set(effect.blockedTargetTypes).size!==effect.blockedTargetTypes.length||effect.blockedTargetTypes.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('blockedTargetTypes must contain distinct canonical types');

@@ -6,6 +6,8 @@ import {applyMajorStatus} from './major-status.mjs';
 import {unitIsGrounded} from './terrain.mjs';
 import {resolveEntryItems,resolveHpThresholdItems} from './item-hooks.mjs';
 import {resolveEntryAbilities} from './ability-lifecycle.mjs';
+import {abilityPreventsIndirectDamage} from './ability-hooks.mjs';
+import {resolveFaintAbilityCopiesFromEvents} from './ability-replacement.mjs';
 const MAX_LAYERS={'stealth-rock':1,spikes:3,'toxic-spikes':2};
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
@@ -52,8 +54,8 @@ function resolveToxicSpikes(next,unit,state,entry,events){
  return applied.battle;
 }
 
-export function resolveEntryHazards(battle,switchEvents=[]){
- let next=clone(battle);const events=[],entryAbilities=resolveEntryAbilities(next,switchEvents);next=entryAbilities.battle;events.push(...entryAbilities.events);const entryItems=resolveEntryItems(next,switchEvents);next=entryItems.battle;events.push(...entryItems.events);
+export function resolveEntryHazards(battle,switchEvents=[],{manifests=null,moves=null}={}){
+ let next=clone(battle);const events=[],entryAbilities=resolveEntryAbilities(next,switchEvents,{manifests,moves});next=entryAbilities.battle;events.push(...entryAbilities.events);const entryItems=resolveEntryItems(next,switchEvents);next=entryItems.battle;events.push(...entryItems.events);
  for(const entry of switchEvents||[]){
   if(entry?.kind!=='switchIn'||!entry.actorId||!entry.side)continue;
   const entrant=unitById(next,entry.actorId);if(!entrant||entrant.hp<=0)continue;
@@ -62,9 +64,11 @@ export function resolveEntryHazards(battle,switchEvents=[]){
    const unit=unitById(next,entry.actorId);if(!unit||unit.hp<=0)break;
    if(state.id==='toxic-spikes'){next=resolveToxicSpikes(next,unit,state,entry,events);continue;}
    const {amount,effectiveness}=hazardDamage(next,unit,state.id,state.layers||1);if(amount<=0)continue;
+   const guard=abilityPreventsIndirectDamage(unit);if(guard){events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:state.id,layers:state.layers||1,amount:0,effectiveness,blockedByAbilityId:guard.sourceId},{kind:'abilityTriggered',sourceId:unit.actorId,abilityId:guard.sourceId,effectId:guard.kind,trigger:`hazard:${state.id}`});continue;}
    events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:state.id,layers:state.layers||1,amount,effectiveness});
    const applied=applyHpGroup(next,[{actorId:unit.actorId,delta:-amount}],state.id);next=applied.battle;
-   events.push(...applied.events.map(event=>({...event,hazard:state.id,layers:state.layers||1,effectiveness:event.kind==='damage'?effectiveness:event.effectiveness})));
+   const hazardEvents=applied.events.map(event=>({...event,hazard:state.id,layers:state.layers||1,effectiveness:event.kind==='damage'?effectiveness:event.effectiveness}));events.push(...hazardEvents);
+   if(manifests){const copied=resolveFaintAbilityCopiesFromEvents(next,hazardEvents,{manifests});next=copied.battle;events.push(...copied.events);}
    const threshold=resolveHpThresholdItems(next,{actorIds:[unit.actorId],trigger:`hazard:${state.id}`});next=threshold.battle;events.push(...threshold.events);
   }
   const threshold=resolveHpThresholdItems(next,{actorIds:[entry.actorId],trigger:'switch-in'});next=threshold.battle;events.push(...threshold.events);

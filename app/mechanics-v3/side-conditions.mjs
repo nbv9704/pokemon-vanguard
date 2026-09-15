@@ -1,7 +1,8 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {passiveEffectActive} from './passive-effects.mjs';
+import {abilitySideConditionBypass} from './ability-hooks.mjs';
 
-export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen'];
+export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen','safeguard'];
 const maxScreenTurns=(battle,unit,condition,defaultTurns)=>{
  const effect=(unit?.passiveEffects||[]).find(entry=>passiveEffectActive(entry,battle,unit)&&entry.kind==='screen-duration'&&entry.conditions?.includes(condition));
  return {remaining:effect?.turns||defaultTurns,sourceItemId:effect?.sourceId};
@@ -27,10 +28,12 @@ export function speedWithSideConditions(speed,unit,battle){
  return side&&battle.sides[side].conditions?.tailwind?Math.floor(speed*2):speed;
 }
 
-export function sideConditionDamageModifiers(battle,defender,move,critical=false){
+export function sideConditionDamageModifiers(battle,defender,move,critical=false,attacker=null){
  if(critical)return {values:[],applied:[]};
  const side=actorSide(battle,defender?.actorId),condition=move?.category==='physical'?'reflect':move?.category==='special'?'light-screen':null;
  if(!side||!condition||!battle.sides[side].conditions?.[condition])return {values:[],applied:[]};
+ const bypass=abilitySideConditionBypass(attacker,condition);
+ if(bypass)return {values:[],applied:[{sourceKind:'ability',sourceId:bypass.sourceId,kind:bypass.kind,condition,bypassed:true}]};
  const multiplier=battle.format==='double'?2732/4096:.5;
  return {values:[multiplier],applied:[{sourceKind:'side-condition',sourceId:condition,kind:'screen-damage-reduction',multiplier}]};
 }

@@ -20,14 +20,14 @@ export {applyPivotSwitchHandler} from './handlers/apply-pivot-switch.mjs';
 export {applyForcedSwitchHandler} from './handlers/apply-forced-switch.mjs';
 export {applyPivotSwitch,applyForcedSwitches,applyPositionSwap,validateSwitchingChoice} from './switching.mjs';
 export {applyMechanicsSwitch,resolveSwitchOutAbilities} from './switch-lifecycle.mjs';
-export {resolveEntryAbilities} from './ability-lifecycle.mjs';
+export {resolveAbilityStartEffects,resolveEntryAbilities} from './ability-lifecycle.mjs';
 export {resolveContactAbilityResponses} from './ability-contact.mjs';
 export {resolveDamageResponseAbilities,resolveKoAbilityEffects,applyLethalHitSurvivalAbility,resolveEndTurnAbilityStageBoosts} from './ability-damage-response.mjs';
 export {applyPositionSwapHandler} from './handlers/apply-position-swap.mjs';
 export {heldDamageBoostHandler,lowHpTypeBoostHandler,receivedTypeDamageReductionHandler} from './handlers/passive-damage-modifiers.mjs';
 export {megaStoneHandler} from './handlers/mega-stone.mjs';
 export {compilePassiveEffects,passiveDamageModifiers,receivedDamageModifiers,passiveEffectActive} from './passive-effects.mjs';
-export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,revealHeldItem,heldItemHasEffect,typeEffectivenessWithHeldItems,applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveStatusCureItems,resolveVolatileCureItems,resolveNegativeStageResetItems,resolveTerrainSeedItems,resolvePpRestoreItems,resolveEntryItems,prepareOneShotMoveDamageItem,prepareConsecutiveMoveItem,prepareTurnOrderItems,resolveFlinchItems,resolveReactiveSwitchItems,speedWithHeldItems,statWithHeldItems,accuracyWithHeldItems,healingWithHeldItems,criticalChanceWithHeldItems,validateChoiceItemMove,applyChoiceItemMoveLock} from './item-hooks.mjs';
+export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,revealHeldItem,heldItemHasEffect,typeEffectivenessWithHeldItems,applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveEndTurnItemAbilityLifecycle,transferHeldItem,resolveStatusCureItems,resolveVolatileCureItems,resolveNegativeStageResetItems,resolveTerrainSeedItems,resolvePpRestoreItems,resolveEntryItems,prepareOneShotMoveDamageItem,prepareConsecutiveMoveItem,prepareTurnOrderItems,resolveFlinchItems,resolveReactiveSwitchItems,speedWithHeldItems,statWithHeldItems,accuracyWithHeldItems,healingWithHeldItems,criticalChanceWithHeldItems,validateChoiceItemMove,applyChoiceItemMoveLock} from './item-hooks.mjs';
 export {validateBetaSlice} from './beta-slice.mjs';
 export {applyProtect,applySideGuard,breakProtection,isProtectedTarget,protectionBlockReason,resolveProtectionBlock} from './protection.mjs';
 export {spendPpHandler} from './handlers/spend-pp.mjs';
@@ -64,6 +64,20 @@ export {applyRechargeHandler} from './handlers/apply-recharge.mjs';
 
 export {SEMI_INVULNERABLE_MODES as SEMI_INVULNERABILITY_MODES,semiInvulnerableState,semiInvulnerabilityInteraction,applySemiInvulnerabilityHitEffect} from './semi-invulnerability.mjs';
 
-export {modifyMoveByAbility,resolveTargetAbilityBlock,abilityPowerModifiers,abilityStatModifiers,abilityIncomingAccuracyModifier,abilityStatusBlock,abilityWeatherResidualDamageGroup} from './ability-hooks.mjs';
+export {modifyMoveByAbility,resolveTargetAbilityBlock,abilityPowerModifiers,abilityStatModifiers,abilityIncomingAccuracyModifier,abilityStatusBlock,abilityWeatherResidualDamageGroup,resolveEndTurnAbilityAllyStatusCures,resolveEndTurnAbilityBerryRestores,abilityBerryConsumptionHeal,abilityBerryEffectMultiplier,globalMoveAbilityBlock,globalContactFaintResponseBlock,abilitySleepCounterRate,abilityStatDropReflection,applyAbilityStatDropReflection,abilityPreventsIndirectDamage,abilitySideConditionBypass} from './ability-hooks.mjs';
+export {resolveBeforeMoveAbilityState,resolveAfterMoveAbilityState} from './ability-action-state.mjs';
+export {applyFormProfile,resolveFieldTypeAbilities,resolvePreMoveFormAbilities,resolveSwitchOutAbilityForms,resolveEndTurnAbilityForms,applyDisguiseShield} from './ability-form.mjs';
+export {applyTransformState,restoreTransformState,resolveEntryTransformAbility,resolveEntryIllusionAbility,breakIllusionOnDamage,clearIllusionState,transformBlockedReason} from './ability-transform.mjs';
+export {resolveStatusMoveReflection,opponentAbilitiesIgnoredFor,statusMoveReflectable,statusMoveReflectionForTarget} from './ability-targeting.mjs';
+export {applySubstitute,applySubstituteDamage,substituteBlocksStatusMove,substituteBypassed} from './substitute.mjs';
+export {effectiveWeatherId,weatherEffectsSuppressed} from './ability-field.mjs';
 
+export {resolveOutgoingAbilitySecondaries} from './ability-outgoing.mjs';
 export {effectiveBattleSpeed} from './speed.mjs';
+export {prepareTurnOrderAbilities,prepareTurnOrderMechanics} from './turn-order-effects.mjs';
+
+export {abilityStageChange,abilityIgnoresOpponentStage} from './ability-stage-change.mjs';
+export {resolveOpponentStatGainCopyAbilities} from './ability-stage-response.mjs';
+
+export {resolvePostMoveItemTransferAbilities} from './ability-item-transfer.mjs';
+export {activeAbilityId,replaceActiveAbility,swapActiveAbilities,restoreTransientAbility,resolveEntryAbilityCopies,resolveAllyFaintAbilityCopies,resolveFaintAbilityCopiesFromEvents,resolveContactAbilityReplacement} from './ability-replacement.mjs';

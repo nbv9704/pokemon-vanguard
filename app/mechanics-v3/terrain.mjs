@@ -12,7 +12,7 @@ const effectFor=(unit,kind,battle)=>(unit?.passiveEffects||[]).find(effect=>pass
 export function unitIsGrounded(unit,battle=null){
  if(!unit)return false;
  if(effectFor(unit,'item-grounding',battle))return true;
- if(effectFor(unit,'item-airborne',battle))return false;
+ if(effectFor(unit,'item-airborne',battle)||effectFor(unit,'grounding-immunity',battle))return false;
  if(unit.volatiles?.['magnet-rise']||unit.volatiles?.telekinesis)return false;
  return !(unit.types||[]).includes('flying');
 }
