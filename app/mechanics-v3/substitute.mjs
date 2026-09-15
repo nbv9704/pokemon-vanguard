@@ -12,7 +12,7 @@ export function applySubstitute(battle,{actorId,moveId}){
  return {battle:next,applied:true,events:[{kind:'damage',actorId,targetId:actorId,moveId,hpBefore,hpAfter:actor.hp,amount:cost,source:'substitute-cost'},{kind:'substituteCreated',actorId,moveId,hp:cost}]};
 }
 
-export function substituteBypassed(actor,mechanics){return isSound(mechanics)||Boolean(abilitySideConditionBypass(actor,'substitute'));}
+export function substituteBypassed(actor,mechanics){return mechanics?.bypassSubstitute===true||isSound(mechanics)||Boolean(abilitySideConditionBypass(actor,'substitute'));}
 
 export function substituteBlocksStatusMove(target,actor,move,mechanics){return Boolean(target?.volatiles?.substitute&&move?.category==='status'&&!substituteBypassed(actor,mechanics));}
 

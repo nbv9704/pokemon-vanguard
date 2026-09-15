@@ -12,6 +12,7 @@ const activeSideUnits=(battle,side)=>side?activeUnits(battle,side).map(entry=>en
 const activeAllies=(battle,unit)=>activeSideUnits(battle,sideOf(battle,unit?.actorId)).filter(ally=>ally.actorId!==unit.actorId);
 const targetTypeMatches=(effect,target)=>!(effect.targetTypes||[]).length||(target?.types||[]).some(type=>effect.targetTypes.includes(type));
 const pokeRound=value=>value%1>.5?Math.ceil(value):Math.floor(value);
+const suppressibleSecondaryCount=mechanics=>(Array.isArray(mechanics?.secondaryEffects)?mechanics.secondaryEffects.length:0)+(Array.isArray(mechanics?.handlers)?mechanics.handlers.filter(handler=>handler?.params?.suppressibleSecondary===true).length:0);
 
 export function modifyMoveByAbility(unit,move,mechanics,{priority=null,turnOrderAbilityIds=[]}={}){
  const nextMove=structuredClone(move),nextMechanics=structuredClone(mechanics),applied=[],tags=tagsOf(nextMechanics);
@@ -24,8 +25,8 @@ export function modifyMoveByAbility(unit,move,mechanics,{priority=null,turnOrder
   if(effect.kind==='move-type-conversion'&&nextMove.type===effect.fromType){
    const fromType=nextMove.type;nextMove.type=effect.toType;nextMechanics.abilityTypeConversion={sourceId:effect.sourceId,multiplier:effect.multiplier,fromType,toType:effect.toType};applied.push({sourceKind:'ability',sourceId:effect.sourceId,kind:effect.kind,fromType,toType:effect.toType,multiplier:effect.multiplier});
   }
-  if(effect.kind==='secondary-effect-power-boost'&&Array.isArray(nextMechanics.secondaryEffects)&&nextMechanics.secondaryEffects.length){
-   nextMechanics.secondaryEffectsSuppressed=true;applied.push({sourceKind:'ability',sourceId:effect.sourceId,kind:effect.kind,multiplier:effect.multiplier,suppressedSecondaries:nextMechanics.secondaryEffects.length});
+  if(effect.kind==='secondary-effect-power-boost'){
+   const suppressedSecondaries=suppressibleSecondaryCount(nextMechanics);if(suppressedSecondaries){nextMechanics.secondaryEffectsSuppressed=true;applied.push({sourceKind:'ability',sourceId:effect.sourceId,kind:effect.kind,multiplier:effect.multiplier,suppressedSecondaries});}
   }
   if(effect.kind==='remove-contact'&&nextMechanics.contact){
    nextMechanics.contact=false;applied.push({sourceKind:'ability',sourceId:effect.sourceId,kind:effect.kind});
@@ -103,7 +104,7 @@ export function abilityPowerModifiers(unit,move,mechanics,{battle=null,runtime=n
   let active=false,multiplier=effect.multiplier;
   if(effect.kind==='base-power-threshold-boost')active=Number.isFinite(move.power)&&move.power<=effect.maxPower;
   if(effect.kind==='move-tag-power-boost')active=tags.has(effect.tag);
-  if(effect.kind==='secondary-effect-power-boost')active=Array.isArray(mechanics?.secondaryEffects)&&mechanics.secondaryEffects.length>0;
+  if(effect.kind==='secondary-effect-power-boost')active=suppressibleSecondaryCount(mechanics)>0;
   if(effect.kind==='contact-power-boost')active=mechanics?.contact===true;
   if(effect.kind==='recoil-power-boost')active=hasRecoil;
   if(effect.kind==='move-type-conversion')active=mechanics?.abilityTypeConversion?.sourceId===effect.sourceId;

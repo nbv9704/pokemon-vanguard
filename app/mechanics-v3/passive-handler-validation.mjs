@@ -95,7 +95,7 @@ export function validatePassiveHandler(entry){
   return problems;
  }
  if(entry.id==='ally-volatile-immunity'){
-  const allowed=['confusion','flinch','taunt','encore','disable','leech-seed'];
+  const allowed=['confusion','flinch','taunt','encore','disable','leech-seed','torment'];
   if(!Array.isArray(params.volatiles)||!params.volatiles.length||new Set(params.volatiles).size!==params.volatiles.length||params.volatiles.some(id=>!allowed.includes(id)))problems.push('ally-volatile-immunity requires distinct supported volatiles');
   return problems;
  }
@@ -360,7 +360,7 @@ export function validatePassiveHandler(entry){
   return problems;
  }
  if(entry.id==='side-condition-bypass'){
-  if(!Array.isArray(params.conditions)||!params.conditions.length||new Set(params.conditions).size!==params.conditions.length||params.conditions.some(condition=>!['reflect','light-screen','safeguard','substitute'].includes(condition)))problems.push('side-condition-bypass requires distinct supported conditions');
+  if(!Array.isArray(params.conditions)||!params.conditions.length||new Set(params.conditions).size!==params.conditions.length||params.conditions.some(condition=>!['reflect','light-screen','aurora-veil','safeguard','substitute'].includes(condition)))problems.push('side-condition-bypass requires distinct supported conditions');
   return problems;
  }
  if(entry.id==='berry-effect-multiplier'){

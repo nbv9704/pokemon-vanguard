@@ -48,7 +48,8 @@ export function applySwitch(battle,side,actorId,toId){
  if(slot<0||!reserve)return {ok:false,code:'INVALID_SWITCH'};
  const next=clone(battle),outgoing=unitById(next,actorId);
  if(outgoing.status?.id==='bad-poison')outgoing.status.toxicCounter=0;
- outgoing.stages={atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0};outgoing.volatiles={};next.sides[side].active[slot]=toId;
+ const originalStats=outgoing.volatiles?.['stored-stat-overrides']?.originalStats;if(originalStats&&typeof originalStats==='object')for(const [stat,value] of Object.entries(originalStats))if(Number.isInteger(value)&&outgoing.stats&&stat in outgoing.stats)outgoing.stats[stat]=value;
+ outgoing.stages={atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0};outgoing.volatiles={};next.sides[side].active[slot]=toId;const incoming=unitById(next,toId);incoming.volatiles??={};incoming.volatiles['fresh-entry']={id:'fresh-entry',eligibleTurn:next.turn+1,endTurnTimer:2};
  return {ok:true,battle:next,events:[{kind:'switchOut',actorId,side,slot},{kind:'switchIn',actorId:toId,side,slot}]};
 }
 
@@ -56,7 +57,7 @@ export function applyReplacements(battle,choicesBySide){
  let next=clone(battle);const events=[];
  for(const side of ['A','B']){
   const valid=validateReplacements(next,side,choicesBySide[side]||[]);if(!valid.ok)return valid;
-  for(const choice of valid.choices.sort((a,b)=>a.slot-b.slot)){next.sides[side].active[choice.slot]=choice.actorId;events.push({kind:'switchIn',actorId:choice.actorId,side,slot:choice.slot,replacement:true});}
+  for(const choice of valid.choices.sort((a,b)=>a.slot-b.slot)){next.sides[side].active[choice.slot]=choice.actorId;const incoming=unitById(next,choice.actorId);incoming.volatiles??={};incoming.volatiles['fresh-entry']={id:'fresh-entry',eligibleTurn:next.turn+1,endTurnTimer:2};events.push({kind:'switchIn',actorId:choice.actorId,side,slot:choice.slot,replacement:true});}
  }
  next.phase='ENTRY';next.phaseRevision=(next.phaseRevision||0)+1;if(!next.pendingResolution)next.turn++;
  const committed=commitEvents(next,events);return {ok:true,...committed};
@@ -116,6 +117,7 @@ export function resolveEndTurn(battle,groups,{initialEvents=[],afterEachGroup=nu
   state.remaining--;if(state.remaining<=0){delete next.field.rooms[room];events.push({kind:'roomEnded',room,reason:'duration'});}
  }
  if(next.field?.rooms&&!Object.keys(next.field.rooms).length)delete next.field.rooms;
+ const fairyLock=next.field?.fairyLock;if(fairyLock&&Number.isInteger(fairyLock.remaining)){fairyLock.remaining--;if(fairyLock.remaining<=0){delete next.field.fairyLock;events.push({kind:'fieldConditionEnded',condition:'fairy-lock',reason:'duration'});}}
  const weather=next.field?.weather;if(weather&&Number.isInteger(weather.remaining)){
   weather.remaining--;if(weather.remaining<=0){delete next.field.weather;events.push({kind:'weatherEnded',weather:weather.id,reason:'duration'});}
  }

@@ -1,4 +1,6 @@
 import {effectiveBattleSpeed} from './speed.mjs';
+import {unitIsGrounded} from './terrain.mjs';
+import {heldItemId} from './item-hooks.mjs';
 
 const hpRatio48=unit=>Math.max(Math.floor(unit.hp*48/unit.maxHp),1);
 const lowHpPower=unit=>{const ratio=hpRatio48(unit);return ratio<2?200:ratio<5?150:ratio<10?100:ratio<17?80:ratio<33?40:20;};
@@ -17,6 +19,10 @@ export function variableMovePower(formula,{battle,actor,target,basePower,runtime
  case 'target-poison':{const status=target.status?.id||target.status;return status==='poison'||status==='bad-poison'?basePower*2:basePower;}
  case 'target-hp-proportional':return proportionalTargetPower(target,basePower);
  case 'random-double':if(typeof runtime?.nextRandom!=='function')throw new Error('random-double requires seeded nextRandom');return runtime.nextRandom()<.3?basePower*2:basePower;
+ case 'target-grounded-electric-terrain':return battle.field?.terrain?.id==='electric'&&unitIsGrounded(target,battle)?basePower*2:basePower;
+ case 'user-no-held-item':return heldItemId(actor)?basePower:basePower*2;
+ case 'target-held-item-boost':return heldItemId(target)?Math.floor(basePower*3/2):basePower;
+ case 'user-stockpile':return basePower*(actor.volatiles?.stockpile?.layers||0);
  default:throw new Error(`unsupported variable-power formula: ${formula}`);
  }
 }

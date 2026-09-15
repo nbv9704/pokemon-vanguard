@@ -27,7 +27,7 @@ export {applyPositionSwapHandler} from './handlers/apply-position-swap.mjs';
 export {heldDamageBoostHandler,lowHpTypeBoostHandler,receivedTypeDamageReductionHandler} from './handlers/passive-damage-modifiers.mjs';
 export {megaStoneHandler} from './handlers/mega-stone.mjs';
 export {compilePassiveEffects,passiveDamageModifiers,receivedDamageModifiers,passiveEffectActive} from './passive-effects.mjs';
-export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,revealHeldItem,heldItemHasEffect,typeEffectivenessWithHeldItems,applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveEndTurnItemAbilityLifecycle,transferHeldItem,resolveStatusCureItems,resolveVolatileCureItems,resolveNegativeStageResetItems,resolveTerrainSeedItems,resolvePpRestoreItems,resolveEntryItems,prepareOneShotMoveDamageItem,prepareConsecutiveMoveItem,prepareTurnOrderItems,resolveFlinchItems,resolveReactiveSwitchItems,speedWithHeldItems,statWithHeldItems,accuracyWithHeldItems,healingWithHeldItems,criticalChanceWithHeldItems,validateChoiceItemMove,applyChoiceItemMoveLock} from './item-hooks.mjs';
+export {createHeldItemState,heldItemId,heldItemEffectActive,activateHeldItem,revealHeldItem,consumeHeldBerry,recycleConsumedItem,hasConsumedBerry,heldItemHasEffect,typeEffectivenessWithHeldItems,applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveHpThresholdItems,resolveEndTurnItems,resolveEndTurnItemAbilityLifecycle,transferHeldItem,removeHeldItem,resolveStatusCureItems,resolveVolatileCureItems,resolveNegativeStageResetItems,resolveTerrainSeedItems,resolvePpRestoreItems,resolveEntryItems,prepareOneShotMoveDamageItem,prepareConsecutiveMoveItem,prepareTurnOrderItems,resolveFlinchItems,resolveReactiveSwitchItems,speedWithHeldItems,statWithHeldItems,accuracyWithHeldItems,healingWithHeldItems,criticalChanceWithHeldItems,validateChoiceItemMove,applyChoiceItemMoveLock} from './item-hooks.mjs';
 export {validateBetaSlice} from './beta-slice.mjs';
 export {applyProtect,applySideGuard,breakProtection,isProtectedTarget,protectionBlockReason,resolveProtectionBlock} from './protection.mjs';
 export {spendPpHandler} from './handlers/spend-pp.mjs';
@@ -51,9 +51,10 @@ export {buildMoveCapabilityInventory,reviewSignalsForMove} from './capability-in
 export {applyVolatileStatus} from './volatile-state.mjs';
 export {tryConfusionAction,tryFlinchAction,tryVolatileAction} from './volatile-action.mjs';
 export {tryBeforeMoveConditions} from './before-action.mjs';
-export {createMoveChoiceValidator,tryVolatileMoveRestriction,validateVolatileMoveChoice} from './move-restrictions.mjs';
+export {createMoveChoiceValidator,tryVolatileMoveRestriction,validateVolatileMoveChoice,validateVolatileSwitchChoice} from './move-restrictions.mjs';
 export {recordLastMove} from './move-history.mjs';
 export {applyLinkedResiduals,resolveMechanicsEndTurn} from './linked-residual.mjs';
+export {prepareBindingResidualEndTurn} from './binding-residual.mjs';
 
 export {resolveDefogCleanup,resolveRapidSpinCleanup} from './field-cleanup.mjs';
 

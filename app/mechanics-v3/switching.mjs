@@ -12,9 +12,9 @@ export function validateSwitchingChoice(battle,action,mechanics){
  return {ok:true};
 }
 
-export function applyPivotSwitch(battle,{side,actorId,toId,moveId,totalDamage}){
+export function applyPivotSwitch(battle,{side,actorId,toId,moveId,totalDamage,requireDamage=true}){
  const next=clone(battle),actor=unitById(next,actorId);
- if(!(totalDamage>0))return failed(next,actorId,moveId,'noDamage');
+ if(requireDamage&&!(totalDamage>0))return failed(next,actorId,moveId,'noDamage');
  if(!actor||actor.hp<=0||!actorAvailable(next,side,actorId))return failed(next,actorId,moveId,'actorUnavailable');
  if(typeof toId!=='string'||!toId)return failed(next,actorId,moveId,'missingSwitchTarget');
  const switched=applyMechanicsSwitch(next,side,actorId,toId);if(!switched.ok)return failed(next,actorId,moveId,'invalidSwitchTarget');
@@ -25,6 +25,8 @@ export function applyForcedSwitches(battle,{actorId,targetIds,moveId,requireDama
  let next=clone(battle);const events=[];if(requireDamage&&!(totalDamage>0))return {battle:next,succeeded:false,events:[]};
  for(const targetId of targetIds||[]){const side=sideOf(next,targetId),target=unitById(next,targetId);
   if(!side||!target||target.hp<=0||!actorAvailable(next,side,targetId)){events.push({kind:'forceSwitchFailed',actorId,targetId,moveId,reason:'targetUnavailable'});continue;}
+  if(target.volatiles?.ingrain){events.push({kind:'forceSwitchFailed',actorId,targetId,moveId,reason:'ingrain'});continue;}
+  const fairy=next.field?.fairyLock;if(fairy&&next.turn>=fairy.activeTurn){events.push({kind:'forceSwitchFailed',actorId,targetId,moveId,reason:'fairy-lock'});continue;}
   const reserves=reserveUnits(next,side);if(!reserves.length){events.push({kind:'forceSwitchFailed',actorId,targetId,moveId,reason:'noReserve'});continue;}
   let index=0;if(reserves.length>1){if(typeof runtime.nextRandom!=='function')throw new Error('forced switch requires seeded nextRandom');index=Math.floor(runtime.nextRandom()*reserves.length);}
   const switched=applyMechanicsSwitch(next,side,targetId,reserves[Math.min(index,reserves.length-1)].actorId);next=switched.battle;

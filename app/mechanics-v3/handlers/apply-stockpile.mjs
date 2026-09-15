@@ -1,0 +1,10 @@
+import {clone,unitById} from '../../rules-v3/battle-state.mjs';
+import {abilityStageChange} from '../ability-stage-change.mjs';
+import {resolveNegativeStageResetItems} from '../item-hooks.mjs';
+
+const clamp=v=>Math.max(-6,Math.min(6,v));
+function changeStage(unit,stat,delta,moveId){const changed=abilityStageChange(unit,delta),before=unit.stages?.[stat]||0,after=clamp(before+changed.requestedDelta);unit.stages[stat]=after;return {event:{kind:'statStageChanged',actorId:unit.actorId,targetId:unit.actorId,moveId,stat,before,after,requestedDelta:changed.requestedDelta,originalRequestedDelta:delta,appliedDelta:after-before,reason:after===before?'stageLimit':null},ability:changed.sourceAbilityId?{kind:'abilityTriggered',sourceId:unit.actorId,abilityId:changed.sourceAbilityId,effectId:changed.effectId,trigger:'stat-change'}:null,changed:after!==before};}
+
+export const applyStockpileHandler={
+ id:'apply-stockpile',hooks:['onMove'],run({battle,payload}){let next=clone(battle);const actor=unitById(next,payload.action.actorId);if(!actor||actor.hp<=0)return {battle:next,payload,events:[]};actor.volatiles??={};actor.stages??={};const old=actor.volatiles.stockpile;if((old?.layers||0)>=3)return {battle:next,payload,events:[{kind:'moveFailed',actorId:actor.actorId,moveId:payload.move.id,reason:'stockpileLimit'}]};const state=old||{id:'stockpile',sourceId:payload.move.id,layers:0,def:0,spd:0};state.layers++;const events=[];for(const stat of ['def','spd']){const r=changeStage(actor,stat,1,payload.move.id);if(r.ability)events.push(r.ability);events.push(r.event);if(r.changed)state[stat]=(state[stat]||0)-1;}actor.volatiles.stockpile=state;events.unshift({kind:old?'volatileRestarted':'volatileApplied',actorId:actor.actorId,targetId:actor.actorId,moveId:payload.move.id,volatile:'stockpile',layers:state.layers});const reset=resolveNegativeStageResetItems(next,{actorIds:[actor.actorId],trigger:`move:${payload.move.id}:stockpile`});next=reset.battle;events.push(...reset.events);return {battle:next,payload:{...payload,stockpileLayers:state.layers},events};}
+};

@@ -1,0 +1,2 @@
+import {clone,unitById} from '../../rules-v3/battle-state.mjs';
+export const requireStockpileHandler={id:'require-stockpile',hooks:['onTryMove'],run({battle,payload}){const next=clone(battle),actor=unitById(next,payload.action.actorId),layers=actor?.volatiles?.stockpile?.layers||0;if(layers>0)return {battle:next,payload:{...payload,stockpileLayers:layers},events:[]};return {battle:next,payload:{...payload,cancelled:true,recordLastMove:true},events:[{kind:'moveFailed',actorId:payload.action.actorId,moveId:payload.move.id,reason:'noStockpile'}]};}};

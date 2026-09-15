@@ -27,6 +27,7 @@ test('Aroma Veil protects holder and allies from move-locking volatiles without 
  let battle=fixture('double');battle.sides.B.roster[1].passiveEffects=effects('aroma-veil');battle.sides.B.roster[0].lastMoveId='hit';battle.sides.B.roster[0].pp.hit=16;
  let result=applyVolatileStatus(battle,{actorId:'a1',targetId:'b1',moveId:'taunt',volatile:'taunt'},{nextRandom:()=>0});assert.equal(result.battle.sides.B.roster[0].volatiles.taunt,undefined);assert.equal(result.events[0].sourceAbilityId,'aroma-veil');assert.equal(result.events[0].sourceActorId,'b2');
  result=applyVolatileStatus(result.battle,{actorId:'a1',targetId:'b2',moveId:'disable',volatile:'disable'},{nextRandom:()=>0});assert.equal(result.battle.sides.B.roster[1].volatiles.disable,undefined);
+ result=applyVolatileStatus(result.battle,{actorId:'a1',targetId:'b1',moveId:'torment',volatile:'torment'},{nextRandom:()=>0});assert.equal(result.battle.sides.B.roster[0].volatiles.torment,undefined);
  result=applyVolatileStatus(result.battle,{actorId:'a1',targetId:'b1',moveId:'confuse-ray',volatile:'confusion'},{nextRandom:()=>0});assert.equal(result.battle.sides.B.roster[0].volatiles.confusion.id,'confusion');
 });
 

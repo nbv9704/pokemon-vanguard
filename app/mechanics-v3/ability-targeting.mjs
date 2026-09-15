@@ -1,7 +1,7 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {resolveTargets} from './targets.mjs';
 
-const reflectableHandlers=new Set(['apply-major-status','apply-volatile-status','apply-stat-stages','apply-hazard','schedule-delayed-effect']);
+const reflectableHandlers=new Set(['apply-major-status','apply-volatile-status','apply-stat-stages','apply-type-change','apply-hazard','schedule-delayed-effect','modify-active-ability','apply-persistent-effect']);
 const abilityEffect=(unit,kind)=>(unit?.passiveEffects||[]).find(effect=>effect?.sourceKind==='ability'&&effect.kind===kind)||null;
 export const sideOfActor=(battle,actorId)=>['A','B'].find(side=>battle.sides?.[side]?.roster?.some(unit=>unit.actorId===actorId))||null;
 
@@ -14,7 +14,7 @@ export function opponentAbilitiesIgnoredFor(battle,actorId,targetId,mechanics){
 export function statusMoveReflectable(move,mechanics){
  if(move?.category!=='status'||mechanics?.statusMoveReflected===true)return false;
  if(['self','userSide','field','allAdjacent'].includes(mechanics?.targetMode))return false;
- return (mechanics?.handlers||[]).some(handler=>reflectableHandlers.has(handler?.id)&&!(handler.id==='apply-stat-stages'&&handler.params?.target==='self'));
+ return (mechanics?.handlers||[]).some(handler=>reflectableHandlers.has(handler?.id)&&!(handler.id==='apply-stat-stages'&&handler.params?.target==='self')&&!(handler.id==='modify-active-ability'&&handler.params?.reflectable!==true)&&!(handler.id==='apply-type-change'&&handler.params?.reflectable===false));
 }
 
 export function statusMoveReflectionForTarget(battle,{actorId,targetId,move,mechanics}){

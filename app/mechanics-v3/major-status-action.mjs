@@ -9,12 +9,12 @@ export function speedWithMajorStatus(speed,unit){
  return (unit?.status?.id==='paralysis'||unit?.status==='paralysis')&&!abilityIgnoresParalysisSpeedPenalty(unit)?Math.floor(speed/2):speed;
 }
 
-export function tryMajorStatusAction(battle,action,runtime={}){
+export function tryMajorStatusAction(battle,action,runtime={},options={}){
  const next=clone(battle),unit=unitById(next,action.actorId),status=unit?.status?.id||unit?.status;
  if(status==='sleep'){
   const remaining=unit.status.turnsRemaining??0,rate=abilitySleepCounterRate(unit);
   if(rate>1&&remaining>0){const after=Math.max(0,remaining-rate);unit.status.turnsRemaining=after;if(after<=0){unit.status=null;return cured(next,action.actorId,status);}return prevented(next,action.actorId,status,{turnsRemaining:after});}
-  if(remaining>0){unit.status.turnsRemaining=remaining-1;return prevented(next,action.actorId,status,{turnsRemaining:remaining-1});}
+  if(remaining>0){const after=remaining-1;unit.status.turnsRemaining=after;if(options.allowSleepAction===true)return {cancelled:false,battle:next,events:[{kind:'statusActionAllowed',actorId:action.actorId,status,turnsRemaining:after}]};return prevented(next,action.actorId,status,{turnsRemaining:after});}
   unit.status=null;return cured(next,action.actorId,status);
  }
  if(status==='freeze'){

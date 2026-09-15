@@ -1,6 +1,6 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {applyHpGroup} from '../rules-v3/lifecycle.mjs';
-import {typeEffectiveness} from '../rules-v3/type-chart.mjs';
+import {TYPE_CHART,typeEffectiveness} from '../rules-v3/type-chart.mjs';
 import {nextRandom} from '../rules-v3/rng.mjs';
 import {applyForcedSwitches} from './switching.mjs';
 import {abilityStageChange} from './ability-stage-change.mjs';
@@ -15,7 +15,7 @@ const itemEffects=(unit,kind,battle)=>(unit?.passiveEffects||[]).filter(effect=>
 
 export function createHeldItemState(itemId){
  const heldItemId=itemId&&itemId!=='none'?itemId:null;
- return {heldItemId,consumed:false,revealed:false,activationCount:0,lastActivationKey:null};
+ return {heldItemId,consumed:false,revealed:false,activationCount:0,lastActivationKey:null,consumedBerryEver:false};
 }
 
 export function heldItemId(unit){
@@ -37,6 +37,7 @@ function ensureItemState(unit){
  if(unit.itemState.revealed===undefined)unit.itemState.revealed=false;
  if(!Number.isInteger(unit.itemState.activationCount))unit.itemState.activationCount=0;
  if(unit.itemState.lastActivationKey===undefined)unit.itemState.lastActivationKey=null;
+ if(unit.itemState.consumedBerryEver===undefined)unit.itemState.consumedBerryEver=false;
  return unit.itemState;
 }
 
@@ -58,9 +59,33 @@ function markItemLost(unit,itemId,reason){
 }
 
 function receiveTransferredItem(unit,itemId,effects,{revealed=true}={}){
+ const consumedBerryEver=unit?.itemState?.consumedBerryEver===true;
  unit.passiveEffects=(unit.passiveEffects||[]).filter(effect=>effect?.sourceKind!=='item');
  unit.passiveEffects.push(...(effects||[]).map(effect=>structuredClone(effect)));
- unit.itemState=createHeldItemState(itemId);unit.itemState.revealed=revealed;unit.itemState.lostReason=null;
+ unit.itemState=createHeldItemState(itemId);unit.itemState.revealed=revealed;unit.itemState.lostReason=null;unit.itemState.consumedBerryEver=consumedBerryEver;
+}
+
+export function removeHeldItem(battle,{actorId,reason='item-removed',sourceId=null,ignoreRemovalImmunity=false}={}){
+ const next=clone(battle),events=[],unit=unitById(next,actorId);if(!unit||unit.hp<=0)return {battle:next,removed:false,events};
+ const itemId=heldItemId(unit);if(!itemId)return {battle:next,removed:false,events};
+ const blocker=!ignoreRemovalImmunity?abilityItemEffect(unit,'held-item-removal-immunity'):null;
+ if(blocker){events.push({kind:'abilityTriggered',sourceId:unit.actorId,abilityId:blocker.sourceId,effectId:blocker.kind,targetId:sourceId||unit.actorId,itemId},{kind:'itemRemovalBlocked',sourceId:sourceId||unit.actorId,targetId:unit.actorId,itemId,reason:'ability',abilityId:blocker.sourceId});return {battle:next,removed:false,blocked:true,itemId,events};}
+ markItemLost(unit,itemId,reason);events.push({kind:'itemRemoved',sourceId:sourceId||unit.actorId,targetId:unit.actorId,itemId,reason});return {battle:next,removed:true,itemId,events};
+}
+
+export function swapHeldItems(battle,{sourceId,targetId,reason='item-swap',ignoreTargetRemovalImmunity=false}={}){
+ let next=clone(battle);const events=[],source=unitById(next,sourceId),target=unitById(next,targetId);if(!source||!target||source.actorId===target.actorId)return {battle:next,swapped:false,events};
+ const sourceItem=heldItemId(source),targetItem=heldItemId(target);if(!sourceItem&&!targetItem)return {battle:next,swapped:false,events};
+ const blocker=targetItem&&!ignoreTargetRemovalImmunity?abilityItemEffect(target,'held-item-removal-immunity'):null;
+ if(blocker){events.push({kind:'abilityTriggered',sourceId:target.actorId,abilityId:blocker.sourceId,effectId:blocker.kind,targetId:source.actorId,itemId:targetItem},{kind:'itemSwapBlocked',sourceId:source.actorId,targetId:target.actorId,itemId:targetItem,reason:'ability',abilityId:blocker.sourceId});return {battle:next,swapped:false,blocked:true,events};}
+ const sourceEffects=sourceItem?itemEffectSnapshot(source,sourceItem):[],targetEffects=targetItem?itemEffectSnapshot(target,targetItem):[];
+ if(sourceItem)markItemLost(source,sourceItem,reason);else receiveTransferredItem(source,null,[],{revealed:false});
+ if(targetItem)markItemLost(target,targetItem,reason);else receiveTransferredItem(target,null,[],{revealed:false});
+ receiveTransferredItem(source,targetItem,targetEffects,{revealed:Boolean(targetItem)});receiveTransferredItem(target,sourceItem,sourceEffects,{revealed:Boolean(sourceItem)});
+ if(sourceItem)events.push({kind:'itemTransferred',sourceId:source.actorId,targetId:target.actorId,itemId:sourceItem,reason});
+ if(targetItem)events.push({kind:'itemTransferred',sourceId:target.actorId,targetId:source.actorId,itemId:targetItem,reason});
+ events.push({kind:'itemsSwapped',sourceId:source.actorId,targetId:target.actorId,sourceItemId:sourceItem,targetItemId:targetItem,reason});
+ return {battle:next,swapped:true,events};
 }
 
 export function transferHeldItem(battle,{fromId,toId,reason='item-transfer',sourceAbilityId=null,sourceAbilityHolderId=null,ignoreRemovalImmunity=false}={}){
@@ -88,21 +113,57 @@ function resolveImmediateAllyItemPass(battle,{actorId,reason}){
  return {battle:next,events};
 }
 
-export function activateHeldItem(battle,{actorId,itemId,reason,consume=false,activationKey=null,allowFainted=false}){
+export function activateHeldItem(battle,{actorId,itemId,reason,consume=false,activationKey=null,allowFainted=false,ignoreBerrySuppression=false}){
  let next=clone(battle);let unit=unitById(next,actorId);if(!unit||(!allowFainted&&unit.hp<=0))return {battle:next,applied:false,events:[]};
  const state=ensureItemState(unit),effect={sourceKind:'item',sourceId:itemId};
  if(!heldItemEffectActive(unit,effect,next))return {battle:next,applied:false,events:[]};
- if(consume&&itemId?.endsWith('-berry')){
+ if(consume&&itemId?.endsWith('-berry')&&!ignoreBerrySuppression){
   const suppression=opposingBerrySuppression(next,unit);if(suppression)return {battle:next,applied:false,events:[{kind:'abilityTriggered',sourceId:suppression.holder.actorId,abilityId:suppression.effect.sourceId,effectId:suppression.effect.kind,targetId:actorId},{kind:'itemActivationBlocked',sourceId:actorId,itemId,reason:'opponentAbility',abilityId:suppression.effect.sourceId}]};
  }
  if(activationKey&&state.lastActivationKey===activationKey)return {battle:next,applied:false,idempotent:true,events:[]};
  const events=[],consumedEffects=consume?itemEffectSnapshot(unit,itemId):[];if(!state.revealed){state.revealed=true;events.push({kind:'itemRevealed',sourceId:actorId,itemId,reason});}
  state.activationCount++;state.lastActivationKey=activationKey||null;events.push({kind:'itemActivated',sourceId:actorId,itemId,reason,activationCount:state.activationCount});
  if(consume){state.consumed=true;recordConsumedItem(unit,itemId,next,{reason,effects:consumedEffects});scheduleBerryReplay(unit,itemId,next,consumedEffects);events.push({kind:'itemConsumed',sourceId:actorId,itemId,reason});
-  if(itemId?.endsWith('-berry')){const effect=abilityBerryConsumptionHeal(unit);if(effect&&unit.hp>0&&unit.hp<maxHp(unit)){const before=unit.hp,amount=Math.max(1,Math.floor(maxHp(unit)*effect.numerator/effect.denominator));unit.hp=Math.min(maxHp(unit),unit.hp+amount);events.push({kind:'abilityTriggered',sourceId:actorId,abilityId:effect.sourceId,effectId:effect.kind,itemId},{kind:'heal',targetId:actorId,hpBefore:before,hpAfter:unit.hp,amount:unit.hp-before,source:`ability:${effect.sourceId}`,abilityId:effect.sourceId,trigger:'berry-consumed'});}}
+  if(itemId?.endsWith('-berry')){state.consumedBerryEver=true;const effect=abilityBerryConsumptionHeal(unit);if(effect&&unit.hp>0&&unit.hp<maxHp(unit)){const before=unit.hp,amount=Math.max(1,Math.floor(maxHp(unit)*effect.numerator/effect.denominator));unit.hp=Math.min(maxHp(unit),unit.hp+amount);events.push({kind:'abilityTriggered',sourceId:actorId,abilityId:effect.sourceId,effectId:effect.kind,itemId},{kind:'heal',targetId:actorId,hpBefore:before,hpAfter:unit.hp,amount:unit.hp-before,source:`ability:${effect.sourceId}`,abilityId:effect.sourceId,trigger:'berry-consumed'});}}
   const passed=resolveImmediateAllyItemPass(next,{actorId,reason});next=passed.battle;events.push(...passed.events);unit=unitById(next,actorId);
  }
  return {battle:next,applied:true,events};
+}
+
+
+export function hasConsumedBerry(unit){
+ return unit?.itemState?.consumedBerryEver===true;
+}
+
+function applyConsumedBerryEffects(battle,{actorId,itemId,effects,reason}){
+ let next=clone(battle);const events=[];const unit=unitById(next,actorId);if(!unit||unit.hp<=0)return {battle:next,events};
+ for(const effect of effects||[]){
+  if(effect.kind==='item-threshold-heal'&&unit.hp<maxHp(unit)){
+   const numerator=effect.healNumerator??1,denominator=effect.healDenominator??4,baseAmount=Number.isInteger(effect.healAmount)?effect.healAmount:Math.max(1,Math.floor(maxHp(unit)*numerator/denominator)),multiplier=abilityBerryEffectMultiplier(unit),amount=Math.max(1,Math.floor(baseAmount*multiplier)),before=unit.hp;unit.hp=Math.min(maxHp(unit),unit.hp+amount);if(unit.hp>before)events.push({kind:'heal',targetId:unit.actorId,hpBefore:before,hpAfter:unit.hp,amount:unit.hp-before,source:itemId,itemId,reason,...(multiplier>1?{abilityMultiplier:multiplier}:{})});
+  }else if(effect.kind==='item-status-cure'){
+   const currentStatus=statusId(unit),statusMatch=!!currentStatus&&Array.isArray(effect.statuses)&&effect.statuses.includes(currentStatus),confusionMatch=!!unit.volatiles?.confusion&&effect.confusion===true;
+   if(statusMatch&&unit.status){unit.status=null;events.push({kind:'statusCured',actorId:unit.actorId,targetId:unit.actorId,status:currentStatus,reason,itemId});}
+   if(confusionMatch&&unit.volatiles?.confusion){delete unit.volatiles.confusion;events.push({kind:'volatileEnded',actorId:unit.actorId,targetId:unit.actorId,volatile:'confusion',reason,itemId});}
+  }else if(effect.kind==='item-pp-restore'){
+   const moveIds=unit.buildSnapshot?.moveIds||Object.keys(unit.pp||{}),moveId=moveIds.find(id=>Number.isInteger(unit.pp?.[id])&&Number.isInteger(unit.maxPp?.[id])&&unit.pp[id]<unit.maxPp[id]);if(moveId){const before=unit.pp[moveId],multiplier=abilityBerryEffectMultiplier(unit),after=Math.min(unit.maxPp[moveId],before+(effect.amount??10)*multiplier);unit.pp[moveId]=after;events.push({kind:'ppRestored',actorId:unit.actorId,moveId,itemId,ppBefore:before,ppAfter:after,amount:after-before,reason,...(multiplier>1?{abilityMultiplier:multiplier}:{})});}
+  }
+ }
+ return {battle:next,events};
+}
+
+export function consumeHeldBerry(battle,{holderId,consumerId=holderId,reason='forced-berry-consumption',ignoreBerrySuppression=false}={}){
+ let next=clone(battle);const events=[],holder=unitById(next,holderId),consumer=unitById(next,consumerId);if(!holder||!consumer||consumer.hp<=0)return {battle:next,consumed:false,events};const itemId=heldItemId(holder);if(!itemId?.endsWith('-berry'))return {battle:next,consumed:false,events};
+ const effects=itemEffectSnapshot(holder,itemId);
+ if(holderId===consumerId){const activated=activateHeldItem(next,{actorId:holderId,itemId,reason,consume:true,activationKey:`forced-berry:${next.turn}:${holderId}:${reason}`,ignoreBerrySuppression});next=activated.battle;events.push(...activated.events);if(!activated.applied)return {battle:next,consumed:false,itemId,events};const applied=applyConsumedBerryEffects(next,{actorId:consumerId,itemId,effects,reason});next=applied.battle;events.push(...applied.events);return {battle:next,consumed:true,itemId,events};}
+ const blocker=abilityItemEffect(holder,'held-item-removal-immunity');if(blocker){events.push({kind:'abilityTriggered',sourceId:holder.actorId,abilityId:blocker.sourceId,effectId:blocker.kind,targetId:consumer.actorId,itemId},{kind:'itemRemovalBlocked',sourceId:consumer.actorId,targetId:holder.actorId,itemId,reason:'ability',abilityId:blocker.sourceId});return {battle:next,consumed:false,itemId,events};}
+ if(!ignoreBerrySuppression){const suppression=opposingBerrySuppression(next,consumer);if(suppression)return {battle:next,consumed:false,itemId,events:[{kind:'abilityTriggered',sourceId:suppression.holder.actorId,abilityId:suppression.effect.sourceId,effectId:suppression.effect.kind,targetId:consumerId},{kind:'itemActivationBlocked',sourceId:consumerId,itemId,reason:'opponentAbility',abilityId:suppression.effect.sourceId}]};}
+ const liveHolder=unitById(next,holderId);recordConsumedItem(liveHolder,itemId,next,{reason,effects});markItemLost(liveHolder,itemId,reason);const liveConsumer=unitById(next,consumerId),consumerState=ensureItemState(liveConsumer);consumerState.consumedBerryEver=true;scheduleBerryReplay(liveConsumer,itemId,next,effects);events.push({kind:'itemRevealed',sourceId:holderId,itemId,reason},{kind:'itemConsumed',sourceId:consumerId,fromId:holderId,itemId,reason});
+ const cheek=abilityBerryConsumptionHeal(liveConsumer);if(cheek&&liveConsumer.hp>0&&liveConsumer.hp<maxHp(liveConsumer)){const before=liveConsumer.hp,amount=Math.max(1,Math.floor(maxHp(liveConsumer)*cheek.numerator/cheek.denominator));liveConsumer.hp=Math.min(maxHp(liveConsumer),liveConsumer.hp+amount);events.push({kind:'abilityTriggered',sourceId:consumerId,abilityId:cheek.sourceId,effectId:cheek.kind,itemId},{kind:'heal',targetId:consumerId,hpBefore:before,hpAfter:liveConsumer.hp,amount:liveConsumer.hp-before,source:`ability:${cheek.sourceId}`,abilityId:cheek.sourceId,trigger:'berry-consumed'});}
+ const applied=applyConsumedBerryEffects(next,{actorId:consumerId,itemId,effects,reason});next=applied.battle;events.push(...applied.events);const passed=resolveImmediateAllyItemPass(next,{actorId:holderId,reason});next=passed.battle;events.push(...passed.events);return {battle:next,consumed:true,itemId,events};
+}
+
+export function recycleConsumedItem(battle,{actorId,reason='recycle'}={}){
+ const next=clone(battle),unit=unitById(next,actorId),events=[];if(!unit||unit.hp<=0||heldItemId(unit))return {battle:next,recycled:false,events};const history=[...(unit.itemHistory||[])].reverse().find(entry=>entry?.itemId&&!entry.recycled);if(!history)return {battle:next,recycled:false,events};history.recycled=true;history.availableForPickup=false;receiveTransferredItem(unit,history.itemId,history.effects,{revealed:true});events.push({kind:'itemRecycled',actorId,itemId:history.itemId,reason});return {battle:next,recycled:true,itemId:history.itemId,events};
 }
 
 
@@ -114,13 +175,15 @@ export function revealHeldItem(battle,{actorId,itemId,reason,force=false}){
 
 export function heldItemHasEffect(unit,kind,battle){return itemEffects(unit,kind,battle).length>0;}
 
-export function typeEffectivenessWithHeldItems(attackType,defender,battle,{attacker=null,ignoreDefenderAbility=false}={}){
+export function typeEffectivenessWithHeldItems(attackType,defender,battle,{attacker=null,ignoreDefenderAbility=false,typeEffectivenessOverrides=null}={}){
  if(!defender)return 1;
- const grounded=attackType==='ground'&&heldItemHasEffect(defender,'item-grounding',battle);
+ const forcedGrounded=attackType==='ground'&&Boolean(defender.volatiles?.['forced-grounded']),grounded=attackType==='ground'&&(forcedGrounded||heldItemHasEffect(defender,'item-grounding',battle));
  if(attackType==='ground'&&!grounded&&(heldItemHasEffect(defender,'item-airborne',battle)||(!ignoreDefenderAbility&&abilityGroundingImmunity(defender))))return 0;
  let types=[...(defender.types||[])];if(grounded)types=types.filter(type=>type!=='flying');
  const bypass=attacker&&abilityTypeImmunityBypass(attacker,attackType,defender);if(bypass)types=types.filter(type=>!(bypass.targetTypes||[]).includes(type));
- return types.length?typeEffectiveness(attackType,types):1;
+ if(!types.length)return 1;
+ if(!typeEffectivenessOverrides||typeof typeEffectivenessOverrides!=='object')return typeEffectiveness(attackType,types);
+ return types.reduce((value,type)=>value*(typeEffectivenessOverrides[type]??TYPE_CHART[attackType]?.[type]??1),1);
 }
 
 export function speedWithHeldItems(speed,unit,battle){

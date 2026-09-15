@@ -4,11 +4,13 @@ import {typeEffectiveness} from '../rules-v3/type-chart.mjs';
 import {HAZARD_IDS} from './manifest-contract.mjs';
 import {applyMajorStatus} from './major-status.mjs';
 import {unitIsGrounded} from './terrain.mjs';
-import {resolveEntryItems,resolveHpThresholdItems} from './item-hooks.mjs';
+import {resolveEntryItems,resolveHpThresholdItems,resolveNegativeStageResetItems} from './item-hooks.mjs';
 import {resolveEntryAbilities} from './ability-lifecycle.mjs';
-import {abilityPreventsIndirectDamage} from './ability-hooks.mjs';
+import {abilityPreventsIndirectDamage,abilityStatDropBlock,applyAbilityStatDropReflection} from './ability-hooks.mjs';
+import {abilityStageChange} from './ability-stage-change.mjs';
+import {resolveOpponentStatGainCopyAbilities,resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
 import {resolveFaintAbilityCopiesFromEvents} from './ability-replacement.mjs';
-const MAX_LAYERS={'stealth-rock':1,spikes:3,'toxic-spikes':2};
+const MAX_LAYERS={'stealth-rock':1,spikes:3,'toxic-spikes':2,'sticky-web':1};
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
 function sideOf(battle,actorId){return ['A','B'].find(side=>battle.sides?.[side]?.roster?.some(unit=>unit.actorId===actorId))||null;}
@@ -54,6 +56,19 @@ function resolveToxicSpikes(next,unit,state,entry,events){
  return applied.battle;
 }
 
+
+function resolveStickyWeb(next,unit,state,entry,events){
+ if(!unitIsGrounded(unit,next))return next;
+ const rawDelta=-1,changed=abilityStageChange(unit,rawDelta),requestedDelta=changed.requestedDelta;if(changed.sourceAbilityId)events.push({kind:'abilityTriggered',sourceId:unit.actorId,abilityId:changed.sourceAbilityId,effectId:changed.effectId,trigger:'stat-change'});
+ const source=state.sourceActorId&&unitById(next,state.sourceActorId),sourceSide=source&&sideOf(next,source.actorId),sourceActive=source?.hp>0&&sourceSide&&(next.sides?.[sourceSide]?.active||[]).includes(source.actorId);
+ if(sourceActive){const reflected=applyAbilityStatDropReflection(next,{sourceId:source.actorId,targetId:unit.actorId,stat:'spe',requestedDelta,moveId:state.sourceMoveId||'sticky-web',trigger:'hazard:sticky-web'});if(reflected.reflected){events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:'sticky-web',layers:1,reflected:true},...reflected.events);next=reflected.battle;if(reflected.resetActorIds.length){const reset=resolveNegativeStageResetItems(next,{actorIds:reflected.resetActorIds,trigger:'hazard:sticky-web:reflected'});next=reset.battle;events.push(...reset.events);}return next;}}
+ const block=abilityStatDropBlock(unit,{battle:next,sourceId:state.sourceActorId||'sticky-web',stat:'spe',requestedDelta});if(block){events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:'sticky-web',layers:1},{kind:'statStageBlocked',actorId:state.sourceActorId||unit.actorId,targetId:unit.actorId,moveId:state.sourceMoveId||'sticky-web',stat:'spe',requestedDelta,...block});return next;}
+ unit.stages??={};const before=Number.isInteger(unit.stages.spe)?unit.stages.spe:0,after=Math.max(-6,Math.min(6,before+requestedDelta)),appliedDelta=after-before;unit.stages.spe=after;
+ const change={kind:'statStageChanged',actorId:state.sourceActorId||unit.actorId,targetId:unit.actorId,moveId:state.sourceMoveId||'sticky-web',stat:'spe',before,after,requestedDelta,originalRequestedDelta:changed.originalRequestedDelta,appliedDelta,reason:appliedDelta===0?'stageLimit':null,trigger:'hazard:sticky-web'};
+ events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:'sticky-web',layers:1},change);
+ const response=resolveStatDropResponseAbilities(next,{sourceId:state.sourceActorId,targetId:unit.actorId,changes:[change],trigger:'hazard:sticky-web'});next=response.battle;events.push(...response.events);const copied=resolveOpponentStatGainCopyAbilities(next,{targetId:unit.actorId,changes:[change],trigger:'hazard:sticky-web'});next=copied.battle;events.push(...copied.events);const reset=resolveNegativeStageResetItems(next,{actorIds:[unit.actorId],trigger:'hazard:sticky-web'});next=reset.battle;events.push(...reset.events);return next;
+}
+
 export function resolveEntryHazards(battle,switchEvents=[],{manifests=null,moves=null}={}){
  let next=clone(battle);const events=[],entryAbilities=resolveEntryAbilities(next,switchEvents,{manifests,moves});next=entryAbilities.battle;events.push(...entryAbilities.events);const entryItems=resolveEntryItems(next,switchEvents);next=entryItems.battle;events.push(...entryItems.events);
  for(const entry of switchEvents||[]){
@@ -63,6 +78,7 @@ export function resolveEntryHazards(battle,switchEvents=[],{manifests=null,moves
   for(const state of hazards){
    const unit=unitById(next,entry.actorId);if(!unit||unit.hp<=0)break;
    if(state.id==='toxic-spikes'){next=resolveToxicSpikes(next,unit,state,entry,events);continue;}
+   if(state.id==='sticky-web'){next=resolveStickyWeb(next,unit,state,entry,events);continue;}
    const {amount,effectiveness}=hazardDamage(next,unit,state.id,state.layers||1);if(amount<=0)continue;
    const guard=abilityPreventsIndirectDamage(unit);if(guard){events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:state.id,layers:state.layers||1,amount:0,effectiveness,blockedByAbilityId:guard.sourceId},{kind:'abilityTriggered',sourceId:unit.actorId,abilityId:guard.sourceId,effectId:guard.kind,trigger:`hazard:${state.id}`});continue;}
    events.push({kind:'hazardTriggered',targetId:unit.actorId,side:entry.side,hazard:state.id,layers:state.layers||1,amount,effectiveness});

@@ -12,6 +12,10 @@ function initialVolatileState(volatile,moveId,runtime,source){
   state.timer=2+Math.floor(runtime.nextRandom()*4);
  }
  if(volatile==='flinch')state.timer=1;
+ if(volatile==='focus-energy')state.criticalRatioStages=2;
+ if(volatile==='laser-focus'){state.alwaysCritical=true;state.consumeOnDamagingMove=true;state.endTurnTimer=2;}
+ if(volatile==='sound-blocked'){state.blockedMoveTags=['sound'];state.endTurnTimer=2;}
+ if(volatile==='helping-hand'){state.damageMultiplier=1.5;state.consumeOnDamagingMove=true;state.endTurnTimer=1;}
  if(volatile==='taunt'||volatile==='encore')state.endTurnTimer=runtime?.hasActed?.(runtime.targetId)?4:3;
  if(volatile==='disable')state.endTurnTimer=runtime?.hasActed?.(runtime.targetId)?5:4;
  if(volatile==='leech-seed'){state.sourceSide=source.side;state.sourceSlot=source.slot;}

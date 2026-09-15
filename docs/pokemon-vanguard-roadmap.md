@@ -26,13 +26,13 @@ Tài liệu này là thứ tự triển khai chính thức của dự án. `ROAD
 | R0 Rebaseline | DONE | Quyết định sản phẩm, source manifest và ranh giới migration đã khóa |
 | R1 M-A Data | BETA 2 SLICE REVIEWED, FULL REVIEW PENDING | `pv-ma-2026-09-12-beta2`: scoped hash-bound approval cho 12 species/29 moves/4 Abilities/11 items; phần còn lại chưa được duyệt |
 | R2 Battle Rules | DONE, SHADOW ONLY | Contract thuần cho 18 hệ, stats/damage, lifecycle, Single/Double và replay; chưa thay schema-2 runtime |
-| R3 Mechanics Coverage | IN PROGRESS / MOVE WAVE 19 COMPLETE | 522 entry đã kiểm thử ở cả hai format; active Beta v22 có 67 move/16 Ability/82 item, global reviewed coverage có 264 move/176 Ability/82 item |
+| R3 Mechanics Coverage | IN PROGRESS / MOVE WAVE 30 COMPLETE | 695 entry đã kiểm thử ở cả hai format; active Beta v22 có 67 move/16 Ability/82 item, global reviewed coverage có 437 move/176 Ability/82 item |
 | R4 | BETA GATE PASSED | Schema 3 chạy Home/Archive/Training/Team/Recruitment status/Guide → Preview → Battle Single/Double; Inspector migration theo beta feedback |
 | R5 Roster Ranch | BETA 2 GATE PASSED | 10 offer deterministic, 22 giờ, Trial 7 ngày, permanent coin/ticket, expiry/receipt/restart và catalog rebase đã nối schema 3 |
 | R6–R7 | R6 BETA SLICE PASSED; R7 CORE GATE PASSED | Mega Venusaur chạy end-to-end với Venusaurite/Thick Fat; 67/67 move có FX profile, ordered timeline và persistent/delayed/commitment/semi-invulnerable/secondary presentation |
 | M6–M7 | BLOCKED | Chỉ bắt đầu sau khi local battle schema 3 đã hoàn chỉnh |
 
-Baseline logic hiện tại có 522/862 entry supported ở cả hai format. Trạng thái 340 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
+Baseline logic hiện tại có 695/862 entry supported ở cả hai format. Trạng thái 167 blocked là fail-closed có chủ đích: catalog đã biết entry nhưng chưa cho dùng khi mechanic chưa có test evidence. Lệnh `npm run beta:validate` là gate riêng cho tập nội dung sẽ đưa vào beta.
 
 ## 3. Thứ tự nguồn và cách xử lý mâu thuẫn
 
@@ -481,7 +481,7 @@ Ticket chỉ DONE khi có:
 2. R4.1 catalog service và promote dry-run đã hoàn tất; mọi batch mới tiếp tục phải xuất đúng slice cùng coverage/provenance.
 3. Nối schema-3 Training → Team → Preview → Battle; battle factory phải compile Ability/item passive effects vào immutable BattleMon snapshot và dùng cùng rules/mechanics engine ở Single/Double.
 4. Chạy beta gate tự động, simulation/replay rồi browser QA cho một trận Single và một trận Double; chỉ sau đó mở beta local cho người test.
-5. Beta v22 đã có Ability Hooks Waves 1–17, Item Hooks/Lifecycle Waves 1–7 và Move Hooks Waves 18–19 trên shared runtime. Global coverage đạt 522/862 nhưng promoted player catalog vẫn giữ 12 Pokémon/67 move/16 Ability/82 item để beta loop ổn định. Ticket kế tiếp ưu tiên các move/item family có thể tái dùng runtime hiện có, sau đó mới promote content batch mới kèm FX; Cute Charm/Rivalry/Heavy Metal/Light Metal tiếp tục chờ normalized gender/weight data thay vì suy diễn.
+5. Beta v22 đã có Ability Hooks Waves 1–17, Item Hooks/Lifecycle Waves 1–7 và Move Hooks Waves 18–30 trên shared runtime. Global coverage đạt 695/862 nhưng promoted player catalog vẫn giữ 12 Pokémon/67 move/16 Ability/82 item để beta loop ổn định. Ticket kế tiếp xử lý 79 move pending theo các multi-family batch có contract chung, rồi 84 item còn lại; chỉ promote content batch mới khi relation và FX đã review. Cute Charm/Rivalry/Heavy Metal/Light Metal tiếp tục chờ normalized gender/weight data thay vì suy diễn.
 
 Tài liệu tham chiếu trong repo:
 

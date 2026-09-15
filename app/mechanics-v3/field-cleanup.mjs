@@ -2,8 +2,8 @@ import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {HAZARD_IDS} from './manifest-contract.mjs';
 import {actorSide} from './side-conditions.mjs';
 
-const SCREEN_IDS=['reflect','light-screen'];
-const HAZARD_CLEAR_ORDER=['spikes','toxic-spikes','stealth-rock'].filter(id=>HAZARD_IDS.includes(id));
+const SCREEN_IDS=['reflect','light-screen','aurora-veil'];
+const HAZARD_CLEAR_ORDER=['spikes','toxic-spikes','stealth-rock','sticky-web'].filter(id=>HAZARD_IDS.includes(id));
 
 function removeHazard(next,side,hazard,{actorId,moveId,reason},events){
  const state=next.sides?.[side]?.conditions?.[hazard];
@@ -39,6 +39,11 @@ export function resolveRapidSpinCleanup(battle,{actorId,moveId,totalDamage=0}){
   events.push({kind:'volatileEnded',actorId,volatile:'leech-seed',reason:'rapid-spin',moveId});
   applied=true;
  }
+ if(actor.volatiles?.bound){
+  delete actor.volatiles.bound;
+  events.push({kind:'volatileEnded',actorId,volatile:'bound',reason:'rapid-spin',moveId});
+  applied=true;
+ }
  applied=removeHazards(next,side,{actorId,moveId,reason:'rapid-spin'},events)||applied;
  return {battle:next,applied,events};
 }
@@ -55,5 +60,21 @@ export function resolveDefogCleanup(battle,{actorId,moveId,targetIds=[]}){
   events.push({kind:'terrainEnded',actorId,moveId,terrain,reason:'defog'});
   applied=true;
  }
+ return {battle:next,applied,events};
+}
+
+export function resolveMortalSpinCleanup(battle,{actorId,moveId,totalDamage=0}){
+ const next=clone(battle),actor=unitById(next,actorId),side=actorSide(next,actorId),events=[];
+ if(!actor||!side||actor.hp<=0||!(totalDamage>0))return {battle:next,applied:false,events};
+ let applied=false;
+ for(const volatile of ['leech-seed','bound'])if(actor.volatiles?.[volatile]){delete actor.volatiles[volatile];events.push({kind:'volatileEnded',actorId,volatile,reason:'mortal-spin',moveId});applied=true;}
+ applied=removeHazards(next,side,{actorId,moveId,reason:'mortal-spin'},events)||applied;
+ return {battle:next,applied,events};
+}
+
+export function resolveTidyUpCleanup(battle,{actorId,moveId}){
+ const next=clone(battle),events=[];let applied=false;
+ for(const side of ['A','B'])applied=removeHazards(next,side,{actorId,moveId,reason:'tidy-up'},events)||applied;
+ for(const side of ['A','B'])for(const actor of next.sides?.[side]?.active||[]){const unit=unitById(next,actor);if(!unit?.volatiles?.substitute)continue;delete unit.volatiles.substitute;events.push({kind:'volatileEnded',actorId:unit.actorId,targetId:unit.actorId,volatile:'substitute',reason:'tidy-up',moveId,sourceActorId:actorId});applied=true;}
  return {battle:next,applied,events};
 }

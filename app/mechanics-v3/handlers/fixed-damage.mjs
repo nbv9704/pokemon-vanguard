@@ -21,7 +21,7 @@ export const fixedDamageHandler={
   let totalDamage=0;const damagedTargetIds=[];
   for(const targetRef of targets){
    let target=unitById(next,targetRef.actorId);if(!target||target.hp<=0)continue;
-   const ignoreTargetAbility=opponentAbilitiesIgnoredFor(next,actor.actorId,target.actorId,mechanics),effectiveness=typeEffectivenessWithHeldItems(move.type,target,next,{attacker:actor,ignoreDefenderAbility:ignoreTargetAbility}),hpBefore=target.hp,requested=params.formula==='user-level'?(next.level||50):Math.max(1,Math.floor(target.hp/params.denominator)),rawDamage=effectiveness===0?0:Math.min(hpBefore,requested);
+   const ignoreTargetAbility=opponentAbilitiesIgnoredFor(next,actor.actorId,target.actorId,mechanics),effectiveness=typeEffectivenessWithHeldItems(move.type,target,next,{attacker:actor,ignoreDefenderAbility:ignoreTargetAbility}),hpBefore=target.hp,requested=params.formula==='user-level'?(next.level||50):params.formula==='user-current-hp'?actor.hp:params.formula==='target-user-hp-difference'?Math.max(0,target.hp-actor.hp):Math.max(1,Math.floor(target.hp/params.denominator)),rawDamage=effectiveness===0?0:Math.min(hpBefore,requested);
    if(rawDamage>0&&target.volatiles?.substitute&&!substituteBypassed(actor,mechanics)){const sub=applySubstituteDamage(next,{actorId:actor.actorId,targetId:target.actorId,damage:rawDamage,moveId:move.id,mechanics});next=sub.battle;totalDamage+=sub.amount;events.push(...sub.events);continue;}
    if(rawDamage>0){const disguise=applyDisguiseShield(next,{targetId:target.actorId,damage:rawDamage,moveId:move.id,ignored:ignoreTargetAbility});if(disguise.shielded){next=disguise.battle;events.push(...disguise.events);continue;}}
    target=unitById(next,targetRef.actorId);if(!target||target.hp<=0)continue;

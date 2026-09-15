@@ -9,6 +9,8 @@ import {resolveEndTurnAbilityStageBoosts} from './ability-damage-response.mjs';
 import {resolveFaintAbilityCopiesFromEvents} from './ability-replacement.mjs';
 import {resolveEndTurnAbilityForms,resolveFieldTypeAbilities} from './ability-form.mjs';
 import {healingWithHeldItems,resolveEndTurnItems,resolveEndTurnItemAbilityLifecycle,resolveHpThresholdItems,resolveNegativeStageResetItems,resolvePpRestoreItems,resolveStatusCureItems,resolveTerrainSeedItems,resolveVolatileCureItems} from './item-hooks.mjs';
+import {prepareBindingResidualEndTurn} from './binding-residual.mjs';
+import {preparePersistentEffectsEndTurn} from './persistent-effects.mjs';
 
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
@@ -39,7 +41,9 @@ export function resolveMechanicsEndTurn(battle,groups=[],{manifests=null}={}){
  const abilityCures=resolveEndTurnAbilityStatusCures(next);next=abilityCures.battle;initialEvents.push(...abilityCures.events);
  const allyCures=resolveEndTurnAbilityAllyStatusCures(next);next=allyCures.battle;initialEvents.push(...allyCures.events);
  const major=prepareMajorStatusEndTurn(next);next=major.battle;initialEvents.push(...major.events);
- return resolveEndTurn(next,[...groups,abilityWeatherResidualDamageGroup(next),weatherResidualDamageGroup(next),weatherHealingGroup(next),major.group],{
+ const binding=prepareBindingResidualEndTurn(next);next=binding.battle;initialEvents.push(...binding.events);
+ const persistent=preparePersistentEffectsEndTurn(next);next=persistent.battle;initialEvents.push(...persistent.events);
+ return resolveEndTurn(next,[...groups,abilityWeatherResidualDamageGroup(next),weatherResidualDamageGroup(next),weatherHealingGroup(next),major.group,binding.group,...persistent.groups],{
   initialEvents,
   afterEachGroup:(state,{groupId,events:groupEvents})=>{
    let current=state,events=[];

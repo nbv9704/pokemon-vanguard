@@ -15,8 +15,8 @@ export function applySecondaryEffects(battle,{actorId,targetIds=[],moveId,effect
  for(const targetId of targetIds){
   for(let index=0;index<targetEffects.length;index++){
    const effect=targetEffects[index],target=unitById(next,targetId);if(!target||target.hp<=0)break;
-   const ignoreTargetAbility=opponentAbilitiesIgnoredFor(next,actorId,targetId,mechanics);
-   if(!ignoreTargetAbility&&abilityBlocksSecondaryEffects(target)){events.push({kind:'secondaryEffectBlocked',actorId,targetId,moveId,abilityId:target.passiveEffects.find(entry=>entry.sourceKind==='ability'&&entry.kind==='secondary-effect-immunity')?.sourceId});break;}
+   const ignoreTargetAbility=opponentAbilitiesIgnoredFor(next,actorId,targetId,mechanics),bypassSecondaryImmunity=effect.bypassSecondaryImmunityWhenSpread===true&&targetIds.length>1;
+   if(!ignoreTargetAbility&&!bypassSecondaryImmunity&&abilityBlocksSecondaryEffects(target)){events.push({kind:'secondaryEffectBlocked',actorId,targetId,moveId,abilityId:target.passiveEffects.find(entry=>entry.sourceKind==='ability'&&entry.kind==='secondary-effect-immunity')?.sourceId});break;}
    if(effect.chance<100){if(typeof runtime.nextRandom!=='function')throw new Error('secondary effect resolution requires seeded nextRandom');if(runtime.nextRandom()>=effect.chance/100)continue;}
    const applied=applySecondaryEffect(next,{actorId,targetId,moveId,effect,ignoreTargetAbility},runtime);next=applied.battle;events.push(...applied.events);
   }
@@ -32,6 +32,8 @@ export function applySecondaryEffects(battle,{actorId,targetIds=[],moveId,effect
 
 function applySecondaryEffect(battle,{actorId,targetId,moveId,effect,ignoreTargetAbility=false},runtime){
  if(effect.kind==='major-status')return applyMajorStatus(battle,{actorId,targetId,moveId,status:effect.status,blockedTargetTypes:effect.blockedTargetTypes||[],ignoreTargetAbility},runtime);
+ if(effect.kind==='random-major-status'){if(typeof runtime.nextRandom!=='function')throw new Error('random major status requires seeded nextRandom');const statuses=effect.statuses||[],status=statuses[Math.floor(runtime.nextRandom()*statuses.length)];return applyMajorStatus(battle,{actorId,targetId,moveId,status,ignoreTargetAbility},runtime);}
+ if(effect.kind==='cure-major-status'){const next=clone(battle),target=unitById(next,targetId),status=target?.status?.id||target?.status||null;if(!target||target.hp<=0||!status||!(effect.statuses||[]).includes(status))return {battle:next,events:[]};target.status=null;return {battle:next,events:[{kind:'statusCured',actorId,targetId,moveId,status,source:`move:${moveId}`,secondary:true}]};}
  if(effect.kind==='volatile-status')return applyVolatileStatus(battle,{actorId,targetId,moveId,volatile:effect.volatile,ignoreTargetAbility},runtime);
  if(effect.kind==='stat-stages')return applySecondaryStatStages(battle,{actorId,targetId,moveId,boosts:effect.boosts,ignoreTargetAbility});
  throw new Error(`unsupported secondary effect kind: ${effect.kind}`);

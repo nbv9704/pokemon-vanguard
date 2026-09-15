@@ -1,7 +1,7 @@
 import {activeUnits,otherSide} from './battle-state.mjs';
 import {selectRedirection} from './redirection.mjs';
 
-export const TARGET_MODES=['self','adjacentAlly','adjacentFoe','anyAdjacent','allAdjacentFoes','allAdjacent','userSide','foeSide','field'];
+export const TARGET_MODES=['self','adjacentAlly','adjacentAllyOrSelf','adjacentFoe','anyAdjacent','allAdjacentFoes','allAdjacent','userSide','foeSide','field'];
 const targetRefs=(battle,side)=>activeUnits(battle,side).map(({unit,...target})=>target);
 
 export function legalTargets(battle,{side,actorId,targetMode}){
@@ -10,6 +10,7 @@ export function legalTargets(battle,{side,actorId,targetMode}){
  if(!self)throw new Error('actor is not active');
  if(targetMode==='self')return [self];
  if(targetMode==='adjacentAlly')return allies.filter(entry=>entry.actorId!==actorId);
+ if(targetMode==='adjacentAllyOrSelf')return allies;
  if(targetMode==='adjacentFoe')return foes;
  if(targetMode==='anyAdjacent')return [...allies.filter(entry=>entry.actorId!==actorId),...foes];
  if(targetMode==='allAdjacentFoes')return foes;

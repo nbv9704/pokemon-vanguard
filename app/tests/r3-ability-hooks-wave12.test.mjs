@@ -55,7 +55,7 @@ test('Ripen doubles supported Berry healing and doubles resistance effect magnit
 
 test('side-condition-bypass foundation remains compatible after Infiltrator promotion',()=>{
  const attack=move('hit','normal','physical',80),roll=()=>{let rolls=[0.9,0.5];return ()=>rolls.shift()??0.5;};let battle=fixture();battle.sides.B.conditions.reflect={id:'reflect',sourceId:'b1',endTurnTimer:5};const screened=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:attack,mechanics:mechanics()},{nextRandom:roll()});
- battle=fixture();battle.sides.B.conditions.reflect={id:'reflect',sourceId:'b1',endTurnTimer:5};battle.sides.A.roster[0].passiveEffects=effects('infiltrator');const bypassed=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:attack,mechanics:mechanics()},{nextRandom:roll()});assert.ok(bypassed.amount>screened.amount);assert.ok(manifests.abilities.infiltrator);assert.deepEqual(manifests.abilities.infiltrator.handlers[0].params.conditions,['reflect','light-screen','safeguard','substitute']);
+ battle=fixture();battle.sides.B.conditions.reflect={id:'reflect',sourceId:'b1',endTurnTimer:5};battle.sides.A.roster[0].passiveEffects=effects('infiltrator');const bypassed=applyDamageHit(battle,{actorId:'a1',targetId:'b1',move:attack,mechanics:mechanics()},{nextRandom:roll()});assert.ok(bypassed.amount>screened.amount);assert.ok(manifests.abilities.infiltrator);assert.deepEqual(manifests.abilities.infiltrator.handlers[0].params.conditions,['reflect','light-screen','aurora-veil','safeguard','substitute']);
 });
 
 test('Unaware ignores the relevant opposing combat stages and accuracy/evasion stages',()=>{
