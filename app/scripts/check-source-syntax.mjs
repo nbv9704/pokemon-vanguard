@@ -1,24 +1,25 @@
-import {readdirSync} from 'node:fs';
+import {readFileSync,readdirSync} from 'node:fs';
 import {extname,join} from 'node:path';
-import {spawnSync} from 'node:child_process';
+import {SourceTextModule} from 'node:vm';
 
+// Parse, do not execute. One process for all source modules avoids ~380 Node startups.
+// Invoked with Node 22 --experimental-vm-modules; fail rather than silently skip.
+if(typeof SourceTextModule!=='function'){
+ console.error('SourceTextModule unavailable; run this checker with Node 22 --experimental-vm-modules.');
+ process.exit(1);
+}
 const roots=['mechanics-v3','rules-v3','server','content-import','content-src','scripts','public/js'];
 const rootFiles=['local-server.mjs','public/client.js','public/battle-animation.js'];
-
 function sourceFiles(directory){
  return readdirSync(directory,{withFileTypes:true}).flatMap(entry=>{
-  const path=join(directory,entry.name);
-  if(entry.isDirectory())return sourceFiles(path);
-  return ['.js','.mjs'].includes(extname(entry.name))?[path]:[];
+  const file=join(directory,entry.name);
+  if(entry.isDirectory())return sourceFiles(file);
+  return ['.js','.mjs'].includes(extname(entry.name))?[file]:[];
  });
 }
-
 const files=[...roots.flatMap(sourceFiles),...rootFiles].sort();
 for(const file of files){
- const result=spawnSync(process.execPath,['--check',file],{encoding:'utf8'});
- if(result.status===0)continue;
- process.stderr.write(result.stderr||result.stdout||`Syntax check failed: ${file}\n`);
- process.exit(result.status||1);
+ try{new SourceTextModule(readFileSync(file,'utf8'),{identifier:file});}
+ catch(error){console.error(`Syntax error in ${file}:\n${error.stack||error}`);process.exit(1);}
 }
-
-console.log(`source syntax OK — ${files.length} files`);
+console.log(`source syntax OK — ${files.length} files (one-process module parser)`);

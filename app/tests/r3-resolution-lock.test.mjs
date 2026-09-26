@@ -61,6 +61,7 @@ test('R3-103 resolution lock owns the root surface and preserves desktop composi
   const modalRule=css.match(/body\.pixel-era\.resolution-locked #modal>\.modalback\{([\s\S]*?)\}/)?.[1]||'';
   assert.ok(modalRule.indexOf('inset:auto!important')<modalRule.indexOf('left:50%!important'),'modal inset must be reset before the centered coordinates are applied');
   assert.match(css,/font-size:calc\(12px \* var\(--game-fit-scale\)\)!important/,'toast size must override the earlier 8px important rule');
+  assert.match(css,/resolution-locked #app>\.loading\{[\s\S]*?width:var\(--game-logical-width\)!important[\s\S]*?height:var\(--game-logical-height\)!important[\s\S]*?margin:0!important[\s\S]*?translate\(-50%,-50%\) scale\(var\(--game-fit-scale\)\)/,'loading must use the same centered 1280x720 fitted surface as the app shell');
 });
 
 test('modal handling moves focus into dialogs, restores it on close and closes the backdrop',()=>{
@@ -76,7 +77,7 @@ test('R3-103 no longer forces high-resolution artwork or battle GIFs through glo
   assert.match(css,/pokemon-battle-stage \.v3-fighter \.art img\{[\s\S]*image-rendering:auto!important/);
 });
 
-test('alternate Aether GBA interface is isolated from the current UI entry',()=>{
+test('alternate classic GBA interface is isolated from the current UI entry',()=>{
   assert.match(currentEntry,/<body class="pixel-era">/);
   assert.match(currentEntry,/href="\/pixel-era-ui\.css"/);
   assert.doesNotMatch(currentEntry,/classic-ui\.css|aether-gba/);
@@ -86,7 +87,7 @@ test('alternate Aether GBA interface is isolated from the current UI entry',()=>
   assert.match(classicEntry,/src="\/client\.js"/,'alternate UI must keep the same functional client and server protocol');
 });
 
-test('alternate Aether GBA interface keeps a fixed game surface and its own visual namespace',()=>{
+test('alternate classic GBA interface keeps a fixed game surface and its own visual namespace',()=>{
   assert.match(classicCss,/body\.aether-gba\.resolution-locked #app>\.shell/);
   assert.match(classicCss,/translate\(-50%,-50%\) scale\(var\(--game-fit-scale\)\)/);
   assert.match(classicCss,/body\.aether-gba \.pokemon-battle-stage \.v3-battle-arena/);

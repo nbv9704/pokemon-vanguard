@@ -18,21 +18,26 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch}={}){
  const secret=env.AUTH_SESSION_SECRET||'pokemon-vanguard-local-beta-session-secret';
  const supabaseUrl=String(env.SUPABASE_URL||'').replace(/\/$/,'');
  const publishableKey=env.SUPABASE_PUBLISHABLE_KEY||env.SUPABASE_ANON_KEY||'';
+ const serviceKey=env.SUPABASE_SECRET_KEY||env.SUPABASE_SERVICE_ROLE_KEY||'';
  const supabaseConfigured=!!(supabaseUrl&&publishableKey);
- const devLogin=env.AUTH_ALLOW_LOCAL_BETA!=='false';
+ const cloudSaveConfigured=!!(supabaseConfigured&&serviceKey);
+ const devLogin=env.AUTH_ALLOW_LOCAL_BETA==='true';
+ const adminIds=new Set(String(env.ADMIN_ACCOUNT_IDS||'').split(',').map(value=>value.trim()).filter(Boolean));
+ const allowLocalAdmin=env.ADMIN_ALLOW_LOCAL_BETA==='true';
+ const isAdmin=session=>!!session&&(adminIds.has(session.accountId)||(allowLocalAdmin&&session.provider==='local'));
  const issueSession=profile=>signed({...profile,exp:Math.floor(Date.now()/1000)+SESSION_AGE},secret);
  const readSession=req=>{const session=readSigned(cookies(req)[SESSION_COOKIE],secret);if(!session||!Number.isInteger(session.exp)||session.exp<=Date.now()/1000||!session.accountId||!session.playerId||!session.roomId)return null;return session;};
  const json=(res,status,body,headers={})=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers});res.end(JSON.stringify(body));};
  const redirect=(res,location,setCookie)=>{res.writeHead(303,{Location:location,'Cache-Control':'no-store',...(setCookie?{'Set-Cookie':setCookie}:{})});res.end();};
  const secure=url=>url.protocol==='https:';
  async function syncProfile(user,profile){
-  const serviceKey=env.SUPABASE_SECRET_KEY||env.SUPABASE_SERVICE_ROLE_KEY;if(!serviceKey)return;
+  if(!serviceKey)return;
   const response=await fetchImpl(`${supabaseUrl}/rest/v1/profiles?on_conflict=user_id`,{method:'POST',headers:{...apiKeyHeaders(serviceKey),'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,display_name:profile.name,avatar_url:profile.avatar,updated_at:new Date().toISOString()})});
   if(!response.ok){const error=new Error('profile sync failed');error.authCode=response.status===404?'storage_not_ready':'profile_sync_failed';throw error;}
  }
  async function handle(req,res,url){
   if(url.pathname==='/api/auth/session'){
-   const session=readSession(req);json(res,200,{authenticated:!!session,user:session?{accountId:session.accountId,playerId:session.playerId,roomId:session.roomId,name:session.name,avatar:session.avatar,provider:session.provider}:null,providers:{google:supabaseConfigured,discord:supabaseConfigured},devLogin,supabaseConfigured});return true;
+   const session=readSession(req);json(res,200,{authenticated:!!session,user:session?{accountId:session.accountId,playerId:session.playerId,roomId:session.roomId,name:session.name,avatar:session.avatar,provider:session.provider,admin:isAdmin(session)}:null,providers:{google:cloudSaveConfigured,discord:cloudSaveConfigured},devLogin,supabaseConfigured,cloudSaveConfigured});return true;
   }
   if(url.pathname==='/api/auth/logout'&&req.method==='POST'){redirect(res,'/',cookie(SESSION_COOKIE,'',{maxAge:0,secure:secure(url)}));return true;}
   if(url.pathname==='/api/auth/dev'&&req.method==='POST'&&devLogin){
@@ -42,7 +47,7 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch}={}){
   }
   const start=/^\/api\/auth\/(google|discord)\/start$/.exec(url.pathname);
   if(start){
-   if(!supabaseConfigured){json(res,503,{error:'Supabase Auth is not configured'});return true;}
+   if(!cloudSaveConfigured){json(res,503,{error:'Supabase account storage is not configured'});return true;}
    const provider=start[1],verifier=randomBytes(48).toString('base64url'),callback=`${url.origin}/auth/callback`,target=new URL(`${supabaseUrl}/auth/v1/authorize`);
    target.search=new URLSearchParams({provider,redirect_to:callback,code_challenge:sha256url(verifier),code_challenge_method:'s256'}).toString();
    const flow=signed({provider,verifier,exp:Math.floor(Date.now()/1000)+FLOW_AGE},secret);
@@ -66,5 +71,5 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch}={}){
   }
   return false;
  }
- return {handle,readSession};
+ return {handle,readSession,isAdmin};
 }

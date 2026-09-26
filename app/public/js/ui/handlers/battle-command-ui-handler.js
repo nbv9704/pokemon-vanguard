@@ -1,6 +1,8 @@
+import {moveCategoryImg,typeSymbolImg} from '../pokemon-symbol-assets.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const automaticTargets=new Set(['self','userSide','field','allAdjacentFoes','allAdjacent','foeSide']);
 const commandModes={COMMAND:'BATTLE_COMMAND',MOVE:'BATTLE_MOVE_SELECT',TARGET:'BATTLE_TARGET_SELECT',PARTY:'BATTLE_PARTY',REVIEW:'BATTLE_REVIEW'};
+const other=side=>side==='A'?'B':'A';
 const typeColors={normal:'#a8a878',fire:'#f08030',water:'#6890f0',electric:'#f8d030',grass:'#78c850',ice:'#98d8d8',fighting:'#c03028',poison:'#a040a0',ground:'#e0c068',flying:'#a890f0',psychic:'#f85888',bug:'#a8b820',rock:'#b8a038',ghost:'#705898',dragon:'#7038f8',dark:'#705848',steel:'#b8b8d0',fairy:'#ee99ac'};
 const activeOwn=snapshot=>(snapshot?.own||[]).filter(mon=>mon.activeSlot>=0&&mon.hp>0).sort((a,b)=>a.activeSlot-b.activeSlot);
 const reserves=snapshot=>(snapshot?.own||[]).filter(mon=>mon.activeSlot<0&&mon.hp>0);
@@ -10,9 +12,9 @@ const moveById=(catalog,id)=>catalog?.moves?.find(entry=>entry.id===id);
 const percent=mon=>Math.max(0,Math.min(100,mon?.maxHp?mon.hp/mon.maxHp*100:mon?.hpPercent??0));
 
 function targetCandidates(snapshot,mon,move){
- const mode=moveTargetMode(move,mon),allies=activeOwn(snapshot),foes=(snapshot?.opponent||[]).filter(entry=>entry.activeSlot>=0&&entry.hpPercent>0).sort((a,b)=>a.activeSlot-b.activeSlot);
- const own=allies.map(entry=>({side:'A',slot:entry.activeSlot,actorId:entry.actorId,name:entry.name,kind:'ally'}));
- const enemy=foes.map(entry=>({side:'B',slot:entry.activeSlot,actorId:entry.actorId,name:entry.name,kind:'foe'}));
+ const mode=moveTargetMode(move,mon),allies=activeOwn(snapshot),foes=(snapshot?.opponent||[]).filter(entry=>entry.activeSlot>=0&&entry.hpPercent>0).sort((a,b)=>a.activeSlot-b.activeSlot),ownSide=snapshot?.ownSide||'A',foeSide=other(ownSide);
+ const own=allies.map(entry=>({side:ownSide,slot:entry.activeSlot,actorId:entry.actorId,name:entry.name,kind:'ally'}));
+ const enemy=foes.map(entry=>({side:foeSide,slot:entry.activeSlot,actorId:entry.actorId,name:entry.name,kind:'foe'}));
  if(mode==='adjacentAlly')return own.filter(entry=>entry.actorId!==mon.actorId);
  if(mode==='adjacentAllyOrSelf')return own;
  if(mode==='adjacentFoe')return enemy;
@@ -31,7 +33,7 @@ function usableMoves(snapshot,mon,catalog){
 function megaInfo(snapshot,mon,catalog){
  const relation=catalog?.megaRelations?.find(entry=>entry.baseSpeciesId===(mon.baseSpeciesId||mon.speciesId)&&entry.itemId===mon.buildSnapshot?.itemId);
  if(!relation)return null;
- const form=catalog?.megaForms?.find(entry=>entry.id===relation.megaSpeciesId),available=!mon.megaEvolved&&(snapshot.megaUsed?.A||0)<(snapshot.megaLimit||0);
+ const form=catalog?.megaForms?.find(entry=>entry.id===relation.megaSpeciesId),available=!mon.megaEvolved&&(snapshot.megaUsed?.[snapshot.ownSide||'A']||0)<(snapshot.megaLimit||0);
  return {relation,form,available};
 }
 
@@ -52,7 +54,7 @@ function commandSummary(command,snapshot,catalog){
  if(command.kind==='recharge')return 'Recharge';
  if(command.kind==='switch')return `Switch → ${esc((snapshot.own||[]).find(mon=>mon.actorId===command.toId)?.name||command.toId)}`;
  if(command.kind==='move'){
-  const move=moveById(catalog,command.moveId),target=command.target&&(command.target.side==='A'?snapshot.own:snapshot.opponent)?.find(mon=>mon.activeSlot===command.target.slot);
+  const move=moveById(catalog,command.moveId),target=command.target&&(command.target.side===(snapshot.ownSide||'A')?snapshot.own:snapshot.opponent)?.find(mon=>mon.activeSlot===command.target.slot);
   return `${command.mega?'Mega · ':''}${esc(move?.name||command.moveId)}${target?` → ${esc(target.name)}`:''}${command.switchToId?` · pivot → ${esc((snapshot.own||[]).find(mon=>mon.actorId===command.switchToId)?.name||command.switchToId)}`:''}`;
  }
  return esc(command.kind);
@@ -147,8 +149,8 @@ export class BattleCommandUiHandler{
  }
  renderMoves(screen,view,catalog,mon,stepLabel){
   const snapshot=view.snapshot,options=usableMoves(snapshot,mon,catalog),mega=megaInfo(snapshot,mon,catalog),megaOn=this.draft?.mega===true;
-  const buttons=options.map(({move,disabled},index)=>`<button class="pokemon-move-tile type-${esc(move.type)}" style="--move-type:${typeColors[move.type]||'#8ca0b8'}" data-ui-focusable data-ui-focus-id="move-${mon.actorId}-${move.id}" data-ui-row="${Math.floor(index/2)}" data-ui-col="${index%2}" data-v3-battle="ui-move" data-move-id="${move.id}" ${disabled?'disabled':''}><span class="move-type-dot"></span><b>${esc(move.name)}</b><small>${esc(move.type)} · ${esc(move.category)}</small><em>${move.power||'—'} PWR</em><span>${mon.pp?.[move.id]??0}/${move.maxPP} PP</span></button>`).join('');
-  return `<div class="pokemon-command-layout move-select-layout"><div class="pokemon-command-message"><small>FIGHT · ${stepLabel}</small><strong>Choose ${esc(mon.name)}'s move.</strong><span>${choiceLockMove(snapshot,mon)?`Choice lock: ${esc(moveById(catalog,choiceLockMove(snapshot,mon))?.name||choiceLockMove(snapshot,mon))}`:'Type, category and PP are shown on each move.'}</span>${mega?`<button class="mega-command-toggle ${megaOn?'selected':''}" data-ui-focusable data-ui-focus-id="mega-${mon.actorId}" data-ui-row="2" data-ui-col="0" data-v3-battle="ui-mega" ${mega.available?'':'disabled'}><b>${megaOn?'✓ MEGA':'MEGA'}</b><small>${megaOn?'Evolution queued':'Evolve into '+esc(mega.form?.name||mega.relation.megaSpeciesId)}</small></button>`:''}<button class="command-back" data-ui-focusable data-ui-focus-id="back-moves-${mon.actorId}" data-ui-row="3" data-ui-col="0" data-v3-battle="ui-back">← Back</button></div><div class="pokemon-move-grid">${buttons}</div></div>`;
+  const buttons=options.map(({move,disabled},index)=>`<button class="pokemon-move-tile type-${esc(move.type)} category-${esc(move.category)}" style="--move-type:${typeColors[move.type]||'#8ca0b8'}" data-ui-focusable data-ui-focus-id="move-${mon.actorId}-${move.id}" data-ui-row="${Math.floor(index/2)}" data-ui-col="${index%2}" data-v3-battle="ui-move" data-move-id="${move.id}" ${disabled?'disabled':''}><span class="move-card-main"><b>${esc(move.name)}</b><span class="move-symbol-row" aria-label="${esc(move.type)} type, ${esc(move.category)} move"><span class="move-type-symbol" title="${esc(move.type)} type">${typeSymbolImg(move.type,{variant:'icon',alt:''})}</span><span class="move-category-symbol" title="${esc(move.category)} move">${moveCategoryImg(move.category,{alt:''})}</span></span></span><span class="move-card-stats"><em>${move.power||'—'} <small>PWR</small></em><span>${mon.pp?.[move.id]??0}/${move.maxPP} <small>PP</small></span></span></button>`).join('');
+  return `<div class="pokemon-command-layout move-select-layout"><div class="pokemon-command-message"><small>FIGHT · ${stepLabel}</small><strong>Choose ${esc(mon.name)}'s move.</strong><span>${choiceLockMove(snapshot,mon)?`Choice lock: ${esc(moveById(catalog,choiceLockMove(snapshot,mon))?.name||choiceLockMove(snapshot,mon))}`:'Move type and class are shown as icons; PP is shown at right.'}</span>${mega?`<button class="mega-command-toggle ${megaOn?'selected':''}" data-ui-focusable data-ui-focus-id="mega-${mon.actorId}" data-ui-row="2" data-ui-col="0" data-v3-battle="ui-mega" ${mega.available?'':'disabled'}><b>${megaOn?'✓ MEGA':'MEGA'}</b><small>${megaOn?'Evolution queued':'Evolve into '+esc(mega.form?.name||mega.relation.megaSpeciesId)}</small></button>`:''}<button class="command-back" data-ui-focusable data-ui-focus-id="back-moves-${mon.actorId}" data-ui-row="3" data-ui-col="0" data-v3-battle="ui-back">← Back</button></div><div class="pokemon-move-grid">${buttons}</div></div>`;
  }
  renderTargets(screen,view,catalog,mon,stepLabel){
   const move=moveById(catalog,this.draft?.moveId),targets=targetCandidates(view.snapshot,mon,move),buttons=targets.map((target,index)=>`<button class="pokemon-target-tile ${target.kind}" data-ui-focusable data-ui-focus-id="target-${target.side}-${target.slot}" data-ui-row="${Math.floor(index/2)}" data-ui-col="${index%2}" data-v3-battle="ui-target" data-side="${target.side}" data-slot="${target.slot}"><small>${target.kind==='foe'?'OPPONENT':'ALLY'} · SLOT ${target.slot+1}</small><b>${esc(target.name)}</b></button>`).join('');

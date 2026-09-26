@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aether.local/schemas/species-identity.schema.json",
-  "title": "Aether Champions stable species identity",
+  "title": "Pokémon Vanguard stable species identity",
   "type": "array",
   "minItems": 36,
   "maxItems": 36,

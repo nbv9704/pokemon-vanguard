@@ -8,8 +8,8 @@ const state=()=>({seed:1,coins:100,crystals:50,recruitmentTickets:2,wallet:{coin
 
 test('daily missions reset by UTC day while starter progress persists',()=>{
  const adventure=state();ensureMissionState(adventure,MONDAY,{login:true});recordMissionEvent(adventure,'battles',1,MONDAY);recordMissionEvent(adventure,'wins',1,MONDAY);
- let view=missionView(adventure,MONDAY);assert.equal(view.daily.find(entry=>entry.id==='daily-login').claimable,true);assert.equal(view.daily.find(entry=>entry.id==='daily-battle').progress,1);assert.equal(view.starter.find(entry=>entry.id==='starter-win').progress,1);
- ensureMissionState(adventure,MONDAY+DAY,{login:true});view=missionView(adventure,MONDAY+DAY);assert.equal(view.daily.find(entry=>entry.id==='daily-battle').progress,0);assert.equal(view.daily.find(entry=>entry.id==='daily-login').progress,1);assert.equal(view.starter.find(entry=>entry.id==='starter-win').progress,1);
+ let view=missionView(adventure,MONDAY);assert.equal(view.daily.find(entry=>entry.id==='daily-login').claimable,true);assert.equal(view.daily.find(entry=>entry.id==='daily-battle').progress,1);assert.equal(view.starter.find(entry=>entry.id==='starter-win').progress,1);assert.equal(view.achievements.find(entry=>entry.id==='achievement-battles-10').progress,1);
+ ensureMissionState(adventure,MONDAY+DAY,{login:true});view=missionView(adventure,MONDAY+DAY);assert.equal(view.daily.find(entry=>entry.id==='daily-battle').progress,0);assert.equal(view.daily.find(entry=>entry.id==='daily-login').progress,1);assert.equal(view.starter.find(entry=>entry.id==='starter-win').progress,1);assert.equal(view.achievements.find(entry=>entry.id==='achievement-battles-10').progress,1);
 });
 
 test('mission rewards are authoritative and cannot be claimed twice',()=>{
@@ -23,5 +23,10 @@ test('claim all collects every completed reward and daily completion bonus',()=>
 });
 
 test('mission view renders categories and emits claim actions',()=>{
- const adventure=state();ensureMissionState(adventure,MONDAY,{login:true});const publicView={missions:missionView(adventure,MONDAY)},sent=[],screen=new MissionView({sendAction:action=>sent.push(action),onChange:()=>{},createActionId:()=> 'mission:ui'}),html=screen.render(publicView);assert.match(html,/Daily Missions/);assert.match(html,/Log in to the game/);screen.handleClick({dataset:{mission:'claim',category:'daily',missionId:'daily-login'}});assert.deepEqual(sent[0],{type:'mission.claim',category:'daily',missionId:'daily-login',actionId:'mission:ui'});
+ const adventure=state();ensureMissionState(adventure,MONDAY,{login:true});const publicView={missions:missionView(adventure,MONDAY)},sent=[],screen=new MissionView({sendAction:action=>sent.push(action),onChange:()=>{},createActionId:()=> 'mission:ui'}),html=screen.render(publicView);assert.match(html,/Daily Missions/);assert.match(html,/Achievements/);assert.match(html,/Log in to the game/);screen.handleClick({dataset:{mission:'claim',category:'daily',missionId:'daily-login'}});assert.deepEqual(sent[0],{type:'mission.claim',category:'daily',missionId:'daily-login',actionId:'mission:ui'});
+});
+
+
+test('achievements are persistent lifetime missions with claimable rewards',()=>{
+ const adventure=state();ensureMissionState(adventure,MONDAY);recordMissionEvent(adventure,'battles',10,MONDAY);let view=missionView(adventure,MONDAY);const achievement=view.achievements.find(entry=>entry.id==='achievement-battles-10');assert.equal(achievement.claimable,true);ensureMissionState(adventure,MONDAY+DAY*14);view=missionView(adventure,MONDAY+DAY*14);assert.equal(view.achievements.find(entry=>entry.id==='achievement-battles-10').progress,10);const result=applyMissionAction(adventure,{type:'mission.claim',category:'achievements',missionId:'achievement-battles-10',actionId:'mission:achievement'},{serverNow:MONDAY+DAY*14});assert.equal(result.ok,true);assert.equal(result.state.wallet.recruitmentTickets,27);
 });

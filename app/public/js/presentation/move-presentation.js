@@ -1,8 +1,9 @@
 import {moveFxProfile,PROFILE_PRIMITIVES} from '../v3-move-fx-profile.js';
 import {assertPresentationDefinition} from './presentation-schema.js';
 import {buildMovePresentationDefinition,movePresentationTemplate,presentationMigrationSummary} from './move-presentation-library.js';
+import {BATTLE_PRESENTATION_TIMING,retimePresentationCues} from './battle-presentation-timing.js';
 
-const CAST_DURATION=1050,IMPACT_DURATION=420;
+const CAST_DURATION=BATTLE_PRESENTATION_TIMING.cast,IMPACT_DURATION=BATTLE_PRESENTATION_TIMING.impact;
 const HEAVY_PROFILES=new Set(['beam','rush','impact','field-burst','drain-contact']);
 const USER_MOTION={rush:'actor-lunge',slash:'actor-lunge',impact:'actor-lunge','drain-contact':'actor-lunge',projectile:'actor-pulse',beam:'actor-pulse',barrage:'actor-pulse',aura:'actor-pulse',orb:'actor-pulse',drain:'actor-pulse',seed:'actor-pulse',notes:'actor-pulse','field-burst':'actor-pulse',barrier:'actor-pulse'};
 
@@ -13,7 +14,7 @@ function legacyCastDefinition(move,profile,targetCount){
  cues.push(localCue('user-motion','actor',40,{duration:420,layer:'ACTOR',anchor:'USER_CENTER',primitive:USER_MOTION[profile.id]||'actor-pulse',role:'user'}));
  cues.push(localCue('cast-audio','audio',100,{sound:`move:${move?.type||'normal'}:cast`,meta:{semantic:true}}));
  for(let targetIndex=0;targetIndex<Math.max(1,targetCount);targetIndex++)for(let index=0;index<primitives.length;index++)cues.push(localCue(`cast-${targetIndex}-${index}`,'effect',130+index*70,{duration:760,layer:index===0?'ACTOR_FRONT':'FX_FRONT',anchor:'USER_TO_TARGET',primitive:primitives[index],role:'target',targetIndex}));
- return assertPresentationDefinition({id:`legacy-${profile.id}-cast`,tier:'legacy-adapter',template:'legacy',profile:profile.id,stage:'cast',duration:CAST_DURATION,cues});
+ return assertPresentationDefinition({id:`legacy-${profile.id}-cast`,tier:'legacy-adapter',template:'legacy',profile:profile.id,stage:'cast',duration:CAST_DURATION,cues:retimePresentationCues(cues,'cast')});
 }
 
 function legacyImpactDefinition(move,profile,targetCount){
@@ -25,7 +26,7 @@ function legacyImpactDefinition(move,profile,targetCount){
   cues.push(localCue(`target-${targetIndex}-shake`,'actor',20,{duration:220,layer:'ACTOR',anchor:'TARGET_CENTER',primitive:'actor-shake',role:'target',targetIndex}));
   for(let index=0;index<primitives.length;index++)cues.push(localCue(`impact-${targetIndex}-${index}`,'effect',15+index*35,{duration:300,layer:'FX_FRONT',anchor:'TARGET_CENTER',primitive:primitives[index],role:'target',targetIndex}));
  }
- return assertPresentationDefinition({id:`legacy-${profile.id}-impact`,tier:'legacy-adapter',template:'legacy',profile:profile.id,stage:'impact',duration:IMPACT_DURATION,cues});
+ return assertPresentationDefinition({id:`legacy-${profile.id}-impact`,tier:'legacy-adapter',template:'legacy',profile:profile.id,stage:'impact',duration:IMPACT_DURATION,cues:retimePresentationCues(cues,'impact')});
 }
 
 export function movePresentationDefinition(move,{stage='cast',targetCount=1}={}){

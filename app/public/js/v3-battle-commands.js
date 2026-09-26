@@ -15,7 +15,7 @@ function defaultMove(screen,snapshot,mon,catalog,index){
  else if(existing)return;
  const candidates=mon.buildSnapshot.moveIds.map(id=>catalog.moves.find(entry=>entry.id===id)).filter(move=>move&&(mon.pp[move.id]||0)>0&&(!locked||move.id===locked)),move=candidates.find(entry=>!entry.actionProfile.requiresPivotTarget)||candidates[0];
  if(!move){const reserve=available[index]||available[0];if(reserve)screen.commands[mon.actorId]={kind:'switch',actorId:mon.actorId,toId:reserve.actorId};else delete screen.commands[mon.actorId];return;}
- const target=automaticTargets.has(moveTargetMode(move,mon))?undefined:{side:'B',slot:snapshot.opponent.find(entry=>entry.activeSlot>=0&&entry.hpPercent>0)?.activeSlot||0};
+ const target=automaticTargets.has(moveTargetMode(move,mon))?undefined:{side:(snapshot.ownSide||'A')==='A'?'B':'A',slot:snapshot.opponent.find(entry=>entry.activeSlot>=0&&entry.hpPercent>0)?.activeSlot||0};
  screen.commands[mon.actorId]={kind:'move',actorId:mon.actorId,moveId:move.id,...(target?{target}:{}),...(move.actionProfile.requiresPivotTarget&&available[index]?{switchToId:available[index].actorId}:{})};
 }
 
@@ -29,7 +29,7 @@ function moveCards(mon,command,catalog,snapshot,panelIndex=0){
 
 function megaChoice(mon,command,snapshot,catalog){
  const relation=catalog.megaRelations?.find(entry=>entry.baseSpeciesId===(mon.baseSpeciesId||mon.speciesId)&&entry.itemId===mon.buildSnapshot.itemId);if(!relation)return '';
- const form=catalog.megaForms?.find(entry=>entry.id===relation.megaSpeciesId),available=!mon.megaEvolved&&(snapshot.megaUsed?.A||0)<(snapshot.megaLimit||0)&&command.kind==='move';
+ const form=catalog.megaForms?.find(entry=>entry.id===relation.megaSpeciesId),available=!mon.megaEvolved&&(snapshot.megaUsed?.[snapshot.ownSide||'A']||0)<(snapshot.megaLimit||0)&&command.kind==='move';
  return `<label class="v3-mega-choice"><input type="checkbox" data-v3-mega="${mon.actorId}" ${command.mega?'checked':''} ${available?'':'disabled'}> Mega Evolve into ${esc(form?.name||relation.megaSpeciesId)}</label>`;
 }
 

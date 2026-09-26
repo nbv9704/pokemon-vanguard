@@ -24,6 +24,14 @@ export const MISSION_DEFINITIONS=Object.freeze({
   {id:'starter-recruit',title:'Meet a new partner',description:'Recruit a Pokémon by trial or permanently.',counter:'recruits',target:1,reward:{recruitmentTickets:10},route:'recruitment'},
   {id:'starter-team',title:'Shape your squad',description:'Save a team in Team Builder.',counter:'teamSaves',target:1,reward:{coins:1200},route:'teams'},
   {id:'starter-roster',title:'Build a roster of 10',description:'Own ten permanent Pokémon.',counter:'ownedPokemon',target:10,reward:{recruitmentTickets:20},route:'collection'}
+ ]),
+ achievements:Object.freeze([
+  {id:'achievement-battles-10',title:'Battle Tested',description:'Complete 10 battles across Single and Double formats.',counter:'battles',target:10,reward:{recruitmentTickets:25},route:'battle'},
+  {id:'achievement-wins-10',title:'League Contender',description:'Win 10 battles.',counter:'wins',target:10,reward:{crystals:1000},route:'battle'},
+  {id:'achievement-recruits-10',title:'Team Scout',description:'Recruit 10 Pokémon through trials or permanent recruitment.',counter:'recruits',target:10,reward:{coins:5000},route:'recruitment'},
+  {id:'achievement-roster-25',title:'Growing Pokédex',description:'Own 25 Pokémon permanently.',counter:'ownedPokemon',target:25,reward:{recruitmentTickets:40},route:'collection'},
+  {id:'achievement-mega-10',title:'Mega Specialist',description:'Use Mega Evolution 10 times in battle.',counter:'megaEvolutions',target:10,reward:{crystals:1500},route:'battle'},
+  {id:'achievement-battles-50',title:'Seasoned Battler',description:'Complete 50 battles.',counter:'battles',target:50,reward:{coins:10000},route:'battle'}
  ])
 });
 
@@ -38,11 +46,14 @@ export function ensureMissionState(state,now=Date.now(),{login=false}={}){
  if(existing.daily?.periodId!==daily.id)existing.daily=freshPeriod(daily);
  if(existing.weekly?.periodId!==weekly.id)existing.weekly=freshPeriod(weekly);
  if(!existing.starter)existing.starter={counters:emptyCounters(),claimed:[]};
- for(const category of [existing.daily,existing.weekly,existing.starter]){category.counters={...emptyCounters(),...(category.counters||{})};category.claimed=Array.isArray(category.claimed)?category.claimed:[];}
- existing.version=1;
+ if(!existing.achievements)existing.achievements={counters:emptyCounters(),claimed:[]};
+ for(const category of [existing.daily,existing.weekly,existing.starter,existing.achievements]){category.counters={...emptyCounters(),...(category.counters||{})};category.claimed=Array.isArray(category.claimed)?category.claimed:[];}
+ existing.version=2;
  if(login)existing.daily.counters.login=Math.max(1,existing.daily.counters.login);
  existing.starter.counters.ownedPokemon=Math.max(existing.starter.counters.ownedPokemon,permanentOwned(state));
  existing.starter.counters.wins=Math.max(existing.starter.counters.wins,Math.min(1,Math.max(0,Number(state.wins)||0)));
+ existing.achievements.counters.ownedPokemon=Math.max(existing.achievements.counters.ownedPokemon,permanentOwned(state));
+ existing.achievements.counters.wins=Math.max(existing.achievements.counters.wins,Math.max(0,Number(state.wins)||0));
  state.missionsV1=existing;return existing;
 }
 
@@ -51,7 +62,9 @@ export function recordMissionEvent(state,event,amount=1,now=Date.now()){
  if(Object.hasOwn(missions.daily.counters,event))missions.daily.counters[event]+=value;
  if(Object.hasOwn(missions.weekly.counters,event))missions.weekly.counters[event]+=value;
  if(Object.hasOwn(missions.starter.counters,event))missions.starter.counters[event]+=value;
+ if(Object.hasOwn(missions.achievements.counters,event))missions.achievements.counters[event]+=value;
  missions.starter.counters.ownedPokemon=Math.max(missions.starter.counters.ownedPokemon,permanentOwned(state));
+ missions.achievements.counters.ownedPokemon=Math.max(missions.achievements.counters.ownedPokemon,permanentOwned(state));
  return state;
 }
 
@@ -64,8 +77,8 @@ function missionProgress(category,definition){
 }
 function projectCategory(missions,category){const bucket=missions[category];return MISSION_DEFINITIONS[category].map(definition=>{const progress=Math.min(definition.target,missionProgress.call(missions,category,definition)),complete=progress>=definition.target,claimed=bucket.claimed.includes(definition.id);return {...definition,progress,complete,claimed,claimable:complete&&!claimed};});}
 export function missionView(state,now=Date.now()){
- const missions=ensureMissionState(state,now),daily=projectCategory(missions,'daily'),weekly=projectCategory(missions,'weekly'),starter=projectCategory(missions,'starter'),claimableCount=[...daily,...weekly,...starter].filter(entry=>entry.claimable).length;
- return {version:1,serverNow:now,dailyEndsAt:missions.daily.endsAt,weeklyEndsAt:missions.weekly.endsAt,daily,weekly,starter,claimableCount};
+ const missions=ensureMissionState(state,now),daily=projectCategory(missions,'daily'),weekly=projectCategory(missions,'weekly'),starter=projectCategory(missions,'starter'),achievements=projectCategory(missions,'achievements'),claimableCount=[...daily,...weekly,...starter,...achievements].filter(entry=>entry.claimable).length;
+ return {version:2,serverNow:now,dailyEndsAt:missions.daily.endsAt,weeklyEndsAt:missions.weekly.endsAt,daily,weekly,starter,achievements,claimableCount};
 }
 
 export const isMissionAction=action=>['mission.claim','mission.claimAll'].includes(action?.type);
@@ -73,14 +86,14 @@ const findMission=(category,id)=>MISSION_DEFINITIONS[category]?.find(entry=>entr
 function rewardMission(state,category,definition,actionId){
  const bucket=state.missionsV1[category];if(bucket.claimed.includes(definition.id))return {ok:false,code:'MISSION_ALREADY_CLAIMED'};
  const progress=missionProgress.call(state.missionsV1,category,definition);if(progress<definition.target)return {ok:false,code:'MISSION_NOT_COMPLETE'};
- const period=category==='starter'?'starter':bucket.periodId,receiptId=`mission:${category}:${period}:${definition.id}`,tx=applyEconomyTransaction(state,{receiptId,actionId,kind:'mission.reward',delta:definition.reward,details:{category,missionId:definition.id}});if(!tx.ok)return tx;
+ const period=['starter','achievements'].includes(category)?category:bucket.periodId,receiptId=`mission:${category}:${period}:${definition.id}`,tx=applyEconomyTransaction(state,{receiptId,actionId,kind:'mission.reward',delta:definition.reward,details:{category,missionId:definition.id}});if(!tx.ok)return tx;
  bucket.claimed.push(definition.id);return {ok:true,reward:clone(definition.reward),receiptId};
 }
 export function applyMissionAction(state,action,{serverNow=Date.now()}={}){
  if(!isMissionAction(action))return {ok:false,code:'UNKNOWN_MISSION_ACTION'};
  if(!validateEconomyActionId(action.actionId))return {ok:false,code:'ACTION_ID_REQUIRED'};
  const base=clone(state);ensureMissionState(base,serverNow);
- if(!['daily','weekly','starter'].includes(action.category))return {ok:false,code:'MISSION_CATEGORY_INVALID'};
+ if(!['daily','weekly','starter','achievements'].includes(action.category))return {ok:false,code:'MISSION_CATEGORY_INVALID'};
  if(action.type==='mission.claim'){const definition=findMission(action.category,action.missionId);if(!definition)return {ok:false,code:'MISSION_NOT_FOUND'};const result=rewardMission(base,action.category,definition,action.actionId);if(!result.ok)return result;base.notice='Mission reward claimed.';return {ok:true,state:base,claimed:[definition.id],reward:result.reward};}
  const claimed=[],reward={coins:0,crystals:0,recruitmentTickets:0};
  for(const definition of MISSION_DEFINITIONS[action.category]){const bucket=base.missionsV1[action.category];if(bucket.claimed.includes(definition.id)||missionProgress.call(base.missionsV1,action.category,definition)<definition.target)continue;const result=rewardMission(base,action.category,definition,`${action.actionId}:${definition.id}`);if(!result.ok)return result;claimed.push(definition.id);for(const key of Object.keys(reward))reward[key]+=definition.reward[key]||0;}

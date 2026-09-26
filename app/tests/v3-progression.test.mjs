@@ -5,8 +5,8 @@ import {applyV3ProgressionAction,createV3BetaProgression,v3TrainingView,validate
 
 const fresh=()=>createV3BetaProgression(v3Catalog);
 
-test('schema-3 beta progression starts with six legal owned Mon, builds and one team',()=>{
- const state=fresh();assert.equal(state.mons.length,6);assert.equal(state.builds.length,6);assert.equal(state.teams[0].buildIds.length,6);assert.deepEqual(state.builds.flatMap(build=>validateV3Build(build,state,v3Catalog)),[]);assert.deepEqual(validateV3Team(state.teams[0],state,v3Catalog),[]);
+test('schema-3 beta progression starts with six legal owned Mon, builds and five switchable teams',()=>{
+ const state=fresh();assert.equal(state.mons.length,6);assert.equal(state.builds.length,6);assert.equal(state.teams.length,5);assert.equal(state.activeTeamId,state.teams[0].teamId);assert.equal(state.teams[0].buildIds.length,6);assert.deepEqual(state.builds.flatMap(build=>validateV3Build(build,state,v3Catalog)),[]);assert.deepEqual(validateV3Team(state.teams[0],state,v3Catalog),[]);
 });
 
 test('schema-3 build validator enforces 66/32, learnset, Ability and enabled item',()=>{
@@ -43,4 +43,14 @@ test('schema-3 Mega-base complete species can build from their full promoted lea
 test("schema-3 build validator supports Ditto's single legal Transform without fake moves",()=>{
  const state=fresh(),species=v3Catalog.speciesById.ditto,defaults=species.defaultBuild,mon={monId:'v3-mon-ditto-contract',speciesId:'ditto',ownership:'permanent'},build={buildId:'v3-build-ditto-contract',monId:mon.monId,name:'Ditto Contract',natureId:defaults.natureId,statPoints:structuredClone(defaults.statPoints),moveIds:[...defaults.moveIds],abilityId:defaults.abilityId,itemId:defaults.itemId,revision:1};
  state.mons.push(mon);state.builds.push(build);assert.deepEqual(species.moveIds,['transform']);assert.deepEqual(build.moveIds,['transform']);assert.deepEqual(validateV3Build(build,state,v3Catalog),[]);assert.ok(validateV3Build({...build,moveIds:['transform','transform']},state,v3Catalog).includes('MOVE_COUNT_INVALID'));
+});
+
+
+test('schema-3 active team can switch without rewriting team builds',()=>{
+ const state=fresh(),target=state.teams[2],result=applyV3ProgressionAction(state,{type:'teamV3.activate',teamId:target.teamId},v3Catalog);assert.equal(result.ok,true);assert.equal(result.progression.activeTeamId,target.teamId);assert.deepEqual(result.progression.teams[2].buildIds,target.buildIds);assert.equal(state.activeTeamId,state.teams[0].teamId);
+});
+
+
+test('team drafts persist composition immediately even when competitive Item Clause still needs fixing',()=>{
+ const state=fresh(),species=v3Catalog.species.find(entry=>!state.mons.some(mon=>mon.speciesId===entry.id)),defaults=species.defaultBuild,mon={monId:'draft-mon',speciesId:species.id,ownership:'permanent'},build={buildId:'draft-build',monId:mon.monId,name:defaults.name,natureId:defaults.natureId,statPoints:structuredClone(defaults.statPoints),moveIds:[...defaults.moveIds],abilityId:defaults.abilityId,itemId:'leftovers',revision:1};state.mons.push(mon);state.builds.push(build);const team=structuredClone(state.teams[0]);team.buildIds[1]=build.buildId;assert.deepEqual(validateV3Team(team,state,v3Catalog),['ITEM_CLAUSE']);const saved=applyV3ProgressionAction(state,{type:'teamV3.save',expectedRevision:team.revision,team},v3Catalog);assert.equal(saved.ok,true);assert.deepEqual(saved.team.buildIds,team.buildIds);assert.deepEqual(validateV3Team(saved.team,saved.progression,v3Catalog),['ITEM_CLAUSE']);
 });

@@ -1,4 +1,4 @@
-import {readFile,writeFile,mkdir,rename,copyFile,access} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,rename,copyFile,access,readdir} from 'node:fs/promises';
 import path from 'node:path';
 
 const ROOM=/^[A-Za-z0-9_-]{1,64}$/;
@@ -16,6 +16,15 @@ export class JsonAdventureStorage{
   await writeFile(temporary,encoded,'utf8');
   JSON.parse(await readFile(temporary,'utf8'));
   await rename(temporary,target);
+ }
+
+ async profile(room){const state=await this.load(room);return state?{userId:room,displayName:state.owner||room,avatarUrl:null,createdAt:null,updatedAt:null}:null;}
+ async listAccounts({search='',limit=50,offset=0}={}){
+  let names=[];try{names=(await readdir(this.saveDir)).filter(name=>name.endsWith('.json')&&!name.endsWith('.tmp')).map(name=>name.slice(0,-5));}catch(error){if(error.code!=='ENOENT')throw error;}
+  const query=String(search||'').trim().toLowerCase();if(query)names=names.filter(name=>name.toLowerCase().includes(query));names.sort();
+  const total=names.length,selected=names.slice(Math.max(0,offset),Math.max(0,offset)+Math.min(100,Math.max(1,limit))),accounts=[];
+  for(const userId of selected){const state=await this.load(userId);accounts.push({userId,displayName:state?.owner||userId,avatarUrl:null,createdAt:null,updatedAt:null,schemaVersion:state?.schemaVersion||null,revision:state?.revision||0,state});}
+  return {total,accounts};
  }
  async backup(room,backupDir,label){
   const source=this.pathFor(room);JSON.parse(await readFile(source,'utf8'));

@@ -93,7 +93,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, catalog chuyển tiếp 36 
 
 The transition build still contains 36 original fixture species, 48 moves, 24 Abilities and 13 held items so completed engine work remains testable. Production content will use the reviewed M-A Pokémon roster, the canonical type chart and locally cached Showdown sprites. Recruitment already uses eight offers, a seven-day Trial, a uniform permanent coin price and recruitment tickets; rarity summoning is disabled for schema-v2 saves.
 
-This is a local solo AI build. PvP/accounts remain outside the current local M-A release scope. Semantic battle/UI audio is implemented locally through Web Audio, and the public runtime is checked to make no Internet requests. Pokémon front/back/artwork coverage is now 272/272 from the local PokéAPI-derived asset pack; runtime rendering remains fully offline. Source URLs, aliases, byte lengths and SHA-256 hashes are recorded in `app/content-src/presentation-asset-sources-v1.json`.
+Pokémon front/back/artwork coverage is 272/272 from the local PokéAPI-derived asset pack, and held-item/rank assets remain local. Pokémon Vanguard also standardizes battle metadata on the **Pokémon Legends: Arceus (LA)** type-symbol family: 18 circular `* icon LA` sprites, 18 horizontal `*IC LA` strips and the matching 50×50 Physical/Special/Status category sprites. Run `cd app && npm run assets:ui-icons` to vendor all 39 third-party UI sprites into `public/assets/ui/`. If they have not been vendored yet, the app uses a same-origin server proxy as a development/deployment fallback; no Bulbagarden URL is exposed in public browser code. Review the sprite fair-use/redistribution terms before a public release.
 
 ## Hoạt ảnh chiến đấu
 
@@ -103,3 +103,20 @@ This is a local solo AI build. PvP/accounts remain outside the current local M-A
 - Settings → Reduced motion tắt chuyển động/hạt sáng; tùy chọn giảm chuyển động của hệ điều hành cũng được tôn trọng.
 - `app/public/battle-animation.js` và `.css`: bộ phát hoạt ảnh Canvas/Web Animations; `src/logic.js` xuất sự kiện và ảnh chụp trạng thái từng hành động.
 - `npm test` kiểm tra đồng bộ sát thương/HP, mục tiêu đấu đôi, 12 hệ, miễn nhiễm, đỡ đòn, hồi máu, thời tiết, đổi Mon, bị hạ và tương thích bản lưu cũ.
+
+## Admin Console
+
+Pokémon Vanguard includes a server-authorized admin surface at `/admin.html`. It is not enabled by a client-side flag: the signed-in account must be present in the server environment variable `ADMIN_ACCOUNT_IDS`.
+
+Example `.dev.vars` configuration:
+
+```text
+ADMIN_ACCOUNT_IDS=11111111-1111-4111-8111-111111111111,22222222-2222-4222-8222-222222222222
+ADMIN_ALLOW_LOCAL_BETA=false
+```
+
+Use Supabase account UUIDs for production. `ADMIN_ALLOW_LOCAL_BETA=true` is intended only for local development. The admin console can inspect player saves; manage wallet, held-item and Pokémon ownership; inspect teams/builds; edit/reset Ranked state; complete/reset Missions and Achievements; create backups; disconnect or suspend accounts; stop active Ranked/Friendly/PvE activity as an administrative no-contest; and send claimable Mailbox gift campaigns to one trainer, a selected list, online trainers, a rank cohort, or the entire server. Gift campaigns can contain VP, Crystals, Recruitment Tickets, multiple held items and multiple Pokémon. Each campaign also selects a mail-retention type and can override separate unread and after-read lifetimes; opening mail shortens retention and expired rewards cannot be claimed. Admin-only notes/audit metadata and the sending admin UUID are never included in the normal player view.
+
+### PvP match lifecycle
+
+Ranked and Friendly PvP use server-authoritative decision clocks: 45 seconds for COMMAND/REPLACE, 90 seconds for Team Preview, and a 90-second reconnect grace. Missed decisions receive a deterministic legal fallback action; a single expired disconnect forfeits to the connected trainer, while simultaneous disconnect expiry is no-contest. Friendly waiting rooms expire after 15 minutes and finished in-memory results are cleaned after 10 minutes. These live coordinator states remain single-process beta state and are not yet restart-persistent.

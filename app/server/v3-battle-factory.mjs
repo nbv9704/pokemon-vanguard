@@ -13,10 +13,21 @@ export function createV3BattleUnit(side,index,build,mon,catalog){
 
 export function publicV3Preview(team,progression,catalog){return team.buildIds.map(buildId=>{const build=progression.builds.find(entry=>entry.buildId===buildId),mon=progression.mons.find(entry=>entry.monId===build.monId),species=catalog.speciesById[mon.speciesId];return {buildId,speciesId:species.id,name:species.name,types:[...species.types],spriteKey:species.spriteKey};});}
 
-export function createV3Battle({id,mode,seed,playerBuildIds,progression,catalog}){
- const count=catalog.regulations[0].pick[mode],playerBuilds=playerBuildIds.map(id=>progression.builds.find(entry=>entry.buildId===id)),enemyBuilds=[...progression.builds].reverse().slice(0,count),unit=(side,build,index)=>createV3BattleUnit(side,index,build,progression.mons.find(mon=>mon.monId===build.monId),catalog);
- const sides={A:{active:[],roster:playerBuilds.map((build,index)=>unit('A',build,index)),conditions:{}},B:{active:[],roster:enemyBuilds.map((build,index)=>unit('B',build,index)),conditions:{}}},activeCount=mode==='double'?2:1;
- sides.A.active=sides.A.roster.slice(0,activeCount).map(entry=>entry.actorId);sides.B.active=sides.B.roster.slice(0,activeCount).map(entry=>entry.actorId);
+function rosterFor(side,buildIds,progression,catalog){
+ return buildIds.map((id,index)=>{const build=progression.builds.find(entry=>entry.buildId===id),mon=progression.mons.find(entry=>entry.monId===build?.monId);if(!build||!mon)throw new Error(`Missing ranked build ${id}`);return createV3BattleUnit(side,index,build,mon,catalog);});
+}
+function finalizeBattle({id,mode,seed,sides,catalog}){
+ const activeCount=mode==='double'?2:1;sides.A.active=sides.A.roster.slice(0,activeCount).map(entry=>entry.actorId);sides.B.active=sides.B.roster.slice(0,activeCount).map(entry=>entry.actorId);
  const battle=createBattleSnapshot({id,rulesVersion:catalog.metadata.rulesVersion,catalogVersion:catalog.metadata.catalogVersion,format:mode,seed,sides});battle.level=50;battle.regulationId=catalog.regulations[0].id;battle.megaLimit=catalog.regulations[0].megaCount||0;battle.megaUsed={A:0,B:0};
  const entryEvents=[...sides.A.active.map(actorId=>({kind:'switchIn',actorId,side:'A',entry:true})),...sides.B.active.map(actorId=>({kind:'switchIn',actorId,side:'B',entry:true}))],entry=resolveEntryHazards(battle,entryEvents,{manifests:mechanicCatalog(catalog),moves:catalog.movesById});return completeEntry(entry.battle,[...entryEvents,...entry.events]).battle;
+}
+
+export function createV3Battle({id,mode,seed,playerBuildIds,progression,catalog}){
+ const count=catalog.regulations[0].pick[mode],playerBuilds=playerBuildIds,enemyBuildIds=[...progression.builds].reverse().slice(0,count).map(build=>build.buildId),sides={A:{active:[],roster:rosterFor('A',playerBuilds,progression,catalog),conditions:{}},B:{active:[],roster:rosterFor('B',enemyBuildIds,progression,catalog),conditions:{}}};
+ return finalizeBattle({id,mode,seed,sides,catalog});
+}
+
+export function createV3PvpBattle({id,mode,seed,buildIdsA,progressionA,buildIdsB,progressionB,catalog}){
+ const sides={A:{active:[],roster:rosterFor('A',buildIdsA,progressionA,catalog),conditions:{}},B:{active:[],roster:rosterFor('B',buildIdsB,progressionB,catalog),conditions:{}}};
+ return finalizeBattle({id,mode,seed,sides,catalog});
 }

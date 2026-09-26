@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "source": "https://www.serebii.net/pokemonchampions/items.shtml",
+  "sourceCheckedAt": "2026-09-22",
+  "beginningItemIds": [
+    "bright-powder",
+    "choice-scarf",
+    "focus-band",
+    "focus-sash",
+    "kings-rock",
+    "leftovers",
+    "quick-claw",
+    "white-herb",
+    "lum-berry",
+    "sitrus-berry"
+  ],
+  "defaultShopPrices": {
+    "held-item": 700,
+    "berry": 400,
+    "mega-evolution": 2000
+  },
+  "heldItemPrice1000Ids": [
+    "air-balloon",
+    "expert-belt",
+    "iron-ball",
+    "life-orb",
+    "light-ball",
+    "light-clay",
+    "mental-herb",
+    "normal-gem",
+    "red-card",
+    "rocky-helmet",
+    "scope-lens"
+  ],
+  "megaTutorialItemIds": [
+    "abomasite",
+    "aggronite",
+    "beedrillite",
+    "garchompite",
+    "gyaradosite",
+    "heracronite",
+    "manectite",
+    "steelixite"
+  ],
+  "depositOnlyItemIds": [
+    "floettite"
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://aether.local/schemas/catalog.schema.json",
-  "title": "Aether Champions catalog contract",
+  "title": "Pokémon Vanguard catalog contract",
   "type": "object",
   "required": ["schemaVersion", "catalogVersion", "types", "stats", "moveCategories", "targetModes", "effectKinds", "effectTimings", "effectTargets", "statuses", "weather", "terrain", "sideConditions"],
   "properties": {

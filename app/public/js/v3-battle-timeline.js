@@ -1,3 +1,4 @@
+import {presentationDuration} from './presentation/battle-presentation-timing.js';
 const clone=value=>structuredClone(value);
 const label=value=>String(value??'').replace(/([a-z0-9])([A-Z])/g,'$1 $2').replaceAll('-',' ').replace(/\b\w/g,char=>char.toUpperCase());
 
@@ -184,10 +185,10 @@ export function createTurnFrames(initialSnapshot,events,{reduced=false,catalog=n
   if(['move','switch','cancelled','recharge'].includes(group.kind))action++;
   if(group.kind==='move'){
    const [started,...effects]=group.events,preCast=effects.filter(event=>event.kind==='abilityFormChanged'&&event.trigger==='before-move'),impactEffects=effects.filter(event=>!preCast.includes(event)),context={actorId:group.actorId,moveId:group.moveId,targetIds:visualTargetIds(effects,group.actorId)};
-   for(const event of preCast)snapshot=applyBattleEvent(snapshot,event,catalog);visible=[...visible,started,...preCast];frames.push({snapshot:clone(snapshot),events:[started,...preCast],visibleEvents:[...visible],stage:'cast',...context,action,total,duration:reduced?0:1050});
-   for(const event of impactEffects)snapshot=applyBattleEvent(snapshot,event,catalog);visible.push(...impactEffects);frames.push({snapshot:clone(snapshot),events:impactEffects,visibleEvents:[...visible],stage:'impact',...context,action,total,duration:reduced?0:420});
+   for(const event of preCast)snapshot=applyBattleEvent(snapshot,event,catalog);visible=[...visible,started,...preCast];frames.push({snapshot:clone(snapshot),events:[started,...preCast],visibleEvents:[...visible],stage:'cast',...context,action,total,duration:presentationDuration('cast',{reduced})});
+   for(const event of impactEffects)snapshot=applyBattleEvent(snapshot,event,catalog);visible.push(...impactEffects);frames.push({snapshot:clone(snapshot),events:impactEffects,visibleEvents:[...visible],stage:'impact',...context,action,total,duration:presentationDuration('impact',{reduced})});
   }else{
-   for(const event of group.events)snapshot=applyBattleEvent(snapshot,event,catalog);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:reduced?0:group.kind==='mega'?1000:500});
+   for(const event of group.events)snapshot=applyBattleEvent(snapshot,event,catalog);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:presentationDuration(group.kind,{reduced})});
   }
  }
  return frames;

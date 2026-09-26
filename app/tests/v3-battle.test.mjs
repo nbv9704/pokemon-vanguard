@@ -44,3 +44,9 @@ test('schema-3 replacement action resumes a suspended mid-turn queue without adv
  const suspended=resolveActionQueue(battle,queued,{switch:(current,action)=>{const switched=applySwitch(current,action.side,action.actorId,action.toId),ko=applyHpGroup(switched.battle,[{actorId:action.toId,delta:-9999}],'entry-hazard');return {battle:ko.battle,events:[...switched.events,...ko.events]};},move:current=>({battle:current,events:[]})});assert.equal(suspended.ok,true);assert.equal(suspended.battle.phase,'REPLACE');
  state.battleV3={...state.battleV3,phase:'REPLACE',battle:suspended.battle,lastEvents:suspended.events};const revision=suspended.battle.phaseRevision,result=applyV3BattleAction(state,{type:'battleV3.replacements',phaseRevision:revision,replacements:[{slot:0,actorId:aReserves[1].actorId}]},v3Catalog);assert.equal(result.ok,true);assert.equal(result.state.battleV3.battle.turn,2);assert.equal(result.state.battleV3.battle.phase,'COMMAND');assert.equal(result.state.battleV3.lastEvents.some(event=>event.kind==='turnResumed'),true);assert.equal(result.state.battleV3.battle.pendingResolution,undefined);
 });
+
+test('schema-3 finished battle can be dismissed from persisted state without reviving its result',()=>{
+ let state=open('single'),result=applyV3BattleAction(state,{type:'battleV3.surrender'},v3Catalog);assert.equal(result.ok,true);assert.equal(result.state.battleV3.phase,'FINISHED');
+ result=applyV3BattleAction(result.state,{type:'battleV3.dismiss'},v3Catalog);assert.equal(result.ok,true);assert.equal(result.state.battleV3,null);assert.equal(v3BattleView(result.state),null);
+ const duplicate=applyV3BattleAction(result.state,{type:'battleV3.dismiss'},v3Catalog);assert.equal(duplicate.ok,true);assert.equal(duplicate.state.battleV3,null);
+});

@@ -182,28 +182,31 @@ body.pixel-era .brandname{
 }
 body.pixel-era .brandname small{margin-top:3px;color:#f5d562;font-size:7px;letter-spacing:.16em}
 body.pixel-era .navlabel{display:none}
-body.pixel-era .navs{display:flex;min-width:0;gap:4px;overflow-x:auto;scrollbar-width:thin;padding:2px}
+body.pixel-era .navs{display:flex;min-width:0;gap:5px;overflow-x:auto;scrollbar-width:thin;padding:2px}
 body.pixel-era .nav{
   flex:0 0 auto;
   width:auto;
-  min-height:42px;
+  min-height:48px;
   margin:0;
-  padding:5px 8px!important;
-  gap:5px;
+  padding:6px 9px!important;
+  gap:6px;
   border:2px solid #173552!important;
   background:#d8e1d7!important;
   color:#1a2d43!important;
   box-shadow:inset 2px 2px #fff,inset -2px -2px #8a9990,2px 2px #07101e!important;
-  font-size:8px!important;
+  font-size:9px!important;
+  line-height:1;
+  font-weight:800;
   white-space:nowrap;
 }
-body.pixel-era .nav .icon{width:15px;font-size:12px;color:#254f72}
+body.pixel-era .nav .icon{display:inline-flex;align-items:center;justify-content:center;align-self:center;width:22px;height:22px;flex:0 0 22px;line-height:0;color:#254f72}
+body.pixel-era .nav .icon img{display:block;width:100%;height:100%;margin:auto;object-fit:contain;object-position:center center;image-rendering:auto!important}
 body.pixel-era .nav.active{
   background:#fff2a4!important;
   color:#23304a!important;
   box-shadow:inset 2px 2px #fff9cc,inset -2px -2px #b58b38,2px 2px #07101e!important;
 }
-body.pixel-era .nav.active:before{content:"▶";margin-right:1px;color:#c04a42;font-size:8px}
+body.pixel-era .nav.active:before{content:"▶";margin-right:1px;color:#c04a42;font-size:9px}
 body.pixel-era .nav .badge{border-radius:0;background:#c94f48;color:white;padding:1px 3px}
 body.pixel-era .sidefoot{margin:0;padding:0 4px;text-align:right;color:#d6e4e8;font-size:7px;line-height:1.2}
 body.pixel-era .sidefoot p{display:none}
@@ -597,7 +600,8 @@ body.pixel-era .mailicon{border-radius:0;background:#d4ddcf;color:#315d71}
 @media(max-width:1000px){
   body.pixel-era .sidebar{grid-template-columns:auto minmax(0,1fr)}
   body.pixel-era .sidefoot{display:none}
-  body.pixel-era .nav{font-size:7px!important;padding:4px 6px!important}
+  body.pixel-era .nav{font-size:8px!important;padding:5px 7px!important}
+  body.pixel-era .nav .icon{width:20px;height:20px;flex-basis:20px}
   body.pixel-era .dashboard{grid-template-columns:1fr}
   body.pixel-era .pokemon-battle-ui{height:auto;min-height:calc(100vh - 50px)}
   body.pixel-era .pokemon-battle-stage .v3-battle-arena{min-height:420px;aspect-ratio:auto}
@@ -608,8 +612,8 @@ body.pixel-era .mailicon{border-radius:0;background:#d4ddcf;color:#315d71}
   body.pixel-era .brandname{display:none}
   body.pixel-era .brand{padding-right:4px}
   body.pixel-era .brandmark{width:30px;height:30px}
-  body.pixel-era .nav{min-height:34px;font-size:0!important;padding:4px!important}
-  body.pixel-era .nav .icon{width:18px;font-size:12px}
+  body.pixel-era .nav{min-height:38px;font-size:0!important;padding:4px!important}
+  body.pixel-era .nav .icon{width:20px;height:20px;flex-basis:20px}
   body.pixel-era .topbar{height:34px;padding:3px 6px}
   body.pixel-era .breadcrumb{display:none}
   body.pixel-era .resources{width:100%;justify-content:flex-end}
@@ -638,10 +642,10 @@ body.pixel-era .mailicon{border-radius:0;background:#d4ddcf;color:#315d71}
 
 
 /* Initial/loading feedback belongs to the same console surface. */
-body.pixel-era .loading{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:8px;background:#132c4b;color:#fffbed;text-align:center}
-body.pixel-era .loading .brandmark{width:48px;height:48px;border:3px solid #f5d65f;border-radius:0;background:#214b74;color:#f5d65f;box-shadow:inset 2px 2px #75a0bd,inset -2px -2px #07101e,4px 4px #07101e}
-body.pixel-era .loading h1{margin:0;font-size:16px;letter-spacing:.06em;text-shadow:2px 2px #07101e}
-body.pixel-era .loading p{font-size:8px;color:#d3e2e4}
+body.pixel-era .loading{width:100%;min-height:100vh;margin:0;display:grid;place-content:center;justify-items:center;gap:10px;background:#132c4b;color:#fffbed;text-align:center}
+body.pixel-era .loading .brandmark{width:64px;height:64px;border:3px solid #f5d65f;border-radius:0;background:#214b74;color:#f5d65f;box-shadow:inset 2px 2px #75a0bd,inset -2px -2px #07101e,4px 4px #07101e}
+body.pixel-era .loading h1{margin:0;font-size:20px;line-height:1.2;letter-spacing:.06em;text-shadow:2px 2px #07101e}
+body.pixel-era .loading p{margin:0;font-size:10px;line-height:1.4;color:#d3e2e4}
 body.pixel-era #toast{border-radius:0!important;border:3px solid #263b59!important;background:#fff9e6!important;color:#18243a!important;box-shadow:inset 2px 2px #fff,inset -2px -2px #aaa997,4px 4px #07101e!important;font-size:8px!important}
 body.pixel-era *{scrollbar-color:#81978e #173552;scrollbar-width:thin}
 
@@ -666,7 +670,8 @@ body.pixel-era.resolution-locked #app{
   background:transparent;
 }
 body.pixel-era.resolution-locked #app>.shell,
-body.pixel-era.resolution-locked #app>.battle-shell-layout{
+body.pixel-era.resolution-locked #app>.battle-shell-layout,
+body.pixel-era.resolution-locked #app>.loading{
   position:absolute;
   left:50%;
   top:50%;
@@ -743,7 +748,8 @@ body.pixel-era .pokemon-art-missing img{image-rendering:auto!important}
 @media(max-width:1000px){
   body.pixel-era.resolution-locked .sidebar{grid-template-columns:auto minmax(0,1fr) auto!important;min-height:62px!important;padding:6px 8px!important}
   body.pixel-era.resolution-locked .sidefoot{display:block!important}
-  body.pixel-era.resolution-locked .nav{min-height:42px!important;font-size:8px!important;padding:5px 8px!important}
+  body.pixel-era.resolution-locked .nav{min-height:48px!important;font-size:9px!important;padding:6px 9px!important}
+  body.pixel-era.resolution-locked .nav .icon{width:22px!important;height:22px!important;flex-basis:22px!important}
   body.pixel-era.resolution-locked .dashboard{grid-template-columns:minmax(0,1fr) minmax(260px,.38fr)!important}
   body.pixel-era.resolution-locked .pokemon-battle-stage .v3-battle-arena{min-height:0!important}
 }
@@ -753,8 +759,8 @@ body.pixel-era .pokemon-art-missing img{image-rendering:auto!important}
   body.pixel-era.resolution-locked .brandname{display:block!important}
   body.pixel-era.resolution-locked .brand{padding-right:8px!important}
   body.pixel-era.resolution-locked .brandmark{width:34px!important;height:34px!important}
-  body.pixel-era.resolution-locked .nav{min-height:42px!important;font-size:8px!important;padding:5px 8px!important}
-  body.pixel-era.resolution-locked .nav .icon{width:15px!important;font-size:12px!important}
+  body.pixel-era.resolution-locked .nav{min-height:48px!important;font-size:9px!important;padding:6px 9px!important}
+  body.pixel-era.resolution-locked .nav .icon{width:22px!important;height:22px!important;flex-basis:22px!important}
   body.pixel-era.resolution-locked .topbar{height:40px!important;padding:5px 10px!important}
   body.pixel-era.resolution-locked .breadcrumb{display:block!important}
   body.pixel-era.resolution-locked .resources{width:auto!important}
@@ -844,7 +850,7 @@ body.pixel-era.resolution-locked #toast{
 /* Project logo integration */
 body.pixel-era .brandmark.project-logo,
 body.pixel-era .loading .brandmark.project-logo{border:0;background:transparent;box-shadow:none}
-body.pixel-era .loading .brandmark.project-logo{width:72px;height:72px}
+body.pixel-era .loading .brandmark.project-logo{width:96px;height:96px}
 body.pixel-era .pokemon-game-logo{width:32px;height:32px}
 
 /* Account menu beside the beta wallet */
@@ -861,4 +867,14 @@ body.pixel-era .user-dropdown-head small{font-size:6px;color:#647083}
 body.pixel-era .user-dropdown>button{min-height:25px;padding:5px 7px!important;border:0!important;background:transparent!important;box-shadow:none!important;color:#26354a!important;font-size:8px}
 body.pixel-era .user-dropdown>button:hover,body.pixel-era .user-dropdown>button:focus-visible{background:#fff0a6!important}
 body.pixel-era .user-dropdown>button.user-logout{color:#8e3434!important}
+body.pixel-era .user-menu-icon img{filter:none!important;image-rendering:auto!important}
 @media(max-width:760px){body.pixel-era .user-trigger-copy,body.pixel-era .user-caret{display:none}body.pixel-era .user-dropdown{right:8px;top:48px}}
+
+/* Mailbox lifecycle owns read/unread states above the global Pixel Era panel primitives. */
+body.pixel-era .mail-gift-list{gap:6px}body.pixel-era .mailrow.mail-gift{padding:8px 10px!important;border:2px solid #687885!important;background:#f4efd2!important;box-shadow:inset 1px 1px #fff,3px 3px #192a3c!important}body.pixel-era .mailrow.mail-gift.unread{border-left:5px solid #5369a5!important;background:#eef0ff!important}body.pixel-era .mailicon{width:38px;height:38px;display:grid;place-items:center;padding:0!important;border:2px solid #52677a!important;background:#dfe5f3!important;font-size:17px}body.pixel-era .mail-meta{font-size:5px;color:#697386}body.pixel-era .mail-status{border-radius:0;padding:2px 4px;font-size:5px}body.pixel-era .mail-status.unread{background:#5369a5;color:#fff;border-color:#263a4f}body.pixel-era .mailtext h3{font-size:9px;color:#26354a;margin:3px 0}body.pixel-era .mailtext p{font-size:6px;color:#647083}body.pixel-era .mail-details small{font-size:5px}body.pixel-era .mail-actions button{min-height:26px!important;padding:4px 7px!important;font-size:6px!important}body.pixel-era .mail-received{font-size:6px;color:#3f7045}
+
+/* PvP timers are gameplay-critical and stay legible above the Pixel Era cascade. */
+body.pixel-era .battle-clock{border-radius:0!important;box-shadow:inset 1px 1px #fff!important;font-family:var(--pixel-font)!important}
+body.pixel-era .battle-clock b{font-family:var(--pixel-font)!important;font-size:8px!important}
+body.pixel-era .battle-clock small{font-family:var(--pixel-font)!important;font-size:5px!important}
+body.pixel-era.resolution-locked .pokemon-battle-statusbar{grid-template-columns:minmax(0,1fr) auto auto auto!important}

@@ -1,3 +1,4 @@
+import {ensureTicketBag} from './ticket-bag.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const actionIdPattern=/^[A-Za-z0-9:_-]{1,128}$/;
 
@@ -10,6 +11,7 @@ export function ensureEconomyState(state){
  state.actionReceipts=Array.isArray(state.actionReceipts)?state.actionReceipts:[];
  state.mailClaims=Array.isArray(state.mailClaims)?state.mailClaims:[];
  state.rewardReceipts=Array.isArray(state.rewardReceipts)?state.rewardReceipts:[];
+ ensureTicketBag(state);
  return state;
 }
 
@@ -35,7 +37,11 @@ export function recordActionReceipt(state,{actionId,kind,fingerprint,receiptId,r
 export function applyEconomyTransaction(state,{receiptId,actionId=null,kind,delta,details=null}){
  ensureEconomyState(state);const existing=state.economyLedger.find(entry=>entry.receiptId===receiptId);if(existing)return {ok:true,duplicate:true,entry:clone(existing)};
  const normalized={coins:Math.trunc(delta?.coins||0),crystals:Math.trunc(delta?.crystals||0),recruitmentTickets:Math.trunc(delta?.recruitmentTickets||0)},before=clone(state.wallet),after={coins:before.coins+normalized.coins,crystals:before.crystals+normalized.crystals,recruitmentTickets:before.recruitmentTickets+normalized.recruitmentTickets};
+ const bag=ensureTicketBag(state),bagBefore={shopTickets:bag.shopTickets,trainingTickets:bag.trainingTickets,rankTickets:bag.rankTickets},bagAfter={...bagBefore};
+ for(const key of Object.keys(bagBefore)){const value=Number(delta?.[key]||0);if(!Number.isSafeInteger(value))return {ok:false,code:'INVALID_TICKET_DELTA'};if(value){normalized[key]=value;bagAfter[key]+=value;}}
  if(after.coins<0||after.crystals<0||after.recruitmentTickets<0)return {ok:false,code:after.coins<0?'INSUFFICIENT_COINS':after.crystals<0?'INSUFFICIENT_CRYSTALS':'INSUFFICIENT_RECRUITMENT_TICKETS'};
+ for(const [key,value] of Object.entries(bagAfter))if(value<0||!Number.isSafeInteger(value))return {ok:false,code:value<0?'INSUFFICIENT_'+key.replace('Tickets','_TICKETS').toUpperCase():'INVALID_TICKET_BALANCE'};
  state.wallet=after;state.coins=after.coins;state.gems=after.crystals;state.recruitmentTickets=after.recruitmentTickets;
- const entry={receiptId,actionId,kind,delta:normalized,balanceBefore:before,balanceAfter:clone(after),details:clone(details)};state.economyLedger.push(entry);return {ok:true,duplicate:false,entry:clone(entry)};
+ Object.assign(bag,bagAfter);if(bag.rankTickets===0)bag.rankProtectionArmed=false;
+ const entry={receiptId,actionId,kind,delta:normalized,balanceBefore:before,balanceAfter:clone(after),details:clone(details),...(Object.keys(bagAfter).some(key=>bagAfter[key]!==bagBefore[key])?{ticketBalanceBefore:bagBefore,ticketBalanceAfter:bagAfter}:{})};state.economyLedger.push(entry);return {ok:true,duplicate:false,entry:clone(entry)};
 }

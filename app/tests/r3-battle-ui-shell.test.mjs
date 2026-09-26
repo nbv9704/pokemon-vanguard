@@ -16,7 +16,7 @@ function openDouble(seed=9393){
 
 test('R3-93 immersive battle shell replaces dashboard framing with a game header and bottom command dock',()=>{
  const current=openDouble(),screen=new V3BattleScreen({onChange(){},sendAction(){}}),html=screen.render(current,publicV3Catalog,{art:()=>'',battleArt:()=>''});
- assert.match(html,/pokemon-battle-shell/);assert.match(html,/Vanguard Arena/);assert.match(html,/pokemon-battle-stage/);assert.match(html,/pokemon-battle-dock/);assert.match(html,/What will .* do\?/);assert.doesNotMatch(html,/v2-command-grid/);
+ assert.match(html,/pokemon-battle-shell/);assert.match(html,/Battle Practice/);assert.match(html,/pokemon-battle-stage/);assert.match(html,/pokemon-battle-dock/);assert.match(html,/What will .* do\?/);assert.doesNotMatch(html,/v2-command-grid/);
 });
 
 test('R3-93 Fight flow enters move then target mode and Cancel walks the state machine backward',()=>{
@@ -35,6 +35,6 @@ test('R3-93 replacement phase renders party cards and prevents duplicate reserve
 });
 
 test('R3-93 client uses an immersive layout for schema-3 battle pages and routes Cancel/Detail through GameUiController',()=>{
- const source=readFileSync(new URL('../public/client.js',import.meta.url),'utf8');assert.match(source,/battle-shell-layout/);assert.match(source,/onCancel:\(\)=>V\?v3BattleScreen\.handleCancel/);assert.match(source,/handleUiAction/);
+ const source=readFileSync(new URL('../public/client.js',import.meta.url),'utf8');assert.match(source,/battle-shell-layout/);assert.match(source,/onCancel:\(\)=>V\?activeBattleScreen\(\)\.handleCancel/);assert.match(source,/handleUiAction/);
  const handler=new BattleCommandUiHandler();assert.equal(handler.mode,'COMMAND');assert.equal(handler.logOpen,false);handler.toggleLog();assert.equal(handler.logOpen,true);
 });

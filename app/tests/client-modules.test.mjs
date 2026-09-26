@@ -17,9 +17,12 @@ test('browser store recovers invalid settings and keeps a stable player room',()
 });
 
 test('router accepts only declared screens',()=>{
- const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,9);assert.equal(router.has('recruitment'),true);assert.equal(router.has('missions'),true);assert.equal(router.has('settings'),true);assert.equal(NAV_ITEMS.some(([route])=>route==='settings'||route==='guide'),false);assert.equal(router.has('summon'),false);
+ const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,11);assert.equal(router.has('recruitment'),true);assert.equal(router.has('shop'),true);assert.equal(router.has('missions'),true);assert.equal(router.has('friends'),true);assert.deepEqual(NAV_ITEMS.slice(4,7).map(([route])=>route),['recruitment','shop','missions']);assert.equal(router.has('settings'),true);assert.equal(NAV_ITEMS.some(([route])=>route==='settings'||route==='guide'),false);assert.equal(router.has('summon'),false);
  assert.equal(router.go('battle'),true);assert.equal(router.current,'battle');
  assert.equal(router.go('admin'),false);assert.equal(router.current,'battle');
+ const expected=[['home','Home'],['battle','Arena'],['collection','Pokedex'],['teams','Box'],['recruitment','Recruitment'],['shop','Shop'],['missions','Missions'],['friends','Friends'],['gym','Gym Challenge'],['training','Training'],['mail','Mailbox']];
+ assert.deepEqual(NAV_ITEMS.map(([route,,label])=>[route,label]),expected);
+ assert.equal(NAV_ITEMS.every(([,icon])=>icon.startsWith('/assets/icons/')&&icon.endsWith('.png')),true);
 });
 
 test('Recruitment UI projects config data and emits revision-safe server actions',()=>{
@@ -44,4 +47,16 @@ test('connection joins, filters protocol frames and sends authoritative actions'
  assert.deepEqual(JSON.parse(socket.sent[1]),{type:'action',action:{type:'claim',id:0}});assert.deepEqual(states,[{coins:1}]);assert.deepEqual(errors,['bad']);assert.deepEqual(statuses,[true]);
  connection.stop();assert.equal(connection.sendAction({type:'claim',id:1}),false);
  assert.equal(websocketUrl({protocol:'https:',host:'game.test'},'a b'),'wss://game.test/ws/a%20b');
+});
+
+test('connection heartbeat drops a silent half-open socket instead of staying falsely connected',async()=>{
+ class SilentSocket{
+  static OPEN=1;constructor(){this.readyState=0;this.sent=[];this.closed=false;SilentSocket.instance=this;}send(value){this.sent.push(value);}close(){this.closed=true;this.readyState=3;}
+ }
+ const statuses=[];const connection=new AdventureConnection({url:'ws://local/ws/test',playerId:'p1',WebSocketImpl:SilentSocket,onStatus:value=>statuses.push(value),reconnect:false,pingMs:10,pongTimeoutMs:50});
+ connection.start();const socket=SilentSocket.instance;socket.readyState=1;socket.onopen();
+ const deadline=Date.now()+1000;
+ while(!socket.closed&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,10));
+ assert.equal(socket.sent.includes('__ping'),true);assert.equal(socket.closed,true);assert.equal(connection.connected,false);assert.deepEqual(statuses,[true,false]);
+ connection.stop();
 });

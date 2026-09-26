@@ -1,0 +1,114 @@
+/* Battle presentation polish — deliberately loaded after Pixel Era overrides. */
+
+/* Draggable battle log. */
+.pokemon-battle-log .aether-window-title{cursor:grab;user-select:none;touch-action:none;letter-spacing:.08em;background:linear-gradient(180deg,#f5eccd,#dfd3aa)!important;border-bottom:2px solid #6b7681!important;color:#1b2b3d!important}
+.pokemon-battle-log.battle-log-dragging .aether-window-title{cursor:grabbing}
+.pokemon-battle-log.battle-log-dragged{left:var(--battle-log-left)!important;right:auto!important;top:var(--battle-log-top)!important;margin:0!important}
+body.pixel-era .pokemon-battle-log.battle-log-dragged,body.pixel-era.resolution-locked .pokemon-battle-log.battle-log-dragged{left:var(--battle-log-left)!important;right:auto!important;top:var(--battle-log-top)!important}
+.pokemon-battle-log:has(.aether-window-title:hover){box-shadow:0 0 0 2px #f7e6a4,0 5px 0 #0a111b!important}
+
+/* Damage/heal becomes visually committed on impact instead of reading as an instant state jump. */
+.pokemon-hp-fill.hp-committing{animation:pv-hp-impact .7s cubic-bezier(.2,.72,.2,1) both!important;transition:none!important}
+@keyframes pv-hp-impact{0%,16%{width:var(--hp-from)}100%{width:var(--hp)}}
+
+/* Slower actor reactions so attack -> travel -> impact reads as separate beats. */
+.v3-battle-arena .v3-fighter.hit .art{animation-duration:.62s!important}
+.v3-battle-arena .v3-fighter.cast .art{animation-duration:.72s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-lunge .art{animation-duration:.68s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-pulse .art{animation-duration:.62s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-shake .art{animation-duration:.42s!important}
+.presentation-camera-shake .v3-battle-arena{animation-duration:.28s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.hit .art{animation-duration:.31s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.cast .art{animation-duration:.36s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-lunge .art{animation-duration:.34s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-pulse .art{animation-duration:.31s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-shake .art{animation-duration:.21s!important}
+
+/* Legacy/fallback FX follow the slower battle cadence too. Data-driven cues use their own retimed durations. */
+.v3-move-fx.stage-cast:not(.presentation-runtime) i{animation-duration:1.28s!important;animation-delay:calc(var(--fx-index)*90ms)!important}
+.v3-move-fx.stage-impact:not(.presentation-runtime) i{animation-duration:.64s!important;animation-delay:calc(var(--fx-index)*55ms)!important}
+.v3-move-fx.speed-2.stage-cast:not(.presentation-runtime) i{animation-duration:.64s!important;animation-delay:calc(var(--fx-index)*45ms)!important}
+.v3-move-fx.speed-2.stage-impact:not(.presentation-runtime) i{animation-duration:.32s!important;animation-delay:calc(var(--fx-index)*27.5ms)!important}
+
+/* Weather: layered atmosphere instead of a single flat repeating texture. */
+.v3-field-effects{isolation:isolate}
+.v3-field-effects>i{overflow:hidden;transition:opacity .55s ease!important}
+.v3-field-effects .field-weather{z-index:4;mix-blend-mode:screen}
+.v3-field-effects .field-terrain{z-index:1;top:43%;transform-origin:50% 100%;clip-path:polygon(7% 24%,93% 24%,100% 100%,0 100%);mix-blend-mode:normal}
+.v3-field-effects .field-weather::before,.v3-field-effects .field-weather::after,.v3-field-effects .field-terrain::before,.v3-field-effects .field-terrain::after{content:"";position:absolute;inset:0;pointer-events:none}
+
+.v3-field-effects.weather-rain .field-weather{opacity:.62!important;background:linear-gradient(180deg,#173d5a38 0,#18314820 55%,transparent 100%)!important;animation:none!important}
+.v3-field-effects.weather-rain .field-weather::before{inset:-24% -10%;background:repeating-linear-gradient(107deg,transparent 0 26px,#bcecffcc 27px 29px,transparent 30px 57px);animation:pv-rain-near 1.05s linear infinite}
+.v3-field-effects.weather-rain .field-weather::after{inset:-18% -8%;opacity:.55;background:repeating-linear-gradient(107deg,transparent 0 48px,#7fc5e988 49px 50px,transparent 51px 92px);animation:pv-rain-far 1.55s linear infinite}
+.v3-field-effects.weather-sun .field-weather,.v3-field-effects.weather-harsh-sunlight .field-weather{opacity:.68!important;background:radial-gradient(circle at 79% 9%,#fffdf0 0 2.5%,#ffe58a88 7%,#ffc84235 21%,transparent 46%)!important;animation:pv-sun-breathe 4.4s ease-in-out infinite!important}
+.v3-field-effects.weather-sun .field-weather::after,.v3-field-effects.weather-harsh-sunlight .field-weather::after{inset:-35%;background:repeating-conic-gradient(from 8deg at 79% 9%,transparent 0 11deg,#ffe89a22 12deg 17deg,transparent 18deg 34deg);animation:pv-sun-rays 18s linear infinite}
+.v3-field-effects.weather-sandstorm .field-weather{opacity:.5!important;background:linear-gradient(180deg,#8d6b3126,#cfa75b18 52%,#b08b4c2f)!important;animation:none!important}
+.v3-field-effects.weather-sandstorm .field-weather::before{inset:-10% -20%;background:repeating-linear-gradient(168deg,transparent 0 46px,#e1bd795c 48px 56px,transparent 58px 108px);filter:blur(1px);animation:pv-sand-near 3.2s linear infinite}
+.v3-field-effects.weather-sandstorm .field-weather::after{background:radial-gradient(circle at 12% 26%,#f1d59a 0 2px,transparent 3px),radial-gradient(circle at 38% 70%,#d8b26d 0 2px,transparent 3px),radial-gradient(circle at 66% 18%,#eed092 0 1.5px,transparent 2.5px),radial-gradient(circle at 84% 62%,#d4aa64 0 2px,transparent 3px);background-size:180px 130px;animation:pv-sand-specks 4.8s linear infinite}
+.v3-field-effects.weather-snow .field-weather,.v3-field-effects.weather-hail .field-weather{opacity:.66!important;background:linear-gradient(180deg,#ccefff13,#dff8ff0a 58%,transparent)!important;animation:none!important}
+.v3-field-effects.weather-snow .field-weather::before,.v3-field-effects.weather-hail .field-weather::before{inset:-10%;background:radial-gradient(circle,#f4fdff 0 2.5px,transparent 3px),radial-gradient(circle,#ccefff 0 1.5px,transparent 2px);background-size:58px 58px,37px 37px;background-position:3px 0,18px 12px;animation:pv-snow-near 4.2s linear infinite}
+.v3-field-effects.weather-snow .field-weather::after,.v3-field-effects.weather-hail .field-weather::after{opacity:.55;background:radial-gradient(circle,#eefbff 0 1px,transparent 2px);background-size:28px 28px;animation:pv-snow-far 6.4s linear infinite}
+
+/* Terrains live on the floor plane and have their own readable visual identity. */
+.v3-field-effects.terrain-electric .field-terrain{opacity:.7!important;background:radial-gradient(ellipse at 50% 98%,#ffe95a80 0,#e6bc2548 35%,#836b1518 62%,transparent 76%)!important;box-shadow:inset 0 -34px 60px #ffe44a24;animation:pv-terrain-pulse 2.8s ease-in-out infinite!important}
+.v3-field-effects.terrain-electric .field-terrain::before{background:repeating-linear-gradient(116deg,transparent 0 52px,#fff29f44 53px 55px,transparent 56px 104px),repeating-linear-gradient(64deg,transparent 0 70px,#ffd73433 71px 73px,transparent 74px 132px);animation:pv-electric-floor 3.6s linear infinite}
+.v3-field-effects.terrain-electric .field-terrain::after{inset:45% 12% 6%;background:radial-gradient(circle at 18% 72%,#fff5a8 0 2px,transparent 3px),radial-gradient(circle at 52% 44%,#ffe03a 0 2px,transparent 3px),radial-gradient(circle at 80% 66%,#fff6b1 0 2px,transparent 3px);filter:drop-shadow(0 0 5px #ffd72e);animation:pv-spark-floor 1.7s ease-in-out infinite}
+.v3-field-effects.terrain-grassy .field-terrain{opacity:.68!important;background:radial-gradient(ellipse at 50% 100%,#69d76880 0,#3f9c5150 37%,#1e6c3522 65%,transparent 78%)!important;animation:pv-terrain-pulse 4.6s ease-in-out infinite!important}
+.v3-field-effects.terrain-grassy .field-terrain::before{inset:28% 3% 0;background:repeating-linear-gradient(78deg,transparent 0 25px,#a5ef9d4d 26px 29px,transparent 30px 55px);clip-path:polygon(0 100%,6% 38%,9% 100%,17% 50%,20% 100%,29% 30%,32% 100%,43% 56%,46% 100%,56% 38%,59% 100%,70% 52%,74% 100%,85% 32%,88% 100%,96% 48%,100% 100%);animation:pv-grass-sway 3.8s ease-in-out infinite}
+.v3-field-effects.terrain-misty .field-terrain{opacity:.72!important;background:radial-gradient(ellipse at 50% 100%,#f2a8dc70 0,#a7dff05a 36%,#d28dd52b 60%,transparent 78%)!important;animation:pv-terrain-pulse 4.2s ease-in-out infinite!important}
+.v3-field-effects.terrain-misty .field-terrain::before,.v3-field-effects.terrain-misty .field-terrain::after{inset:36% -18% 0;border-radius:50%;background:radial-gradient(ellipse,#fff8 0 8%,#ffd9f14a 22%,transparent 62%);filter:blur(8px);animation:pv-mist-floor 6s ease-in-out infinite}
+.v3-field-effects.terrain-misty .field-terrain::after{animation-delay:-3s;transform:translateX(28%)}
+.v3-field-effects.terrain-psychic .field-terrain{opacity:.68!important;background:radial-gradient(ellipse at 50% 98%,#f073c870 0,#9b69e14f 34%,#4c4cb72a 60%,transparent 78%)!important;animation:pv-terrain-pulse 3.6s ease-in-out infinite!important}
+.v3-field-effects.terrain-psychic .field-terrain::before{inset:20% 8% 0;background:repeating-radial-gradient(ellipse at 50% 100%,transparent 0 22px,#ffc1eb34 24px 27px,transparent 29px 48px);animation:pv-psychic-floor 4.5s ease-in-out infinite}
+.v3-field-effects.terrain-psychic .field-terrain::after{inset:48% 18% 4%;background:linear-gradient(90deg,transparent,#8ff7ff38,transparent);transform:skewX(-24deg);animation:pv-psychic-scan 3.2s ease-in-out infinite}
+
+/* Rooms stay atmospheric but no longer overpower the Pokémon. */
+.v3-field-effects .field-room.room-trick-room{opacity:.25!important;background:repeating-linear-gradient(90deg,#a880e52d 0 1px,transparent 1px 54px),repeating-linear-gradient(0deg,#a880e52d 0 1px,transparent 1px 54px)!important;animation:pv-room-breathe 3.6s ease-in-out infinite!important}
+.v3-field-effects .field-room.room-wonder-room{opacity:.24!important;background:linear-gradient(90deg,#69d6ff1f 0 49%,#f3a2ff29 51% 100%)!important;animation:pv-room-breathe 4.2s ease-in-out infinite!important}
+.v3-field-effects .field-room.room-magic-room{opacity:.24!important;background:repeating-radial-gradient(circle at 50% 48%,#ffd56a35 0 2px,transparent 3px 42px)!important;animation:pv-room-breathe 4.8s ease-in-out infinite!important}
+
+@keyframes pv-rain-near{to{transform:translate(-70px,145px)}}
+@keyframes pv-rain-far{to{transform:translate(-52px,108px)}}
+@keyframes pv-sun-breathe{50%{opacity:.82;filter:saturate(1.08)}}
+@keyframes pv-sun-rays{to{transform:rotate(360deg)}}
+@keyframes pv-sand-near{to{transform:translateX(210px)}}
+@keyframes pv-sand-specks{to{background-position:170px 18px}}
+@keyframes pv-snow-near{to{transform:translate(18px,118px)}}
+@keyframes pv-snow-far{to{transform:translate(-12px,92px)}}
+@keyframes pv-terrain-pulse{50%{filter:brightness(1.1) saturate(1.08)}}
+@keyframes pv-electric-floor{to{background-position:104px 0,-132px 0}}
+@keyframes pv-spark-floor{50%{opacity:.45;transform:translateY(-5px)}}
+@keyframes pv-grass-sway{50%{transform:skewX(-2deg) translateX(4px)}}
+@keyframes pv-mist-floor{50%{transform:translateX(24%) scaleX(1.1);opacity:.65}}
+@keyframes pv-psychic-floor{50%{transform:scale(1.035);opacity:.7}}
+@keyframes pv-psychic-scan{50%{transform:translateX(12%) skewX(-24deg);opacity:.45}}
+@keyframes pv-room-breathe{50%{opacity:.38;transform:scale(1.025)}}
+
+@media(prefers-reduced-motion:reduce){
+ .pokemon-hp-fill.hp-committing,.v3-field-effects>i,.v3-field-effects>i::before,.v3-field-effects>i::after{animation:none!important;transition:none!important}
+ .pokemon-hp-fill.hp-committing{width:var(--hp)!important}
+}
+
+/* Surrender confirmation uses the same lightweight paper/navy visual language as battle UI. */
+.battle-confirm-modal{max-width:480px!important;border:4px solid #263b54!important;border-radius:6px!important;background:linear-gradient(180deg,#fffdf4,#ece5d3)!important;color:#172334!important;box-shadow:inset 0 0 0 2px #fff,0 8px 0 #08111c,0 18px 34px #0007!important}
+.battle-confirm-modal>small{display:block;margin-bottom:5px;color:#8a4d4d;font:800 9px 'Barlow Condensed',sans-serif;letter-spacing:.14em}
+.battle-confirm-modal h2{margin:0 0 8px;font:800 24px 'Barlow Condensed',sans-serif;color:#172334}
+.battle-confirm-modal p{margin:0;color:#556476;line-height:1.5}
+.battle-confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+.battle-confirm-actions button{min-width:120px;border:3px solid #4d6075!important;border-radius:4px!important;box-shadow:0 2px 0 #26374d!important;transform:none!important}
+.battle-confirm-actions .danger{background:#ead1c8!important;border-color:#8b4b50!important;color:#5b2329!important}
+
+/* Redefine the travel curve after the base stylesheet: projectiles remain visible until contact. */
+@keyframes v3-fx-travel{0%{opacity:0;transform:translate(-50%,-50%) scale(.18)}18%{opacity:1}88%{opacity:1;left:var(--end-x);top:var(--end-y);transform:translate(-50%,-50%) scale(1.02)}100%{opacity:.08;left:var(--end-x);top:var(--end-y);transform:translate(-50%,-50%) scale(1.12)}}
+
+/* Special state/form animations now read as deliberate beats instead of flashes. */
+.v3-battle-arena .v3-fighter.presentation-actor-morph .art{animation-duration:.58s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-shatter .art{animation-duration:.54s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-break .art{animation-duration:.55s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-vanish .art,.v3-battle-arena .v3-fighter.presentation-actor-emerge .art{animation-duration:.58s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-mega .art{animation-duration:1.14s!important}
+.v3-battle-arena .v3-fighter.presentation-actor-faint .art{animation-duration:.62s!important}
+.v3-mega-fx{animation-duration:1.25s!important}.v3-mega-fx i{animation-duration:1.15s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-morph .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-shatter .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-break .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-vanish .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-emerge .art{animation-duration:.29s!important}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-mega .art{animation-duration:.57s!important}.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-faint .art{animation-duration:.31s!important}
+.v3-mega-fx.speed-2{animation-duration:.625s!important}.v3-mega-fx.speed-2 i{animation-duration:.575s!important}

@@ -50,13 +50,13 @@ const validImage=(buffer,ext)=>ext==='.gif'?buffer.subarray(0,4).toString('ascii
 const exists=async file=>{try{await fs.access(file);return true;}catch{return false;}};
 
 async function fetchJson(url){
-  const response=await fetch(url,{headers:{'User-Agent':'AetherChampions-local-asset-import/1.0'}});
+  const response=await fetch(url,{headers:{'User-Agent':'PokemonVanguard-local-asset-import/1.0'}});
   if(!response.ok)throw new Error(`${response.status} ${response.statusText}: ${url}`);
   return response.json();
 }
 
 async function showdownDirectory(directory){
-  const response=await fetch(`${SHOWDOWN}${directory}/`,{headers:{'User-Agent':'AetherChampions-local-asset-import/1.0'}});
+  const response=await fetch(`${SHOWDOWN}${directory}/`,{headers:{'User-Agent':'PokemonVanguard-local-asset-import/1.0'}});
   if(!response.ok)throw new Error(`${response.status} ${response.statusText}: ${SHOWDOWN}${directory}/`);
   const html=await response.text();
   return new Set([...html.matchAll(/href="(?:\.\/)?([^"/]+\.gif)"/gi)].map(match=>decodeURIComponent(match[1]).replace(/\.gif$/i,'')));
@@ -90,7 +90,7 @@ async function download(url,relative){
     await fs.rm(alternative,{force:true});
     return {relative:`/${relative.replaceAll('\\','/')}`,bytes:body.length,sha256:sha256(body),downloaded:false};
   }
-  const response=await fetch(url,{headers:{'User-Agent':'AetherChampions-local-asset-import/1.0'}});
+  const response=await fetch(url,{headers:{'User-Agent':'PokemonVanguard-local-asset-import/1.0'}});
   if(!response.ok)throw new Error(`${response.status} ${response.statusText}: ${url}`);
   const body=Buffer.from(await response.arrayBuffer());
   if(!validImage(body,ext))throw new Error(`Downloaded asset has invalid ${ext} signature: ${url}`);

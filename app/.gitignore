@@ -12,6 +12,9 @@ dist
 # Object storage from `bun run dev` and the test runner.
 .wrangler
 .dev.vars
+.env
+.env.*
+!.env.example
 
 .DS_Store
 

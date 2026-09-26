@@ -17,7 +17,7 @@ const isPng=buffer=>buffer.length>24&&buffer.subarray(0,pngMagic.length).equals(
 const dimensions=buffer=>({width:buffer.readUInt32BE(16),height:buffer.readUInt32BE(20)});
 
 async function fetchRequired(url,type){
- const response=await fetch(url,{headers:{'user-agent':'AetherChampions asset fetcher'}});
+ const response=await fetch(url,{headers:{'user-agent':'PokemonVanguard asset fetcher'}});
  if(!response.ok)throw new Error(`${type} request failed (${response.status}): ${url}`);
  return type==='item data'?response.text():Buffer.from(await response.arrayBuffer());
 }

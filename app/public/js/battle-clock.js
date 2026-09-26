@@ -1,0 +1,12 @@
+const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const seconds=(deadline,now)=>Math.max(0,Math.ceil((Number(deadline)-Number(now))/1000));
+const decisionLabel=kind=>kind==='preview'?'TEAM':kind==='replacement'?'REPLACE':'MOVE';
+export function renderBattleTiming(view,{preview=false}={}){
+ const timing=view?.timing;if(!timing)return '';const decision=timing.decision,opponent=timing.opponent||{},parts=[];
+ if(decision){const remain=seconds(decision.deadlineAt,timing.serverNow),label=decision.submitted?'LOCKED':decisionLabel(decision.kind);parts.push(`<span class="battle-clock ${decision.submitted?'submitted':''}" data-battle-clock-wrap><small>${label}</small><b data-battle-deadline="${decision.deadlineAt}" data-battle-clock-kind="${esc(decision.kind)}">${remain}s</b></span>`);}
+ if(opponent.connected===false&&opponent.reconnectDeadlineAt){const remain=seconds(opponent.reconnectDeadlineAt,timing.serverNow);parts.push(`<span class="battle-clock reconnect" data-battle-clock-wrap><small>RECONNECT</small><b data-battle-deadline="${opponent.reconnectDeadlineAt}" data-battle-clock-kind="reconnect">${remain}s</b></span>`);}
+ if(!parts.length)return '';return `<div class="battle-clock-group ${preview?'battle-clock-preview':''}">${parts.join('')}</div>`;
+}
+export function battleClockOffset(view){const serverNow=Number(view?.timing?.serverNow);return Number.isFinite(serverNow)?serverNow-Date.now():0;}
+export function updateBattleCountdowns(offsetMs=0){if(typeof document==='undefined')return;const now=Date.now()+offsetMs;for(const node of document.querySelectorAll('[data-battle-deadline]')){const deadline=Number(node.dataset.battleDeadline);if(!Number.isFinite(deadline))continue;const remain=seconds(deadline,now);node.textContent=`${remain}s`;const wrap=node.closest('[data-battle-clock-wrap]');if(wrap)wrap.classList.toggle('urgent',remain<=10);}}
+export function battleResultReason(reason){const labels={'disconnect-timeout':'Opponent disconnected','both-disconnected':'Both trainers disconnected','match-expired':'Match expired','action-timeout-no-legal-action':'No legal timed action','action-timeout-resolution-error':'Timed action could not resolve','replacement-timeout-resolution-error':'Timed replacement could not resolve','admin-stop':'Stopped by an administrator','preview-forfeit':'Preview forfeit','left-room':'Trainer left the room',surrender:'Surrender'};return labels[reason]||String(reason||'completed').replaceAll('-',' ');}

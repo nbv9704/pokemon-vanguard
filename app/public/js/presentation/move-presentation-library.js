@@ -1,5 +1,6 @@
 import {assertPresentationDefinition} from './presentation-schema.js';
 import {SIGNATURE_MOVE_IDS,signatureMoveSpec} from './signature-move-specs.js';
+import {BATTLE_PRESENTATION_TIMING,retimePresentationCues} from './battle-presentation-timing.js';
 
 export {SIGNATURE_MOVE_IDS} from './signature-move-specs.js';
 export const WEATHER_MOVE_IDS=['chilly-reception','rain-dance','sandstorm','snowscape','sunny-day'];
@@ -23,8 +24,9 @@ export function movePresentationTemplate(move,profile){
  return PROFILE_TO_TEMPLATE[profile?.id]||'legacy';
 }
 
-function definition({move,profile,stage,targetCount,template,tier,cues,duration}){
- return assertPresentationDefinition({id:`${tier==='signature-timeline'?'signature':'template'}-${template.replace(':','-')}-${stage}`,tier,template,profile:profile.id,stage,duration,cues,moveId:move.id});
+function definition({move,profile,stage,targetCount,template,tier,cues}){
+ const duration=stage==='impact'?BATTLE_PRESENTATION_TIMING.impact:BATTLE_PRESENTATION_TIMING.cast;
+ return assertPresentationDefinition({id:`${tier==='signature-timeline'?'signature':'template'}-${template.replace(':','-')}-${stage}`,tier,template,profile:profile.id,stage,duration,cues:retimePresentationCues(cues,stage),moveId:move.id});
 }
 
 function commonAudio(move,stage,at=stage==='cast'?80:30){return cue(`${stage}-audio`,'audio',at,{sound:`move:${move?.type||'normal'}:${stage}`,meta:{semantic:true}});}
@@ -66,7 +68,7 @@ function templateCast(move,profile,targetCount,template){
    cue(`${template}-trail-${i}`,'effect',230,{duration:520,layer:'ACTOR_FRONT',anchor:'USER_TO_TARGET',primitive:template==='slash'?'slash':'trail',role:'target',targetIndex:i})
   ]));
  }
- return definition({move,profile,stage:'cast',targetCount,template,tier:'parameterized-template',cues,duration:1050});
+ return definition({move,profile,stage:'cast',targetCount,template,tier:'parameterized-template',cues});
 }
 
 function templateImpact(move,profile,targetCount,template){
@@ -83,7 +85,7 @@ function templateImpact(move,profile,targetCount,template){
    cue(`target-${i}-shake`,'actor',20,{duration:210,layer:'ACTOR',anchor:'TARGET_CENTER',primitive:'actor-shake',role:'target',targetIndex:i}),
    cue(`impact-${i}`,'effect',20,{duration:330,layer:'FX_FRONT',anchor:'TARGET_CENTER',primitive:template==='drain'?'ring':template==='multi-hit'?'burst':'burst',role:'target',targetIndex:i})
   ]));
- return definition({move,profile,stage:'impact',targetCount,template,tier:'parameterized-template',cues,duration:420});
+ return definition({move,profile,stage:'impact',targetCount,template,tier:'parameterized-template',cues});
 }
 
 function signatureAudio(move,stage,at=stage==='cast'?70:25){return cue(`${stage}-signature-audio`,'audio',at,{sound:`move-signature:${move.id}:${move?.type||'normal'}:${stage}`,meta:{semantic:true,signature:true}});}
@@ -152,7 +154,7 @@ function signatureCues(move,stage,targetCount){
  return stage==='cast'?signatureCast(move,targetCount,spec):signatureImpact(move,targetCount,spec);
 }
 
-function signatureDefinition(move,profile,stage,targetCount){const spec=signatureCues(move,stage,targetCount);return definition({move,profile,stage,targetCount,template:`signature:${move.id}`,tier:'signature-timeline',cues:spec.cues,duration:spec.duration});}
+function signatureDefinition(move,profile,stage,targetCount){const spec=signatureCues(move,stage,targetCount);return definition({move,profile,stage,targetCount,template:`signature:${move.id}`,tier:'signature-timeline',cues:spec.cues});}
 
 export function buildMovePresentationDefinition(move,profile,{stage='cast',targetCount=1}={}){
  const template=movePresentationTemplate(move,profile);

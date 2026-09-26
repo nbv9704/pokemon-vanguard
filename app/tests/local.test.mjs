@@ -51,8 +51,14 @@ test('local beta mode tops new saves up with abundant testing currency',async()=
   }finally{await app.close();await rm(saveDir,{recursive:true,force:true});}
 });
 
+
+test('public auth defaults hide Local Beta and OAuth providers until cloud save is fully configured',async()=>{
+  const saveDir=await mkdtemp(path.join(os.tmpdir(),'pv-public-auth-')),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret',SUPABASE_URL:'https://project.supabase.co',SUPABASE_PUBLISHABLE_KEY:'publishable'}});
+  try{const port=await app.listen(0),response=await fetch(`http://127.0.0.1:${port}/api/auth/session`),body=await response.json();assert.equal(body.devLogin,false);assert.deepEqual(body.providers,{google:false,discord:false});assert.equal(body.cloudSaveConfigured,false);}finally{await app.close();await rm(saveDir,{recursive:true,force:true});}
+});
+
 test('authenticated local mode issues an HttpOnly session and rejects anonymous game sockets',async()=>{
-  const saveDir=await mkdtemp(path.join(os.tmpdir(),'aether-auth-')),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret'}});
+  const saveDir=await mkdtemp(path.join(os.tmpdir(),'aether-auth-')),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret',AUTH_ALLOW_LOCAL_BETA:'true'}});
   try{
     const port=await app.listen(0),base=`http://127.0.0.1:${port}`;
     let response=await fetch(`${base}/api/auth/session`),body=await response.json();assert.equal(body.authenticated,false);
@@ -63,7 +69,7 @@ test('authenticated local mode issues an HttpOnly session and rejects anonymous 
 });
 
 test('Google Supabase PKCE callback creates a stable account session',async()=>{
-  const saveDir=await mkdtemp(path.join(os.tmpdir(),'aether-google-auth-')),authFetch=async url=>String(url).includes('/auth/v1/token')?new Response(JSON.stringify({access_token:'token',user:{id:'11111111-1111-4111-8111-111111111111',email:'trainer@example.test',user_metadata:{full_name:'Test Trainer',avatar_url:'https://example.test/avatar.png'},identities:[{provider:'google',identity_data:{}}]}}),{status:200,headers:{'content-type':'application/json'}}):new Response(null,{status:404}),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret',SUPABASE_URL:'https://project.supabase.co',SUPABASE_PUBLISHABLE_KEY:'publishable'},authFetch});
+  const saveDir=await mkdtemp(path.join(os.tmpdir(),'aether-google-auth-')),authFetch=async url=>String(url).includes('/auth/v1/token')?new Response(JSON.stringify({access_token:'token',user:{id:'11111111-1111-4111-8111-111111111111',email:'trainer@example.test',user_metadata:{full_name:'Test Trainer',avatar_url:'https://example.test/avatar.png'},identities:[{provider:'google',identity_data:{}}]}}),{status:200,headers:{'content-type':'application/json'}}):String(url).includes('/rest/v1/profiles')?new Response(null,{status:201}):new Response(null,{status:404}),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret',SUPABASE_URL:'https://project.supabase.co',SUPABASE_PUBLISHABLE_KEY:'publishable',SUPABASE_SECRET_KEY:'server-secret'},authFetch});
   try{
     const port=await app.listen(0),base=`http://127.0.0.1:${port}`;
     let response=await fetch(`${base}/api/auth/google/start`,{redirect:'manual'});assert.equal(response.status,303);const location=new URL(response.headers.get('location')),flowCookie=/pv_supabase_flow=[^;]+/.exec(response.headers.get('set-cookie'))?.[0];assert.equal(location.hostname,'project.supabase.co');assert.equal(location.searchParams.get('provider'),'google');assert.equal(location.searchParams.get('code_challenge_method'),'s256');assert.ok(flowCookie);
@@ -73,7 +79,7 @@ test('Google Supabase PKCE callback creates a stable account session',async()=>{
 });
 
 test('Discord Supabase PKCE callback creates a stable account session',async()=>{
-  const saveDir=await mkdtemp(path.join(os.tmpdir(),'aether-discord-auth-')),authFetch=async url=>String(url).includes('/auth/v1/token')?new Response(JSON.stringify({access_token:'token',user:{id:'22222222-2222-4222-8222-222222222222',user_metadata:{full_name:'Discord Trainer'},identities:[{provider:'discord',identity_data:{}}]}}),{status:200,headers:{'content-type':'application/json'}}):new Response(null,{status:404}),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret',SUPABASE_URL:'https://project.supabase.co',SUPABASE_PUBLISHABLE_KEY:'publishable'},authFetch});
+  const saveDir=await mkdtemp(path.join(os.tmpdir(),'aether-discord-auth-')),authFetch=async url=>String(url).includes('/auth/v1/token')?new Response(JSON.stringify({access_token:'token',user:{id:'22222222-2222-4222-8222-222222222222',user_metadata:{full_name:'Discord Trainer'},identities:[{provider:'discord',identity_data:{}}]}}),{status:200,headers:{'content-type':'application/json'}}):String(url).includes('/rest/v1/profiles')?new Response(null,{status:201}):new Response(null,{status:404}),app=createLocalServer({saveDir,authRequired:true,authEnv:{AUTH_SESSION_SECRET:'test-secret',SUPABASE_URL:'https://project.supabase.co',SUPABASE_PUBLISHABLE_KEY:'publishable',SUPABASE_SECRET_KEY:'server-secret'},authFetch});
   try{
     const port=await app.listen(0),base=`http://127.0.0.1:${port}`;
     let response=await fetch(`${base}/api/auth/discord/start`,{redirect:'manual'}),location=new URL(response.headers.get('location')),flowCookie=/pv_supabase_flow=[^;]+/.exec(response.headers.get('set-cookie'))?.[0];assert.equal(location.hostname,'project.supabase.co');assert.equal(location.searchParams.get('provider'),'discord');assert.ok(flowCookie);

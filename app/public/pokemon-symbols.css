@@ -1,0 +1,56 @@
+/* Pokémon Legends: Arceus presentation sprites used as UI metadata, not gameplay state. */
+.pv-type-symbol,.pv-move-category-symbol{display:inline-block;object-fit:contain;object-position:center;vertical-align:middle;image-rendering:pixelated!important;flex:none}
+.pv-type-symbol-icon{width:18px;height:18px}
+.pv-type-symbol-ic{width:76px;height:18px}
+.pv-move-category-symbol{width:16px;height:16px}
+.pv-type-strip-list{display:flex;align-items:center;gap:4px;flex-wrap:wrap;min-height:18px}
+.summary-types.pv-type-strip-list,.party-types.pv-type-strip-list{gap:4px}
+.summary-types.pv-type-strip-list .pv-type-symbol-ic,.party-types.pv-type-strip-list .pv-type-symbol-ic{width:68px;height:16px}
+.ranch-types.pv-type-strip-list,.pokedex-types.pv-type-strip-list{gap:4px}
+.ranch-types.pv-type-strip-list .pv-type-symbol-ic,.pokedex-types.pv-type-strip-list .pv-type-symbol-ic{width:68px;height:16px}
+.party-move-type{display:grid;place-items:center;align-self:stretch;overflow:hidden;background:transparent!important}
+.party-move-type .pv-type-symbol-ic{width:58px;height:14px}
+.party-move-meta{display:flex;align-items:center;justify-content:flex-end;gap:3px;padding-right:4px;min-width:0}
+.party-move-meta .pv-move-category-symbol{width:13px;height:13px}
+.party-move-meta em{padding:0!important}
+.summary-move-symbols{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-height:18px}
+.summary-move-symbols .pv-type-symbol-ic{width:63px;height:15px}
+.summary-move-symbols .pv-move-category-symbol{width:15px;height:15px}
+/* Move-category LA glyphs are monochrome source sprites. Tint them by semantic class so the same assets stay legible on light Vanguard panels. */
+.pv-move-category-physical{filter:brightness(0) saturate(100%) invert(46%) sepia(71%) saturate(1810%) hue-rotate(336deg) brightness(94%) contrast(88%)}
+.pv-move-category-special{filter:brightness(0) saturate(100%) invert(48%) sepia(31%) saturate(1668%) hue-rotate(198deg) brightness(87%) contrast(88%)}
+.pv-move-category-status{filter:brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1047%) hue-rotate(118deg) brightness(88%) contrast(86%)}
+
+/* Battle move cards: move name first, icon-only semantics second, compact stat rail at right. */
+.pokemon-move-tile .move-card-main{display:grid;align-content:center;gap:6px;min-width:0}
+.pokemon-move-tile .move-card-main>b{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pokemon-move-tile .move-symbol-row{display:flex;align-items:center;gap:7px;min-height:20px}
+.pokemon-move-tile .move-type-symbol,.pokemon-move-tile .move-category-symbol{display:grid;place-items:center;width:20px;height:20px;flex:0 0 20px}
+.pokemon-move-tile .move-type-symbol .pv-type-symbol-icon{width:20px;height:20px}
+.pokemon-move-tile .move-category-symbol .pv-move-category-symbol{width:18px;height:18px}
+.pokemon-move-tile .move-card-stats{display:grid;align-content:center;justify-items:end;gap:8px;min-width:76px;align-self:stretch;padding-left:10px;border-left:1px solid #c8c2ad}
+.pokemon-move-tile .move-card-stats>em,.pokemon-move-tile .move-card-stats>span{display:flex;align-items:baseline;justify-content:flex-end;gap:4px;white-space:nowrap}
+.pokemon-move-tile .move-card-stats small{font-size:inherit;color:inherit}
+body.pixel-era .pokemon-move-tile .move-card-stats{border-left:1px solid #c4bea9}
+body.pixel-era .pokemon-move-tile .move-symbol-row{gap:6px}
+body.pixel-era .pokemon-move-tile .move-type-symbol,body.pixel-era .pokemon-move-tile .move-category-symbol{width:18px;height:18px;flex-basis:18px}
+body.pixel-era .pokemon-move-tile .move-type-symbol .pv-type-symbol-icon{width:18px;height:18px}
+body.pixel-era .pokemon-move-tile .move-category-symbol .pv-move-category-symbol{width:16px;height:16px}
+body.pixel-era .pokemon-move-tile .move-card-stats{min-width:70px;padding-left:8px;gap:7px}
+.ranch-move-type{display:grid;place-items:center;min-width:0}
+.ranch-move-type .pv-type-symbol-ic{width:58px;height:14px}
+.ranch-move-meta{display:flex;align-items:center;gap:4px}
+.ranch-move-meta .pv-move-category-symbol{width:13px;height:13px}
+@media(max-width:680px){.pv-type-symbol-ic{width:64px;height:15px}.summary-types.pv-type-strip-list .pv-type-symbol-ic,.party-types.pv-type-strip-list .pv-type-symbol-ic{width:60px;height:14px}}
+body.pixel-era .pv-type-symbol,body.pixel-era .pv-move-category-symbol,body.aether-gba .pv-type-symbol,body.aether-gba .pv-move-category-symbol{image-rendering:pixelated!important}
+
+/* Final battle move-card geometry. This sheet loads after Pixel Era so these rules own the icon-first presentation. */
+body.pixel-era .pokemon-move-tile{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:1fr!important;column-gap:10px!important;align-items:stretch!important;min-height:58px!important;padding:7px 9px!important;border-left:6px solid var(--move-type)!important}
+body.pixel-era .pokemon-move-tile>.move-card-main{grid-column:1;grid-row:1}
+body.pixel-era .pokemon-move-tile>.move-card-stats{grid-column:2;grid-row:1}
+body.pixel-era .pokemon-move-tile .move-card-main>b{font-family:var(--pixel-font)!important;font-size:9px!important;line-height:1.25}
+body.pixel-era .pokemon-move-tile .move-card-stats>em,body.pixel-era .pokemon-move-tile .move-card-stats>span{font-family:var(--pixel-font)!important;font-size:6px!important;color:#2f3f55!important;font-style:normal}
+body.pixel-era .pokemon-move-tile .move-card-stats small{font-family:var(--pixel-font)!important;font-size:5px!important;color:#697386!important}
+body.pixel-era .pokemon-move-tile:hover:not(:disabled),body.pixel-era .pokemon-move-tile:focus-visible{background:#fffdf0!important;box-shadow:inset 1px 1px #fff,inset -1px -1px #aaa997,2px 2px #172a40,0 0 0 2px color-mix(in srgb,var(--move-type),transparent 52%)!important}
+body.pixel-era.resolution-locked .pokemon-move-tile{min-height:58px!important;padding:7px 9px!important}
+@media(max-width:600px){body.pixel-era .pokemon-move-tile{min-height:54px!important;padding:6px 7px!important;column-gap:7px!important}body.pixel-era .pokemon-move-tile .move-card-stats{min-width:62px;padding-left:6px}}

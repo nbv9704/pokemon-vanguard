@@ -29,8 +29,10 @@ Copy `.dev.vars.example` to `.dev.vars` and fill in:
 - `SUPABASE_URL`: Project URL from Supabase.
 - `SUPABASE_PUBLISHABLE_KEY`: safe browser/public project key, used by the server for OAuth exchange.
 - `SUPABASE_SECRET_KEY`: server-only secret key. Never expose or commit it.
-- `AUTH_ALLOW_LOCAL_BETA`: keep `true` for local testing; set `false` in production.
+- `AUTH_ALLOW_LOCAL_BETA`: development-only escape hatch. It is disabled unless explicitly set to `true`; never enable it in production.
 
 Google and Discord client secrets stay in the Supabase dashboard and do not belong in `.dev.vars`.
 
-Restart `npm run dev` after changing `.dev.vars`. OAuth users use Supabase save storage. The Local Beta option continues to use `.local-data` so existing development saves remain intact.
+`BETA_TEST_FUNDS`: optional development-only flag that tops up the beta test wallet when set to `true`. Production defaults to normal balances.
+
+Restart `npm run dev` after changing `.dev.vars`. OAuth users use Supabase save storage. The Local Beta option is development-only and uses `.local-data`. Authenticated Google/Discord UUID accounts require Supabase server-side save storage and never silently fall back to local JSON.

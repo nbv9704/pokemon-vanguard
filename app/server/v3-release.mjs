@@ -1,4 +1,5 @@
-import {createV3BetaProgression,validateV3Team} from './v3-progression.mjs';
+import {createV3BetaProgression,normalizeV3TeamSlots,validateV3Team} from './v3-progression.mjs';
+import {ensureV3ItemInventory} from './v3-item-shop.mjs';
 
 const clone=value=>structuredClone(value);
 const activeBattle=state=>(state?.battle&&!state.battle.result)||(state?.battleV2&&!['FINISHED'].includes(state.battleV2.phase));
@@ -7,7 +8,8 @@ export function upgradeAdventureToV3(state,catalog){
  const source=clone(state),version=Number.isInteger(source?.schemaVersion)?source.schemaVersion:1;
  if(version>3)throw new Error(`Save schema ${version} is newer than this application supports`);
  if(version===3){
-  if(source.progressionV3?.catalogVersion!==catalog.metadata.catalogVersion){const progressionV3=rebaseProgression(source.progressionV3,catalog);return {status:'catalog-upgraded',state:{...source,rulesVersion:catalog.metadata.rulesVersion,catalogVersion:catalog.metadata.catalogVersion,progressionV3,migrationV3:{from:3,to:3,id:'v3-catalog-rebase',catalogVersion:catalog.metadata.catalogVersion}},report:{from:3,to:3,changed:true,mons:progressionV3.mons.length,builds:progressionV3.builds.length,teamSize:progressionV3.teams[0].buildIds.length}};}
+  if(source.progressionV3?.catalogVersion!==catalog.metadata.catalogVersion){const progressionV3=rebaseProgression(source.progressionV3,catalog),normalized=normalizeV3TeamSlots(progressionV3,catalog).progression;ensureV3ItemInventory(normalized,catalog);return {status:'catalog-upgraded',state:{...source,rulesVersion:catalog.metadata.rulesVersion,catalogVersion:catalog.metadata.catalogVersion,progressionV3:normalized,migrationV3:{from:3,to:3,id:'v3-catalog-rebase',catalogVersion:catalog.metadata.catalogVersion}},report:{from:3,to:3,changed:true,mons:normalized.mons.length,builds:normalized.builds.length,teamSize:normalized.teams[0].buildIds.length,teamSlots:normalized.teams.length,ownedItems:normalized.ownedItemIds.length}};}
+  if(source.progressionV3){const normalized=normalizeV3TeamSlots(source.progressionV3,catalog),inventory=ensureV3ItemInventory(normalized.progression,catalog);if(normalized.changed||inventory.changed)return {status:'progression-upgraded',state:{...source,progressionV3:normalized.progression,migrationV3:{from:3,to:3,id:'v3-team-slots-items-v1',catalogVersion:catalog.metadata.catalogVersion}},report:{from:3,to:3,changed:true,teamSlots:normalized.progression.teams.length,ownedItems:normalized.progression.ownedItemIds.length}};}
   return {status:'current',state:source,report:{from:3,to:3,changed:false}};
  }
  if(activeBattle(source))return {status:'deferred-active-battle',state:source,report:{from:version,to:3,changed:false,reason:'Finish or surrender the active battle first'}};
