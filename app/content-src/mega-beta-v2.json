@@ -1,0 +1,665 @@
+{
+  "schemaVersion": 1,
+  "id": "mega-beta-v2",
+  "reviewedAt": "2026-09-16T23:45:00.000Z",
+  "regulationSets": [
+    "m-a"
+  ],
+  "sources": {
+    "championsForms": {
+      "venusaur-mega": "https://pokebase.app/pokemon-champions/pokemon/venusaur-mega",
+      "blastoise-mega": "https://pokebase.app/pokemon-champions/pokemon/blastoise-mega",
+      "beedrill-mega": "https://pokebase.app/pokemon-champions/pokemon/beedrill-mega",
+      "charizard-mega-x": "https://pokebase.app/pokemon-champions/pokemon/charizard-mega-x",
+      "charizard-mega-y": "https://pokebase.app/pokemon-champions/pokemon/charizard-mega-y",
+      "chesnaught-mega": "https://pokebase.app/pokemon-champions/pokemon/chesnaught-mega",
+      "scizor-mega": "https://pokebase.app/pokemon-champions/pokemon/scizor-mega"
+    },
+    "weights": "https://www.pokemon.com/; https://portal-pokemon.com/; https://www.serebii.net/",
+    "sprites": "local sprite when available; otherwise explicit base-form fallback via spriteKey until reviewed Mega art is imported"
+  },
+  "relations": [
+    {
+      "baseSpeciesId": "venusaur",
+      "megaSpeciesId": "venusaur-mega",
+      "itemId": "venusaurite",
+      "regulationSets": [
+        "m-a"
+      ]
+    },
+    {
+      "baseSpeciesId": "blastoise",
+      "megaSpeciesId": "blastoise-mega",
+      "itemId": "blastoisinite",
+      "regulationSets": [
+        "m-a"
+      ]
+    },
+    {
+      "baseSpeciesId": "beedrill",
+      "megaSpeciesId": "beedrill-mega",
+      "itemId": "beedrillite",
+      "regulationSets": [
+        "m-a"
+      ]
+    },
+    {
+      "baseSpeciesId": "charizard",
+      "megaSpeciesId": "charizard-mega-x",
+      "itemId": "charizardite-x",
+      "regulationSets": [
+        "m-a"
+      ]
+    },
+    {
+      "baseSpeciesId": "charizard",
+      "megaSpeciesId": "charizard-mega-y",
+      "itemId": "charizardite-y",
+      "regulationSets": [
+        "m-a"
+      ]
+    },
+    {
+      "baseSpeciesId": "chesnaught",
+      "megaSpeciesId": "chesnaught-mega",
+      "itemId": "chesnaughtite",
+      "regulationSets": [
+        "m-a"
+      ]
+    },
+    {
+      "baseSpeciesId": "scizor",
+      "megaSpeciesId": "scizor-mega",
+      "itemId": "scizorite",
+      "regulationSets": [
+        "m-a"
+      ]
+    }
+  ],
+  "forms": [
+    {
+      "id": "venusaur-mega",
+      "formId": "venusaur-mega",
+      "name": "Mega Venusaur",
+      "types": [
+        "grass",
+        "poison"
+      ],
+      "baseStats": {
+        "hp": 80,
+        "atk": 100,
+        "spa": 122,
+        "spd": 120,
+        "spe": 80,
+        "def": 123
+      },
+      "abilityId": "thick-fat",
+      "spriteKey": "venusaur-mega"
+    },
+    {
+      "id": "blastoise-mega",
+      "formId": "blastoise-mega",
+      "name": "Mega Blastoise",
+      "types": [
+        "water"
+      ],
+      "baseStats": {
+        "hp": 79,
+        "atk": 103,
+        "spa": 135,
+        "spd": 115,
+        "spe": 78,
+        "def": 120
+      },
+      "abilityId": "mega-launcher",
+      "spriteKey": "blastoise"
+    },
+    {
+      "id": "beedrill-mega",
+      "formId": "beedrill-mega",
+      "name": "Mega Beedrill",
+      "types": [
+        "bug",
+        "poison"
+      ],
+      "baseStats": {
+        "hp": 65,
+        "atk": 150,
+        "spa": 15,
+        "spd": 80,
+        "spe": 145,
+        "def": 40
+      },
+      "abilityId": "adaptability",
+      "spriteKey": "beedrill"
+    },
+    {
+      "id": "charizard-mega-x",
+      "formId": "charizard-mega-x",
+      "name": "Mega Charizard X",
+      "types": [
+        "fire",
+        "dragon"
+      ],
+      "baseStats": {
+        "hp": 78,
+        "atk": 130,
+        "spa": 130,
+        "spd": 85,
+        "spe": 100,
+        "def": 111
+      },
+      "abilityId": "tough-claws",
+      "spriteKey": "charizard"
+    },
+    {
+      "id": "charizard-mega-y",
+      "formId": "charizard-mega-y",
+      "name": "Mega Charizard Y",
+      "types": [
+        "fire",
+        "flying"
+      ],
+      "baseStats": {
+        "hp": 78,
+        "atk": 104,
+        "spa": 159,
+        "spd": 115,
+        "spe": 100,
+        "def": 78
+      },
+      "abilityId": "drought",
+      "spriteKey": "charizard"
+    },
+    {
+      "id": "chesnaught-mega",
+      "formId": "chesnaught-mega",
+      "name": "Mega Chesnaught",
+      "types": [
+        "grass",
+        "fighting"
+      ],
+      "baseStats": {
+        "hp": 88,
+        "atk": 137,
+        "spa": 74,
+        "spd": 115,
+        "spe": 44,
+        "def": 172
+      },
+      "abilityId": "bulletproof",
+      "spriteKey": "chesnaught"
+    },
+    {
+      "id": "scizor-mega",
+      "formId": "scizor-mega",
+      "name": "Mega Scizor",
+      "types": [
+        "bug",
+        "steel"
+      ],
+      "baseStats": {
+        "hp": 70,
+        "atk": 150,
+        "spa": 65,
+        "spd": 100,
+        "spe": 75,
+        "def": 140
+      },
+      "abilityId": "technician",
+      "spriteKey": "scizor"
+    }
+  ],
+  "abilities": [
+    {
+      "id": "thick-fat",
+      "sourceSlug": "thick-fat",
+      "sourceId": "69c71aaebe80518c84778b72",
+      "name": "Thick Fat",
+      "description": "The Pok\u00e9mon is protected by a layer of thick fat, which halves the damage taken from Fire- and Ice-type moves.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "thick-fat",
+        "handlers": [
+          {
+            "order": 40,
+            "id": "received-type-damage-reduction",
+            "hook": "modifyDamage",
+            "params": {
+              "types": [
+                "fire",
+                "ice"
+              ],
+              "multiplier": 0.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks-wave6:single"
+          ],
+          "double": [
+            "r3-ability-hooks-wave6:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "mega-launcher",
+      "sourceSlug": "mega-launcher",
+      "sourceId": "69c71a8fbe80518c84778952",
+      "name": "Mega Launcher",
+      "description": "Powers up pulse moves.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "mega-launcher",
+        "handlers": [
+          {
+            "id": "move-tag-power-boost",
+            "hook": "modifyPower",
+            "order": 40,
+            "params": {
+              "tag": "pulse",
+              "multiplier": 1.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks:single"
+          ],
+          "double": [
+            "r3-ability-hooks:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "adaptability",
+      "sourceSlug": "adaptability",
+      "sourceId": "69c71a70be80518c8477868b",
+      "name": "Adaptability",
+      "description": "Increases the Same Type Attack Bonus from *1.5 to *2.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "adaptability",
+        "handlers": [
+          {
+            "id": "stab-modifier",
+            "hook": "modifyDamage",
+            "order": 40,
+            "params": {
+              "multiplier": 2
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks:single"
+          ],
+          "double": [
+            "r3-ability-hooks:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "tough-claws",
+      "sourceSlug": "tough-claws",
+      "sourceId": "69c71aaebe80518c84778b7a",
+      "name": "Tough Claws",
+      "description": "Powers up moves that make direct contact.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "tough-claws",
+        "handlers": [
+          {
+            "id": "contact-power-boost",
+            "hook": "modifyPower",
+            "order": 40,
+            "params": {
+              "multiplier": 1.300048828125
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks:single"
+          ],
+          "double": [
+            "r3-ability-hooks:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "drought",
+      "sourceSlug": "drought",
+      "sourceId": "69c71a7fbe80518c8477880e",
+      "name": "Drought",
+      "description": "Turns the sunlight harsh when the Pok\u00e9mon enters a battle.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "drought",
+        "handlers": [
+          {
+            "id": "entry-weather",
+            "hook": "onEntry",
+            "order": 40,
+            "params": {
+              "weather": "sun",
+              "turns": 5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks-wave5:single"
+          ],
+          "double": [
+            "r3-ability-hooks-wave5:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "bulletproof",
+      "sourceSlug": "bulletproof",
+      "sourceId": "69c71a79be80518c8477878e",
+      "name": "Bulletproof",
+      "description": "Protects the Pok\u00e9mon from some ball and bomb moves.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "bulletproof",
+        "handlers": [
+          {
+            "id": "move-tag-immunity",
+            "hook": "beforeTarget",
+            "order": 40,
+            "params": {
+              "tag": "bullet"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks:single"
+          ],
+          "double": [
+            "r3-ability-hooks:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "technician",
+      "sourceSlug": "technician",
+      "sourceId": "69c71aacbe80518c84778b56",
+      "name": "Technician",
+      "description": "Powers up weak moves so the Pok\u00e9mon can deal more damage with them.",
+      "isMegaAbility": true,
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "technician",
+        "handlers": [
+          {
+            "id": "base-power-threshold-boost",
+            "hook": "modifyPower",
+            "order": 30,
+            "params": {
+              "maxPower": 60,
+              "multiplier": 1.5
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r3-ability-hooks:single"
+          ],
+          "double": [
+            "r3-ability-hooks:double"
+          ]
+        }
+      }
+    }
+  ],
+  "items": [
+    {
+      "id": "venusaurite",
+      "sourceSlug": "venusaurite",
+      "sourceId": "69c7a2888c34a1869b2f498b",
+      "name": "Venusaurite",
+      "description": "One of a variety of mysterious Mega Stones. A Venusaur holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "venusaurite",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "venusaur",
+              "megaSpeciesId": "venusaur-mega"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega:single"
+          ],
+          "double": [
+            "r6-mega:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "blastoisinite",
+      "sourceSlug": "blastoisinite",
+      "sourceId": "69c7a20f8c34a1869b2f3fa0",
+      "name": "Blastoisinite",
+      "description": "One of a variety of mysterious Mega Stones. A Blastoise holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "blastoisinite",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "blastoise",
+              "megaSpeciesId": "blastoise-mega"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega-wave2:single"
+          ],
+          "double": [
+            "r6-mega-wave2:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "beedrillite",
+      "sourceSlug": "beedrillite",
+      "sourceId": "69c7a20b8c34a1869b2f3f56",
+      "name": "Beedrillite",
+      "description": "One of a variety of mysterious Mega Stones. A Beedrill holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "beedrillite",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "beedrill",
+              "megaSpeciesId": "beedrill-mega"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega-wave2:single"
+          ],
+          "double": [
+            "r6-mega-wave2:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "charizardite-x",
+      "sourceSlug": "charizardite-x",
+      "sourceId": "69c7a2148c34a1869b2f4017",
+      "name": "Charizardite X",
+      "description": "One of a variety of mysterious Mega Stones. A Charizard holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "charizardite-x",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "charizard",
+              "megaSpeciesId": "charizard-mega-x"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega-wave2:single"
+          ],
+          "double": [
+            "r6-mega-wave2:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "charizardite-y",
+      "sourceSlug": "charizardite-y",
+      "sourceId": "69c7a2158c34a1869b2f4019",
+      "name": "Charizardite Y",
+      "description": "One of a variety of mysterious Mega Stones. A Charizard holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "charizardite-y",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "charizard",
+              "megaSpeciesId": "charizard-mega-y"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega-wave2:single"
+          ],
+          "double": [
+            "r6-mega-wave2:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "chesnaughtite",
+      "sourceSlug": "chesnaughtite",
+      "sourceId": "69d58b1186a553da9d64d3c6",
+      "name": "Chesnaughtite",
+      "description": "One of a variety of mysterious Mega Stones. A Chesnaught holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "chesnaughtite",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "chesnaught",
+              "megaSpeciesId": "chesnaught-mega"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega-wave2:single"
+          ],
+          "double": [
+            "r6-mega-wave2:double"
+          ]
+        }
+      }
+    },
+    {
+      "id": "scizorite",
+      "sourceSlug": "scizorite",
+      "sourceId": "69c7a2738c34a1869b2f47e3",
+      "name": "Scizorite",
+      "description": "One of a variety of mysterious Mega Stones. A Scizor holding this stone will be able to Mega Evolve during battle.",
+      "category": "mega-evolution",
+      "implemented": true,
+      "enabledForBattle": true,
+      "mechanics": {
+        "id": "scizorite",
+        "handlers": [
+          {
+            "id": "mega-stone",
+            "hook": "beforeAction",
+            "order": 1,
+            "params": {
+              "baseSpeciesId": "scizor",
+              "megaSpeciesId": "scizor-mega"
+            }
+          }
+        ],
+        "testEvidence": {
+          "single": [
+            "r6-mega-wave2:single"
+          ],
+          "double": [
+            "r6-mega-wave2:double"
+          ]
+        }
+      }
+    }
+  ]
+}

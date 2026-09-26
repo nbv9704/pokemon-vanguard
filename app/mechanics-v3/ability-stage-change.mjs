@@ -1,10 +1,11 @@
 const abilityEffects=(unit,kind)=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind==='ability'&&effect.kind===kind);
 
 export function abilityStageChange(unit,requestedDelta){
- const effect=abilityEffects(unit,'stat-change-inversion')[0]||null;
- return effect&&Number.isInteger(requestedDelta)&&requestedDelta!==0
-  ?{requestedDelta:-requestedDelta,originalRequestedDelta:requestedDelta,sourceAbilityId:effect.sourceId,effectId:effect.kind}
-  :{requestedDelta,originalRequestedDelta:requestedDelta,sourceAbilityId:null,effectId:null};
+ const inversion=abilityEffects(unit,'stat-change-inversion')[0]||null,multiplier=abilityEffects(unit,'stat-change-multiplier')[0]||null;
+ if(!Number.isInteger(requestedDelta)||requestedDelta===0)return {requestedDelta,originalRequestedDelta:requestedDelta,sourceAbilityId:null,effectId:null};
+ if(inversion)return {requestedDelta:-requestedDelta,originalRequestedDelta:requestedDelta,sourceAbilityId:inversion.sourceId,effectId:inversion.kind};
+ if(multiplier)return {requestedDelta:requestedDelta*(multiplier.multiplier||2),originalRequestedDelta:requestedDelta,sourceAbilityId:multiplier.sourceId,effectId:multiplier.kind};
+ return {requestedDelta,originalRequestedDelta:requestedDelta,sourceAbilityId:null,effectId:null};
 }
 
 export function abilityIgnoresOpponentStage(unit,stat,role){

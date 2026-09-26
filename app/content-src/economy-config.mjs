@@ -20,8 +20,8 @@ export const economy={
   },
   mega:{stoneCostCoins:1200},
   mail:[
-    {mailId:0,key:'starter-ready',reward:{coins:500,crystals:500},eligibility:{kind:'always'}},
-    {mailId:1,key:'first-win',reward:{coins:400,crystals:300},eligibility:{kind:'winsAtLeast',value:1}},
-    {mailId:2,key:'first-badge',reward:{coins:800,crystals:500},eligibility:{kind:'badgesAtLeast',value:1}}
+    {mailId:0,key:'welcome-gift',reward:{coins:500,crystals:500,recruitmentTickets:3},eligibility:{kind:'always'}},
+    {mailId:1,key:'training-update-gift',reward:{coins:1200,crystals:300,recruitmentTickets:5},eligibility:{kind:'always'}},
+    {mailId:2,key:'mission-board-gift',reward:{coins:800,crystals:500,recruitmentTickets:5},eligibility:{kind:'always'}}
   ]
 };

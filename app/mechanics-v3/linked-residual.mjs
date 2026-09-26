@@ -3,7 +3,7 @@ import {applyHpGroup,resolveEndTurn} from '../rules-v3/lifecycle.mjs';
 import {prepareMajorStatusEndTurn} from './major-status-residual.mjs';
 import {weatherHealingGroup,weatherResidualDamageGroup} from './weather.mjs';
 import {terrainHealingGroup} from './terrain.mjs';
-import {resolveDelayedEffectsEndTurn} from './delayed-effects.mjs';
+import {resolveDelayedEffectsEndTurn,resolveFutureAttacksEndTurn} from './delayed-effects.mjs';
 import {abilityPreventsIndirectDamage,abilityWeatherResidualDamageGroup,resolveEndTurnAbilityAllyStatusCures,resolveEndTurnAbilityBerryRestores,resolveEndTurnAbilityStatusCures} from './ability-hooks.mjs';
 import {resolveEndTurnAbilityStageBoosts} from './ability-damage-response.mjs';
 import {resolveFaintAbilityCopiesFromEvents} from './ability-replacement.mjs';
@@ -11,6 +11,7 @@ import {resolveEndTurnAbilityForms,resolveFieldTypeAbilities} from './ability-fo
 import {healingWithHeldItems,resolveEndTurnItems,resolveEndTurnItemAbilityLifecycle,resolveHpThresholdItems,resolveNegativeStageResetItems,resolvePpRestoreItems,resolveStatusCureItems,resolveTerrainSeedItems,resolveVolatileCureItems} from './item-hooks.mjs';
 import {prepareBindingResidualEndTurn} from './binding-residual.mjs';
 import {preparePersistentEffectsEndTurn} from './persistent-effects.mjs';
+import {recordTurnEvents} from './turn-history.mjs';
 
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
@@ -33,8 +34,9 @@ export function applyLinkedResiduals(battle){
  return {battle:next,events:[...damage.events,...threshold.events,...heal.events]};
 }
 
-export function resolveMechanicsEndTurn(battle,groups=[],{manifests=null}={}){
- let terrain=applyHpGroup(battle,terrainHealingGroup(battle).changes,'terrain-healing'),next=terrain.battle,initialEvents=[{kind:'endTurnStarted',turn:battle.turn},...terrain.events];
+export function resolveMechanicsEndTurn(battle,groups=[],{manifests=null,moves=null}={}){
+ const future=resolveFutureAttacksEndTurn(battle,{moves,manifests}),futureCopies=manifests?resolveFaintAbilityCopiesFromEvents(future.battle,future.events,{manifests}):{battle:future.battle,events:[]};
+ let terrain=applyHpGroup(futureCopies.battle,terrainHealingGroup(futureCopies.battle).changes,'terrain-healing'),next=terrain.battle,initialEvents=[{kind:'endTurnStarted',turn:battle.turn},...future.events,...futureCopies.events,...terrain.events];
  const linked=applyLinkedResiduals(next);next=linked.battle;initialEvents.push(...linked.events);
  if(manifests){const copied=resolveFaintAbilityCopiesFromEvents(next,linked.events,{manifests});next=copied.battle;initialEvents.push(...copied.events);}
  const items=resolveEndTurnItems(next);next=items.battle;initialEvents.push(...items.events);
@@ -43,7 +45,7 @@ export function resolveMechanicsEndTurn(battle,groups=[],{manifests=null}={}){
  const major=prepareMajorStatusEndTurn(next);next=major.battle;initialEvents.push(...major.events);
  const binding=prepareBindingResidualEndTurn(next);next=binding.battle;initialEvents.push(...binding.events);
  const persistent=preparePersistentEffectsEndTurn(next);next=persistent.battle;initialEvents.push(...persistent.events);
- return resolveEndTurn(next,[...groups,abilityWeatherResidualDamageGroup(next),weatherResidualDamageGroup(next),weatherHealingGroup(next),major.group,binding.group,...persistent.groups],{
+ const resolved=resolveEndTurn(next,[...groups,abilityWeatherResidualDamageGroup(next),weatherResidualDamageGroup(next),weatherHealingGroup(next),major.group,binding.group,...persistent.groups],{
   initialEvents,
   afterEachGroup:(state,{groupId,events:groupEvents})=>{
    let current=state,events=[];
@@ -53,4 +55,5 @@ export function resolveMechanicsEndTurn(battle,groups=[],{manifests=null}={}){
   afterGroups:state=>{let current=state,events=[];const delayed=resolveDelayedEffectsEndTurn(current);current=delayed.battle;events.push(...delayed.events);if(manifests){const copied=resolveFaintAbilityCopiesFromEvents(current,delayed.events,{manifests});current=copied.battle;events.push(...copied.events);}const boosts=resolveEndTurnAbilityStageBoosts(current);return {battle:boosts.battle,events:[...events,...boosts.events]};},
   afterTimers:state=>{const cured=resolveStatusCureItems(state,{trigger:'condition-expiry'}),volatile=resolveVolatileCureItems(cured.battle,{trigger:'condition-expiry'}),reset=resolveNegativeStageResetItems(volatile.battle,{trigger:'condition-expiry'}),pp=resolvePpRestoreItems(reset.battle,{trigger:'condition-expiry'}),seeds=resolveTerrainSeedItems(pp.battle,{trigger:'condition-expiry'}),itemAbilities=resolveEndTurnItemAbilityLifecycle(seeds.battle),harvest=resolveEndTurnAbilityBerryRestores(itemAbilities.battle),forms=resolveEndTurnAbilityForms(harvest.battle),fieldTypes=resolveFieldTypeAbilities(forms.battle,{trigger:'end-turn'});return {battle:fieldTypes.battle,events:[...cured.events,...volatile.events,...reset.events,...pp.events,...seeds.events,...itemAbilities.events,...harvest.events,...forms.events,...fieldTypes.events]};}
  });
+ if(!resolved.ok)return resolved;return {...resolved,battle:recordTurnEvents(resolved.battle,resolved.events,{turn:battle.turn})};
 }

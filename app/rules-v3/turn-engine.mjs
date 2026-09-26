@@ -10,7 +10,7 @@ export function validateTurnActions(battle,actions,{validateAction}={}){
  for(const action of actions){
   const key=`${action?.side}:${action?.actorId}`;
   if(!expected.includes(key)||received.has(key))return {ok:false,code:'INVALID_ACTOR'};
-  if(!['move','switch','recharge'].includes(action.kind)||!Number.isFinite(action.speed)||!Number.isInteger(action.priority??0)||action.orderBoost!==undefined||(action.kind==='switch'||action.kind==='recharge')&&action.mega)return {ok:false,code:'INVALID_ACTION'};
+  if(!['move','switch','recharge'].includes(action.kind)||!Number.isFinite(action.speed)||!Number.isInteger(action.priority??0)||action.orderBoost!==undefined||action.queueOrderOverride!==undefined||(action.kind==='switch'||action.kind==='recharge')&&action.mega)return {ok:false,code:'INVALID_ACTION'};
   if(action.kind==='move'&&(typeof action.moveId!=='string'||!action.moveId))return {ok:false,code:'INVALID_MOVE'};
   if(action.kind==='recharge'&&action.moveId!==undefined)return {ok:false,code:'INVALID_RECHARGE'};
   if(action.kind==='move'&&action.switchToId!==undefined){if(typeof action.switchToId!=='string'||!action.switchToId||switchTargets[action.side].has(action.switchToId))return {ok:false,code:'INVALID_SWITCH'};switchTargets[action.side].add(action.switchToId);}
@@ -48,10 +48,12 @@ function entryKoRequiresReplacement(battle,actionEvents){
  return false;
 }
 
-function suspendResolution(next,state,events,rngState){
+function forcedReplacementPending(battle){return ['A','B'].some(side=>replacementRequirements(battle,side).forced?.length>0);}
+
+function suspendResolution(next,state,events,rngState,reason='entryKoReplacement'){
  const suspended=clone(state);suspended.rngState=rngState;
  next.phase='REPLACE';next.phaseRevision=(next.phaseRevision||0)+1;next.pendingResolution=suspended;
- events.push({kind:'turnSuspended',turn:next.turn,reason:'entryKoReplacement'});
+ events.push({kind:'turnSuspended',turn:next.turn,reason});
  return next;
 }
 
@@ -68,7 +70,7 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom,afterAc
   if(!actorAvailable(next,action.side,action.actorId)){events.push({kind:'actionCancelled',actorId:action.actorId,reason:'actorUnavailable',speed:action.speed,priority:action.priority??0});return {suspended:false};}
   const handler=handlers?.[kind];if(typeof handler!=='function')throw new Error(`missing action handler: ${kind}`);
   const handlerInput=clone(next),handlerBefore=JSON.stringify(handlerInput),beforeEventCount=events.length;
-  const result=handler(handlerInput,clone({...action,kind}),{hasActed:actorId=>executionOrder.some(entry=>entry.actorId===actorId),willMove:actorId=>(state.movePending||[]).some(entry=>entry.actorId===actorId),nextRandom(){const roll=nextRandom(rngState);rngState=roll.rngState;return roll.value;}});
+  const result=handler(handlerInput,clone({...action,kind}),{hasActed:actorId=>executionOrder.some(entry=>entry.actorId===actorId),willMove:actorId=>(state.movePending||[]).some(entry=>entry.actorId===actorId),pendingActionFor:actorId=>clone((state.movePending||[]).find(entry=>entry.actorId===actorId)||null),reorderPendingAction(actorId,position){const pending=(state.movePending||[]).find(entry=>entry.actorId===actorId&&entry.kind==='move');if(!pending)return false;pending.queueOrderOverride=position==='front'?1:position==='back'?-1:0;return position==='front'||position==='back';},nextRandom(){const roll=nextRandom(rngState);rngState=roll.rngState;return roll.value;}});
   if(JSON.stringify(handlerInput)!==handlerBefore)throw new Error(`action handler mutated battle: ${kind}`);
   if(!result?.battle||!Array.isArray(result.events))throw new Error(`invalid action result: ${kind}`);
   next=clone(result.battle);events.push(...result.events);executionOrder.push({...action,kind});
@@ -81,8 +83,8 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom,afterAc
   }
   if(typeof afterAction==='function'){const actionEvents=events.slice(beforeEventCount),input=clone(next),before=JSON.stringify(input),post=afterAction(input,clone(actionEvents));if(JSON.stringify(input)!==before)throw new Error('afterAction mutated battle');if(!post?.battle||!Array.isArray(post.events))throw new Error('invalid afterAction result');next=clone(post.battle);events.push(...clone(post.events));}
   const outcome=checkBattleResult(next);next=outcome.battle;events.push(...outcome.events);
-  const actionEvents=events.slice(beforeEventCount);
-  return {suspended:next.phase!=='FINISHED'&&entryKoRequiresReplacement(next,actionEvents)};
+  const actionEvents=events.slice(beforeEventCount),forced=forcedReplacementPending(next),entryKo=entryKoRequiresReplacement(next,actionEvents);
+  return {suspended:next.phase!=='FINISHED'&&(forced||entryKo),reason:forced?'forcedReplacement':'entryKoReplacement'};
  };
  const stages=[
   ['switchPending','switch',action=>action],
@@ -94,7 +96,7 @@ function continueActionQueue(battle,state,handlers,{getSpeed,isTrickRoom,afterAc
    const rankedPending=ranked(state[key].map(rankShape)),action=rankedPending[0],index=state[key].findIndex(entry=>entry.actorId===action.actorId);state[key].splice(index,1);
    const kind=typeof kindSpec==='function'?kindSpec(action):kindSpec;
    const outcome=kind==='mega'&&!actorAvailable(next,action.side,action.actorId)?{suspended:false}:execute(action,kind);
-   if(outcome.suspended){next=suspendResolution(next,{...state,executionOrder},events,rngState);return {battle:next,events,executionOrder,rngState,suspended:true};}
+   if(outcome.suspended){next=suspendResolution(next,{...state,executionOrder},events,rngState,outcome.reason);return {battle:next,events,executionOrder,rngState,suspended:true};}
   }
  }
  next=finishResolution(next,events,rngState);

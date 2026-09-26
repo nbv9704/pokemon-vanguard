@@ -1,6 +1,7 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {TERRAIN_IDS} from './manifest-contract.mjs';
 import {passiveEffectActive} from './passive-effects.mjs';
+import {gravityActive} from './gravity.mjs';
 
 export {TERRAIN_IDS};
 
@@ -11,7 +12,7 @@ const effectFor=(unit,kind,battle)=>(unit?.passiveEffects||[]).find(effect=>pass
 
 export function unitIsGrounded(unit,battle=null){
  if(!unit)return false;
- if(unit.volatiles?.['forced-grounded']||effectFor(unit,'item-grounding',battle))return true;
+ if(gravityActive(battle)||unit.volatiles?.['forced-grounded']||effectFor(unit,'item-grounding',battle))return true;
  if(effectFor(unit,'item-airborne',battle)||effectFor(unit,'grounding-immunity',battle))return false;
  if(unit.volatiles?.['magnet-rise']||unit.volatiles?.telekinesis)return false;
  return !(unit.types||[]).includes('flying');

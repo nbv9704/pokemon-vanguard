@@ -18,7 +18,7 @@ export const applyTypeChangeHandler={
    else throw new Error(`unsupported type change mode: ${mode}`);
    const before=[...(changedUnit.types||[])];if(!after.length||after.some(type=>!CANONICAL_TYPES.includes(type)))throw new Error(`unsupported type change for ${move.id}`);
    if(sameTypes(before,after)){events.push({kind:'typeChangeFailed',actorId:source.actorId,targetId:changedUnit.actorId,moveId:move.id,reason:'noChange',reflected:application.reflected});continue;}
-   changedUnit.types=after;changedTargetIds.push(changedUnit.actorId);events.push({kind:'typesChanged',actorId:source.actorId,targetId:changedUnit.actorId,moveId:move.id,beforeTypes:before,afterTypes:[...after],reflected:application.reflected,...(mode==='copy-target-to-user'?{copiedFromId:target.actorId}:{})});
+   changedUnit.volatiles??={};if(!changedUnit.volatiles['type-change-state'])changedUnit.volatiles['type-change-state']={id:'type-change-state',originalTypes:before,restoreOnSwitch:true};changedUnit.types=after;changedTargetIds.push(changedUnit.actorId);events.push({kind:'typesChanged',actorId:source.actorId,targetId:changedUnit.actorId,moveId:move.id,beforeTypes:before,afterTypes:[...after],reflected:application.reflected,...(mode==='copy-target-to-user'?{copiedFromId:target.actorId}:{})});
   }
   return {battle:next,payload:{...payload,typeChangedTargetIds:[...new Set(changedTargetIds)]},events};
  }

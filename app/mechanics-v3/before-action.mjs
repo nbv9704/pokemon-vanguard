@@ -1,13 +1,13 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {tryMajorStatusAction} from './major-status.mjs';
-import {tryConfusionAction,tryFlinchAction} from './volatile-action.mjs';
+import {tryConfusionAction,tryFlinchAction,tryInfatuationAction} from './volatile-action.mjs';
 import {tryVolatileMoveRestriction} from './move-restrictions.mjs';
 import {abortTwoTurnMove} from './move-commitments.mjs';
 import {resolveNegativeStageResetItems,resolvePpRestoreItems,resolveStatusCureItems} from './item-hooks.mjs';
 
 function cancelledResult(next,events,action,move,reason){
  if(!move)return {cancelled:true,battle:next,events};
- const interrupted=['majorStatus','flinch','confusion'].includes(reason),unit=unitById(next,action.actorId),rampage=interrupted?unit?.volatiles?.rampage:null;if(rampage){delete unit.volatiles.rampage;events.push({kind:'rampageEnded',actorId:action.actorId,moveId:rampage.moveId,reason:'actionPrevented'});}
+ const interrupted=['majorStatus','flinch','confusion','infatuation'].includes(reason),unit=unitById(next,action.actorId),rampage=interrupted?unit?.volatiles?.rampage:null;if(rampage){delete unit.volatiles.rampage;events.push({kind:'rampageEnded',actorId:action.actorId,moveId:rampage.moveId,reason:'actionPrevented'});}
  const aborted=abortTwoTurnMove(next,{actorId:action.actorId,moveId:move.id,reason});return {cancelled:true,battle:aborted.battle,events:[...events,...aborted.events]};
 }
 
@@ -17,7 +17,7 @@ export function tryBeforeMoveConditions(battle,action,runtime={},move=null,mecha
  const itemCure=resolveStatusCureItems(next,{actorIds:[action.actorId],trigger:'before-action'});next=itemCure.battle;events.push(...itemCure.events);
  const stageReset=resolveNegativeStageResetItems(next,{actorIds:[action.actorId],trigger:'before-action'});next=stageReset.battle;events.push(...stageReset.events);
  const status=unitById(next,action.actorId)?.status?.id||unitById(next,action.actorId)?.status;
- if(status==='freeze'&&mechanics?.thawsUser===true){const unit=unitById(next,action.actorId);unit.status=null;events.push({kind:'statusCured',actorId:action.actorId,status:'freeze',reason:'moveThaw',moveId:move?.id});}
+ if(status==='freeze'&&mechanics?.thawsUser===true){const unit=unitById(next,action.actorId),requiredTypes=mechanics?.thawsUserIfUserTypes,canThaw=!Array.isArray(requiredTypes)||requiredTypes.some(type=>(unit?.types||[]).includes(type));if(canThaw){unit.status=null;events.push({kind:'statusCured',actorId:action.actorId,status:'freeze',reason:'moveThaw',moveId:move?.id});}}
  const activeStatus=unitById(next,action.actorId)?.status?.id||unitById(next,action.actorId)?.status;
  if(activeStatus==='sleep'||activeStatus==='freeze'){
   const result=tryMajorStatusAction(next,action,runtime,{allowSleepAction:activeStatus==='sleep'&&mechanics?.sleepUsable===true});next=result.battle;events.push(...result.events);
@@ -28,6 +28,8 @@ export function tryBeforeMoveConditions(battle,action,runtime={},move=null,mecha
  if(move){const restricted=tryVolatileMoveRestriction(next,action,move,mechanics);next=restricted.battle;events.push(...restricted.events);if(restricted.cancelled)return cancelledResult(next,events,action,move,'moveRestriction');}
  const confusion=tryConfusionAction(next,action,runtime);next=confusion.battle;events.push(...confusion.events);
  if(confusion.cancelled)return cancelledResult(next,events,action,move,'confusion');
+ const infatuation=tryInfatuationAction(next,action,runtime);next=infatuation.battle;events.push(...infatuation.events);
+ if(infatuation.cancelled)return cancelledResult(next,events,action,move,'infatuation');
  const remainingStatus=unitById(next,action.actorId)?.status?.id||unitById(next,action.actorId)?.status;
  if(remainingStatus==='paralysis'){
   const result=tryMajorStatusAction(next,action,runtime);next=result.battle;events.push(...result.events);

@@ -1,5 +1,6 @@
 import {calculateLevel50Stats,completeEntry,createBattleSnapshot} from '../rules-v3/index.mjs';
 import {compilePassiveEffects,createHeldItemState,resolveEntryHazards} from '../mechanics-v3/index.mjs';
+import {deterministicBattleGender} from '../mechanics-v3/foundation-data.mjs';
 
 const clone=value=>structuredClone(value);
 const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0});
@@ -7,7 +8,7 @@ export const mechanicCatalog=catalog=>({moves:Object.fromEntries(catalog.moves.m
 
 export function createV3BattleUnit(side,index,build,mon,catalog){
  const species=catalog.speciesById[mon.speciesId],stats=calculateLevel50Stats(species.baseStats,build.statPoints,build.natureId),manifests=mechanicCatalog(catalog);
- return {actorId:`${side}-${index}`,baseSpeciesId:species.id,speciesId:species.id,name:species.name,spriteKey:species.spriteKey,types:[...species.types],level:50,hp:stats.hp,maxHp:stats.hp,stats,stages:stages(),status:null,volatiles:{},pp:Object.fromEntries(build.moveIds.map(id=>[id,catalog.movesById[id].maxPP])),maxPp:Object.fromEntries(build.moveIds.map(id=>[id,catalog.movesById[id].maxPP])),buildSnapshot:{name:build.name,natureId:build.natureId,statPoints:clone(build.statPoints),moveIds:[...build.moveIds],abilityId:build.abilityId,itemId:build.itemId},activeAbilityId:build.abilityId,itemState:createHeldItemState(build.itemId),megaEvolved:false,passiveEffects:compilePassiveEffects({abilityId:build.abilityId,itemId:build.itemId,manifests})};
+ return {actorId:`${side}-${index}`,baseSpeciesId:species.id,speciesId:species.id,name:species.name,spriteKey:species.spriteKey,types:[...species.types],heightM:species.heightM,weightKg:species.weightKg,gender:deterministicBattleGender(species.id,mon.monId),level:50,hp:stats.hp,maxHp:stats.hp,stats,stages:stages(),status:null,volatiles:{},pp:Object.fromEntries(build.moveIds.map(id=>[id,catalog.movesById[id].maxPP])),maxPp:Object.fromEntries(build.moveIds.map(id=>[id,catalog.movesById[id].maxPP])),buildSnapshot:{name:build.name,natureId:build.natureId,statPoints:clone(build.statPoints),moveIds:[...build.moveIds],abilityId:build.abilityId,itemId:build.itemId},activeAbilityId:build.abilityId,itemState:createHeldItemState(build.itemId),megaEvolved:false,passiveEffects:compilePassiveEffects({abilityId:build.abilityId,itemId:build.itemId,manifests})};
 }
 
 export function publicV3Preview(team,progression,catalog){return team.buildIds.map(buildId=>{const build=progression.builds.find(entry=>entry.buildId===buildId),mon=progression.mons.find(entry=>entry.monId===build.monId),species=catalog.speciesById[mon.speciesId];return {buildId,speciesId:species.id,name:species.name,types:[...species.types],spriteKey:species.spriteKey};});}

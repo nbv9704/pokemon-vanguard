@@ -52,10 +52,11 @@
   "mail": [
     {
       "mailId": 0,
-      "key": "starter-ready",
+      "key": "welcome-gift",
       "reward": {
         "coins": 500,
-        "crystals": 500
+        "crystals": 500,
+        "recruitmentTickets": 3
       },
       "eligibility": {
         "kind": "always"
@@ -63,26 +64,26 @@
     },
     {
       "mailId": 1,
-      "key": "first-win",
+      "key": "training-update-gift",
       "reward": {
-        "coins": 400,
-        "crystals": 300
+        "coins": 1200,
+        "crystals": 300,
+        "recruitmentTickets": 5
       },
       "eligibility": {
-        "kind": "winsAtLeast",
-        "value": 1
+        "kind": "always"
       }
     },
     {
       "mailId": 2,
-      "key": "first-badge",
+      "key": "mission-board-gift",
       "reward": {
         "coins": 800,
-        "crystals": 500
+        "crystals": 500,
+        "recruitmentTickets": 5
       },
       "eligibility": {
-        "kind": "badgesAtLeast",
-        "value": 1
+        "kind": "always"
       }
     }
   ]

@@ -17,7 +17,7 @@ test('browser store recovers invalid settings and keeps a stable player room',()
 });
 
 test('router accepts only declared screens',()=>{
- const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,10);assert.equal(router.has('recruitment'),true);assert.equal(router.has('summon'),false);
+ const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,9);assert.equal(router.has('recruitment'),true);assert.equal(router.has('missions'),true);assert.equal(router.has('settings'),true);assert.equal(NAV_ITEMS.some(([route])=>route==='settings'||route==='guide'),false);assert.equal(router.has('summon'),false);
  assert.equal(router.go('battle'),true);assert.equal(router.current,'battle');
  assert.equal(router.go('admin'),false);assert.equal(router.current,'battle');
 });

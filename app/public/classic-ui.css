@@ -1,0 +1,588 @@
+/* Aether GBA — independent alternate interface.
+   Built on the existing semantic DOM and game state; no PokéRogue code or assets. */
+
+:root{
+  --gba-ink:#182d34;
+  --gba-ink-2:#2d4950;
+  --gba-deep:#0b2630;
+  --gba-navy:#173f48;
+  --gba-teal:#32746f;
+  --gba-mint:#7eb79b;
+  --gba-mint-hi:#b9d8a7;
+  --gba-paper:#fff7d6;
+  --gba-paper-2:#e8ddb2;
+  --gba-paper-3:#c8c49c;
+  --gba-white:#fffef2;
+  --gba-red:#b84c48;
+  --gba-red-hi:#ef8265;
+  --gba-gold:#e2b84e;
+  --gba-blue:#4b78a1;
+  --gba-shadow:#06181d;
+  --gba-font:ui-monospace,"Cascadia Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+}
+
+html,body.aether-gba{width:100%;height:100%;overflow:hidden;background:#07191f}
+body.aether-gba{
+  margin:0;
+  color:var(--gba-ink);
+  font-family:var(--gba-font)!important;
+  font-size:12px;
+  image-rendering:pixelated;
+  background:
+    linear-gradient(#0c2932dd,#07191fee),
+    repeating-linear-gradient(0deg,#173b44 0 2px,#102f37 2px 4px);
+}
+body.aether-gba *{box-sizing:border-box;font-family:inherit}
+body.aether-gba img,body.aether-gba canvas,body.aether-gba svg{image-rendering:pixelated}
+body.aether-gba ::selection{background:var(--gba-gold);color:var(--gba-deep)}
+
+/* Fixed game surface: 1280 × 720, scaled as one unit by the shared viewport scaler. */
+body.aether-gba.resolution-locked #app{
+  position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;background:transparent;
+}
+body.aether-gba.resolution-locked #app>.shell,
+body.aether-gba.resolution-locked #app>.battle-shell-layout{
+  position:absolute;left:50%;top:50%;width:1280px!important;height:720px!important;
+  transform:translate(-50%,-50%) scale(var(--game-fit-scale));transform-origin:center;
+  overflow:hidden;
+}
+
+/* Pixel window language */
+body.aether-gba .panel,
+body.aether-gba .aether-window,
+body.aether-gba .modal{
+  position:relative;border:4px solid var(--gba-deep)!important;border-radius:0!important;
+  color:var(--gba-ink)!important;background:var(--gba-paper)!important;
+  box-shadow:inset 0 0 0 3px var(--gba-white),inset 0 0 0 6px #928f76,4px 4px 0 var(--gba-shadow)!important;
+}
+body.aether-gba .panel:before,
+body.aether-gba .aether-window:before{
+  content:"";position:absolute;inset:7px;border:1px solid #b2aa83;pointer-events:none;z-index:1;
+}
+body.aether-gba .panel>* ,body.aether-gba .aether-window>*{position:relative;z-index:2}
+body.aether-gba .aether-window-body{padding:12px 14px}
+body.aether-gba .aether-window-title{
+  padding:7px 12px 6px;border-bottom:3px solid var(--gba-deep);border-radius:0;
+  color:#fff;background:var(--gba-teal);font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;
+}
+
+body.aether-gba button,
+body.aether-gba input,
+body.aether-gba select,
+body.aether-gba textarea{font-family:var(--gba-font)!important}
+body.aether-gba button{
+  min-height:30px;border:3px solid var(--gba-deep)!important;border-radius:0!important;padding:6px 10px;
+  color:var(--gba-ink)!important;background:var(--gba-paper)!important;
+  box-shadow:inset 2px 2px 0 var(--gba-white),inset -2px -2px 0 #aaa586,2px 2px 0 var(--gba-shadow)!important;
+  font-size:10px;font-weight:900;letter-spacing:.02em;transform:none!important;
+}
+body.aether-gba button:hover:not(:disabled){background:#fff3a9!important;color:#172c32!important}
+body.aether-gba button:active:not(:disabled){translate:2px 2px;box-shadow:inset 2px 2px 0 #aaa586!important}
+body.aether-gba button.primary{background:#b9dfa0!important;color:#153226!important;border-color:#244d3c!important}
+body.aether-gba button.ghost{background:#d8e4d0!important}
+body.aether-gba button.orange{background:#efbd72!important}
+body.aether-gba button:disabled{opacity:.45;filter:grayscale(.7)}
+body.aether-gba input,body.aether-gba select,body.aether-gba textarea{
+  border:3px solid var(--gba-deep)!important;border-radius:0!important;padding:7px 9px;
+  background:var(--gba-white)!important;color:var(--gba-ink)!important;
+  box-shadow:inset 2px 2px 0 #b5ae8e!important;font-size:10px;
+}
+body.aether-gba button:focus-visible,
+body.aether-gba input:focus-visible,
+body.aether-gba select:focus-visible,
+body.aether-gba textarea:focus-visible,
+body.aether-gba .ui-cursor-focus{
+  outline:3px solid var(--gba-gold)!important;outline-offset:2px!important;
+  box-shadow:0 0 0 2px var(--gba-deep),3px 3px 0 var(--gba-shadow)!important;
+}
+body.aether-gba [data-ui-focusable].ui-cursor-focus:before,
+body.aether-gba [data-ui-focusable]:focus-visible:before{
+  content:"▶"!important;position:absolute!important;left:-16px!important;top:50%!important;transform:translateY(-50%)!important;
+  color:var(--gba-red)!important;font-size:11px!important;text-shadow:1px 1px #fff!important;z-index:20!important;
+}
+
+/* Application shell */
+body.aether-gba .shell{
+  display:grid!important;grid-template-columns:218px minmax(0,1fr)!important;
+  width:1280px;height:720px;border:4px solid var(--gba-shadow);background:#7fa69a;
+  box-shadow:0 0 0 4px #4c807a,0 0 0 8px var(--gba-shadow),0 16px 48px #000a;
+}
+body.aether-gba .sidebar{
+  position:relative!important;width:auto!important;height:100%!important;padding:12px 10px!important;
+  display:grid!important;grid-template-rows:70px auto 1fr auto;gap:8px;
+  border:0!important;border-right:4px solid var(--gba-deep)!important;
+  color:#eff7dc;background:
+    linear-gradient(90deg,transparent 0 92%,#ffffff16 92%),
+    repeating-linear-gradient(0deg,#1d5158 0 4px,#17464d 4px 8px)!important;
+}
+body.aether-gba .brand{display:flex;align-items:center;gap:10px;padding:8px;border:3px solid #071d24;background:#286568;box-shadow:inset 2px 2px #72aaa0,inset -2px -2px #143c43}
+body.aether-gba .brandmark{display:grid;place-items:center;width:42px;height:42px;border:3px solid #19343b;border-radius:50%;background:#f4d868;color:#a94740;font-size:25px;box-shadow:inset 3px 3px #fff0a8,inset -3px -3px #bd8f31}
+body.aether-gba .brandname{color:#fff;font-size:15px;font-weight:1000;line-height:1;text-shadow:2px 2px #102f36;letter-spacing:.03em}
+body.aether-gba .brandname small{display:block;margin-top:5px;color:#f3d865;font-size:8px;letter-spacing:.18em}
+body.aether-gba .navlabel{padding:5px 8px;color:#b8ddc8;font-size:8px;font-weight:900;letter-spacing:.14em}
+body.aether-gba .navs{display:grid!important;align-content:start;gap:5px;overflow:auto;padding:3px 4px 6px 2px;scrollbar-width:thin}
+body.aether-gba .nav{
+  position:relative;width:100%!important;min-height:39px;display:grid!important;grid-template-columns:26px 1fr auto;align-items:center;gap:8px;
+  padding:6px 8px!important;text-align:left;color:#17363d!important;background:#e6eccf!important;border-color:#0b2b32!important;
+}
+body.aether-gba .nav .icon{display:grid;place-items:center;width:23px;height:23px;border:2px solid #31555a;background:#fff5cd;color:#2a5c62;font-size:13px}
+body.aether-gba .nav.active{padding-left:15px!important;background:#fff5bc!important;color:#8f352f!important}
+body.aether-gba .nav.active:after{content:"";position:absolute;left:4px;top:50%;width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:7px solid var(--gba-red);transform:translateY(-50%)}
+body.aether-gba .nav .badge{min-width:17px;padding:2px 4px;border:2px solid #642924;border-radius:0;background:var(--gba-red);color:#fff;text-align:center;font-size:8px}
+body.aether-gba .sidefoot{padding:8px;border:2px solid #0b2b32;background:#123b42;color:#a9cdc0;font-size:8px;line-height:1.5}
+body.aether-gba .online{color:#dff37c;font-size:8px;font-weight:900}
+body.aether-gba .shell>div{min-width:0;min-height:0;display:grid;grid-template-rows:48px minmax(0,1fr)}
+body.aether-gba .topbar{
+  height:48px!important;padding:5px 12px!important;border:0!important;border-bottom:4px solid var(--gba-deep)!important;
+  background:#d7ddbd!important;color:var(--gba-ink);box-shadow:inset 0 -3px #a1a888;
+}
+body.aether-gba .breadcrumb{font-size:9px;font-weight:800;color:#506164}
+body.aether-gba .breadcrumb b{color:#8e3c36}
+body.aether-gba .resources{gap:7px}
+body.aether-gba .currency{padding:5px 8px;border:2px solid #354e50;border-radius:0;background:#fff6d3;color:#22383a;box-shadow:inset 1px 1px #fff;font-size:9px}
+body.aether-gba .currency span{color:#a97820}.aether-gba .currency.crystal span{color:#73539b}
+body.aether-gba .avatar{display:grid;place-items:center;width:28px;height:28px;border:3px solid #263f43;border-radius:0;background:#4e8d70;color:#fff;font-size:10px;box-shadow:inset 2px 2px #94c49c}
+body.aether-gba .content{
+  min-width:0;min-height:0;max-width:none!important;margin:0!important;padding:15px 18px 24px!important;overflow:auto;
+  background:
+    linear-gradient(#ffffff24 1px,transparent 1px),linear-gradient(90deg,#ffffff24 1px,transparent 1px),
+    #91b7a5;background-size:16px 16px;
+  scrollbar-color:#476d68 #d7ddbd;
+}
+
+/* Page heading */
+body.aether-gba .heading{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 13px;padding:10px 13px;
+  border:4px solid var(--gba-deep);background:var(--gba-paper);box-shadow:inset 0 0 0 3px #fff,inset 0 -5px #c7bd96,4px 4px var(--gba-shadow);
+}
+body.aether-gba .heading h1{margin:3px 0 2px;color:#214850;font-size:20px;line-height:1.1;font-weight:1000;text-transform:uppercase;letter-spacing:.02em;text-shadow:1px 1px #fff}
+body.aether-gba .heading p{margin:3px 0;color:#5a6865;font-size:9px}
+body.aether-gba .eyebrow{color:#a6413d!important;font-size:8px!important;font-weight:1000;letter-spacing:.12em;text-transform:uppercase}
+body.aether-gba .pill,body.aether-gba .rarity,body.aether-gba .phase-chip{
+  display:inline-flex;align-items:center;border:2px solid #36575a!important;border-radius:0!important;padding:4px 7px;
+  background:#dfe8c8!important;color:#34534e!important;font-size:8px;font-weight:900;letter-spacing:.06em;
+}
+body.aether-gba p{color:#576663}
+
+/* Home */
+body.aether-gba .hero,body.aether-gba .summonhero{
+  min-height:250px;padding:24px 28px;border:4px solid var(--gba-deep)!important;border-radius:0!important;overflow:hidden;
+  color:#fff;background:
+    radial-gradient(circle at 76% 48%,#d7e8a5 0 4%,transparent 4% 25%,#ffffff18 25% 27%,transparent 27%),
+    repeating-linear-gradient(135deg,#2e746f 0 12px,#2a6968 12px 24px)!important;
+  box-shadow:inset 0 0 0 4px #83b39c,4px 4px var(--gba-shadow);isolation:isolate;
+}
+body.aether-gba .hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#102f3ce8 0 46%,transparent 72%);z-index:-1}
+body.aether-gba .herocopy{width:48%}
+body.aether-gba .hero h2,body.aether-gba .summonhero h2{margin:12px 0;color:#fff9ce;font-size:32px;line-height:1.05;font-weight:1000;text-shadow:3px 3px #11363d}
+body.aether-gba .hero h2 em{color:#f4d45e;font-style:normal}
+body.aether-gba .hero p,body.aether-gba .summonhero p{max-width:330px;color:#dfead4;font-size:10px;line-height:1.6}
+body.aether-gba .heroart .ring{border:4px solid #f5e48855;box-shadow:0 0 0 12px #ffffff0c,0 0 0 24px #ffffff0a}
+body.aether-gba .heroart .art{filter:drop-shadow(5px 7px 0 #0a252c88)}
+body.aether-gba .herotag{padding:4px 7px;border:2px solid #d8eab5;background:#183d43;color:#f7e990;font-size:7px}
+body.aether-gba .dashboard{grid-template-columns:minmax(0,1fr) 260px;gap:14px;margin-top:16px}
+body.aether-gba .sectiontitle{margin-bottom:8px}.aether-gba .sectiontitle h2{margin:0;color:#173f48;font-size:13px;text-transform:uppercase;text-shadow:1px 1px #dfe9c9}
+body.aether-gba .sectiontitle small{color:#4b635f;font-size:8px;font-weight:800}
+body.aether-gba .modegrid{gap:9px}
+body.aether-gba .modecard{min-height:125px;padding:15px!important;background:#fff5cf!important;text-align:left}
+body.aether-gba .modecard.double{background:#e8e0f0!important}
+body.aether-gba .modecard h3{margin:6px 0;color:#23484e;font-size:18px;text-transform:uppercase}
+body.aether-gba .modecard p{font-size:8px;line-height:1.5}.aether-gba .modecard .modeicon{right:13px;top:18px;color:#6b8c7c55;font-size:46px}.aether-gba .modecard .arrow{color:#9c403b;font-size:8px;font-weight:900}
+body.aether-gba .teamstrip{gap:7px;margin-top:9px}.aether-gba .mini{padding:5px 6px 9px!important;background:#f5f1d3!important}.aether-gba .mini .art{height:68px}.aether-gba .mini b{font-size:9px}.aether-gba .mini small{font-size:7px;color:#65706b}
+body.aether-gba .mission{padding:9px 0;border-bottom:2px solid #b6ae88}.aether-gba .mission b{font-size:9px}.aether-gba .mission small,.aether-gba .reward{font-size:7px}
+
+/* Shared cards, bars and collections */
+body.aether-gba .progress,body.aether-gba .party-hp,body.aether-gba .pokemon-hp-track{
+  height:8px;border:2px solid var(--gba-deep)!important;border-radius:0!important;background:#6e765f!important;box-shadow:inset 1px 1px #333!important;
+}
+body.aether-gba .progress i,body.aether-gba .party-hp i,body.aether-gba .pokemon-hp-fill{border-radius:0!important;background:#62a94f!important;box-shadow:inset 0 2px #a8db72}
+body.aether-gba .pokemon-hp-fill.mid{background:#d3a932!important;box-shadow:inset 0 2px #f2dc70}
+body.aether-gba .pokemon-hp-fill.low{background:#bd4c42!important;box-shadow:inset 0 2px #ef8c69}
+body.aether-gba .filters{gap:7px;margin-bottom:12px;padding:8px;border:3px solid var(--gba-deep);background:#d5dfbf}
+body.aether-gba .grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+body.aether-gba .monster{padding:9px!important;border:3px solid var(--gba-deep)!important;border-radius:0!important;background:#f6f0cf!important;box-shadow:inset 2px 2px #fff,3px 3px var(--gba-shadow)!important}
+body.aether-gba .monster .art{height:105px;background:radial-gradient(circle,#d8e7c2 0 43%,transparent 44%)}
+body.aether-gba .monster h3{margin:5px 0 3px;color:#24484d;font-size:14px;text-transform:uppercase}.aether-gba .monster .serial{font-size:7px;color:#6a7067}.aether-gba .monster.locked{filter:grayscale(.8)}
+body.aether-gba .type,body.aether-gba .summary-type{
+  border:2px solid color-mix(in srgb,var(--c,#58756f),#182d34 35%)!important;border-radius:0!important;
+  color:#172c32!important;background:color-mix(in srgb,var(--c,#9fb9a3),#fff7d6 68%)!important;padding:2px 5px;font-size:7px;font-weight:900;text-transform:uppercase;
+}
+body.aether-gba .gymgrid{gap:10px}.aether-gba .gym{min-height:215px}.aether-gba .gym h2{font-size:18px;color:#21484f}.aether-gba .gym p{font-size:8px}
+body.aether-gba .mailrow{gap:13px;margin:8px 0;padding:13px}.aether-gba .mailicon{border:3px solid #32565a;border-radius:0;background:#dbe4c4;color:#a4433e;padding:10px}.aether-gba .mailtext h3{font-size:12px}.aether-gba .mailtext p{font-size:8px}
+body.aether-gba .settingsrow{padding:13px 4px;border-bottom:2px solid #b6ae88}.aether-gba .settingsrow p{font-size:8px}.aether-gba .settingsrow input[type=checkbox]{width:20px;height:20px;accent-color:#4e8f65}
+body.aether-gba .helpgrid{gap:9px}.aether-gba .helpgrid h3{font-size:11px;color:#93413b}.aether-gba .helpgrid p{font-size:8px;line-height:1.6}
+
+/* Party builder and Summary/Training */
+body.aether-gba .party-builder-layout{gap:10px;grid-template-columns:minmax(0,1fr) 290px}
+body.aether-gba .party-console,body.aether-gba .party-picker,body.aether-gba .summary-console{background:var(--gba-paper)!important}
+body.aether-gba .party-console-head,body.aether-gba .summary-console-head{
+  padding:9px 12px;border-bottom:3px solid var(--gba-deep);color:#fff;background:#2f706d!important;box-shadow:inset 0 -3px #1c4d50;
+}
+body.aether-gba .party-console-head h2{font-size:15px}.aether-gba .party-console-head p,.aether-gba .party-console-head small{font-size:7px;color:#d8ead0}
+body.aether-gba .party-slot-grid{gap:7px;padding:10px}
+body.aether-gba .party-slot-card{grid-template-columns:72px 1fr 12px;min-height:91px;padding:6px;border:3px solid #36565a;border-radius:0;background:#f8f2d5;color:var(--gba-ink);box-shadow:inset 2px 2px #fff,2px 2px #162d31}
+body.aether-gba .party-slot-card.selected{border-color:#8d3e39;background:#fff0ad}
+body.aether-gba .party-portrait{width:64px;height:64px;border:3px solid #42665f;border-radius:0;background:#d7e5c0;box-shadow:inset 3px 3px #f4f4d6}
+body.aether-gba .party-slot-copy h3{font-size:12px}.aether-gba .party-slot-copy p,.aether-gba .party-slot-copy em{font-size:7px}.aether-gba .party-slot-number{border:2px solid #1f3b40;border-radius:0;background:#b64c46;font-size:7px}
+body.aether-gba .party-save-bar,body.aether-gba .summary-save-bar{padding:8px 11px;border-top:3px solid var(--gba-deep);background:#c8d4b2}
+body.aether-gba .party-picker{top:0;max-height:548px}.aether-gba .party-picker header{padding:9px;border-bottom:3px solid var(--gba-deep);background:#dce4c4}.aether-gba .party-picker-card{grid-template-columns:46px 1fr auto;padding:5px;border:3px solid #526b67;border-radius:0;background:#fff7d8}.aether-gba .party-picker-card .party-portrait{width:42px;height:42px}.aether-gba .party-picker-card.selected{background:#fff0a8;border-color:#9b4640}
+body.aether-gba .summary-tabs{border-bottom:3px solid var(--gba-deep);background:#afc7a9}
+body.aether-gba .summary-tab{min-height:35px;border:0!important;border-right:2px solid #536a67!important;border-radius:0!important;background:#dfe6c7!important;box-shadow:none!important}
+body.aether-gba .summary-tab.selected{background:#fff3bd!important;box-shadow:inset 0 -4px var(--gba-red)!important}.aether-gba .summary-tab b{border-radius:0;background:#34706b}.aether-gba .summary-tab span{font-size:7px}
+body.aether-gba .summary-page-wrap{min-height:388px}.aether-gba .summary-page{padding:14px 16px}.aether-gba .summary-profile-hero{grid-template-columns:130px 1fr;min-height:155px;gap:18px;border-bottom:3px solid #77785f}.aether-gba .summary-portrait{width:118px;height:118px;border:4px solid #33575a;border-radius:0;background:#dae6bd;box-shadow:inset 0 0 0 4px #fff5cc,4px 4px #162d31}.aether-gba .summary-profile-hero h2{font-size:23px;color:#244b50}.aether-gba .summary-profile-hero p{font-size:8px}.aether-gba .summary-info-grid{gap:6px;margin:10px 0}.aether-gba .summary-info-grid>div,.aether-gba .summary-info-grid>label,.aether-gba .summary-base-stats{padding:7px;border:2px solid #727a67;border-radius:0;background:#f4efd2}.aether-gba .summary-info-grid span{font-size:7px}.aether-gba .summary-info-grid b{font-size:9px}.aether-gba .summary-base-stats>div{font-size:7px}.aether-gba .summary-base-stats i{height:7px;border-radius:0}.aether-gba .summary-page-wrap{background:linear-gradient(90deg,#ffffff18 1px,transparent 1px),#e6dfbb;background-size:12px}
+body.aether-gba .summary-stat-editor{gap:5px}.aether-gba .summary-stat-row{grid-template-columns:96px 44px minmax(100px,1fr) 52px;gap:7px;padding:6px 8px;border:2px solid #6c7566;border-radius:0;background:#fbf5d7}.aether-gba .summary-stat-row b{font-size:8px}.aether-gba .summary-stat-row strong{font-size:13px}.aether-gba .summary-move-list{gap:7px}.aether-gba .summary-move-card,.aether-gba .summary-loadout-card{padding:9px;border:3px solid #536b68;border-radius:0;background:#fff6d8}.aether-gba .summary-move-index{border:2px solid #17363c;border-radius:0;background:#b74d47}.aether-gba .summary-loadout-card{min-height:185px}.aether-gba .summary-loadout-card p{min-height:52px;border-radius:0;background:#ded8b5;font-size:8px}
+
+/* Pokédex */
+body.aether-gba .pokedex-shell{gap:10px;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr)}
+body.aether-gba .pokedex-index,body.aether-gba .pokedex-detail{border:4px solid var(--gba-deep)!important;border-radius:0!important;background:#e8e2bf!important;box-shadow:inset 0 0 0 3px #fff9d9,4px 4px var(--gba-shadow)!important}
+body.aether-gba .pokedex-index-head{padding:10px;border-bottom:3px solid var(--gba-deep);background:#32736f;color:#fff}
+body.aether-gba .pokedex-index-head input,body.aether-gba .pokedex-index-head select{background:#fff7d2!important}
+body.aether-gba .pokedex-grid{gap:6px;padding:8px}
+body.aether-gba .pokedex-entry{border:3px solid #486461!important;border-radius:0!important;background:#f8f2d1!important;box-shadow:inset 2px 2px #fff,2px 2px #172f33!important}
+body.aether-gba .pokedex-entry.selected{border-color:#953f39!important;background:#fff0aa!important}.aether-gba .pokedex-entry img{image-rendering:pixelated}.aether-gba .pokedex-detail{padding:0}.aether-gba .pokedex-detail-head{border-bottom:3px solid var(--gba-deep);background:#2d6866;color:#fff}.aether-gba .pokedex-detail h2{color:#20474d}.aether-gba .pokedex-empty{color:#51625e}
+
+/* Recruitment */
+body.aether-gba .recruitment-stage,body.aether-gba .recruitment-console{border-radius:0!important}
+body.aether-gba .recruitment-card,body.aether-gba .offer-card{
+  border:3px solid var(--gba-deep)!important;border-radius:0!important;background:#fff3cf!important;
+  box-shadow:inset 2px 2px #fff,3px 3px var(--gba-shadow)!important;
+}
+body.aether-gba .recruitment-card.selected,body.aether-gba .offer-card.selected{border-color:#963f39!important;background:#ffeda4!important}
+body.aether-gba .recruitment-banner,body.aether-gba .recruitment-head{border-radius:0!important;background:#2d6d69!important;color:#fff!important}
+
+/* Battle shell */
+body.aether-gba .battle-shell-layout,body.aether-gba .battle-content{width:1280px;height:720px;overflow:hidden;background:#0b2730}
+body.aether-gba .pokemon-game-surface{width:100%;height:100%;display:grid;grid-template-rows:48px minmax(0,1fr);background:#102f38;color:#f5f6d8}
+body.aether-gba .pokemon-game-header{
+  height:48px!important;padding:5px 10px!important;border:0!important;border-bottom:4px solid #061b22!important;
+  color:#fff;background:repeating-linear-gradient(90deg,#245c62 0 12px,#20545b 12px 24px)!important;box-shadow:inset 0 -3px #579189;
+}
+body.aether-gba .pokemon-game-header small{color:#c6e1ba;font-size:7px;letter-spacing:.12em}.aether-gba .pokemon-game-header b{font-size:13px;text-shadow:2px 2px #102f35}.aether-gba .pokemon-game-header-actions span{font-size:8px;color:#f3dc79}
+body.aether-gba .pokemon-game-body{min-height:0;height:100%;padding:7px!important;background:#0f323a}
+body.aether-gba .pokemon-battle-ui{width:100%!important;height:100%!important;min-height:0!important;display:grid!important;grid-template-rows:38px minmax(0,1fr) 154px!important;gap:6px!important}
+body.aether-gba .pokemon-battle-statusbar{min-height:38px!important;padding:3px 8px;border:3px solid #061b22;background:#d9e1be;color:#17353a;box-shadow:inset 2px 2px #fff}
+body.aether-gba .pokemon-battle-statusbar small{color:#53706b;font-size:7px}.aether-gba .pokemon-battle-statusbar strong{color:#1e454b;font-size:12px}.aether-gba .pokemon-battle-statusbar .phase-chip{background:#a94540!important;color:#fff!important;border-color:#5e2926!important}
+body.aether-gba .pokemon-battle-stage{min-height:0}
+body.aether-gba .pokemon-battle-stage .v3-battle-arena{
+  height:100%!important;min-height:0!important;border:4px solid #061b22!important;border-radius:0!important;
+  background:
+    radial-gradient(ellipse at 72% 27%,#eff1c3 0 15%,transparent 16%),
+    linear-gradient(180deg,#8ec9c6 0 52%,#80af68 52% 70%,#557d4e 70%)!important;
+  box-shadow:inset 0 0 0 3px #bad9b7,4px 4px #06181d!important;
+}
+body.aether-gba .pokemon-battle-stage .v3-battle-arena:before{
+  background:
+    radial-gradient(ellipse at 73% 65%,#dce7aa88 0 18%,transparent 19%),
+    radial-gradient(ellipse at 27% 88%,#d7e5a488 0 20%,transparent 21%),
+    repeating-linear-gradient(0deg,transparent 0 11px,#315f421d 11px 12px)!important;
+}
+body.aether-gba .v3-battle-arena .v2-side{width:78%!important;gap:3%!important}.aether-gba .v3-battle-arena .enemy-side{right:3%!important;top:18px!important}.aether-gba .v3-battle-arena .own-side{left:3%!important;bottom:10px!important}
+body.aether-gba .v3-battle-arena .v3-fighter{width:min(390px,48%)!important;height:170px!important;min-width:0!important;flex:0 1 390px!important}
+body.aether-gba .v3-battle-arena .v3-fighter .art{width:175px!important;height:155px!important;filter:drop-shadow(5px 7px 0 #193a3866)!important}.aether-gba .v3-battle-arena .player-fighter .art{width:205px!important;height:180px!important}
+body.aether-gba .v3-battle-arena .v3-fighter:after{width:185px!important;border-radius:50%!important;background:#21472f55!important;filter:none!important}.aether-gba .v3-battle-arena .player-fighter:after{width:215px!important}
+body.aether-gba .pokemon-hud,body.aether-gba .v3-battle-hud{
+  width:min(205px,59%)!important;padding:7px 9px 8px!important;border:3px solid var(--gba-deep)!important;border-radius:0!important;
+  color:var(--gba-ink)!important;background:var(--gba-paper)!important;box-shadow:inset 0 0 0 2px #fff,inset 0 -3px #c0b68e,3px 3px var(--gba-shadow)!important;
+}
+body.aether-gba .pokemon-hud:before,body.aether-gba .v3-battle-hud:before{content:"";position:absolute;left:0;top:0;bottom:0;width:7px;background:#3e786d}
+body.aether-gba .pokemon-hud-line strong,body.aether-gba .v3-battle-hud strong{font-size:10px!important;text-transform:uppercase}.aether-gba .pokemon-hud-meta{font-size:7px!important;color:#52615d}.aether-gba .v3-mega-badge{border-radius:0;background:#a94b45;color:#fff;font-size:6px}
+body.aether-gba .v3-battle-arena .opponent-fighter .pokemon-hud{left:0;top:8px}.aether-gba .v3-battle-arena .player-fighter .pokemon-hud{right:0;bottom:10px}
+body.aether-gba .pokemon-battle-dock{min-height:0;z-index:30}
+body.aether-gba .pokemon-bottom-command-window{height:100%;margin:0!important;border-width:4px!important;border-radius:0!important;box-shadow:4px 4px #06181d!important}
+body.aether-gba .pokemon-bottom-command-window>.aether-window-body{height:100%;padding:0!important}
+body.aether-gba .pokemon-command-layout{height:100%;min-height:0!important;grid-template-columns:38% 62%!important;color:var(--gba-ink);background:var(--gba-paper)}
+body.aether-gba .pokemon-command-message{min-height:0!important;padding:12px 16px!important;border-right:4px solid var(--gba-deep)!important;background:#fff5cf!important}
+body.aether-gba .pokemon-command-message small{color:#9c403a;font-size:7px}.aether-gba .pokemon-command-message strong{color:#21464b;font-size:13px}.aether-gba .pokemon-command-message>span{color:#5a6761;font-size:8px}
+body.aether-gba .pokemon-command-grid,body.aether-gba .pokemon-move-grid,body.aether-gba .pokemon-target-grid,body.aether-gba .pokemon-party-grid{gap:5px;padding:7px;background:#91ad95!important}
+body.aether-gba .pokemon-command-grid button,body.aether-gba .pokemon-target-tile,body.aether-gba .pokemon-party-tile,body.aether-gba .pokemon-move-tile{min-height:52px!important;padding:6px 9px!important;border:3px solid #17383d!important;border-radius:0!important;background:#fff5d2!important;color:#17343a!important;box-shadow:inset 2px 2px #fff,2px 2px #10272b!important}
+body.aether-gba .pokemon-command-grid button b{font-size:12px}.aether-gba .pokemon-command-grid button small{font-size:7px;color:#647069}.aether-gba .pokemon-move-tile b{font-size:9px}.aether-gba .pokemon-move-tile small,.aether-gba .pokemon-move-tile span,.aether-gba .pokemon-move-tile em{font-size:6px}.aether-gba .pokemon-move-tile:before{border-radius:0}
+body.aether-gba .pokemon-review-layout{height:100%;min-height:0!important;background:var(--gba-paper)}.aether-gba .pokemon-review-list{padding:6px;background:#91ad95}.aether-gba .pokemon-review-row{min-height:37px;border:3px solid #17383d!important;border-radius:0!important;background:#fff4cf!important}.aether-gba .pokemon-review-actions{padding:6px;background:#cbd5b5}
+body.aether-gba .pokemon-battle-log{right:8px!important;top:8px!important;width:400px!important;max-height:72%!important;border-radius:0!important;background:#fff5d1!important}.aether-gba .pokemon-battle-log p{font-size:7px;color:#324c4c}
+body.aether-gba .v3-resolving{height:100%;min-height:0}.aether-gba .aether-message-box .aether-window-body{height:100%;justify-content:center}.aether-gba .aether-prompt-arrow{border-top-color:var(--gba-red)}
+
+/* V3 preview/landing and replacements */
+body.aether-gba .pokemon-battle-shell .panel{background:var(--gba-paper)!important;color:var(--gba-ink)!important}
+body.aether-gba .pokemon-battle-shell .panel h1,body.aether-gba .pokemon-battle-shell .panel h2,body.aether-gba .pokemon-battle-shell .panel h3{color:#21484e}
+body.aether-gba .pokemon-preview-card,body.aether-gba .replacement-card{border:3px solid var(--gba-deep)!important;border-radius:0!important;background:#fff4d0!important;box-shadow:inset 2px 2px #fff,2px 2px var(--gba-shadow)!important}
+body.aether-gba .pokemon-replacement-overlay{height:100%;min-height:0!important;color:var(--gba-ink);background:var(--gba-paper)}
+
+/* Modal and toast share the logical game scale. */
+body.aether-gba.resolution-locked #modal{position:fixed;inset:0;z-index:100;pointer-events:none}
+body.aether-gba.resolution-locked #modal>.modalback{
+  position:absolute!important;left:var(--game-gutter-x)!important;top:var(--game-gutter-y)!important;
+  width:var(--game-rendered-width)!important;height:var(--game-rendered-height)!important;padding:16px!important;
+  display:grid;place-items:center;background:#07191fcc!important;backdrop-filter:none!important;pointer-events:auto;
+}
+body.aether-gba .modal{width:min(780px,94%);max-height:650px;padding:19px!important;overflow:auto;background:#fff5d2!important}
+body.aether-gba .modal h2{color:#21484e;font-size:22px;text-transform:uppercase}.aether-gba .modal .close{right:12px;top:12px}.aether-gba .detail{gap:14px}.aether-gba .detail .art{height:220px;background:#d8e3bd;border:3px solid #3e615d}.aether-gba .stat,.aether-gba .movedetail{border:2px solid #677469;border-radius:0;background:#e7dfba;color:#5f6b65}.aether-gba .stat b{color:#203f43}.aether-gba .movedetail{padding:8px}.aether-gba .chart th,.aether-gba .chart td{border:2px solid #566964;padding:5px}.aether-gba .chart th{background:#2d6967;color:#fff}.aether-gba .chart td{background:#fff5d2;color:#314a49}.aether-gba .chart .good{background:#a9d590;color:#22482b}.aether-gba .chart .bad{background:#e8aaa0;color:#612c28}
+body.aether-gba #toast{
+  position:fixed;left:50%;bottom:calc(var(--game-gutter-y) + 14px);z-index:140;transform:translate(-50%,18px);
+  max-width:min(640px,80vw);padding:9px 14px;border:3px solid var(--gba-deep);border-radius:0;background:#fff2bd;color:#213d40;
+  box-shadow:inset 2px 2px #fff,3px 3px var(--gba-shadow);font:bold calc(9px * var(--game-fit-scale)) var(--gba-font);opacity:0;pointer-events:none;
+}
+body.aether-gba #toast.show{opacity:1;transform:translate(-50%,0)}
+body.aether-gba .classic-ui-switch{
+  position:fixed;right:max(8px,calc(var(--game-gutter-x) + 6px));bottom:max(8px,calc(var(--game-gutter-y) + 6px));z-index:150;
+  padding:4px 7px;border:2px solid #061b22;background:#244f54;color:#dce9c5;text-decoration:none;font:bold 7px var(--gba-font);letter-spacing:.08em;opacity:.72;
+}
+body.aether-gba .classic-ui-switch:hover{opacity:1;background:#a74640;color:#fff}
+
+/* Loading */
+body.aether-gba .loading{display:grid;place-items:center;align-content:center;width:100vw;height:100vh;color:#f7edb1;background:repeating-linear-gradient(0deg,#153f47 0 4px,#123840 4px 8px)}
+body.aether-gba .loading .brandmark{width:56px;height:56px;margin:auto}.aether-gba .loading h1{font-size:22px;text-shadow:3px 3px #071b21}.aether-gba .loading p{color:#c8dec1;font-size:9px}
+
+/* Fixed layout wins over legacy responsive rules; the entire surface scales. */
+@media(max-width:1150px){
+  body.aether-gba.resolution-locked .shell{grid-template-columns:218px minmax(0,1fr)!important}
+  body.aether-gba.resolution-locked .sidebar{width:auto!important;height:100%!important;padding:12px 10px!important}
+  body.aether-gba.resolution-locked .content{padding:15px 18px 24px!important}
+  body.aether-gba.resolution-locked .dashboard{grid-template-columns:minmax(0,1fr) 260px!important}
+  body.aether-gba.resolution-locked .grid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+@media(max-width:760px){
+  body.aether-gba.resolution-locked .shell{display:grid!important}
+  body.aether-gba.resolution-locked .sidebar{display:grid!important;position:relative!important;border-right:4px solid var(--gba-deep)!important;border-bottom:0!important}
+  body.aether-gba.resolution-locked .brand{padding:8px!important}.aether-gba.resolution-locked .brandname{display:block!important;font-size:15px!important}.aether-gba.resolution-locked .navlabel,.aether-gba.resolution-locked .sidefoot{display:block!important}
+  body.aether-gba.resolution-locked .navs{display:grid!important}.aether-gba.resolution-locked .nav{width:100%!important;padding:6px 8px!important;font-size:10px!important}.aether-gba.resolution-locked .nav .badge{display:inline!important}
+  body.aether-gba.resolution-locked .topbar{height:48px!important;padding:5px 12px!important}.aether-gba.resolution-locked .breadcrumb{display:block!important}.aether-gba.resolution-locked .avatar{display:grid!important}
+  body.aether-gba.resolution-locked .heading .pill{display:inline-flex!important}.aether-gba.resolution-locked .hero{padding:24px 28px!important;min-height:250px!important}.aether-gba.resolution-locked .herocopy{width:48%!important}.aether-gba.resolution-locked .heroart{width:55%!important;right:1%!important;top:0!important;opacity:1!important}
+  body.aether-gba.resolution-locked .pokemon-battle-ui{grid-template-rows:38px minmax(0,1fr) 154px!important}.aether-gba.resolution-locked .pokemon-command-layout{grid-template-columns:38% 62%!important}.aether-gba.resolution-locked .pokemon-command-grid,.aether-gba.resolution-locked .pokemon-move-grid,.aether-gba.resolution-locked .pokemon-target-grid,.aether-gba.resolution-locked .pokemon-party-grid{grid-template-columns:1fr 1fr!important}
+}
+
+body.aether-gba.reduce *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+body.aether-gba.contrast{--gba-paper:#fffbdc;--gba-ink:#07171b;--gba-deep:#000}
+
+/* Cartridge pass -----------------------------------------------------------
+   Treat management screens as a game scene with a START menu layered over it.
+   The earlier pass retained a desktop dashboard silhouette; these rules replace
+   that silhouette while preserving the shared semantic DOM and battle engine. */
+body.aether-gba{
+  --gba-unit:4px;
+  background:#050b0c!important;
+}
+body.aether-gba:after{
+  content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.045;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,#001014 3px 4px);
+  mix-blend-mode:multiply;
+}
+body.aether-gba .shell{
+  position:relative!important;display:block!important;border:4px solid #08171b!important;
+  background:#74a36d!important;isolation:isolate;
+  box-shadow:0 0 0 4px #d9e1c1,0 0 0 8px #102e32,0 20px 70px #000!important;
+}
+body.aether-gba .shell:before{
+  content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
+  background:
+    linear-gradient(90deg,transparent 0 11%,#274b3b55 11% 12%,transparent 12% 88%,#274b3b55 88% 89%,transparent 89%),
+    radial-gradient(ellipse at 50% 88%,#d9c67d 0 11%,#bea862 11.5% 15%,transparent 15.5%),
+    repeating-linear-gradient(90deg,#547d54 0 16px,#5d895a 16px 32px) 0 70%/100% 30% no-repeat,
+    linear-gradient(#80c8c2 0 55%,#b9d49a 55% 70%,#5d895a 70%);
+}
+body.aether-gba .shell:after{
+  content:"";position:absolute;left:0;right:0;top:48px;height:12px;z-index:-1;pointer-events:none;
+  background:repeating-linear-gradient(90deg,#315d43 0 20px,#46784d 20px 40px);
+  box-shadow:0 4px #183b36,0 8px #8db16f;
+}
+
+body.aether-gba .shell>div{
+  position:absolute!important;inset:0!important;display:grid!important;
+  grid-template-rows:44px minmax(0,1fr)!important;min-width:0;min-height:0;
+}
+body.aether-gba .topbar{
+  position:relative;z-index:20;height:44px!important;padding:4px 18px!important;
+  border:0!important;border-bottom:4px solid #102e32!important;
+  background:linear-gradient(180deg,#f8f4d0 0 75%,#c4c59a 75%)!important;
+  box-shadow:inset 0 -2px #777b65!important;
+}
+body.aether-gba .breadcrumb{font-size:9px!important;letter-spacing:.06em;text-transform:uppercase}
+body.aether-gba .resources{margin-right:88px}
+body.aether-gba .content{
+  position:relative!important;z-index:2;min-height:0!important;max-width:none!important;
+  margin:0!important;padding:22px 24px 28px!important;overflow:auto!important;
+  background:
+    linear-gradient(#ffffff14 1px,transparent 1px),
+    linear-gradient(90deg,#ffffff12 1px,transparent 1px),
+    linear-gradient(180deg,#6aa5a166 0 44%,#91b87755 44%)!important;
+  background-size:16px 16px,16px 16px,100% 100%!important;
+}
+
+/* START menu: hidden during play, opened explicitly like a handheld pause menu. */
+body.aether-gba .sidebar{
+  position:absolute!important;z-index:90!important;right:22px!important;top:58px!important;bottom:24px!important;
+  width:258px!important;height:auto!important;padding:10px!important;display:grid!important;
+  grid-template-rows:54px 16px minmax(0,1fr) 38px!important;gap:6px!important;
+  border:4px solid #102b31!important;color:#173038!important;
+  background:#f7f0cc!important;
+  box-shadow:inset 0 0 0 4px #fffbe4,inset 0 0 0 7px #8a9277,6px 6px 0 #07191d!important;
+  transform:translateX(310px);opacity:0;pointer-events:none;
+  transition:transform 120ms steps(4,end),opacity 80ms linear;
+}
+body.aether-gba.gba-menu-open .sidebar{transform:translateX(0);opacity:1;pointer-events:auto}
+body.aether-gba.gba-menu-open .shell>div:after{
+  content:"";position:absolute;inset:44px 0 0;z-index:70;background:#07191d55;pointer-events:none;
+}
+body.aether-gba .sidebar .brand{
+  padding:5px 8px!important;border:3px solid #17373d!important;background:#32726d!important;
+  box-shadow:inset 2px 2px #8fc0a5,inset -2px -2px #1a4d50!important;
+}
+body.aether-gba .sidebar .brandmark{width:36px;height:36px;font-size:20px}
+body.aether-gba .sidebar .brandname{font-size:13px}.aether-gba .sidebar .brandname small{font-size:6px}
+body.aether-gba .navlabel{padding:2px 6px!important;color:#8f3f39!important;font-size:7px!important}
+body.aether-gba .navs{gap:3px!important;padding:2px 3px!important;overflow:hidden!important}
+body.aether-gba .nav{
+  min-height:30px!important;padding:3px 7px!important;grid-template-columns:22px 1fr auto!important;
+  border:2px solid transparent!important;background:transparent!important;box-shadow:none!important;
+  font-size:9px!important;
+}
+body.aether-gba .nav .icon{width:19px;height:19px;border:0;background:transparent;font-size:11px}
+body.aether-gba .nav:hover:not(:disabled),body.aether-gba .nav.active{
+  padding-left:16px!important;border-color:#7a8069!important;background:#fff5ad!important;
+  box-shadow:inset 2px 2px #fffbe0!important;
+}
+body.aether-gba .sidefoot{padding:5px 8px!important;border:2px solid #415f5d!important;background:#d9e1bd!important;color:#405856!important}
+body.aether-gba .sidefoot p{display:none}.aether-gba .sidefoot .online{color:#2f6847!important;font-size:7px!important}
+body.aether-gba .gba-menu-toggle{
+  position:fixed;right:max(18px,calc(var(--game-gutter-x) + 18px));top:max(14px,calc(var(--game-gutter-y) + 10px));z-index:190;
+  width:70px;min-height:30px;padding:3px 6px!important;border:3px solid #102e32!important;border-radius:0!important;
+  color:#17343a!important;background:#fff3bd!important;box-shadow:inset 2px 2px #fff,2px 2px #07191d!important;
+  font:bold calc(8px * var(--game-fit-scale)) var(--gba-font)!important;line-height:1.05;letter-spacing:.06em;
+}
+body.aether-gba .gba-menu-toggle span{display:block;color:#a4433e;font-size:.7em;letter-spacing:.14em}
+body.aether-gba .gba-menu-toggle[hidden]{display:none!important}
+
+/* Home behaves as a title/route scene, not a web dashboard. */
+body.aether-gba[data-gba-screen="home"] .content{overflow:hidden!important;padding:18px 24px 22px!important}
+body.aether-gba[data-gba-screen="home"] .heading{
+  position:absolute;left:28px;top:24px;z-index:10;width:470px;min-height:70px;margin:0!important;padding:9px 13px!important;
+}
+body.aether-gba[data-gba-screen="home"] .heading h1{font-size:17px!important}
+body.aether-gba[data-gba-screen="home"] .hero{
+  position:absolute!important;inset:18px 22px 20px!important;min-height:0!important;padding:105px 36px 170px!important;
+  border:4px solid #102e32!important;background:
+    radial-gradient(ellipse at 76% 73%,#d9d9a1 0 14%,transparent 14.5%),
+    repeating-linear-gradient(90deg,#5c8b56 0 18px,#65975d 18px 36px) 0 65%/100% 35% no-repeat,
+    linear-gradient(#75bbb8 0 58%,#a9cf8c 58% 65%,#5f9159 65%)!important;
+  box-shadow:inset 0 0 0 4px #b9d8ad,4px 4px #07191d!important;
+}
+body.aether-gba[data-gba-screen="home"] .hero:before{
+  background:linear-gradient(90deg,#123841dc 0 36%,#12384155 50%,transparent 67%)!important;
+}
+body.aether-gba[data-gba-screen="home"] .herocopy{width:44%!important}
+body.aether-gba[data-gba-screen="home"] .hero h2{font-size:30px!important;margin:6px 0 10px!important}
+body.aether-gba[data-gba-screen="home"] .dashboard{
+  position:absolute!important;left:38px;right:38px;bottom:34px;z-index:15;display:block!important;margin:0!important;
+}
+body.aether-gba[data-gba-screen="home"] .dashboard>aside,
+body.aether-gba[data-gba-screen="home"] .dashboard>div>.sectiontitle:nth-of-type(2),
+body.aether-gba[data-gba-screen="home"] .teamstrip{display:none!important}
+body.aether-gba[data-gba-screen="home"] .dashboard>.sectiontitle{display:none!important}
+body.aether-gba[data-gba-screen="home"] .dashboard>div>.sectiontitle:first-child{
+  display:block!important;margin:0!important;padding:7px 12px;border:4px solid #102e32;border-bottom:0;background:#32716d;
+}
+body.aether-gba[data-gba-screen="home"] .dashboard .sectiontitle h2{color:#fff9d6!important;font-size:10px!important;text-shadow:2px 2px #153a40!important}
+body.aether-gba[data-gba-screen="home"] .dashboard .sectiontitle small{color:#dcecc8!important}
+body.aether-gba[data-gba-screen="home"] .modegrid{
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:0!important;padding:7px!important;
+  border:4px solid #102e32;background:#f8f2d1;box-shadow:inset 0 0 0 3px #fff,4px 4px #07191d;
+}
+body.aether-gba[data-gba-screen="home"] .modecard{
+  min-height:72px!important;padding:8px 12px!important;border:0!important;border-right:3px solid #8f9277!important;
+  background:#fff8d8!important;box-shadow:none!important;
+}
+body.aether-gba[data-gba-screen="home"] .modecard:last-child{border-right:0!important}
+body.aether-gba[data-gba-screen="home"] .modecard h3{font-size:13px!important;margin:3px 0!important}
+body.aether-gba[data-gba-screen="home"] .modecard p{display:none}.aether-gba[data-gba-screen="home"] .modecard .modeicon{font-size:30px!important}
+
+/* Management screens use large game windows and keep the scenery visible. */
+body.aether-gba:not([data-gba-screen="home"]):not([data-gba-screen="battle"]) .heading{
+  margin-bottom:10px!important;padding:8px 12px!important;border-width:4px!important;
+}
+body.aether-gba:not([data-gba-screen="home"]):not([data-gba-screen="battle"]) .heading h1{font-size:17px!important}
+body.aether-gba .panel,body.aether-gba .pokedex-index,body.aether-gba .pokedex-detail,
+body.aether-gba .party-console,body.aether-gba .party-picker,body.aether-gba .summary-console{
+  backdrop-filter:none!important;
+}
+
+/* The old switch is diagnostic chrome; keep it quiet like a cartridge label. */
+body.aether-gba .classic-ui-switch{opacity:.28!important;font-size:6px!important}
+body.aether-gba .classic-ui-switch:hover{opacity:1!important}
+
+@media(max-width:760px){
+  body.aether-gba.resolution-locked .sidebar{
+    position:absolute!important;right:22px!important;top:58px!important;bottom:24px!important;width:258px!important;
+    height:auto!important;padding:10px!important;border:4px solid #102b31!important;
+  }
+  body.aether-gba.resolution-locked .navs{display:grid!important}
+}
+
+/* Dedicated hub renderer. The classic entry no longer reuses the dashboard
+   composition on its first screen; it renders an explorable-game tableau. */
+body.aether-gba[data-gba-screen="home"] .content{padding:0!important;background:#74a36d!important}
+body.aether-gba .gba-hub-scene{
+  position:relative;width:100%;height:100%;overflow:hidden;color:#17343a;
+  background:
+    linear-gradient(90deg,transparent 0 7%,#2c594244 7% 8%,transparent 8% 92%,#2c594244 92% 93%,transparent 93%),
+    repeating-linear-gradient(90deg,#68a05f 0 24px,#73aa67 24px 48px);
+}
+body.aether-gba .gba-map-layer{position:absolute;inset:0 0 154px;overflow:hidden}
+body.aether-gba .gba-map-layer:before{
+  content:"";position:absolute;left:8%;right:8%;top:28px;bottom:18px;
+  border:4px solid #315d43;background:
+    linear-gradient(90deg,transparent 47%,#d6c17a 47% 55%,transparent 55%),
+    linear-gradient(#76aa67 0 58%,#a3c779 58% 100%);
+  box-shadow:inset 0 0 0 4px #9ec37a,4px 4px #1d4539;
+}
+body.aether-gba .gba-map-layer:after{
+  content:"";position:absolute;left:12%;right:12%;bottom:35px;height:42px;
+  background:repeating-linear-gradient(90deg,#477d4e 0 16px,#538b55 16px 32px);
+  border-top:4px solid #2b5c42;border-bottom:4px solid #7fb26a;
+}
+body.aether-gba .gba-tree{position:absolute;z-index:2;width:46px;height:58px;border:4px solid #1e493b;background:#39734b;box-shadow:inset 8px 0 #579157,inset -8px 0 #285d43,4px 4px #173c35}
+body.aether-gba .gba-tree:before{content:"";position:absolute;left:7px;right:7px;top:-14px;height:22px;background:#4d8953;border:4px solid #1e493b;box-shadow:inset 6px 0 #6da15d}
+body.aether-gba .tree-a{left:11%;top:68px}.aether-gba .tree-b{left:17%;top:68px}.aether-gba .tree-c{right:13%;top:80px}.aether-gba .tree-d{right:19%;top:80px}
+body.aether-gba .gba-pond{position:absolute;z-index:1;right:12%;bottom:40px;width:190px;height:80px;border:4px solid #37665e;background:repeating-linear-gradient(0deg,#62aaa3 0 7px,#72bbb1 7px 14px);box-shadow:inset 0 0 0 4px #a5d4b1}
+body.aether-gba .gba-path{position:absolute;left:46%;top:25px;bottom:0;width:86px;background:repeating-linear-gradient(0deg,#ccb875 0 12px,#d6c482 12px 24px);border-left:4px solid #988b5d;border-right:4px solid #988b5d}
+body.aether-gba .gba-route-sign{
+  position:absolute;z-index:12;left:28px;top:24px;width:260px;padding:9px 12px;border:4px solid #17363b;background:#fff4ca;box-shadow:inset 0 0 0 3px #fff,inset 0 -4px #b7b28f,4px 4px #10282c;
+}
+body.aether-gba .gba-route-sign small{display:block;color:#a3453f;font-size:7px}.aether-gba .gba-route-sign b{display:block;margin:3px 0;font-size:15px}.aether-gba .gba-route-sign span{font-size:7px;color:#53645f}
+body.aether-gba .gba-lead-stage{position:absolute;z-index:8;left:31%;right:23%;top:60px;bottom:185px;display:flex;align-items:end;justify-content:center;gap:0}
+body.aether-gba .gba-lead-stage:after{content:"";position:absolute;left:12%;right:10%;bottom:13px;height:42px;border-radius:50%;background:#315f4066;z-index:-1}
+body.aether-gba .gba-lead-stage .pokemon-art{width:280px!important;height:310px!important;margin:0 -42px;filter:drop-shadow(6px 8px 0 #183d3566)}
+body.aether-gba .gba-lead-stage .pokemon-art:first-child{transform:translateY(18px) scale(.9)}
+body.aether-gba .gba-squad-ribbon{position:absolute;z-index:14;right:24px;top:24px;width:280px;padding:8px;border:4px solid #17363b;background:#2f716b;box-shadow:inset 0 0 0 3px #80ad91,4px 4px #10282c}
+body.aether-gba .gba-squad-ribbon>small{display:block;padding:0 4px 5px;color:#fff5c9;font-size:7px;letter-spacing:.15em}
+body.aether-gba .gba-squad-list{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+body.aether-gba .gba-party-member{position:relative;min-height:72px!important;padding:2px!important;border:2px solid #183d40!important;background:#eaf0cf!important;box-shadow:inset 2px 2px #fff,2px 2px #10282c!important}
+body.aether-gba .gba-party-member .pokemon-art{width:100%!important;height:50px!important}.aether-gba .gba-party-member span{display:block;overflow:hidden;font-size:6px;text-overflow:ellipsis;white-space:nowrap}
+body.aether-gba .gba-command-box{position:absolute;z-index:20;left:18px;right:18px;bottom:16px;height:142px;display:grid;grid-template-columns:42% 58%;border:4px solid #102e32;background:#fff4cf;box-shadow:inset 0 0 0 4px #fff,inset 0 0 0 7px #8b9277,4px 4px #07191d}
+body.aether-gba .gba-command-copy{display:flex;flex-direction:column;justify-content:center;padding:18px 24px;border-right:4px solid #102e32}
+body.aether-gba .gba-command-copy small{color:#a3453f;font-size:7px}.aether-gba .gba-command-copy strong{margin:8px 0 6px;font-size:14px}.aether-gba .gba-command-copy span{color:#596762;font-size:8px}
+body.aether-gba .gba-hub-actions{display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:9px;background:#84a78d}
+body.aether-gba .gba-hub-actions button{position:relative;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;min-height:53px!important;padding:7px 12px 7px 24px!important;text-align:left}
+body.aether-gba .gba-hub-actions button:before{content:"▶";position:absolute;left:9px;color:#b4453f}.aether-gba .gba-hub-actions b{font-size:11px}.aether-gba .gba-hub-actions small{margin-top:3px;color:#60706a;font-size:7px}
+
+/* A distinct red cartridge-device silhouette for the archive. */
+body.aether-gba[data-gba-screen="collection"] .pokedex-shell{
+  position:relative;gap:14px!important;padding:14px!important;border:8px solid #552b2b!important;
+  background:#b63f3b!important;box-shadow:inset 0 0 0 5px #e7745d,inset 0 0 0 9px #762f31,6px 6px #07191d!important;
+}
+body.aether-gba[data-gba-screen="collection"] .pokedex-shell:before{
+  content:"";position:absolute;left:50%;top:0;bottom:0;width:12px;transform:translateX(-50%);
+  border-left:3px solid #6d2d2e;border-right:3px solid #e36e59;background:#963536;z-index:3;pointer-events:none;
+}
+body.aether-gba[data-gba-screen="collection"] .pokedex-index,
+body.aether-gba[data-gba-screen="collection"] .pokedex-detail{border-color:#442a2b!important;box-shadow:inset 0 0 0 3px #fff8d8,3px 3px #642a2b!important}
+body.aether-gba[data-gba-screen="collection"] .pokedex-index-head,
+body.aether-gba[data-gba-screen="collection"] .pokedex-detail-head{background:#335e58!important}
+
+/* Party/Summary reads as a separate blue-green status screen. */
+body.aether-gba[data-gba-screen="training"] .summary-shell,
+body.aether-gba[data-gba-screen="training"] .summary-layout,
+body.aether-gba[data-gba-screen="teams"] .party-builder-layout{padding:10px!important;border:6px solid #173b49!important;background:#39798a!important;box-shadow:inset 0 0 0 4px #75a8a0,5px 5px #07191d}
+
+/* Project logo integration */
+body.aether-gba .brandmark.project-logo,
+body.aether-gba .loading .brandmark.project-logo{border:0;background:transparent;box-shadow:none}
+body.aether-gba .loading .brandmark.project-logo{width:72px;height:72px}
+body.aether-gba .pokemon-game-logo{width:34px;height:34px}

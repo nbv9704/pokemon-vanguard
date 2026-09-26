@@ -1,7 +1,7 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {WEATHER_IDS} from './manifest-contract.mjs';
 import {passiveEffectActive} from './passive-effects.mjs';
-import {effectiveWeatherId} from './ability-field.mjs';
+import {effectiveWeatherForUnit,effectiveWeatherId} from './ability-field.mjs';
 import {abilityPreventsIndirectDamage} from './ability-hooks.mjs';
 
 export {WEATHER_IDS};
@@ -10,8 +10,8 @@ const effectFor=(unit,kind,weather,battle)=>(unit?.passiveEffects||[]).find(effe
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 const weatherAbilityEffect=(unit,kind,weather,battle)=>(unit?.passiveEffects||[]).find(effect=>passiveEffectActive(effect,battle,unit)&&effect.kind===kind&&effect.weather===weather);
 
-export function weatherDamageModifier(battle,moveType){
- const weather=effectiveWeatherId(battle);
+export function weatherDamageModifier(battle,moveType,actor=null){
+ const weather=actor?effectiveWeatherForUnit(battle,actor):effectiveWeatherId(battle);
  if(weather==='sun')return moveType==='fire'?1.5:moveType==='water'?0.5:1;
  if(weather==='rain')return moveType==='water'?1.5:moveType==='fire'?0.5:1;
  return 1;

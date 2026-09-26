@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "r3-100-ma-release-gate",
+  "generatedAt": "2026-09-19T09:25:43.838Z",
+  "status": "runtime-ready",
+  "scope": {
+    "regulationId": "m-a-beta",
+    "nonMega": 213,
+    "megaForms": 59,
+    "megaRelations": 59,
+    "totalSelectable": 272,
+    "moves": 490
+  },
+  "presentation": {
+    "timelines": 490,
+    "signature": 30,
+    "parameterized": 460,
+    "legacy": 0,
+    "missingCommit": 0
+  },
+  "assets": {
+    "selectable": 272,
+    "front": 272,
+    "back": 272,
+    "artwork": 272,
+    "fallbackSafe": 272,
+    "bespokeComplete": 272,
+    "bespokeDebt": 0
+  },
+  "offline": {
+    "externalRuntimeReferences": []
+  },
+  "qa": {
+    "keyboardMappings": true,
+    "reducedMotion": true,
+    "coarsePointer": true,
+    "responsiveViewport": true
+  },
+  "problems": [],
+  "warnings": []
+}

@@ -16,7 +16,7 @@ export function validateManifestCatalog(catalog,manifests){
 }
 
 export function coverageForEntry(kind,entry,manifest,registeredHandlers,registeredTests){
- const base={kind:singular[kind],id:entry.id,name:entry.name,requiredHandlers:manifest?.handlers?.map(handler=>handler.id)||[],formats:{}};
+ const base={kind:singular[kind],id:entry.id,name:entry.name,reviewState:manifest?.reviewState||'executable',reviewReason:manifest?.reviewReason||null,requiredHandlers:manifest?.handlers?.map(handler=>handler.id)||[],formats:{}};
  const problems=manifest?validateMechanicManifest(manifest,kind):[];
  const missingHandlers=manifest?[...new Set(base.requiredHandlers.filter(id=>!registeredHandlers.has(id)))]:[];
  for(const format of BATTLE_FORMATS){
@@ -26,7 +26,8 @@ export function coverageForEntry(kind,entry,manifest,registeredHandlers,register
   else if(missingHandlers.length)reason=`missing-handler:${missingHandlers.join(',')}`;
   else if(!manifest.testEvidence[format].length)reason='missing-test-evidence';
   else{const unknown=manifest.testEvidence[format].filter(id=>!registeredTests.has(id));if(unknown.length)reason=`unknown-test-evidence:${unknown.join(',')}`;}
-  base.formats[format]={supported:reason===null,reason};
+  const reviewed=reason===null,supported=reviewed&&manifest?.reviewState!=='fail-closed';
+  base.formats[format]={supported,reviewed,reason:supported?null:reviewed?`reviewed-fail-closed:${manifest.reviewReason}`:reason};
  }
  return {...base,missingHandlers,manifestProblems:problems};
 }
@@ -37,6 +38,7 @@ export function buildMechanicsCoverage(catalog,manifests,registeredHandlerIds=[]
  for(const kind of CONTENT_KINDS)for(const entry of catalog[kind]||[])entries.push(coverageForEntry(kind,entry,manifests[kind]?.[entry.id],registered,tests));
  const summary={total:entries.length};
  for(const format of BATTLE_FORMATS){summary[format]={supported:entries.filter(entry=>entry.formats[format].supported).length,blocked:entries.filter(entry=>!entry.formats[format].supported).length};}
+ summary.reviewed=Object.fromEntries(BATTLE_FORMATS.map(format=>[format,{reviewed:entries.filter(entry=>entry.formats[format].reviewed).length,unreviewed:entries.filter(entry=>!entry.formats[format].reviewed).length}]));
  summary.byKind=Object.fromEntries(CONTENT_KINDS.map(kind=>[kind,{total:(catalog[kind]||[]).length,singleSupported:entries.filter(entry=>entry.kind===singular[kind]&&entry.formats.single.supported).length,doubleSupported:entries.filter(entry=>entry.kind===singular[kind]&&entry.formats.double.supported).length}]));
  return {schemaVersion:1,summary,entries};
 }

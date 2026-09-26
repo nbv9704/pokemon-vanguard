@@ -5,7 +5,7 @@ const sideOf=(battle,actorId)=>['A','B'].find(side=>battle.sides?.[side]?.roster
 
 export function validateSwitchingChoice(battle,action,mechanics){
  if(action.kind!=='move')return {ok:true};
- const pivot=(mechanics?.handlers||[]).some(handler=>handler.id==='apply-pivot-switch');
+ const pivot=(mechanics?.handlers||[]).some(handler=>['apply-pivot-switch','apply-shed-tail','apply-baton-pass','apply-parting-shot-switch'].includes(handler.id));
  if(!pivot)return action.switchToId===undefined?{ok:true}:{ok:false,code:'UNEXPECTED_SWITCH_TARGET'};
  if(typeof action.switchToId!=='string'||!action.switchToId)return {ok:false,code:'PIVOT_SWITCH_TARGET_REQUIRED'};
  if(!reserveUnits(battle,action.side).some(unit=>unit.actorId===action.switchToId))return {ok:false,code:'INVALID_PIVOT_SWITCH_TARGET'};

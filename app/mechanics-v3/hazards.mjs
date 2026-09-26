@@ -10,6 +10,7 @@ import {abilityPreventsIndirectDamage,abilityStatDropBlock,applyAbilityStatDropR
 import {abilityStageChange} from './ability-stage-change.mjs';
 import {resolveOpponentStatGainCopyAbilities,resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
 import {resolveFaintAbilityCopiesFromEvents} from './ability-replacement.mjs';
+import {resolveSlotEffectsOnEntry} from './delayed-effects.mjs';
 const MAX_LAYERS={'stealth-rock':1,spikes:3,'toxic-spikes':2,'sticky-web':1};
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 
@@ -70,7 +71,7 @@ function resolveStickyWeb(next,unit,state,entry,events){
 }
 
 export function resolveEntryHazards(battle,switchEvents=[],{manifests=null,moves=null}={}){
- let next=clone(battle);const events=[],entryAbilities=resolveEntryAbilities(next,switchEvents,{manifests,moves});next=entryAbilities.battle;events.push(...entryAbilities.events);const entryItems=resolveEntryItems(next,switchEvents);next=entryItems.battle;events.push(...entryItems.events);
+ let next=clone(battle);const events=[];const slotEffects=resolveSlotEffectsOnEntry(next,switchEvents);next=slotEffects.battle;events.push(...slotEffects.events);for(const entry of switchEvents||[]){if(entry?.kind!=='switchIn'||!entry.actorId)continue;const entrant=unitById(next,entry.actorId);if(!entrant)continue;entrant.usedMoveIdsSinceEntry=[];entrant.lastUsedMoveIdSinceEntry=null;}const entryAbilities=resolveEntryAbilities(next,switchEvents,{manifests,moves});next=entryAbilities.battle;events.push(...entryAbilities.events);const entryItems=resolveEntryItems(next,switchEvents);next=entryItems.battle;events.push(...entryItems.events);
  for(const entry of switchEvents||[]){
   if(entry?.kind!=='switchIn'||!entry.actorId||!entry.side)continue;
   const entrant=unitById(next,entry.actorId);if(!entrant||entrant.hp<=0)continue;

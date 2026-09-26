@@ -30,13 +30,13 @@ export function applyTransformState(battle,{actorId,targetId,source='transform'}
  for(const moveId of copiedMoveIds){const max=Math.max(1,Math.min(5,target.maxPp?.[moveId]??5));unit.pp[moveId]=max;unit.maxPp[moveId]=max;}
  unit.buildSnapshot??={};unit.buildSnapshot.moveIds=[...copiedMoveIds];unit.activeAbilityId=copiedAbility;
  unit.passiveEffects=[...snapshot(abilityEffects(target)),...itemEffects(unit)];
- return {battle:next,transformed:true,events:[{kind:'transformed',actorId,targetId,source,speciesId:target.speciesId,abilityId:copiedAbility,moveIds:[...copiedMoveIds]}]};
+ return {battle:next,transformed:true,events:[{kind:'transformed',actorId,targetId,source,speciesId:target.speciesId,name:target.name,spriteKey:target.spriteKey,types:snapshot(target.types||[]),abilityId:copiedAbility,moveIds:[...copiedMoveIds]}]};
 }
 
 export function restoreTransformState(unit){
  const state=unit?.transformState?.original;if(!state)return [];
  const previousSpeciesId=unit.speciesId;unit.speciesId=state.speciesId;unit.name=state.name;unit.spriteKey=state.spriteKey;unit.types=snapshot(state.types);unit.stats=snapshot(state.stats);unit.maxHp=state.maxHp;unit.pp=snapshot(state.pp);unit.maxPp=snapshot(state.maxPp);unit.stages=snapshot(state.stages);unit.activeAbilityId=state.activeAbilityId;unit.passiveEffects=snapshot(state.passiveEffects);unit.buildSnapshot??={};unit.buildSnapshot.moveIds=snapshot(state.buildMoveIds);delete unit.transformState;
- return [{kind:'transformEnded',actorId:unit.actorId,fromSpeciesId:previousSpeciesId,toSpeciesId:unit.speciesId,reason:'switch-out'}];
+ return [{kind:'transformEnded',actorId:unit.actorId,fromSpeciesId:previousSpeciesId,toSpeciesId:unit.speciesId,name:unit.name,spriteKey:unit.spriteKey,types:snapshot(unit.types||[]),reason:'switch-out'}];
 }
 
 export function resolveEntryTransformAbility(battle,{actorId,slot=0}={}){
@@ -53,7 +53,7 @@ export function resolveEntryIllusionAbility(battle,{actorId}={}){
  const side=['A','B'].find(candidate=>next.sides?.[candidate]?.roster?.some(mon=>mon.actorId===actorId));if(!side)return {battle:next,events:[]};
  const disguise=[...(next.sides[side].roster||[])].reverse().find(mon=>mon.actorId!==actorId&&mon.hp>0);if(!disguise)return {battle:next,events:[]};
  unit.illusionState={abilityId:effect.sourceId,sourceActorId:disguise.actorId,speciesId:disguise.speciesId,name:disguise.name,spriteKey:disguise.spriteKey,types:snapshot(disguise.types||[])};
- return {battle:next,events:[{kind:'abilityTriggered',sourceId:actorId,abilityId:effect.sourceId,effectId:effect.kind,targetId:disguise.actorId},{kind:'illusionStarted',actorId,abilityId:effect.sourceId,displaySpeciesId:disguise.speciesId,displayName:disguise.name}]};
+ return {battle:next,events:[{kind:'abilityTriggered',sourceId:actorId,abilityId:effect.sourceId,effectId:effect.kind,targetId:disguise.actorId},{kind:'illusionStarted',actorId,abilityId:effect.sourceId,displaySpeciesId:disguise.speciesId,displayName:disguise.name,displaySpriteKey:disguise.spriteKey,displayTypes:snapshot(disguise.types||[]),sourceActorId:disguise.actorId}]};
 }
 
 export function breakIllusionOnDamage(battle,{targetId,sourceId=null,moveId=null}={}){

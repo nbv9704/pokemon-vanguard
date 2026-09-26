@@ -25,3 +25,43 @@
 @media(max-width:600px){.v3-battle-arena{min-height:560px}.v3-battle-arena .v2-side{gap:0}.v3-battle-arena .v3-fighter{height:210px}.v3-battle-arena .v3-fighter .art,.v3-battle-arena.format-double .v3-fighter .art{width:105px;height:115px}.v3-battle-arena .player-fighter .art,.v3-battle-arena.format-double .player-fighter .art{width:125px;height:130px}.v3-battle-arena .v3-battle-hud{width:68%;font-size:9px}.v3-battle-arena .opponent-fighter .v3-battle-hud{top:0}.v3-battle-arena .player-fighter .v3-battle-hud{bottom:12px}}
 @media(prefers-reduced-motion:reduce){.v3-battle-arena .v3-fighter.hit .art,.v3-battle-arena .v3-fighter.cast .art{animation:none}.v3-battle-hud u{transition:none}}
 .v3-mega-choice{display:flex!important;align-items:center;gap:.55rem;margin:.8rem 0;padding:.7rem .8rem;border:1px solid #b68cff;border-radius:10px;background:linear-gradient(90deg,#6c3fc533,#46d8ff22);color:#e8dfff;font-weight:700}.v3-mega-choice input{width:1.1rem;height:1.1rem;accent-color:#aa79ff}.v3-mega-fx{position:absolute;inset:0;z-index:8;pointer-events:none;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle,#fff9 0,#c48cff55 12%,transparent 48%);animation:v3-mega-flash .95s ease both}.v3-mega-fx i{position:absolute;width:9rem;height:9rem;border:3px solid #d8baff;border-radius:50%;box-shadow:0 0 28px #9c6cff;animation:v3-mega-ring .9s ease-out both}.v3-mega-fx i:nth-child(2){animation-delay:.12s}.v3-mega-fx i:nth-child(3){animation-delay:.24s}.v3-mega-fx.speed-2{animation-duration:.475s}.v3-mega-fx.speed-2 i{animation-duration:.45s}.v3-mega-fx.speed-2 i:nth-child(2){animation-delay:.06s}.v3-mega-fx.speed-2 i:nth-child(3){animation-delay:.12s}.v3-mega-fx strong{padding:.45rem .8rem;border-radius:999px;background:#20143dcc;color:#fff;letter-spacing:.14em;text-shadow:0 0 12px #d7b5ff}@keyframes v3-mega-ring{from{transform:scale(.15);opacity:1}to{transform:scale(3.5);opacity:0}}@keyframes v3-mega-flash{0%{opacity:0}20%,70%{opacity:1}100%{opacity:0}}
+
+.v3-mega-badge{display:inline-block;margin-left:.35rem;padding:.08rem .3rem;border:1px solid #b68cff;border-radius:999px;background:#6c3fc544;color:#eadfff;font-size:.65em;font-style:normal;font-weight:800;letter-spacing:.08em;vertical-align:.1em}
+
+/* R3-94 actor/camera hooks emitted by the presentation runtime. */
+.v3-battle-arena .v3-fighter.presentation-actor-lunge .art{animation:v3-presentation-lunge .46s cubic-bezier(.2,.72,.25,1) both}
+.v3-battle-arena .v3-fighter.presentation-actor-pulse .art{animation:v3-presentation-pulse .42s ease-out both}
+.v3-battle-arena .v3-fighter.presentation-actor-shake .art{animation:v3-presentation-target-shake .25s ease-out both}
+.presentation-camera-shake .v3-battle-arena{animation:v3-presentation-camera-shake .16s ease-out both}
+.presentation-screen-flash .v3-battle-arena{isolation:isolate}
+@keyframes v3-presentation-lunge{0%,100%{transform:translate(0,0) scale(1)}45%{transform:translate(22px,-10px) scale(1.06)}}
+@keyframes v3-presentation-pulse{0%,100%{transform:scale(1)}45%{transform:scale(1.075);filter:brightness(1.2) drop-shadow(0 15px 10px #050b1499)}}
+@keyframes v3-presentation-target-shake{0%,100%{transform:translateX(0)}30%{transform:translateX(-8px)}60%{transform:translateX(7px)}}
+@keyframes v3-presentation-camera-shake{0%,100%{transform:translate(0,0)}25%{transform:translate(-3px,2px)}50%{transform:translate(4px,-2px)}75%{transform:translate(-2px,-1px)}}
+@media(prefers-reduced-motion:reduce){.v3-battle-arena .v3-fighter.presentation-actor-lunge .art,.v3-battle-arena .v3-fighter.presentation-actor-pulse .art,.v3-battle-arena .v3-fighter.presentation-actor-shake .art,.presentation-camera-shake .v3-battle-arena{animation:none!important}.v3-move-fx.presentation-runtime .presentation-screen-cue{display:none}}
+
+/* R3-96 special battle presentation: form/state transitions and semi-invulnerable visibility. */
+.v3-battle-arena .v3-fighter.presentation-actor-morph .art{animation:v3-special-morph .34s ease-in-out both}
+.v3-battle-arena .v3-fighter.presentation-actor-shatter .art{animation:v3-special-shatter .32s ease-out both}
+.v3-battle-arena .v3-fighter.presentation-actor-break .art{animation:v3-special-break .34s ease-out both}
+.v3-battle-arena .v3-fighter.presentation-actor-vanish .art{animation:v3-special-vanish .34s ease-in both}
+.v3-battle-arena .v3-fighter.presentation-actor-emerge .art{animation:v3-special-emerge .34s ease-out both}
+.v3-battle-arena .v3-fighter.presentation-actor-mega .art{animation:v3-special-mega .78s cubic-bezier(.18,.75,.2,1) both}
+.v3-battle-arena .v3-fighter.is-semi-invulnerable .art{opacity:.13;filter:saturate(.5) brightness(.75) drop-shadow(0 8px 12px #050b1499)}
+.v3-battle-arena .v3-fighter.is-semi-invulnerable.semi-underground .art{transform:translateY(24px) scale(.78);opacity:.08}
+.v3-battle-arena .v3-fighter.is-semi-invulnerable.semi-underwater .art{transform:translateY(16px) scale(.9);opacity:.1;filter:hue-rotate(165deg) saturate(.8) brightness(.75)}
+.v3-battle-arena .v3-fighter.is-semi-invulnerable.semi-airborne .art{transform:translateY(-42px) scale(.88);opacity:.14}
+.v3-battle-arena .v3-fighter.is-semi-invulnerable.semi-vanished .art{opacity:.03;filter:blur(3px)}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-morph .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-shatter .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-break .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-vanish .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-emerge .art{animation-duration:.17s}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-mega .art{animation-duration:.39s}
+@keyframes v3-special-morph{0%{opacity:1;transform:scale(1);filter:brightness(1)}46%{opacity:.18;transform:scale(.72) rotate(-3deg);filter:brightness(3) saturate(0)}54%{opacity:.22;transform:scale(.78) rotate(3deg);filter:brightness(3) saturate(0)}100%{opacity:1;transform:scale(1);filter:brightness(1)}}
+@keyframes v3-special-shatter{0%{opacity:1;filter:brightness(1)}35%{transform:skewX(-8deg) scale(1.05);filter:brightness(2.2)}58%{opacity:.25;transform:skewX(10deg) scale(.94)}100%{opacity:1;transform:none;filter:none}}
+@keyframes v3-special-break{0%{transform:scale(1)}34%{transform:translateX(-7px) rotate(-2deg);filter:brightness(2)}62%{transform:translateX(7px) rotate(2deg)}100%{transform:none;filter:none}}
+@keyframes v3-special-vanish{0%{opacity:1;transform:scale(1)}65%{opacity:.3;transform:translateY(-12px) scale(.82)}100%{opacity:.05;transform:translateY(-25px) scale(.68);filter:blur(2px)}}
+@keyframes v3-special-emerge{0%{opacity:.05;transform:translateY(-25px) scale(.68);filter:blur(2px)}58%{opacity:1;transform:translateY(5px) scale(1.08);filter:none}100%{opacity:1;transform:none}}
+@keyframes v3-special-mega{0%{filter:brightness(1);transform:scale(1)}22%{filter:brightness(3) saturate(.4);transform:scale(.86)}55%{filter:brightness(2.4) drop-shadow(0 0 28px #c995ff);transform:scale(1.13)}100%{filter:none;transform:scale(1)}}
+@media(prefers-reduced-motion:reduce){.v3-battle-arena .v3-fighter.presentation-actor-morph .art,.v3-battle-arena .v3-fighter.presentation-actor-shatter .art,.v3-battle-arena .v3-fighter.presentation-actor-break .art,.v3-battle-arena .v3-fighter.presentation-actor-vanish .art,.v3-battle-arena .v3-fighter.presentation-actor-emerge .art,.v3-battle-arena .v3-fighter.presentation-actor-mega .art{animation:none!important}}
+.v3-battle-arena .v3-fighter.presentation-actor-faint .art{animation:v3-special-faint .36s ease-in both}
+.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-faint .art{animation-duration:.18s}
+@keyframes v3-special-faint{0%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}45%{opacity:.65;filter:brightness(1.8) saturate(.2)}100%{opacity:0;transform:translateY(32px) scale(.72);filter:brightness(.5) saturate(0)}}
+@media(prefers-reduced-motion:reduce){.v3-battle-arena .v3-fighter.presentation-actor-faint .art{animation:none!important;opacity:.35}}

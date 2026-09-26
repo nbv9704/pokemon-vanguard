@@ -31,3 +31,16 @@ test('schema-3 build actions use optimistic revisions and preserve input state',
 test('schema-3 training view is detached and contains dual-type display data',()=>{
  const state=fresh(),view=v3TrainingView(state,v3Catalog),venusaur=view.species.find(species=>species.id==='venusaur');assert.deepEqual(venusaur.types,['grass','poison']);view.builds[0].name='mutated';assert.notEqual(state.builds[0].name,'mutated');
 });
+
+test('schema-3 Mega-base complete species can build from their full promoted learnset and Abilities',()=>{
+ const state=fresh(),steelix=v3Catalog.speciesById.steelix,mon={monId:'v3-mon-steelix-complete',speciesId:'steelix',ownership:'permanent'},build={buildId:'v3-build-steelix-complete',monId:mon.monId,name:'Steelix Complete',natureId:'brave',statPoints:{hp:32,atk:32,def:0,spa:0,spd:2,spe:0},moveIds:['head-smash','heavy-slam','curse','sleep-talk'],abilityId:'rock-head',itemId:'steelixite',revision:1};
+ state.mons.push(mon);state.builds.push(build);assert.deepEqual(validateV3Build(build,state,v3Catalog),[]);assert.ok(v3Catalog.movesById['head-smash']?.enabledForBattle);assert.ok(v3Catalog.abilitiesById['rock-head']?.enabledForBattle);
+ const heracross=v3Catalog.speciesById.heracross;assert.ok(heracross.moveIds.includes('megahorn'));assert.ok(v3Catalog.movesById.megahorn?.enabledForBattle);assert.ok(v3Catalog.abilitiesById.moxie?.enabledForBattle);
+ const alakazam=v3Catalog.speciesById.alakazam;assert.ok(alakazam.moveIds.includes('future-sight'));assert.ok(v3Catalog.movesById['future-sight']?.enabledForBattle);assert.ok(v3Catalog.abilitiesById['magic-guard']?.enabledForBattle);const garchomp=v3Catalog.speciesById.garchomp;assert.ok(garchomp.moveIds.includes('earthquake'));assert.ok(garchomp.abilityIds.includes('sand-veil'));assert.ok(v3Catalog.abilitiesById['rough-skin']?.enabledForBattle);
+});
+
+
+test("schema-3 build validator supports Ditto's single legal Transform without fake moves",()=>{
+ const state=fresh(),species=v3Catalog.speciesById.ditto,defaults=species.defaultBuild,mon={monId:'v3-mon-ditto-contract',speciesId:'ditto',ownership:'permanent'},build={buildId:'v3-build-ditto-contract',monId:mon.monId,name:'Ditto Contract',natureId:defaults.natureId,statPoints:structuredClone(defaults.statPoints),moveIds:[...defaults.moveIds],abilityId:defaults.abilityId,itemId:defaults.itemId,revision:1};
+ state.mons.push(mon);state.builds.push(build);assert.deepEqual(species.moveIds,['transform']);assert.deepEqual(build.moveIds,['transform']);assert.deepEqual(validateV3Build(build,state,v3Catalog),[]);assert.ok(validateV3Build({...build,moveIds:['transform','transform']},state,v3Catalog).includes('MOVE_COUNT_INVALID'));
+});

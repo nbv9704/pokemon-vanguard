@@ -23,7 +23,7 @@ export function abortTwoTurnMove(battle,{actorId,moveId,reason}){
  const next=clone(battle),unit=unitById(next,actorId),state=twoTurnMoveState(unit);
  if(!state||state.moveId!==moveId)return {battle:next,events:[]};
  delete unit.volatiles['two-turn-move'];
- return {battle:next,events:[{kind:'twoTurnMoveAborted',actorId,moveId,reason}]};
+ return {battle:next,events:[{kind:'twoTurnMoveAborted',actorId,moveId,reason,...(state.semiInvulnerable?{semiInvulnerable:state.semiInvulnerable}:{})}]};
 }
 
 export function resolveRechargeAction(battle,action){

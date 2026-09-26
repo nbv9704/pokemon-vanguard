@@ -1,0 +1,5252 @@
+{
+  "schemaVersion": 4,
+  "id": "beta-slice-v35",
+  "snapshotId": "pv-ma-2026-09-12-beta2",
+  "regulationSet": "m-a",
+  "formats": [
+    "single",
+    "double"
+  ],
+  "starterTeamSpeciesIds": [
+    "venusaur",
+    "blastoise",
+    "beedrill",
+    "chesnaught",
+    "decidueye",
+    "feraligatr"
+  ],
+  "recruitment": {
+    "sourceBannerId": "regular-roster-m-a",
+    "sourcePullCount": 10,
+    "lineupSize": 10,
+    "cycleDurationMs": 79200000,
+    "trialDurationMs": 604800000,
+    "permanentCostCoins": 1600,
+    "permanentCostTickets": 1,
+    "refreshCostCoins": 350,
+    "paidRefreshLimitPerCycle": 3
+  },
+  "team": [
+    {
+      "speciesId": "venusaur",
+      "abilityId": "overgrow",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "bullet-seed",
+        "giga-drain",
+        "leech-seed",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "blastoise",
+      "abilityId": "torrent",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "flip-turn",
+        "water-spout",
+        "gyro-ball",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "beedrill",
+      "abilityId": "swarm",
+      "itemId": "silver-powder",
+      "moveIds": [
+        "u-turn",
+        "dual-wingbeat",
+        "giga-drain",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "chesnaught",
+      "abilityId": "overgrow",
+      "itemId": "muscle-band",
+      "moveIds": [
+        "bullet-seed",
+        "drain-punch",
+        "leech-seed",
+        "spiky-shield"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 2,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "decidueye",
+      "abilityId": "overgrow",
+      "itemId": "wise-glasses",
+      "moveIds": [
+        "bullet-seed",
+        "brave-bird",
+        "hex",
+        "u-turn"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "feraligatr",
+      "abilityId": "torrent",
+      "itemId": "dragon-fang",
+      "moveIds": [
+        "flip-turn",
+        "dragon-tail",
+        "scale-shot",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "charizard",
+      "abilityId": "blaze",
+      "itemId": "sharp-beak",
+      "moveIds": [
+        "aerial-ace",
+        "dragon-tail",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "meganium",
+      "abilityId": "overgrow",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "giga-drain",
+        "leech-seed",
+        "charm",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "typhlosion",
+      "abilityId": "blaze",
+      "itemId": "charcoal",
+      "moveIds": [
+        "eruption",
+        "wild-charge",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "scizor",
+      "abilityId": "swarm",
+      "itemId": "metal-coat",
+      "moveIds": [
+        "u-turn",
+        "dual-wingbeat",
+        "hard-press",
+        "quick-guard"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "infernape",
+      "abilityId": "blaze",
+      "itemId": "black-belt",
+      "moveIds": [
+        "drain-punch",
+        "coaching",
+        "feint",
+        "taunt"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "primarina",
+      "abilityId": "torrent",
+      "itemId": "fairy-feather",
+      "moveIds": [
+        "draining-kiss",
+        "stored-power",
+        "calm-mind",
+        "sing"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "steelix",
+      "abilityId": "sheer-force",
+      "itemId": "soft-sand",
+      "moveIds": [
+        "gyro-ball",
+        "rock-slide",
+        "stealth-rock",
+        "protect"
+      ],
+      "natureId": "brave",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "camerupt",
+      "abilityId": "solid-rock",
+      "itemId": "charcoal",
+      "moveIds": [
+        "eruption",
+        "solar-beam",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 32,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "heracross",
+      "abilityId": "swarm",
+      "itemId": "muscle-band",
+      "moveIds": [
+        "bullet-seed",
+        "rock-slide",
+        "aerial-ace",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "medicham",
+      "abilityId": "pure-power",
+      "itemId": "black-belt",
+      "moveIds": [
+        "drain-punch",
+        "ice-punch",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "alakazam",
+      "abilityId": "magic-guard",
+      "itemId": "twisted-spoon",
+      "moveIds": [
+        "psychic",
+        "shadow-ball",
+        "focus-blast",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "aerodactyl",
+      "abilityId": "unnerve",
+      "itemId": "hard-stone",
+      "moveIds": [
+        "rock-slide",
+        "dual-wingbeat",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "garchomp",
+      "abilityId": "rough-skin",
+      "itemId": "soft-sand",
+      "moveIds": [
+        "earthquake",
+        "dragon-claw",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "gyarados",
+      "abilityId": "intimidate",
+      "itemId": "wacan-berry",
+      "moveIds": [
+        "waterfall",
+        "crunch",
+        "dragon-dance",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "ampharos",
+      "abilityId": "static",
+      "itemId": "magnet",
+      "moveIds": [
+        "thunderbolt",
+        "dragon-pulse",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "manectric",
+      "abilityId": "lightning-rod",
+      "itemId": "magnet",
+      "moveIds": [
+        "thunderbolt",
+        "volt-switch",
+        "snarl",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "abomasnow",
+      "abilityId": "snow-warning",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "blizzard",
+        "giga-drain",
+        "ice-shard",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "absol",
+      "abilityId": "super-luck",
+      "itemId": "black-glasses",
+      "moveIds": [
+        "sucker-punch",
+        "knock-off",
+        "play-rough",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "altaria",
+      "abilityId": "natural-cure",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "dragon-pulse",
+        "dazzling-gleam",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "audino",
+      "abilityId": "regenerator",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "life-dew",
+        "dazzling-gleam",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "banette",
+      "abilityId": "cursed-body",
+      "itemId": "spell-tag",
+      "moveIds": [
+        "shadow-claw",
+        "sucker-punch",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gallade",
+      "abilityId": "sharpness",
+      "itemId": "scope-lens",
+      "moveIds": [
+        "psycho-cut",
+        "close-combat",
+        "leaf-blade",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "gardevoir",
+      "abilityId": "trace",
+      "itemId": "twisted-spoon",
+      "moveIds": [
+        "psychic",
+        "dazzling-gleam",
+        "mystical-fire",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "glalie",
+      "abilityId": "inner-focus",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "ice-beam",
+        "freeze-dry",
+        "shadow-ball",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "houndoom",
+      "abilityId": "flash-fire",
+      "itemId": "black-glasses",
+      "moveIds": [
+        "dark-pulse",
+        "heat-wave",
+        "solar-beam",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "lucario",
+      "abilityId": "inner-focus",
+      "itemId": "expert-belt",
+      "moveIds": [
+        "close-combat",
+        "flash-cannon",
+        "extreme-speed",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "lopunny",
+      "abilityId": "limber",
+      "itemId": "leftovers",
+      "moveIds": [
+        "close-combat",
+        "fake-out",
+        "high-jump-kick",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "pidgeot",
+      "abilityId": "keen-eye",
+      "itemId": "sharp-beak",
+      "moveIds": [
+        "hurricane",
+        "heat-wave",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "sableye",
+      "abilityId": "prankster",
+      "itemId": "leftovers",
+      "moveIds": [
+        "foul-play",
+        "will-o-wisp",
+        "recover",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "sharpedo",
+      "abilityId": "speed-boost",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "liquidation",
+        "crunch",
+        "ice-beam",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "slowbro",
+      "abilityId": "regenerator",
+      "itemId": "leftovers",
+      "moveIds": [
+        "psychic",
+        "scald",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "tyranitar",
+      "abilityId": "sand-stream",
+      "itemId": "black-glasses",
+      "moveIds": [
+        "rock-slide",
+        "knock-off",
+        "low-kick",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "chandelure",
+      "abilityId": "infiltrator",
+      "itemId": "spell-tag",
+      "moveIds": [
+        "heat-wave",
+        "shadow-ball",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "dragonite",
+      "abilityId": "multiscale",
+      "itemId": "dragon-fang",
+      "moveIds": [
+        "dragon-pulse",
+        "extreme-speed",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "clefable",
+      "abilityId": "magic-guard",
+      "itemId": "leftovers",
+      "moveIds": [
+        "moonblast",
+        "follow-me",
+        "mystical-fire",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "froslass",
+      "abilityId": "cursed-body",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "ice-beam",
+        "shadow-ball",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "hawlucha",
+      "abilityId": "mold-breaker",
+      "itemId": "muscle-band",
+      "moveIds": [
+        "close-combat",
+        "acrobatics",
+        "flying-press",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "starmie",
+      "abilityId": "natural-cure",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "hydro-pump",
+        "psychic",
+        "thunderbolt",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "delphox",
+      "abilityId": "blaze",
+      "itemId": "wise-glasses",
+      "moveIds": [
+        "heat-wave",
+        "psychic",
+        "mystical-fire",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "aggron",
+      "abilityId": "sturdy",
+      "itemId": "rocky-helmet",
+      "moveIds": [
+        "iron-head",
+        "earthquake",
+        "body-press",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "chimecho",
+      "abilityId": "levitate",
+      "itemId": "light-clay",
+      "moveIds": [
+        "psychic",
+        "dazzling-gleam",
+        "recover",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "crabominable",
+      "abilityId": "iron-fist",
+      "itemId": "expert-belt",
+      "moveIds": [
+        "ice-hammer",
+        "close-combat",
+        "thunder-punch",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "drampa",
+      "abilityId": "berserk",
+      "itemId": "life-orb",
+      "moveIds": [
+        "dragon-pulse",
+        "hyper-voice",
+        "flamethrower",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "emboar",
+      "abilityId": "reckless",
+      "itemId": "life-orb",
+      "moveIds": [
+        "flare-blitz",
+        "close-combat",
+        "wild-charge",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "excadrill",
+      "abilityId": "mold-breaker",
+      "itemId": "soft-sand",
+      "moveIds": [
+        "earthquake",
+        "iron-head",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "floette",
+      "abilityId": "flower-veil",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "moonblast",
+        "pollen-puff",
+        "calm-mind",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gengar",
+      "abilityId": "cursed-body",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "shadow-ball",
+        "sludge-bomb",
+        "thunderbolt",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "glimmora",
+      "abilityId": "toxic-debris",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "power-gem",
+        "sludge-wave",
+        "earth-power",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "golurk",
+      "abilityId": "iron-fist",
+      "itemId": "expert-belt",
+      "moveIds": [
+        "shadow-punch",
+        "earthquake",
+        "ice-punch",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "greninja",
+      "abilityId": "protean",
+      "itemId": "life-orb",
+      "moveIds": [
+        "hydro-pump",
+        "dark-pulse",
+        "ice-beam",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "kangaskhan",
+      "abilityId": "scrappy",
+      "itemId": "silk-scarf",
+      "moveIds": [
+        "body-slam",
+        "crunch",
+        "earthquake",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "meowstic",
+      "abilityId": "prankster",
+      "itemId": "light-clay",
+      "moveIds": [
+        "psychic",
+        "thunder-wave",
+        "reflect",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "pinsir",
+      "abilityId": "moxie",
+      "itemId": "expert-belt",
+      "moveIds": [
+        "x-scissor",
+        "earthquake",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "raichu",
+      "abilityId": "lightning-rod",
+      "itemId": "magnet",
+      "moveIds": [
+        "thunderbolt",
+        "surf",
+        "focus-blast",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "scovillain",
+      "abilityId": "chlorophyll",
+      "itemId": "life-orb",
+      "moveIds": [
+        "energy-ball",
+        "flamethrower",
+        "giga-drain",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "skarmory",
+      "abilityId": "sturdy",
+      "itemId": "rocky-helmet",
+      "moveIds": [
+        "brave-bird",
+        "body-press",
+        "iron-defense",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 2,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "victreebel",
+      "abilityId": "chlorophyll",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "energy-ball",
+        "sludge-bomb",
+        "knock-off",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "arbok",
+      "abilityId": "intimidate",
+      "itemId": "poison-barb",
+      "moveIds": [
+        "gunk-shot",
+        "earthquake",
+        "sucker-punch",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "pikachu",
+      "abilityId": "lightning-rod",
+      "itemId": "light-ball",
+      "moveIds": [
+        "volt-tackle",
+        "fake-out",
+        "knock-off",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "ninetales",
+      "abilityId": "drought",
+      "itemId": "heat-rock",
+      "moveIds": [
+        "heat-wave",
+        "will-o-wisp",
+        "solar-beam",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "arcanine",
+      "abilityId": "intimidate",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "flare-blitz",
+        "extreme-speed",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "machamp",
+      "abilityId": "no-guard",
+      "itemId": "expert-belt",
+      "moveIds": [
+        "dynamic-punch",
+        "knock-off",
+        "ice-punch",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "tauros",
+      "abilityId": "intimidate",
+      "itemId": "silk-scarf",
+      "moveIds": [
+        "body-slam",
+        "high-horsepower",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "vaporeon",
+      "abilityId": "water-absorb",
+      "itemId": "leftovers",
+      "moveIds": [
+        "muddy-water",
+        "ice-beam",
+        "yawn",
+        "protect"
+      ],
+      "natureId": "bold",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 32,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "jolteon",
+      "abilityId": "volt-absorb",
+      "itemId": "magnet",
+      "moveIds": [
+        "thunderbolt",
+        "volt-switch",
+        "shadow-ball",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "flareon",
+      "abilityId": "guts",
+      "itemId": "life-orb",
+      "moveIds": [
+        "flare-blitz",
+        "facade",
+        "quick-attack",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "snorlax",
+      "abilityId": "thick-fat",
+      "itemId": "leftovers",
+      "moveIds": [
+        "body-slam",
+        "high-horsepower",
+        "crunch",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "ariados",
+      "abilityId": "sniper",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "lunge",
+        "poison-jab",
+        "sucker-punch",
+        "sticky-web"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "azumarill",
+      "abilityId": "huge-power",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "aqua-jet",
+        "play-rough",
+        "liquidation",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "politoed",
+      "abilityId": "drizzle",
+      "itemId": "damp-rock",
+      "moveIds": [
+        "muddy-water",
+        "ice-beam",
+        "perish-song",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "espeon",
+      "abilityId": "magic-bounce",
+      "itemId": "twisted-spoon",
+      "moveIds": [
+        "psychic",
+        "dazzling-gleam",
+        "shadow-ball",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "umbreon",
+      "abilityId": "inner-focus",
+      "itemId": "leftovers",
+      "moveIds": [
+        "foul-play",
+        "snarl",
+        "moonlight",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "slowking",
+      "abilityId": "regenerator",
+      "itemId": "leftovers",
+      "moveIds": [
+        "surf",
+        "psychic",
+        "slack-off",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "forretress",
+      "abilityId": "sturdy",
+      "itemId": "rocky-helmet",
+      "moveIds": [
+        "gyro-ball",
+        "body-press",
+        "stealth-rock",
+        "protect"
+      ],
+      "natureId": "relaxed",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 32,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "pelipper",
+      "abilityId": "drizzle",
+      "itemId": "damp-rock",
+      "moveIds": [
+        "hurricane",
+        "weather-ball",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "torkoal",
+      "abilityId": "drought",
+      "itemId": "heat-rock",
+      "moveIds": [
+        "eruption",
+        "heat-wave",
+        "yawn",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "milotic",
+      "abilityId": "competitive",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "muddy-water",
+        "ice-beam",
+        "recover",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "torterra",
+      "abilityId": "shell-armor",
+      "itemId": "leftovers",
+      "moveIds": [
+        "wood-hammer",
+        "high-horsepower",
+        "stealth-rock",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "empoleon",
+      "abilityId": "competitive",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "hydro-pump",
+        "flash-cannon",
+        "icy-wind",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "luxray",
+      "abilityId": "intimidate",
+      "itemId": "magnet",
+      "moveIds": [
+        "wild-charge",
+        "ice-fang",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "roserade",
+      "abilityId": "natural-cure",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "sludge-bomb",
+        "leaf-storm",
+        "sleep-powder",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rampardos",
+      "abilityId": "mold-breaker",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "head-smash",
+        "earthquake",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "bastiodon",
+      "abilityId": "sturdy",
+      "itemId": "leftovers",
+      "moveIds": [
+        "body-press",
+        "iron-defense",
+        "stealth-rock",
+        "protect"
+      ],
+      "natureId": "relaxed",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 32,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "spiritomb",
+      "abilityId": "infiltrator",
+      "itemId": "spell-tag",
+      "moveIds": [
+        "shadow-ball",
+        "foul-play",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "hippowdon",
+      "abilityId": "sand-stream",
+      "itemId": "smooth-rock",
+      "moveIds": [
+        "earthquake",
+        "rock-slide",
+        "yawn",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "toxicroak",
+      "abilityId": "dry-skin",
+      "itemId": "life-orb",
+      "moveIds": [
+        "drain-punch",
+        "gunk-shot",
+        "sucker-punch",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "weavile",
+      "abilityId": "pressure",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "icicle-crash",
+        "knock-off",
+        "fake-out",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rhyperior",
+      "abilityId": "solid-rock",
+      "itemId": "hard-stone",
+      "moveIds": [
+        "high-horsepower",
+        "rock-slide",
+        "ice-punch",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "leafeon",
+      "abilityId": "chlorophyll",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "leaf-blade",
+        "knock-off",
+        "swords-dance",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "glaceon",
+      "abilityId": "ice-body",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "ice-beam",
+        "freeze-dry",
+        "shadow-ball",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gliscor",
+      "abilityId": "sand-veil",
+      "itemId": "leftovers",
+      "moveIds": [
+        "earthquake",
+        "dual-wingbeat",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "mamoswine",
+      "abilityId": "thick-fat",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "high-horsepower",
+        "icicle-crash",
+        "ice-shard",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "serperior",
+      "abilityId": "contrary",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "leaf-storm",
+        "dragon-pulse",
+        "glare",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "samurott",
+      "abilityId": "shell-armor",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "razor-shell",
+        "aqua-jet",
+        "sacred-sword",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "watchog",
+      "abilityId": "analytic",
+      "itemId": "silk-scarf",
+      "moveIds": [
+        "facade",
+        "crunch",
+        "hypnosis",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "liepard",
+      "abilityId": "prankster",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "foul-play",
+        "encore",
+        "thunder-wave",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "simisage",
+      "abilityId": "overgrow",
+      "itemId": "miracle-seed",
+      "moveIds": [
+        "seed-bomb",
+        "acrobatics",
+        "crunch",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "simisear",
+      "abilityId": "blaze",
+      "itemId": "charcoal",
+      "moveIds": [
+        "heat-wave",
+        "focus-blast",
+        "nasty-plot",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "simipour",
+      "abilityId": "torrent",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "hydro-pump",
+        "ice-beam",
+        "flip-turn",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "conkeldurr",
+      "abilityId": "iron-fist",
+      "itemId": "expert-belt",
+      "moveIds": [
+        "drain-punch",
+        "mach-punch",
+        "ice-punch",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "whimsicott",
+      "abilityId": "prankster",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "moonblast",
+        "tailwind",
+        "encore",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "krookodile",
+      "abilityId": "intimidate",
+      "itemId": "black-glasses",
+      "moveIds": [
+        "earthquake",
+        "knock-off",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "cofagrigus",
+      "abilityId": "mummy",
+      "itemId": "spell-tag",
+      "moveIds": [
+        "shadow-ball",
+        "will-o-wisp",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "garbodor",
+      "abilityId": "weak-armor",
+      "itemId": "poison-barb",
+      "moveIds": [
+        "gunk-shot",
+        "toxic-spikes",
+        "drain-punch",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "reuniclus",
+      "abilityId": "magic-guard",
+      "itemId": "twisted-spoon",
+      "moveIds": [
+        "psychic",
+        "shadow-ball",
+        "recover",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "vanilluxe",
+      "abilityId": "snow-warning",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "blizzard",
+        "freeze-dry",
+        "flash-cannon",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "emolga",
+      "abilityId": "motor-drive",
+      "itemId": "magnet",
+      "moveIds": [
+        "thunderbolt",
+        "air-slash",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "beartic",
+      "abilityId": "slush-rush",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "icicle-crash",
+        "superpower",
+        "aqua-jet",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "stunfisk",
+      "abilityId": "static",
+      "itemId": "soft-sand",
+      "moveIds": [
+        "earth-power",
+        "discharge",
+        "yawn",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "hydreigon",
+      "abilityId": "levitate",
+      "itemId": "black-glasses",
+      "moveIds": [
+        "dark-pulse",
+        "draco-meteor",
+        "heat-wave",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "volcarona",
+      "abilityId": "flame-body",
+      "itemId": "life-orb",
+      "moveIds": [
+        "quiver-dance",
+        "heat-wave",
+        "bug-buzz",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "diggersby",
+      "abilityId": "huge-power",
+      "itemId": "soft-sand",
+      "moveIds": [
+        "high-horsepower",
+        "facade",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "talonflame",
+      "abilityId": "gale-wings",
+      "itemId": "life-orb",
+      "moveIds": [
+        "brave-bird",
+        "flare-blitz",
+        "tailwind",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "vivillon",
+      "abilityId": "compound-eyes",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "hurricane",
+        "bug-buzz",
+        "sleep-powder",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "florges",
+      "abilityId": "flower-veil",
+      "itemId": "leftovers",
+      "moveIds": [
+        "moonblast",
+        "wish",
+        "helping-hand",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "pangoro",
+      "abilityId": "scrappy",
+      "itemId": "black-glasses",
+      "moveIds": [
+        "knock-off",
+        "drain-punch",
+        "parting-shot",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "furfrou",
+      "abilityId": "fur-coat",
+      "itemId": "leftovers",
+      "moveIds": [
+        "facade",
+        "thunder-wave",
+        "u-turn",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "aromatisse",
+      "abilityId": "aroma-veil",
+      "itemId": "leftovers",
+      "moveIds": [
+        "moonblast",
+        "trick-room",
+        "helping-hand",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 32,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "slurpuff",
+      "abilityId": "unburden",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "play-rough",
+        "drain-punch",
+        "yawn",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "clawitzer",
+      "abilityId": "mega-launcher",
+      "itemId": "mystic-water",
+      "moveIds": [
+        "water-pulse",
+        "aura-sphere",
+        "dark-pulse",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "heliolisk",
+      "abilityId": "dry-skin",
+      "itemId": "magnet",
+      "moveIds": [
+        "thunderbolt",
+        "hyper-voice",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "tyrantrum",
+      "abilityId": "rock-head",
+      "itemId": "hard-stone",
+      "moveIds": [
+        "head-smash",
+        "dragon-claw",
+        "high-horsepower",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "aurorus",
+      "abilityId": "snow-warning",
+      "itemId": "never-melt-ice",
+      "moveIds": [
+        "blizzard",
+        "earth-power",
+        "light-screen",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "sylveon",
+      "abilityId": "pixilate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "hyper-voice",
+        "yawn",
+        "helping-hand",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "dedenne",
+      "abilityId": "cheek-pouch",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "nuzzle",
+        "parabolic-charge",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "goodra",
+      "abilityId": "sap-sipper",
+      "itemId": "leftovers",
+      "moveIds": [
+        "draco-meteor",
+        "flamethrower",
+        "muddy-water",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "klefki",
+      "abilityId": "prankster",
+      "itemId": "leftovers",
+      "moveIds": [
+        "thunder-wave",
+        "reflect",
+        "light-screen",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "trevenant",
+      "abilityId": "harvest",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "horn-leech",
+        "shadow-claw",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gourgeist",
+      "abilityId": "frisk",
+      "itemId": "leftovers",
+      "moveIds": [
+        "seed-bomb",
+        "shadow-sneak",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 32,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "avalugg",
+      "abilityId": "sturdy",
+      "itemId": "leftovers",
+      "moveIds": [
+        "avalanche",
+        "body-press",
+        "recover",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 2,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "noivern",
+      "abilityId": "infiltrator",
+      "itemId": "life-orb",
+      "moveIds": [
+        "draco-meteor",
+        "hurricane",
+        "heat-wave",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "incineroar",
+      "abilityId": "intimidate",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "flare-blitz",
+        "darkest-lariat",
+        "fake-out",
+        "parting-shot"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "toucannon",
+      "abilityId": "skill-link",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "bullet-seed",
+        "rock-blast",
+        "beak-blast",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "lycanroc-midday",
+      "abilityId": "sand-rush",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "accelerock",
+        "rock-slide",
+        "close-combat",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "toxapex",
+      "abilityId": "regenerator",
+      "itemId": "leftovers",
+      "moveIds": [
+        "chilling-water",
+        "recover",
+        "haze",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "mudsdale",
+      "abilityId": "stamina",
+      "itemId": "leftovers",
+      "moveIds": [
+        "high-horsepower",
+        "heavy-slam",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 2,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "araquanid",
+      "abilityId": "water-bubble",
+      "itemId": "leftovers",
+      "moveIds": [
+        "liquidation",
+        "leech-life",
+        "wide-guard",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "salazzle",
+      "abilityId": "corrosion",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "heat-wave",
+        "sludge-bomb",
+        "encore",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "tsareena",
+      "abilityId": "queenly-majesty",
+      "itemId": "life-orb",
+      "moveIds": [
+        "power-whip",
+        "triple-axel",
+        "high-jump-kick",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "oranguru",
+      "abilityId": "telepathy",
+      "itemId": "mental-herb",
+      "moveIds": [
+        "psychic",
+        "trick-room",
+        "instruct",
+        "protect"
+      ],
+      "natureId": "sassy",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "passimian",
+      "abilityId": "defiant",
+      "itemId": "choice-scarf",
+      "moveIds": [
+        "close-combat",
+        "knock-off",
+        "rock-slide",
+        "u-turn"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "kommo-o",
+      "abilityId": "bulletproof",
+      "itemId": "life-orb",
+      "moveIds": [
+        "clanging-scales",
+        "flamethrower",
+        "flash-cannon",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "corviknight",
+      "abilityId": "mirror-armor",
+      "itemId": "leftovers",
+      "moveIds": [
+        "brave-bird",
+        "body-press",
+        "tailwind",
+        "roost"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 32,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "flapple",
+      "abilityId": "hustle",
+      "itemId": "wide-lens",
+      "moveIds": [
+        "grav-apple",
+        "dragon-rush",
+        "u-turn",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "appletun",
+      "abilityId": "thick-fat",
+      "itemId": "leftovers",
+      "moveIds": [
+        "apple-acid",
+        "recover",
+        "leech-seed",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "sandaconda",
+      "abilityId": "sand-spit",
+      "itemId": "smooth-rock",
+      "moveIds": [
+        "high-horsepower",
+        "rock-slide",
+        "glare",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 2,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "polteageist",
+      "abilityId": "weak-armor",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "shadow-ball",
+        "giga-drain",
+        "shell-smash",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "hatterene",
+      "abilityId": "magic-bounce",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "psychic",
+        "dazzling-gleam",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 32,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "mr-rime",
+      "abilityId": "screen-cleaner",
+      "itemId": "light-clay",
+      "moveIds": [
+        "psychic",
+        "freeze-dry",
+        "fake-out",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "runerigus",
+      "abilityId": "wandering-spirit",
+      "itemId": "leftovers",
+      "moveIds": [
+        "earthquake",
+        "will-o-wisp",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 2,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "alcremie",
+      "abilityId": "aroma-veil",
+      "itemId": "leftovers",
+      "moveIds": [
+        "dazzling-gleam",
+        "mystical-fire",
+        "helping-hand",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 2,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "dragapult",
+      "abilityId": "infiltrator",
+      "itemId": "life-orb",
+      "moveIds": [
+        "draco-meteor",
+        "shadow-ball",
+        "flamethrower",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "raichu-alola",
+      "abilityId": "surge-surfer",
+      "itemId": "life-orb",
+      "moveIds": [
+        "thunderbolt",
+        "psychic",
+        "fake-out",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "ninetales-alola",
+      "abilityId": "snow-warning",
+      "itemId": "light-clay",
+      "moveIds": [
+        "aurora-veil",
+        "blizzard",
+        "moonblast",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "arcanine-hisui",
+      "abilityId": "intimidate",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "flare-blitz",
+        "rock-slide",
+        "extreme-speed",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "slowbro-galar",
+      "abilityId": "regenerator",
+      "itemId": "leftovers",
+      "moveIds": [
+        "shell-side-arm",
+        "psychic",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "tauros-paldea",
+      "abilityId": "intimidate",
+      "itemId": "life-orb",
+      "moveIds": [
+        "close-combat",
+        "raging-bull",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "tauros-paldea-aqua-breed",
+      "abilityId": "intimidate",
+      "itemId": "life-orb",
+      "moveIds": [
+        "close-combat",
+        "wave-crash",
+        "aqua-jet",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "tauros-paldea-blaze-breed",
+      "abilityId": "intimidate",
+      "itemId": "life-orb",
+      "moveIds": [
+        "close-combat",
+        "flare-blitz",
+        "raging-bull",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "typhlosion-hisui",
+      "abilityId": "frisk",
+      "itemId": "charcoal",
+      "moveIds": [
+        "eruption",
+        "shadow-ball",
+        "heat-wave",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "slowking-galar",
+      "abilityId": "regenerator",
+      "itemId": "leftovers",
+      "moveIds": [
+        "psychic",
+        "sludge-bomb",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "samurott-hisui",
+      "abilityId": "sharpness",
+      "itemId": "life-orb",
+      "moveIds": [
+        "ceaseless-edge",
+        "razor-shell",
+        "sacred-sword",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "stunfisk-galar",
+      "abilityId": "mimicry",
+      "itemId": "leftovers",
+      "moveIds": [
+        "earth-power",
+        "flash-cannon",
+        "stealth-rock",
+        "protect"
+      ],
+      "natureId": "calm",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 2,
+        "spd": 32,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "meowstic-female",
+      "abilityId": "competitive",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "psychic",
+        "energy-ball",
+        "thunderbolt",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "goodra-hisui",
+      "abilityId": "shell-armor",
+      "itemId": "leftovers",
+      "moveIds": [
+        "draco-meteor",
+        "flash-cannon",
+        "body-press",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 32,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "avalugg-hisui",
+      "abilityId": "sturdy",
+      "itemId": "leftovers",
+      "moveIds": [
+        "rock-slide",
+        "body-press",
+        "recover",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 2,
+        "def": 32,
+        "spa": 0,
+        "spd": 0,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "decidueye-hisui",
+      "abilityId": "scrappy",
+      "itemId": "life-orb",
+      "moveIds": [
+        "triple-arrows",
+        "leaf-blade",
+        "brave-bird",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "lycanroc-dusk",
+      "abilityId": "tough-claws",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "accelerock",
+        "close-combat",
+        "rock-slide",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "lycanroc-midnight",
+      "abilityId": "no-guard",
+      "itemId": "life-orb",
+      "moveIds": [
+        "stone-edge",
+        "close-combat",
+        "play-rough",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "wyrdeer",
+      "abilityId": "intimidate",
+      "itemId": "sitrus-berry",
+      "moveIds": [
+        "psyshield-bash",
+        "psychic",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "quiet",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "kleavor",
+      "abilityId": "sharpness",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "stone-axe",
+        "x-scissor",
+        "night-slash",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "basculegion",
+      "abilityId": "adaptability",
+      "itemId": "life-orb",
+      "moveIds": [
+        "wave-crash",
+        "last-respects",
+        "aqua-jet",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "basculegion-female",
+      "abilityId": "adaptability",
+      "itemId": "life-orb",
+      "moveIds": [
+        "hydro-pump",
+        "shadow-ball",
+        "ice-beam",
+        "protect"
+      ],
+      "natureId": "timid",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "sneasler",
+      "abilityId": "unburden",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "close-combat",
+        "dire-claw",
+        "fake-out",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "meowscarada",
+      "abilityId": "protean",
+      "itemId": "focus-sash",
+      "moveIds": [
+        "flower-trick",
+        "knock-off",
+        "u-turn",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "skeledirge",
+      "abilityId": "unaware",
+      "itemId": "leftovers",
+      "moveIds": [
+        "torch-song",
+        "shadow-ball",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "quaquaval",
+      "abilityId": "moxie",
+      "itemId": "life-orb",
+      "moveIds": [
+        "aqua-step",
+        "close-combat",
+        "ice-spinner",
+        "protect"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "garganacl",
+      "abilityId": "purifying-salt",
+      "itemId": "leftovers",
+      "moveIds": [
+        "salt-cure",
+        "body-press",
+        "recover",
+        "protect"
+      ],
+      "natureId": "impish",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 32,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "aegislash",
+      "abilityId": "stance-change",
+      "itemId": "leftovers",
+      "moveIds": [
+        "kings-shield",
+        "shadow-ball",
+        "sacred-sword",
+        "shadow-sneak"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "archaludon",
+      "abilityId": "stamina",
+      "itemId": "leftovers",
+      "moveIds": [
+        "electro-shot",
+        "flash-cannon",
+        "draco-meteor",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "armarouge",
+      "abilityId": "flash-fire",
+      "itemId": "leftovers",
+      "moveIds": [
+        "armor-cannon",
+        "psychic",
+        "aura-sphere",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "bellibolt",
+      "abilityId": "electromorphosis",
+      "itemId": "leftovers",
+      "moveIds": [
+        "parabolic-charge",
+        "thunderbolt",
+        "acid-spray",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "castform",
+      "abilityId": "forecast",
+      "itemId": "leftovers",
+      "moveIds": [
+        "weather-ball",
+        "sunny-day",
+        "rain-dance",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "ceruledge",
+      "abilityId": "flash-fire",
+      "itemId": "leftovers",
+      "moveIds": [
+        "bitter-blade",
+        "shadow-claw",
+        "close-combat",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "ditto",
+      "abilityId": "imposter",
+      "itemId": "choice-scarf",
+      "moveIds": [
+        "transform"
+      ],
+      "natureId": "jolly",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 2,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "espathra",
+      "abilityId": "speed-boost",
+      "itemId": "leftovers",
+      "moveIds": [
+        "lumina-crash",
+        "dazzling-gleam",
+        "calm-mind",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "farigiraf",
+      "abilityId": "armor-tail",
+      "itemId": "leftovers",
+      "moveIds": [
+        "twin-beam",
+        "hyper-voice",
+        "trick-room",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gourgeist-jumbo",
+      "abilityId": "frisk",
+      "itemId": "leftovers",
+      "moveIds": [
+        "power-whip",
+        "shadow-sneak",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gourgeist-large",
+      "abilityId": "frisk",
+      "itemId": "leftovers",
+      "moveIds": [
+        "power-whip",
+        "shadow-sneak",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "gourgeist-small",
+      "abilityId": "frisk",
+      "itemId": "leftovers",
+      "moveIds": [
+        "power-whip",
+        "shadow-sneak",
+        "will-o-wisp",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "hydrapple",
+      "abilityId": "regenerator",
+      "itemId": "leftovers",
+      "moveIds": [
+        "fickle-beam",
+        "giga-drain",
+        "earth-power",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "kingambit",
+      "abilityId": "supreme-overlord",
+      "itemId": "leftovers",
+      "moveIds": [
+        "kowtow-cleave",
+        "sucker-punch",
+        "iron-head",
+        "swords-dance"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "maushold",
+      "abilityId": "technician",
+      "itemId": "leftovers",
+      "moveIds": [
+        "population-bomb",
+        "tidy-up",
+        "play-rough",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "mimikyu",
+      "abilityId": "disguise",
+      "itemId": "leftovers",
+      "moveIds": [
+        "play-rough",
+        "shadow-sneak",
+        "swords-dance",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "morpeko",
+      "abilityId": "hunger-switch",
+      "itemId": "leftovers",
+      "moveIds": [
+        "aura-wheel",
+        "parting-shot",
+        "fake-out",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "orthworm",
+      "abilityId": "earth-eater",
+      "itemId": "leftovers",
+      "moveIds": [
+        "body-press",
+        "iron-defense",
+        "shed-tail",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 32,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "palafin",
+      "abilityId": "zero-to-hero",
+      "itemId": "leftovers",
+      "moveIds": [
+        "jet-punch",
+        "flip-turn",
+        "wave-crash",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rotom",
+      "abilityId": "levitate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "thunderbolt",
+        "shadow-ball",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rotom-fan",
+      "abilityId": "levitate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "air-slash",
+        "thunderbolt",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rotom-frost",
+      "abilityId": "levitate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "blizzard",
+        "thunderbolt",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rotom-heat",
+      "abilityId": "levitate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "overheat",
+        "thunderbolt",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rotom-mow",
+      "abilityId": "levitate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "leaf-storm",
+        "thunderbolt",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "rotom-wash",
+      "abilityId": "levitate",
+      "itemId": "leftovers",
+      "moveIds": [
+        "hydro-pump",
+        "thunderbolt",
+        "volt-switch",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "sinistcha",
+      "abilityId": "hospitality",
+      "itemId": "leftovers",
+      "moveIds": [
+        "matcha-gotcha",
+        "shadow-ball",
+        "strength-sap",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 32,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 2,
+        "spe": 0
+      }
+    },
+    {
+      "speciesId": "tinkaton",
+      "abilityId": "mold-breaker",
+      "itemId": "leftovers",
+      "moveIds": [
+        "gigaton-hammer",
+        "play-rough",
+        "fake-out",
+        "protect"
+      ],
+      "natureId": "adamant",
+      "statPoints": {
+        "hp": 2,
+        "atk": 32,
+        "def": 0,
+        "spa": 0,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "zoroark",
+      "abilityId": "illusion",
+      "itemId": "leftovers",
+      "moveIds": [
+        "dark-pulse",
+        "flamethrower",
+        "nasty-plot",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    },
+    {
+      "speciesId": "zoroark-hisui",
+      "abilityId": "illusion",
+      "itemId": "leftovers",
+      "moveIds": [
+        "shadow-ball",
+        "hyper-voice",
+        "nasty-plot",
+        "protect"
+      ],
+      "natureId": "modest",
+      "statPoints": {
+        "hp": 2,
+        "atk": 0,
+        "def": 0,
+        "spa": 32,
+        "spd": 0,
+        "spe": 32
+      }
+    }
+  ],
+  "enabledContent": {
+    "moveIds": [
+      "accelerock",
+      "acid-armor",
+      "acid-spray",
+      "acrobatics",
+      "acupressure",
+      "aerial-ace",
+      "after-you",
+      "agility",
+      "air-cutter",
+      "air-slash",
+      "alluring-voice",
+      "ally-switch",
+      "amnesia",
+      "ancient-power",
+      "apple-acid",
+      "aqua-cutter",
+      "aqua-jet",
+      "aqua-ring",
+      "aqua-step",
+      "aqua-tail",
+      "armor-cannon",
+      "aromatic-mist",
+      "assurance",
+      "attract",
+      "aura-sphere",
+      "aura-wheel",
+      "aurora-veil",
+      "avalanche",
+      "axe-kick",
+      "baby-doll-eyes",
+      "baneful-bunker",
+      "baton-pass",
+      "beak-blast",
+      "beat-up",
+      "belch",
+      "belly-drum",
+      "bind",
+      "bite",
+      "bitter-blade",
+      "bitter-malice",
+      "blast-burn",
+      "blaze-kick",
+      "blizzard",
+      "block",
+      "body-press",
+      "body-slam",
+      "bone-rush",
+      "boomburst",
+      "bounce",
+      "brave-bird",
+      "breaking-swipe",
+      "brick-break",
+      "brutal-swing",
+      "bug-bite",
+      "bug-buzz",
+      "bulk-up",
+      "bulldoze",
+      "bullet-punch",
+      "bullet-seed",
+      "burn-up",
+      "burning-jealousy",
+      "calm-mind",
+      "ceaseless-edge",
+      "charge",
+      "charge-beam",
+      "charm",
+      "chilling-water",
+      "chilly-reception",
+      "circle-throw",
+      "clanging-scales",
+      "clangorous-soul",
+      "clear-smog",
+      "close-combat",
+      "coaching",
+      "coil",
+      "comeuppance",
+      "confuse-ray",
+      "copycat",
+      "corrosive-gas",
+      "cosmic-power",
+      "cotton-guard",
+      "cotton-spore",
+      "counter",
+      "covet",
+      "crabhammer",
+      "cross-chop",
+      "cross-poison",
+      "crunch",
+      "crush-claw",
+      "curse",
+      "dark-pulse",
+      "darkest-lariat",
+      "dazzling-gleam",
+      "decorate",
+      "defog",
+      "destiny-bond",
+      "detect",
+      "dig",
+      "dire-claw",
+      "disable",
+      "discharge",
+      "dive",
+      "double-edge",
+      "double-hit",
+      "double-team",
+      "draco-meteor",
+      "dragon-cheer",
+      "dragon-claw",
+      "dragon-dance",
+      "dragon-darts",
+      "dragon-pulse",
+      "dragon-rush",
+      "dragon-tail",
+      "drain-punch",
+      "draining-kiss",
+      "drill-peck",
+      "drill-run",
+      "dual-wingbeat",
+      "dynamic-punch",
+      "earth-power",
+      "earthquake",
+      "eerie-impulse",
+      "eerie-spell",
+      "electric-terrain",
+      "electrify",
+      "electro-ball",
+      "electro-shot",
+      "electroweb",
+      "encore",
+      "endeavor",
+      "endure",
+      "energy-ball",
+      "entrainment",
+      "eruption",
+      "expanding-force",
+      "explosion",
+      "extrasensory",
+      "extreme-speed",
+      "facade",
+      "fairy-lock",
+      "fake-out",
+      "fake-tears",
+      "feather-dance",
+      "feint",
+      "fell-stinger",
+      "fickle-beam",
+      "fiery-dance",
+      "final-gambit",
+      "fire-blast",
+      "fire-fang",
+      "fire-lash",
+      "fire-punch",
+      "fire-spin",
+      "first-impression",
+      "fissure",
+      "flail",
+      "flame-charge",
+      "flamethrower",
+      "flare-blitz",
+      "flash-cannon",
+      "flatter",
+      "fling",
+      "flip-turn",
+      "flower-trick",
+      "fly",
+      "flying-press",
+      "focus-blast",
+      "focus-energy",
+      "focus-punch",
+      "follow-me",
+      "forests-curse",
+      "foul-play",
+      "freeze-dry",
+      "frenzy-plant",
+      "frost-breath",
+      "future-sight",
+      "gastro-acid",
+      "giga-drain",
+      "giga-impact",
+      "gigaton-hammer",
+      "glare",
+      "grass-knot",
+      "grassy-glide",
+      "grassy-terrain",
+      "grav-apple",
+      "gravity",
+      "growth",
+      "guard-split",
+      "guard-swap",
+      "guillotine",
+      "gunk-shot",
+      "gyro-ball",
+      "hammer-arm",
+      "hard-press",
+      "haze",
+      "head-smash",
+      "headlong-rush",
+      "heal-bell",
+      "heal-pulse",
+      "healing-wish",
+      "heat-crash",
+      "heat-wave",
+      "heavy-slam",
+      "helping-hand",
+      "hex",
+      "high-horsepower",
+      "high-jump-kick",
+      "horn-drill",
+      "horn-leech",
+      "howl",
+      "hurricane",
+      "hydro-cannon",
+      "hydro-pump",
+      "hyper-beam",
+      "hyper-voice",
+      "hypnosis",
+      "ice-beam",
+      "ice-fang",
+      "ice-hammer",
+      "ice-punch",
+      "ice-shard",
+      "ice-spinner",
+      "icicle-crash",
+      "icicle-spear",
+      "icy-wind",
+      "imprison",
+      "infernal-parade",
+      "inferno",
+      "infestation",
+      "ingrain",
+      "instruct",
+      "iron-defense",
+      "iron-head",
+      "iron-tail",
+      "jet-punch",
+      "kings-shield",
+      "knock-off",
+      "kowtow-cleave",
+      "lash-out",
+      "last-resort",
+      "last-respects",
+      "lava-plume",
+      "leaf-blade",
+      "leaf-storm",
+      "leech-life",
+      "leech-seed",
+      "life-dew",
+      "light-of-ruin",
+      "light-screen",
+      "liquidation",
+      "lock-on",
+      "low-kick",
+      "low-sweep",
+      "lumina-crash",
+      "lunge",
+      "mach-punch",
+      "magic-powder",
+      "magic-room",
+      "magnet-rise",
+      "magnetic-flux",
+      "matcha-gotcha",
+      "mean-look",
+      "mega-kick",
+      "megahorn",
+      "memento",
+      "metal-burst",
+      "metal-sound",
+      "meteor-beam",
+      "meteor-mash",
+      "minimize",
+      "mirror-coat",
+      "misty-explosion",
+      "misty-terrain",
+      "moonblast",
+      "moonlight",
+      "morning-sun",
+      "mortal-spin",
+      "mountain-gale",
+      "mud-shot",
+      "mud-slap",
+      "muddy-water",
+      "mystical-fire",
+      "nasty-plot",
+      "night-daze",
+      "night-shade",
+      "night-slash",
+      "noble-roar",
+      "nuzzle",
+      "outrage",
+      "overheat",
+      "pain-split",
+      "parabolic-charge",
+      "parting-shot",
+      "payback",
+      "perish-song",
+      "petal-blizzard",
+      "petal-dance",
+      "phantom-force",
+      "pin-missile",
+      "play-rough",
+      "pluck",
+      "poison-fang",
+      "poison-jab",
+      "poison-powder",
+      "pollen-puff",
+      "poltergeist",
+      "population-bomb",
+      "pounce",
+      "power-gem",
+      "power-split",
+      "power-swap",
+      "power-trick",
+      "power-trip",
+      "power-whip",
+      "protect",
+      "psych-up",
+      "psychic",
+      "psychic-fangs",
+      "psychic-noise",
+      "psychic-terrain",
+      "psycho-cut",
+      "psyshield-bash",
+      "psyshock",
+      "quash",
+      "quick-attack",
+      "quick-guard",
+      "quiver-dance",
+      "rage-powder",
+      "raging-bull",
+      "raging-fury",
+      "rain-dance",
+      "rapid-spin",
+      "razor-shell",
+      "recover",
+      "recycle",
+      "reflect",
+      "reflect-type",
+      "rest",
+      "reversal",
+      "rising-voltage",
+      "roar",
+      "rock-blast",
+      "rock-polish",
+      "rock-slide",
+      "rock-tomb",
+      "rock-wrecker",
+      "role-play",
+      "roost",
+      "round",
+      "sacred-sword",
+      "safeguard",
+      "salt-cure",
+      "sand-tomb",
+      "sandstorm",
+      "scald",
+      "scale-shot",
+      "scary-face",
+      "scorching-sands",
+      "screech",
+      "seed-bomb",
+      "seismic-toss",
+      "self-destruct",
+      "shadow-ball",
+      "shadow-claw",
+      "shadow-punch",
+      "shadow-sneak",
+      "shed-tail",
+      "sheer-cold",
+      "shell-side-arm",
+      "shell-smash",
+      "shelter",
+      "simple-beam",
+      "sing",
+      "skill-swap",
+      "skitter-smack",
+      "sky-attack",
+      "slack-off",
+      "slash",
+      "sleep-powder",
+      "sleep-talk",
+      "sludge-bomb",
+      "sludge-wave",
+      "smack-down",
+      "smart-strike",
+      "snap-trap",
+      "snarl",
+      "snore",
+      "snowscape",
+      "soak",
+      "solar-beam",
+      "solar-blade",
+      "sparkling-aria",
+      "speed-swap",
+      "spicy-extract",
+      "spikes",
+      "spiky-shield",
+      "spirit-shackle",
+      "spit-up",
+      "spite",
+      "stealth-rock",
+      "steel-beam",
+      "steel-roller",
+      "steel-wing",
+      "sticky-web",
+      "stockpile",
+      "stomping-tantrum",
+      "stone-axe",
+      "stone-edge",
+      "stored-power",
+      "storm-throw",
+      "strength-sap",
+      "string-shot",
+      "struggle-bug",
+      "stuff-cheeks",
+      "stun-spore",
+      "substitute",
+      "sucker-punch",
+      "sunny-day",
+      "super-fang",
+      "supercell-slam",
+      "superpower",
+      "surf",
+      "swagger",
+      "swallow",
+      "sweet-kiss",
+      "sweet-scent",
+      "switcheroo",
+      "swords-dance",
+      "synthesis",
+      "syrup-bomb",
+      "tail-slap",
+      "tailwind",
+      "taunt",
+      "tearful-look",
+      "teatime",
+      "teeter-dance",
+      "temper-flare",
+      "terrain-pulse",
+      "thief",
+      "thrash",
+      "throat-chop",
+      "thunder",
+      "thunder-fang",
+      "thunder-punch",
+      "thunder-wave",
+      "thunderbolt",
+      "tickle",
+      "tidy-up",
+      "torch-song",
+      "torment",
+      "toxic",
+      "toxic-spikes",
+      "toxic-thread",
+      "trailblaze",
+      "transform",
+      "tri-attack",
+      "trick",
+      "trick-or-treat",
+      "trick-room",
+      "triple-arrows",
+      "triple-axel",
+      "trop-kick",
+      "twin-beam",
+      "u-turn",
+      "upper-hand",
+      "uproar",
+      "vacuum-wave",
+      "venoshock",
+      "volt-switch",
+      "volt-tackle",
+      "water-pulse",
+      "water-shuriken",
+      "water-spout",
+      "waterfall",
+      "wave-crash",
+      "weather-ball",
+      "whirlpool",
+      "whirlwind",
+      "wide-guard",
+      "wild-charge",
+      "will-o-wisp",
+      "wish",
+      "wonder-room",
+      "wood-hammer",
+      "worry-seed",
+      "wrap",
+      "x-scissor",
+      "yawn",
+      "zap-cannon",
+      "zen-headbutt"
+    ],
+    "abilityIds": [
+      "adaptability",
+      "aftermath",
+      "analytic",
+      "anger-point",
+      "anticipation",
+      "armor-tail",
+      "aroma-veil",
+      "berserk",
+      "big-pecks",
+      "blaze",
+      "bulletproof",
+      "cheek-pouch",
+      "chlorophyll",
+      "clear-body",
+      "cloud-nine",
+      "competitive",
+      "compound-eyes",
+      "contrary",
+      "corrosion",
+      "cud-chew",
+      "curious-medicine",
+      "cursed-body",
+      "cute-charm",
+      "damp",
+      "defiant",
+      "disguise",
+      "drizzle",
+      "drought",
+      "dry-skin",
+      "early-bird",
+      "earth-eater",
+      "electromorphosis",
+      "flame-body",
+      "flash-fire",
+      "flower-veil",
+      "forecast",
+      "friend-guard",
+      "frisk",
+      "fur-coat",
+      "gale-wings",
+      "gluttony",
+      "gooey",
+      "guts",
+      "harvest",
+      "healer",
+      "heatproof",
+      "heavy-metal",
+      "hospitality",
+      "huge-power",
+      "hunger-switch",
+      "hustle",
+      "hydration",
+      "hyper-cutter",
+      "ice-body",
+      "illuminate",
+      "illusion",
+      "immunity",
+      "imposter",
+      "infiltrator",
+      "inner-focus",
+      "insomnia",
+      "intimidate",
+      "iron-fist",
+      "justified",
+      "keen-eye",
+      "klutz",
+      "leaf-guard",
+      "levitate",
+      "light-metal",
+      "lightning-rod",
+      "limber",
+      "liquid-voice",
+      "long-reach",
+      "magic-bounce",
+      "magic-guard",
+      "magician",
+      "magma-armor",
+      "marvel-scale",
+      "mega-launcher",
+      "merciless",
+      "mimicry",
+      "minus",
+      "mirror-armor",
+      "mold-breaker",
+      "moody",
+      "motor-drive",
+      "moxie",
+      "multiscale",
+      "mummy",
+      "natural-cure",
+      "no-guard",
+      "oblivious",
+      "opportunist",
+      "overcoat",
+      "overgrow",
+      "own-tempo",
+      "pickpocket",
+      "pickup",
+      "pixilate",
+      "plus",
+      "poison-heal",
+      "poison-point",
+      "poison-touch",
+      "prankster",
+      "pressure",
+      "protean",
+      "pure-power",
+      "purifying-salt",
+      "queenly-majesty",
+      "quick-draw",
+      "quick-feet",
+      "rain-dish",
+      "receiver",
+      "reckless",
+      "refrigerate",
+      "regenerator",
+      "ripen",
+      "rivalry",
+      "rock-head",
+      "rough-skin",
+      "sand-force",
+      "sand-rush",
+      "sand-spit",
+      "sand-stream",
+      "sand-veil",
+      "sap-sipper",
+      "scrappy",
+      "screen-cleaner",
+      "sharpness",
+      "shed-skin",
+      "sheer-force",
+      "shell-armor",
+      "shield-dust",
+      "skill-link",
+      "slush-rush",
+      "sniper",
+      "snow-cloak",
+      "snow-warning",
+      "solar-power",
+      "solid-rock",
+      "soundproof",
+      "speed-boost",
+      "stall",
+      "stalwart",
+      "stamina",
+      "stance-change",
+      "static",
+      "steadfast",
+      "stench",
+      "sticky-hold",
+      "strong-jaw",
+      "sturdy",
+      "super-luck",
+      "supersweet-syrup",
+      "supreme-overlord",
+      "surge-surfer",
+      "swarm",
+      "sweet-veil",
+      "swift-swim",
+      "symbiosis",
+      "synchronize",
+      "tangled-feet",
+      "technician",
+      "telepathy",
+      "thick-fat",
+      "torrent",
+      "tough-claws",
+      "toxic-debris",
+      "trace",
+      "unaware",
+      "unburden",
+      "unnerve",
+      "vital-spirit",
+      "volt-absorb",
+      "wandering-spirit",
+      "water-absorb",
+      "water-bubble",
+      "weak-armor",
+      "white-smoke",
+      "zero-to-hero"
+    ],
+    "itemIds": [
+      "heat-rock",
+      "damp-rock",
+      "light-clay",
+      "terrain-extender",
+      "leftovers",
+      "sitrus-berry",
+      "focus-sash",
+      "lum-berry",
+      "cheri-berry",
+      "chesto-berry",
+      "pecha-berry",
+      "rawst-berry",
+      "aspear-berry",
+      "persim-berry",
+      "life-orb",
+      "rocky-helmet",
+      "shell-bell",
+      "choice-scarf",
+      "white-herb",
+      "occa-berry",
+      "passho-berry",
+      "wacan-berry",
+      "rindo-berry",
+      "yache-berry",
+      "chople-berry",
+      "kebia-berry",
+      "shuca-berry",
+      "coba-berry",
+      "payapa-berry",
+      "tanga-berry",
+      "charti-berry",
+      "kasib-berry",
+      "haban-berry",
+      "colbur-berry",
+      "babiri-berry",
+      "roseli-berry",
+      "chilan-berry",
+      "black-glasses",
+      "hard-stone",
+      "magnet",
+      "never-melt-ice",
+      "poison-barb",
+      "silk-scarf",
+      "soft-sand",
+      "spell-tag",
+      "twisted-spoon",
+      "expert-belt",
+      "wide-lens",
+      "oran-berry",
+      "bright-powder",
+      "scope-lens",
+      "focus-band",
+      "air-balloon",
+      "big-root",
+      "electric-seed",
+      "grassy-seed",
+      "misty-seed",
+      "psychic-seed",
+      "iron-ball",
+      "leppa-berry",
+      "normal-gem",
+      "red-card",
+      "zoom-lens",
+      "kings-rock",
+      "metronome",
+      "light-ball",
+      "leek",
+      "mental-herb",
+      "quick-claw",
+      "icy-rock",
+      "smooth-rock"
+    ]
+  },
+  "completeSpeciesIds": [
+    "abomasnow",
+    "absol",
+    "aegislash",
+    "aerodactyl",
+    "aggron",
+    "alakazam",
+    "alcremie",
+    "altaria",
+    "ampharos",
+    "appletun",
+    "araquanid",
+    "arbok",
+    "arcanine",
+    "arcanine-hisui",
+    "archaludon",
+    "ariados",
+    "armarouge",
+    "aromatisse",
+    "audino",
+    "aurorus",
+    "avalugg",
+    "avalugg-hisui",
+    "azumarill",
+    "banette",
+    "basculegion",
+    "basculegion-female",
+    "bastiodon",
+    "beartic",
+    "beedrill",
+    "bellibolt",
+    "blastoise",
+    "camerupt",
+    "castform",
+    "ceruledge",
+    "chandelure",
+    "charizard",
+    "chesnaught",
+    "chimecho",
+    "clawitzer",
+    "clefable",
+    "cofagrigus",
+    "conkeldurr",
+    "corviknight",
+    "crabominable",
+    "decidueye",
+    "decidueye-hisui",
+    "dedenne",
+    "delphox",
+    "diggersby",
+    "ditto",
+    "dragapult",
+    "dragonite",
+    "drampa",
+    "emboar",
+    "emolga",
+    "empoleon",
+    "espathra",
+    "espeon",
+    "excadrill",
+    "farigiraf",
+    "feraligatr",
+    "flapple",
+    "flareon",
+    "floette",
+    "florges",
+    "forretress",
+    "froslass",
+    "furfrou",
+    "gallade",
+    "garbodor",
+    "garchomp",
+    "gardevoir",
+    "garganacl",
+    "gengar",
+    "glaceon",
+    "glalie",
+    "glimmora",
+    "gliscor",
+    "golurk",
+    "goodra",
+    "goodra-hisui",
+    "gourgeist",
+    "gourgeist-jumbo",
+    "gourgeist-large",
+    "gourgeist-small",
+    "greninja",
+    "gyarados",
+    "hatterene",
+    "hawlucha",
+    "heliolisk",
+    "heracross",
+    "hippowdon",
+    "houndoom",
+    "hydrapple",
+    "hydreigon",
+    "incineroar",
+    "infernape",
+    "jolteon",
+    "kangaskhan",
+    "kingambit",
+    "kleavor",
+    "klefki",
+    "kommo-o",
+    "krookodile",
+    "leafeon",
+    "liepard",
+    "lopunny",
+    "lucario",
+    "luxray",
+    "lycanroc-dusk",
+    "lycanroc-midday",
+    "lycanroc-midnight",
+    "machamp",
+    "mamoswine",
+    "manectric",
+    "maushold",
+    "medicham",
+    "meganium",
+    "meowscarada",
+    "meowstic",
+    "meowstic-female",
+    "milotic",
+    "mimikyu",
+    "morpeko",
+    "mr-rime",
+    "mudsdale",
+    "ninetales",
+    "ninetales-alola",
+    "noivern",
+    "oranguru",
+    "orthworm",
+    "palafin",
+    "pangoro",
+    "passimian",
+    "pelipper",
+    "pidgeot",
+    "pikachu",
+    "pinsir",
+    "politoed",
+    "polteageist",
+    "primarina",
+    "quaquaval",
+    "raichu",
+    "raichu-alola",
+    "rampardos",
+    "reuniclus",
+    "rhyperior",
+    "roserade",
+    "rotom",
+    "rotom-fan",
+    "rotom-frost",
+    "rotom-heat",
+    "rotom-mow",
+    "rotom-wash",
+    "runerigus",
+    "sableye",
+    "salazzle",
+    "samurott",
+    "samurott-hisui",
+    "sandaconda",
+    "scizor",
+    "scovillain",
+    "serperior",
+    "sharpedo",
+    "simipour",
+    "simisage",
+    "simisear",
+    "sinistcha",
+    "skarmory",
+    "skeledirge",
+    "slowbro",
+    "slowbro-galar",
+    "slowking",
+    "slowking-galar",
+    "slurpuff",
+    "sneasler",
+    "snorlax",
+    "spiritomb",
+    "starmie",
+    "steelix",
+    "stunfisk",
+    "stunfisk-galar",
+    "sylveon",
+    "talonflame",
+    "tauros",
+    "tauros-paldea",
+    "tauros-paldea-aqua-breed",
+    "tauros-paldea-blaze-breed",
+    "tinkaton",
+    "torkoal",
+    "torterra",
+    "toucannon",
+    "toxapex",
+    "toxicroak",
+    "trevenant",
+    "tsareena",
+    "typhlosion",
+    "typhlosion-hisui",
+    "tyranitar",
+    "tyrantrum",
+    "umbreon",
+    "vanilluxe",
+    "vaporeon",
+    "venusaur",
+    "victreebel",
+    "vivillon",
+    "volcarona",
+    "watchog",
+    "weavile",
+    "whimsicott",
+    "wyrdeer",
+    "zoroark",
+    "zoroark-hisui"
+  ]
+}

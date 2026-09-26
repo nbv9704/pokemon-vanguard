@@ -5,9 +5,10 @@ import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
 import { meta, setup, validateAction, applyAction, viewFor } from './src/logic.js';
 import { JsonAdventureStorage } from './server/storage-json.mjs';
+import {HybridAdventureStorage,SupabaseAdventureStorage} from './server/storage-supabase.mjs';
 import { publicV2Catalog, v2Catalog } from './server/v2-catalog.mjs';
 import {publicV3Catalog,v3Catalog} from './server/v3-catalog.mjs';
-import {applyV3ProgressionAction,v3TrainingView} from './server/v3-progression.mjs';
+import {applyV3ProgressionAction,v3TrainingCost,v3TrainingView} from './server/v3-progression.mjs';
 import {upgradeAdventureToV3} from './server/v3-release.mjs';
 import {applyV3BattleAction} from './server/v3-battle-actions.mjs';
 import {v3BattleView} from './server/v3-battle-view.mjs';
@@ -21,20 +22,34 @@ import {applyV2RecruitmentAction,isV2RecruitmentAction,v2RecruitmentView} from '
 import {prepareRecruitmentState} from './server/v2-recruitment-state.mjs';
 import {applyV3RecruitmentAction,isV3RecruitmentAction,v3RecruitmentView} from './server/v3-recruitment.mjs';
 import {prepareV3RecruitmentState} from './server/v3-recruitment-state.mjs';
-import {reconcileV3BattleAfterTeamSave} from './server/v3-battle-session.mjs';
+import {reconcileV3BattleAfterTeamSave,reconcileV3BattlePresentation} from './server/v3-battle-session.mjs';
+import {applyEconomyTransaction,ensureEconomyState} from './server/v2-economy-ledger.mjs';
+import {createLocalAuth} from './server/local-auth.mjs';
+import {applyMissionAction,ensureMissionState,isMissionAction,missionView,recordMissionEvent} from './server/missions.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
+export const BETA_TEST_WALLET=Object.freeze({coins:999999,crystals:999999,recruitmentTickets:999});
+export function ensureBetaTestWallet(state){
+  if(!state?.progressionV3)return false;
+  ensureEconomyState(state);let changed=false;
+  for(const [currency,floor] of Object.entries(BETA_TEST_WALLET))if(state.wallet[currency]<floor){state.wallet[currency]=floor;changed=true;}
+  state.coins=state.wallet.coins;state.gems=state.wallet.crystals;state.recruitmentTickets=state.wallet.recruitmentTickets;
+  if(state.betaTestWalletVersion!==1){state.betaTestWalletVersion=1;changed=true;}
+  return changed;
+}
   const mime = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif', '.json':'application/json', '.woff2':'font/woff2' };
 async function readJsonBody(req,maxBytes=32*1024){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>maxBytes)throw Object.assign(new Error('Request too large'),{statusCode:413});chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString('utf8'));}
 
-export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock() } = {}) {
+export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock(), betaTestFunds = false, authRequired = false, authEnv = process.env, authFetch = fetch, storageFetch = fetch } = {}) {
   const rooms = new Map();
-  const storage = new JsonAdventureStorage(saveDir);
+  const storage = new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})});
+  const auth=createLocalAuth({env:authEnv,fetchImpl:authFetch});
   const migrationBackups=path.join(path.resolve(saveDir),'.migration-backups');
   const publicDir = path.join(root, 'public');
   const server = http.createServer(async (req, res) => {
     try {
-      const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
+      const url=new URL(req.url,`http://${req.headers.host||'localhost'}`);if(await auth.handle(req,res,url))return;
+      const pathname = decodeURIComponent(url.pathname);
       if(pathname==='/api/v2/damage'){
         if(req.method!=='POST'){res.writeHead(405);return res.end();}
         const result=inspectV2Damage(await readJsonBody(req),v2Catalog);res.writeHead(result.ok?200:400,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});return res.end(JSON.stringify(result));
@@ -57,32 +72,37 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   });
   const wss = new WebSocketServer({ noServer:true, maxPayload:70 * 1024 });
   server.on('upgrade', (req, socket, head) => {
-    let match, validOrigin = false;
+    let match, validOrigin = false,session=null;
     try {
       match = /^\/ws\/([A-Za-z0-9_-]{1,64})$/.exec(new URL(req.url, 'http://localhost').pathname);
       validOrigin = !req.headers.origin || new URL(req.headers.origin).host === req.headers.host;
+      session=auth.readSession(req);
     } catch {}
-    if (!match || !validOrigin) {
+    if (!match || !validOrigin || authRequired&&!session) {
+      socket.end(`HTTP/1.1 ${authRequired&&!session?'401 Unauthorized':'403 Forbidden'}\r\n\r\n`); return;
+    }
+    if(session&&match[1]!==session.roomId){
       socket.end('HTTP/1.1 403 Forbidden\r\n\r\n'); return;
     }
-    wss.handleUpgrade(req, socket, head, ws => wss.emit('connection', ws, match[1]));
+    wss.handleUpgrade(req, socket, head, ws => wss.emit('connection', ws, {name:match[1],session}));
   });
   const send = (ws, message) => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(message)); };
   const broadcast = room => {
     const serverNow=clock.now();
     for (const [ws, player] of room.clients) {
       const legacyView=viewFor(room.state,player);
-      const {rngState,rewardReceipts,economyLedger,actionReceipts,recruitmentV2:_privateRecruitmentV2,recruitmentV3:_privateRecruitmentV3,progressionV3:_privateProgressionV3,legacyV2Archive,clockV2,mons,builds,teams,blueprints,nextMonId,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
+      const {rngState,rewardReceipts,economyLedger,actionReceipts,missionsV1:_privateMissions,recruitmentV2:_privateRecruitmentV2,recruitmentV3:_privateRecruitmentV3,progressionV3:_privateProgressionV3,legacyV2Archive,clockV2,mons,builds,teams,blueprints,nextMonId,nextBuildId,nextTeamId,nextBlueprintId,...publicAdventure}=legacyView;
       const recruitmentV2=v2RecruitmentView(room.state,v2Catalog,{serverNow}),viewNow=recruitmentV2?.effectiveNow??serverNow;
       const recruitmentV3=v3RecruitmentView(room.state,v3Catalog,{serverNow});
-      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,recruitmentV2,recruitmentV3,battleV2:v2BattleView(room.state,v2Catalog),battleV3:v3BattleView(room.state)};
+      const view=legacyView.spectator?{spectator:true}:{...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,missions:missionView(room.state,serverNow),trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,recruitmentV2,recruitmentV3,battleV2:v2BattleView(room.state,v2Catalog),battleV3:v3BattleView(room.state)};
       send(ws, { type:'state', status:'playing', seats:[room.state.owner], you:player, connected:room.clients.size, view, result:null, meta });
     }
   };
   async function persist(name, state) {
     await storage.save(name,state);
   }
-  wss.on('connection', (ws, name) => {
+  wss.on('connection', (ws, identity) => {
+    const {name,session}=identity;
     if (!rooms.has(name)) rooms.set(name, { state:null, clients:new Map(), queue:Promise.resolve() });
     const room = rooms.get(name);
     ws.on('error', () => {});
@@ -95,6 +115,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         if (!message || typeof message !== 'object' || Array.isArray(message)) return fail('expected a json object');
         if (message.type === 'join') {
           if (typeof message.playerId !== 'string' || !message.playerId.trim() || message.playerId.length > 128) return fail('playerId required');
+          if(session&&message.playerId!==session.playerId)return fail('AUTH_IDENTITY_MISMATCH');
           if (room.clients.has(ws)) return fail('already joined');
           if (!room.state) {
             const loaded=await storage.load(name);
@@ -102,7 +123,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
             else if(!loaded.battle){let base=loaded;if((loaded.schemaVersion||1)<2){const v2=upgradeAdventure(loaded,v2Catalog);base=v2.state;}const upgraded=upgradeAdventureToV3(base,v3Catalog);if(['migrated','catalog-upgraded'].includes(upgraded.status)){await storage.backup(name,migrationBackups,'pre-v3-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=upgraded.state;}
             else room.state=loaded;
           }
-          if((room.state.schemaVersion||1)>=2)prepareRecruitmentState(room.state,v2Catalog,clock.now());if(room.state.progressionV3)prepareV3RecruitmentState(room.state,v3Catalog,clock.now());await persist(name,room.state);
+          if(betaTestFunds)ensureBetaTestWallet(room.state);if((room.state.schemaVersion||1)>=2)prepareRecruitmentState(room.state,v2Catalog,clock.now());if(room.state.progressionV3)prepareV3RecruitmentState(room.state,v3Catalog,clock.now());ensureMissionState(room.state,clock.now(),{login:true});room.state=reconcileV3BattlePresentation(room.state,v3Catalog).state;await persist(name,room.state);
           room.clients.set(ws,message.playerId); broadcast(room); return;
         }
         const player = room.clients.get(ws);
@@ -114,18 +135,27 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if((room.state.schemaVersion||1)>=2||!room.state.battle?.result)return fail('NO_LEGACY_RESULT');
           await storage.backup(name,migrationBackups,'pre-v2-schema');const upgraded=upgradeAdventure(room.state,v2Catalog);await persist(name,upgraded.state);room.state=upgraded.state;broadcast(room);return;
         }
-        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||isV3RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')||message.action?.type?.startsWith('battleV3.')))return fail('LEGACY_BATTLE_ACTIVE');
-        if(['buildV3.save','teamV3.save'].includes(message.action?.type)){
+        if(isMissionAction(message.action)){
+          const result=applyMissionAction(room.state,message.action,{serverNow:clock.now()});if(!result.ok)return fail(result.code);
+          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+        }
+        if(room.state.battle&&!room.state.battle.result&&(['build.save','team.save','blueprint.import','buildV3.save','teamV3.save','replicaV3.apply'].includes(message.action?.type)||isV2RecruitmentAction(message.action)||isV3RecruitmentAction(message.action)||message.action?.type?.startsWith('battleV2.')||message.action?.type?.startsWith('battleV3.')))return fail('LEGACY_BATTLE_ACTIVE');
+        if(['buildV3.save','teamV3.save','replicaV3.apply'].includes(message.action?.type)){
           if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3ProgressionAction(room.state.progressionV3,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
-          room.state={...room.state,progressionV3:result.progression,revision:(room.state.revision||0)+1};if(message.action.type==='teamV3.save')room.state=reconcileV3BattleAfterTeamSave(room.state,result.team.teamId);await persist(name,room.state);broadcast(room);return;
+          const next=structuredClone(room.state);next.progressionV3=result.progression;next.revision=(room.state.revision||0)+1;
+          if(message.action.type==='buildV3.save'){const current=room.state.progressionV3.builds.find(build=>build.buildId===message.action.build?.buildId),cost=v3TrainingCost(current,result.build);if(cost.total){const tx=applyEconomyTransaction(next,{receiptId:`buildV3.training:${result.build.buildId}:${result.build.revision}`,actionId:message.action.actionId||null,kind:'buildV3.training',delta:{coins:-cost.total},details:cost});if(!tx.ok)return fail(tx.code);}next.notice=cost.total?`Training complete · ${cost.total.toLocaleString()} VP spent.`:'Build saved.';}
+          room.state=next;if(['teamV3.save','replicaV3.apply'].includes(message.action.type)){room.state=reconcileV3BattleAfterTeamSave(room.state,result.team.teamId);recordMissionEvent(room.state,'teamSaves',1,clock.now());if(message.action.type==='replicaV3.apply')room.state.notice='Replica Team applied successfully.';}await persist(name,room.state);broadcast(room);return;
         }
         if(isV3RecruitmentAction(message.action)){
           if(!room.state.progressionV3)return fail('SCHEMA_V3_NOT_READY');const result=applyV3RecruitmentAction(room.state,message.action,v3Catalog,{serverNow:clock.now()});if(!result.ok)return fail(result.code);
+          if(!result.duplicate&&['recruitV3.trial','recruitV3.permanent'].includes(message.action.type))recordMissionEvent(result.state,'recruits',1,clock.now());
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         if(message.action?.type?.startsWith('battleV3.')){
           prepareV3RecruitmentState(room.state,v3Catalog,clock.now());
-          const result=applyV3BattleAction(room.state,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
+          const wasFinished=room.state.battleV3?.phase==='FINISHED',megaBefore=room.state.battleV3?.battle?.megaUsed?.A||0,result=applyV3BattleAction(room.state,message.action,v3Catalog);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
+          const megaAfter=result.state.battleV3?.battle?.megaUsed?.A||0;if(megaAfter>megaBefore)recordMissionEvent(result.state,'megaEvolutions',megaAfter-megaBefore,clock.now());
+          if(!wasFinished&&result.state.battleV3?.phase==='FINISHED'){recordMissionEvent(result.state,'battles',1,clock.now());if(result.state.battleV3.battle?.result?.winner==='A')recordMissionEvent(result.state,'wins',1,clock.now());}
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         if (['build.save','team.save','blueprint.import'].includes(message.action?.type)) {
@@ -136,6 +166,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         if (room.state.schemaVersion>=2&&isV2RecruitmentAction(message.action)) {
           const result=applyV2RecruitmentAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});
           if (!result.ok) return fail(result.code);
+          if(!result.duplicate&&['recruit.trial','recruit.permanent'].includes(message.action.type))recordMissionEvent(result.state,'recruits',1,clock.now());
           synchronizeLegacyState(result.state,v2Catalog);await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         if (room.state.schemaVersion>=2&&isV2EconomyAction(message.action)) {
@@ -145,8 +176,9 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         }
         if(room.state.schemaVersion>=2&&message.action?.type==='summon')return fail('LEGACY_SUMMON_DISABLED');
         if (typeof message.action?.type === 'string' && message.action.type.startsWith('battleV2.')) {
-          const result=applyV2BattleAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});
+          const wasFinished=room.state.battleV2?.phase==='FINISHED',result=applyV2BattleAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});
           if (!result.ok) return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
+          if(!wasFinished&&result.state.battleV2?.phase==='FINISHED'){recordMissionEvent(result.state,'battles',1,clock.now());if(result.state.battleV2.result?.winner==='A'||result.state.battleV2.battle?.result?.winner==='A')recordMissionEvent(result.state,'wins',1,clock.now());}
           await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         if(room.state.schemaVersion>=2&&message.action?.type==='battle')return fail('LEGACY_BATTLE_DISABLED');
@@ -167,7 +199,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   };
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const app = createLocalServer();
+  const app = createLocalServer({betaTestFunds:true,authRequired:true});
   const port = await app.listen(Number(process.env.PORT || 3100));
   console.log(`Pokémon Vanguard: http://localhost:${port}\nSaves: ${path.join(root,'.local-data')}\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);
   for (const signal of ['SIGINT','SIGTERM']) process.on(signal,async()=>{await app.close();process.exit(0);});

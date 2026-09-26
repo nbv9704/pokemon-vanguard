@@ -6,6 +6,7 @@ import {abilityBlocksSecondaryEffects,abilityStatDropBlock,applyAbilityStatDropR
 import {resolveOpponentStatGainCopyAbilities,resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
 import {abilityStageChange} from './ability-stage-change.mjs';
 import {opponentAbilitiesIgnoredFor} from './ability-targeting.mjs';
+import {statsRaisedThisTurn} from './turn-history.mjs';
 
 const clampStage=value=>Math.max(-6,Math.min(6,value));
 
@@ -15,6 +16,7 @@ export function applySecondaryEffects(battle,{actorId,targetIds=[],moveId,effect
  for(const targetId of targetIds){
   for(let index=0;index<targetEffects.length;index++){
    const effect=targetEffects[index],target=unitById(next,targetId);if(!target||target.hp<=0)break;
+   if(effect.condition==='target-stats-raised-this-turn'&&!statsRaisedThisTurn(next,targetId))continue;
    const ignoreTargetAbility=opponentAbilitiesIgnoredFor(next,actorId,targetId,mechanics),bypassSecondaryImmunity=effect.bypassSecondaryImmunityWhenSpread===true&&targetIds.length>1;
    if(!ignoreTargetAbility&&!bypassSecondaryImmunity&&abilityBlocksSecondaryEffects(target)){events.push({kind:'secondaryEffectBlocked',actorId,targetId,moveId,abilityId:target.passiveEffects.find(entry=>entry.sourceKind==='ability'&&entry.kind==='secondary-effect-immunity')?.sourceId});break;}
    if(effect.chance<100){if(typeof runtime.nextRandom!=='function')throw new Error('secondary effect resolution requires seeded nextRandom');if(runtime.nextRandom()>=effect.chance/100)continue;}

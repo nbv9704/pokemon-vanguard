@@ -1,5 +1,5 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
-import {effectiveWeatherId} from '../ability-field.mjs';
+import {effectiveWeatherForUnit} from '../ability-field.mjs';
 import {unitIsGrounded} from '../terrain.mjs';
 
 function applyProfile(move,mechanics,profile){
@@ -14,7 +14,7 @@ export const prepareFieldMoveHandler={
  id:'prepare-field-move',hooks:['onMove'],
  run({battle,payload,params}){
   const next=clone(battle),actor=unitById(next,payload.action.actorId);if(!actor||actor.hp<=0)return {battle:next,payload,events:[]};
-  const weather=effectiveWeatherId(next),terrain=next.field?.terrain?.id||null,grounded=unitIsGrounded(actor,next);let profile=null,sourceKind=null,sourceId=null;
+  const weather=effectiveWeatherForUnit(next,actor),terrain=next.field?.terrain?.id||null,grounded=unitIsGrounded(actor,next);let profile=null,sourceKind=null,sourceId=null;
   if(weather&&params.weather?.[weather]){profile=params.weather[weather];sourceKind='weather';sourceId=weather;}
   if(terrain&&params.terrain?.[terrain]&&(!params.requireGrounded||grounded)){profile=params.terrain[terrain];sourceKind='terrain';sourceId=terrain;}
   if(!profile)return {battle:next,payload,events:[]};

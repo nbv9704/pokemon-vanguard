@@ -1,0 +1,3573 @@
+{
+  "schemaVersion": 1,
+  "id": "battle-foundation-v1",
+  "provenance": {
+    "species": "Pok\u00e9Base Champions species/forms + Serebii Champions/Pok\u00e9mon Database physical cross-check; Mega physical fields are explicit per form and never inherited silently.",
+    "fling": {
+      "source": "Pokemon Showdown machine-readable item data, cross-checked against Bulbapedia Fling",
+      "reference": "https://github.com/smogon/pokemon-showdown/blob/master/data/items.ts; https://bulbapedia.bulbagarden.net/wiki/Fling_(move)"
+    },
+    "reviewedAt": "2026-09-18",
+    "speciesPhysical": "R3-91 canonical M-A closure: Pok\u00e9Base Champions selector/form identity + Pok\u00e9mon Database explicit per-form height/weight/gender cross-check through 2026-09-18. Includes internal battle-state forms for Castform, Aegislash, Mimikyu, Morpeko and Palafin; physical data remains explicit per form and is never inherited silently."
+  },
+  "species": {
+    "venusaur": {
+      "weightKg": 100,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2
+    },
+    "blastoise": {
+      "weightKg": 85.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "beedrill": {
+      "weightKg": 29.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1
+    },
+    "chesnaught": {
+      "weightKg": 90,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "decidueye": {
+      "weightKg": 36.6,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "feraligatr": {
+      "weightKg": 88.8,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.3
+    },
+    "charizard": {
+      "weightKg": 90.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.7
+    },
+    "meganium": {
+      "weightKg": 100.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.8
+    },
+    "typhlosion": {
+      "weightKg": 79.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.7
+    },
+    "scizor": {
+      "weightKg": 118,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "infernape": {
+      "weightKg": 55,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.2
+    },
+    "primarina": {
+      "weightKg": 44,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.8
+    },
+    "venusaur-mega": {
+      "weightKg": 155.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.4
+    },
+    "blastoise-mega": {
+      "weightKg": 101.1,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "beedrill-mega": {
+      "weightKg": 40.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.4
+    },
+    "charizard-mega-x": {
+      "weightKg": 110.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.7
+    },
+    "charizard-mega-y": {
+      "weightKg": 100.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.7
+    },
+    "chesnaught-mega": {
+      "weightKg": 90,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "scizor-mega": {
+      "weightKg": 125,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2
+    },
+    "feraligatr-mega": {
+      "weightKg": 108.8,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.3
+    },
+    "meganium-mega": {
+      "weightKg": 201,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.4
+    },
+    "steelix": {
+      "weightKg": 400,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 9.2
+    },
+    "steelix-mega": {
+      "weightKg": 740,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 10.5
+    },
+    "camerupt": {
+      "weightKg": 220,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.9
+    },
+    "camerupt-mega": {
+      "weightKg": 320.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "heracross": {
+      "weightKg": 54,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "heracross-mega": {
+      "weightKg": 62.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "medicham": {
+      "weightKg": 31.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "medicham-mega": {
+      "weightKg": 31.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "alakazam": {
+      "heightM": 1.5,
+      "weightKg": 48,
+      "genderRate": {
+        "femaleEighths": 2,
+        "maleEighths": 6
+      }
+    },
+    "alakazam-mega": {
+      "heightM": 1.2,
+      "weightKg": 48,
+      "genderRate": {
+        "femaleEighths": 2,
+        "maleEighths": 6
+      }
+    },
+    "aerodactyl": {
+      "heightM": 1.8,
+      "weightKg": 59,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      }
+    },
+    "aerodactyl-mega": {
+      "heightM": 2.1,
+      "weightKg": 79,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      }
+    },
+    "garchomp": {
+      "heightM": 1.9,
+      "weightKg": 95,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "garchomp-mega": {
+      "heightM": 1.9,
+      "weightKg": 95,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "gyarados": {
+      "heightM": 6.5,
+      "weightKg": 235,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "gyarados-mega": {
+      "heightM": 6.5,
+      "weightKg": 305,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "ampharos": {
+      "heightM": 1.4,
+      "weightKg": 61.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "ampharos-mega": {
+      "heightM": 1.4,
+      "weightKg": 61.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "manectric": {
+      "heightM": 1.5,
+      "weightKg": 40.2,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "manectric-mega": {
+      "heightM": 1.8,
+      "weightKg": 44,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "abomasnow": {
+      "heightM": 2.2,
+      "weightKg": 135.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "abomasnow-mega": {
+      "heightM": 2.7,
+      "weightKg": 185,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "absol": {
+      "heightM": 1.2,
+      "weightKg": 47,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "absol-mega": {
+      "heightM": 1.2,
+      "weightKg": 49,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "altaria": {
+      "heightM": 1.1,
+      "weightKg": 20.6,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "altaria-mega": {
+      "heightM": 1.5,
+      "weightKg": 20.6,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "audino": {
+      "heightM": 1.1,
+      "weightKg": 31,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "audino-mega": {
+      "heightM": 1.5,
+      "weightKg": 32,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "banette": {
+      "heightM": 1.1,
+      "weightKg": 12.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "banette-mega": {
+      "heightM": 1.2,
+      "weightKg": 13,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "gallade": {
+      "heightM": 1.6,
+      "weightKg": 52,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      }
+    },
+    "gallade-mega": {
+      "heightM": 1.6,
+      "weightKg": 56.4,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      }
+    },
+    "gardevoir": {
+      "heightM": 1.6,
+      "weightKg": 48.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "gardevoir-mega": {
+      "heightM": 1.6,
+      "weightKg": 48.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "glalie": {
+      "heightM": 1.5,
+      "weightKg": 256.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "glalie-mega": {
+      "heightM": 2.1,
+      "weightKg": 350.2,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "houndoom": {
+      "heightM": 1.4,
+      "weightKg": 35,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "houndoom-mega": {
+      "heightM": 1.9,
+      "weightKg": 49.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      }
+    },
+    "lucario": {
+      "heightM": 1.2,
+      "weightKg": 54,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      }
+    },
+    "lucario-mega": {
+      "heightM": 1.3,
+      "weightKg": 57.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      }
+    },
+    "lopunny": {
+      "weightKg": 33.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "lopunny-mega": {
+      "weightKg": 28.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "pidgeot": {
+      "weightKg": 39.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "pidgeot-mega": {
+      "weightKg": 50.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.2
+    },
+    "sableye": {
+      "weightKg": 11,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.5
+    },
+    "sableye-mega": {
+      "weightKg": 161,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.5
+    },
+    "sharpedo": {
+      "weightKg": 88.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "sharpedo-mega": {
+      "weightKg": 130.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "slowbro": {
+      "weightKg": 78.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.6
+    },
+    "slowbro-mega": {
+      "weightKg": 120,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2
+    },
+    "tyranitar": {
+      "weightKg": 202,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2
+    },
+    "tyranitar-mega": {
+      "weightKg": 255,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "chandelure": {
+      "weightKg": 34.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1
+    },
+    "chandelure-mega": {
+      "weightKg": 69.6,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "dragonite": {
+      "weightKg": 210,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.2
+    },
+    "dragonite-mega": {
+      "weightKg": 290,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.2
+    },
+    "clefable": {
+      "weightKg": 40,
+      "genderRate": {
+        "femaleEighths": 6,
+        "maleEighths": 2
+      },
+      "heightM": 1.3
+    },
+    "clefable-mega": {
+      "weightKg": 42.3,
+      "genderRate": {
+        "femaleEighths": 6,
+        "maleEighths": 2
+      },
+      "heightM": 1.7
+    },
+    "froslass": {
+      "weightKg": 26.6,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 1.3
+    },
+    "froslass-mega": {
+      "weightKg": 29.6,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 2.6
+    },
+    "hawlucha": {
+      "weightKg": 21.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "hawlucha-mega": {
+      "weightKg": 25,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1
+    },
+    "starmie": {
+      "weightKg": 80,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 1.1
+    },
+    "starmie-mega": {
+      "weightKg": 80,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 2.3
+    },
+    "delphox": {
+      "weightKg": 39,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "delphox-mega": {
+      "weightKg": 39,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "aggron": {
+      "weightKg": 360,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.1
+    },
+    "chimecho": {
+      "weightKg": 1,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.6
+    },
+    "crabominable": {
+      "weightKg": 180,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "drampa": {
+      "weightKg": 185,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 3
+    },
+    "emboar": {
+      "weightKg": 150,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "excadrill": {
+      "weightKg": 40.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "floette": {
+      "weightKg": 0.9,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 0.2
+    },
+    "gengar": {
+      "weightKg": 40.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "glimmora": {
+      "weightKg": 45,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "golurk": {
+      "weightKg": 330,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 2.8
+    },
+    "greninja": {
+      "weightKg": 40,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "kangaskhan": {
+      "weightKg": 80,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 2.2
+    },
+    "meowstic": {
+      "weightKg": 8.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.6
+    },
+    "pinsir": {
+      "weightKg": 55,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "raichu": {
+      "weightKg": 30,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "scovillain": {
+      "weightKg": 15,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.9
+    },
+    "skarmory": {
+      "weightKg": 50.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "victreebel": {
+      "weightKg": 15.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "aggron-mega": {
+      "weightKg": 395,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.2
+    },
+    "chimecho-mega": {
+      "weightKg": 8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "crabominable-mega": {
+      "weightKg": 252.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.6
+    },
+    "drampa-mega": {
+      "weightKg": 240.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 3
+    },
+    "emboar-mega": {
+      "weightKg": 180.3,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.8
+    },
+    "excadrill-mega": {
+      "weightKg": 60,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.9
+    },
+    "floette-mega": {
+      "weightKg": 100.8,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 0.2
+    },
+    "gengar-mega": {
+      "weightKg": 40.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.4
+    },
+    "glimmora-mega": {
+      "weightKg": 77,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.8
+    },
+    "golurk-mega": {
+      "weightKg": 330,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 4
+    },
+    "greninja-mega": {
+      "weightKg": 40,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "kangaskhan-mega": {
+      "weightKg": 100,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 2.2
+    },
+    "meowstic-mega": {
+      "weightKg": 10.1,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      },
+      "heightM": 0.8
+    },
+    "pinsir-mega": {
+      "weightKg": 59,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "raichu-mega-x": {
+      "weightKg": 38,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "raichu-mega-y": {
+      "weightKg": 26,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.0
+    },
+    "scovillain-mega": {
+      "weightKg": 22,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "skarmory-mega": {
+      "weightKg": 40.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "victreebel-mega": {
+      "weightKg": 125.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 4.5
+    },
+    "absol-mega-z": {
+      "weightKg": 49,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "garchomp-mega-z": {
+      "weightKg": 99,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.9
+    },
+    "lucario-mega-z": {
+      "weightKg": 49.4,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.3
+    },
+    "arbok": {
+      "weightKg": 65.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 3.5
+    },
+    "pikachu": {
+      "weightKg": 6.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.4
+    },
+    "ninetales": {
+      "weightKg": 19.9,
+      "genderRate": {
+        "femaleEighths": 6,
+        "maleEighths": 2
+      },
+      "heightM": 1.1
+    },
+    "arcanine": {
+      "weightKg": 155.0,
+      "genderRate": {
+        "femaleEighths": 2,
+        "maleEighths": 6
+      },
+      "heightM": 1.9
+    },
+    "machamp": {
+      "weightKg": 130.0,
+      "genderRate": {
+        "femaleEighths": 2,
+        "maleEighths": 6
+      },
+      "heightM": 1.6
+    },
+    "tauros": {
+      "weightKg": 88.4,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      },
+      "heightM": 1.4
+    },
+    "vaporeon": {
+      "weightKg": 29.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.0
+    },
+    "jolteon": {
+      "weightKg": 24.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 0.8
+    },
+    "flareon": {
+      "weightKg": 25.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 0.9
+    },
+    "snorlax": {
+      "weightKg": 460.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.1
+    },
+    "ariados": {
+      "weightKg": 33.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "azumarill": {
+      "weightKg": 28.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "politoed": {
+      "weightKg": 33.9,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "espeon": {
+      "weightKg": 26.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 0.9
+    },
+    "umbreon": {
+      "weightKg": 27.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.0
+    },
+    "slowking": {
+      "weightKg": 79.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "forretress": {
+      "weightKg": 125.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "pelipper": {
+      "weightKg": 28.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "torkoal": {
+      "weightKg": 80.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.5
+    },
+    "milotic": {
+      "weightKg": 162.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 6.2
+    },
+    "torterra": {
+      "weightKg": 310.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.2
+    },
+    "empoleon": {
+      "weightKg": 84.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.7
+    },
+    "luxray": {
+      "weightKg": 42.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.4
+    },
+    "roserade": {
+      "weightKg": 14.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.9
+    },
+    "rampardos": {
+      "weightKg": 102.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "bastiodon": {
+      "weightKg": 149.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.3
+    },
+    "spiritomb": {
+      "weightKg": 108.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.0
+    },
+    "hippowdon": {
+      "weightKg": 300.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "toxicroak": {
+      "weightKg": 44.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "weavile": {
+      "weightKg": 34.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "rhyperior": {
+      "weightKg": 282.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.4
+    },
+    "leafeon": {
+      "weightKg": 25.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.0
+    },
+    "glaceon": {
+      "weightKg": 25.9,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 0.8
+    },
+    "gliscor": {
+      "weightKg": 42.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "mamoswine": {
+      "weightKg": 291.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "serperior": {
+      "weightKg": 63.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 3.3
+    },
+    "samurott": {
+      "weightKg": 94.6,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "watchog": {
+      "weightKg": 27.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "liepard": {
+      "weightKg": 37.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "simisage": {
+      "weightKg": 30.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.1
+    },
+    "simisear": {
+      "weightKg": 28.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.0
+    },
+    "simipour": {
+      "weightKg": 29.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.0
+    },
+    "conkeldurr": {
+      "weightKg": 87.0,
+      "genderRate": {
+        "femaleEighths": 2,
+        "maleEighths": 6
+      },
+      "heightM": 1.4
+    },
+    "whimsicott": {
+      "weightKg": 6.6,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "krookodile": {
+      "weightKg": 96.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "cofagrigus": {
+      "weightKg": 76.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "garbodor": {
+      "weightKg": 107.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.9
+    },
+    "reuniclus": {
+      "weightKg": 20.1,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.0
+    },
+    "vanilluxe": {
+      "weightKg": 57.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "emolga": {
+      "weightKg": 5.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.4
+    },
+    "beartic": {
+      "weightKg": 260.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.6
+    },
+    "stunfisk": {
+      "weightKg": 11.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "hydreigon": {
+      "weightKg": 160.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "volcarona": {
+      "weightKg": 46.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.6
+    },
+    "diggersby": {
+      "weightKg": 42.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.0
+    },
+    "talonflame": {
+      "weightKg": 24.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "vivillon": {
+      "weightKg": 17.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "florges": {
+      "weightKg": 10.0,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 1.1
+    },
+    "pangoro": {
+      "weightKg": 136.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.1
+    },
+    "furfrou": {
+      "weightKg": 28.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "aromatisse": {
+      "weightKg": 15.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "slurpuff": {
+      "weightKg": 5.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "clawitzer": {
+      "weightKg": 35.3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "heliolisk": {
+      "weightKg": 21.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.0
+    },
+    "tyrantrum": {
+      "weightKg": 270.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.5
+    },
+    "aurorus": {
+      "weightKg": 225.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 2.7
+    },
+    "sylveon": {
+      "weightKg": 23.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.0
+    },
+    "dedenne": {
+      "weightKg": 2.2,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.2
+    },
+    "goodra": {
+      "weightKg": 150.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "klefki": {
+      "weightKg": 3.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.2
+    },
+    "trevenant": {
+      "weightKg": 71.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "gourgeist": {
+      "weightKg": 12.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.9
+    },
+    "avalugg": {
+      "weightKg": 505.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "noivern": {
+      "weightKg": 85.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "incineroar": {
+      "weightKg": 83.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.8
+    },
+    "toucannon": {
+      "weightKg": 26.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "lycanroc-midday": {
+      "weightKg": 25.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "toxapex": {
+      "weightKg": 14.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "mudsdale": {
+      "weightKg": 920.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "araquanid": {
+      "weightKg": 82.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "salazzle": {
+      "weightKg": 22.2,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 1.2
+    },
+    "tsareena": {
+      "weightKg": 21.4,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 1.2
+    },
+    "oranguru": {
+      "weightKg": 76.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "passimian": {
+      "weightKg": 82.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "kommo-o": {
+      "weightKg": 78.2,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.6
+    },
+    "corviknight": {
+      "weightKg": 75.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.2
+    },
+    "flapple": {
+      "weightKg": 1.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "appletun": {
+      "weightKg": 13.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.4
+    },
+    "sandaconda": {
+      "weightKg": 65.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 3.8
+    },
+    "polteageist": {
+      "weightKg": 0.4,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.2
+    },
+    "hatterene": {
+      "weightKg": 5.1,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 2.1
+    },
+    "mr-rime": {
+      "weightKg": 58.2,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "runerigus": {
+      "weightKg": 66.6,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 1.6
+    },
+    "alcremie": {
+      "weightKg": 0.5,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 0.3
+    },
+    "dragapult": {
+      "weightKg": 50.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 3.0
+    },
+    "raichu-alola": {
+      "weightKg": 21,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "ninetales-alola": {
+      "weightKg": 19.9,
+      "genderRate": {
+        "femaleEighths": 6,
+        "maleEighths": 2
+      },
+      "heightM": 1.1
+    },
+    "arcanine-hisui": {
+      "weightKg": 168,
+      "genderRate": {
+        "femaleEighths": 2,
+        "maleEighths": 6
+      },
+      "heightM": 2.0
+    },
+    "slowbro-galar": {
+      "weightKg": 70.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.6
+    },
+    "tauros-paldea": {
+      "weightKg": 115,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      },
+      "heightM": 1.4
+    },
+    "tauros-paldea-aqua-breed": {
+      "weightKg": 110,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      },
+      "heightM": 1.4
+    },
+    "tauros-paldea-blaze-breed": {
+      "weightKg": 85,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      },
+      "heightM": 1.4
+    },
+    "typhlosion-hisui": {
+      "weightKg": 69.8,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "slowking-galar": {
+      "weightKg": 79.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "samurott-hisui": {
+      "weightKg": 58.2,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "stunfisk-galar": {
+      "weightKg": 20.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "meowstic-female": {
+      "weightKg": 8.5,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 0.6
+    },
+    "goodra-hisui": {
+      "weightKg": 334.1,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "avalugg-hisui": {
+      "weightKg": 262.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.4
+    },
+    "decidueye-hisui": {
+      "weightKg": 37.0,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "lycanroc-dusk": {
+      "weightKg": 25.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.8
+    },
+    "lycanroc-midnight": {
+      "weightKg": 25.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "wyrdeer": {
+      "weightKg": 95.1,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "kleavor": {
+      "weightKg": 89.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "basculegion": {
+      "weightKg": 110.0,
+      "genderRate": {
+        "femaleEighths": 0,
+        "maleEighths": 8
+      },
+      "heightM": 3.0
+    },
+    "basculegion-female": {
+      "weightKg": 110.0,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 3.0
+    },
+    "sneasler": {
+      "weightKg": 43.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "meowscarada": {
+      "weightKg": 31.2,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.5
+    },
+    "skeledirge": {
+      "weightKg": 326.5,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "quaquaval": {
+      "weightKg": 61.9,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.8
+    },
+    "garganacl": {
+      "weightKg": 240.0,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.3
+    },
+    "ditto": {
+      "weightKg": 4,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "castform": {
+      "weightKg": 0.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "castform-sunny": {
+      "weightKg": 0.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "castform-rainy": {
+      "weightKg": 0.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "castform-snowy": {
+      "weightKg": 0.8,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "rotom": {
+      "weightKg": 0.3,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "rotom-heat": {
+      "weightKg": 0.3,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "rotom-wash": {
+      "weightKg": 0.3,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "rotom-frost": {
+      "weightKg": 0.3,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "rotom-fan": {
+      "weightKg": 0.3,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "rotom-mow": {
+      "weightKg": 0.3,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "aegislash": {
+      "weightKg": 53,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "aegislash-shield": {
+      "weightKg": 53,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "aegislash-blade": {
+      "weightKg": 53,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "zoroark": {
+      "weightKg": 81.1,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "zoroark-hisui": {
+      "weightKg": 73,
+      "genderRate": {
+        "femaleEighths": 1,
+        "maleEighths": 7
+      },
+      "heightM": 1.6
+    },
+    "mimikyu": {
+      "weightKg": 0.7,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.2
+    },
+    "mimikyu-busted": {
+      "weightKg": 0.7,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.2
+    },
+    "morpeko": {
+      "weightKg": 3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "morpeko-hangry": {
+      "weightKg": 3,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.3
+    },
+    "palafin": {
+      "weightKg": 60.2,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.3
+    },
+    "palafin-hero": {
+      "weightKg": 97.4,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    },
+    "gourgeist-small": {
+      "weightKg": 9.5,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 0.7
+    },
+    "gourgeist-large": {
+      "weightKg": 14,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.1
+    },
+    "gourgeist-jumbo": {
+      "weightKg": 39,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.7
+    },
+    "maushold": {
+      "weightKg": 2.8,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.3
+    },
+    "armarouge": {
+      "weightKg": 85,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.5
+    },
+    "ceruledge": {
+      "weightKg": 62,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.6
+    },
+    "bellibolt": {
+      "weightKg": 113,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.2
+    },
+    "espathra": {
+      "weightKg": 90,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.9
+    },
+    "tinkaton": {
+      "weightKg": 112.8,
+      "genderRate": {
+        "femaleEighths": 8,
+        "maleEighths": 0
+      },
+      "heightM": 0.7
+    },
+    "orthworm": {
+      "weightKg": 310,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.5
+    },
+    "farigiraf": {
+      "weightKg": 160,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 3.2
+    },
+    "kingambit": {
+      "weightKg": 120,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "sinistcha": {
+      "weightKg": 2.2,
+      "genderRate": {
+        "femaleEighths": -1,
+        "maleEighths": -1
+      },
+      "heightM": 0.2
+    },
+    "archaludon": {
+      "weightKg": 60,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 2.0
+    },
+    "hydrapple": {
+      "weightKg": 93,
+      "genderRate": {
+        "femaleEighths": 4,
+        "maleEighths": 4
+      },
+      "heightM": 1.8
+    }
+  },
+  "items": {
+    "abomasite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "absolite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "absolite-z": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "aerodactylite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "aggronite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "air-balloon": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "alakazite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "altarianite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "ampharosite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "aspear-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "audinite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "babiri-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "banettite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "barbaracite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "baxcalibrite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "beedrillite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "big-root": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "binding-band": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "black-belt": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "black-glasses": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "blastoisinite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "blazikenite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "bright-powder": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "cameruptite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "chandelurite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "charcoal": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "charizardite-x": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "charizardite-y": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "charti-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "cheri-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "chesnaughtite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "chesto-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "chilan-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "chimechite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "choice-scarf": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "chople-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "clefablite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "coba-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "colbur-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "crabominite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "damp-rock": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 60
+      }
+    },
+    "delphoxite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "dragalgite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "dragon-fang": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 70
+      }
+    },
+    "dragoninite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "drampanite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "eelektrossite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "eject-button": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "electric-seed": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "emboarite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "excadrite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "expert-belt": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "fairy-feather": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "falinksite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "feraligite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "floettite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "focus-band": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "focus-sash": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "froslassite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "galladite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "garchompite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "garchompite-z": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "gardevoirite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "gengarite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "glalitite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "glimmoranite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "golisopite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "golurkite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "grassy-seed": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "greninjite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "gyaradosite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "haban-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "hard-stone": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 100
+      }
+    },
+    "hawluchanite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "heat-rock": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 60
+      }
+    },
+    "heracronite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "houndoominite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "icy-rock": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 40
+      }
+    },
+    "iron-ball": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 130
+      }
+    },
+    "kangaskhanite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "kasib-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "kebia-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "kings-rock": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30,
+        "effect": "flinch"
+      }
+    },
+    "leek": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 60
+      }
+    },
+    "leftovers": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "leppa-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "life-orb": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "light-ball": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30,
+        "effect": "paralysis"
+      }
+    },
+    "light-clay": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "lopunnite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "lucarionite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "lucarionite-z": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "lum-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "magnet": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "malamarite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "manectite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "mawilite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "medichamite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "meganiumite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "mental-herb": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "mental-herb"
+      }
+    },
+    "meowsticite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "metagrossite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "metal-coat": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "metronome": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "miracle-seed": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "misty-seed": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "muscle-band": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "mystic-water": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "never-melt-ice": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "normal-gem": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "occa-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "oran-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "passho-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "payapa-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "pecha-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "persim-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "pidgeotite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "pinsirite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "poison-barb": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 70,
+        "effect": "poison"
+      }
+    },
+    "psychic-seed": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "pyroarite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "quick-claw": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 80
+      }
+    },
+    "raichunite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "raichunite-x": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "rawst-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "red-card": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "rindo-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "rocky-helmet": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 60
+      }
+    },
+    "roseli-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "sablenite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "salamencite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "sceptilite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "scizorite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "scolipite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "scope-lens": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "scovillainite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "scraftinite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "sharp-beak": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 50
+      }
+    },
+    "sharpedonite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "shed-shell": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "shell-bell": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "shuca-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "silk-scarf": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "silver-powder": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "sitrus-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "skarmorite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "slowbronite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "smooth-rock": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "soft-sand": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "spell-tag": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "staraptite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "starminite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "steelixite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "swampertite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "tanga-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "terrain-extender": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 60
+      }
+    },
+    "twisted-spoon": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 30
+      }
+    },
+    "tyranitarite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "venusaurite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "victreebelite": {
+      "category": "mega-evolution",
+      "fling": {
+        "usable": false,
+        "basePower": null,
+        "reason": "mega-stone"
+      }
+    },
+    "wacan-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "white-herb": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "white-herb"
+      }
+    },
+    "wide-lens": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "wise-glasses": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    },
+    "yache-berry": {
+      "category": "berry",
+      "fling": {
+        "usable": true,
+        "basePower": 10,
+        "effect": "berry"
+      }
+    },
+    "zoom-lens": {
+      "category": "held-item",
+      "fling": {
+        "usable": true,
+        "basePower": 10
+      }
+    }
+  }
+}

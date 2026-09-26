@@ -34,8 +34,17 @@ export function tryConfusionAction(battle,action,runtime={}){
  return {cancelled:true,battle:next,events};
 }
 
+export function tryInfatuationAction(battle,action,runtime={}){
+ const next=clone(battle),unit=unitById(next,action.actorId),state=unit?.volatiles?.infatuation;if(!state)return {cancelled:false,battle:next,events:[]};
+ const source=unitById(next,state.sourceId),active=source&&source.hp>0&&['A','B'].some(side=>(next.sides?.[side]?.active||[]).includes(source.actorId));
+ if(!active){delete unit.volatiles.infatuation;return {cancelled:false,battle:next,events:[{kind:'volatileEnded',actorId:action.actorId,volatile:'infatuation',reason:'sourceUnavailable'}]};}
+ if(typeof runtime.nextRandom!=='function')throw new Error('infatuation action gate requires seeded nextRandom');
+ const events=[{kind:'volatileActivated',actorId:action.actorId,volatile:'infatuation',sourceId:source.actorId}];if(runtime.nextRandom()>=.5)return {cancelled:false,battle:next,events};
+ events.push({kind:'actionPrevented',actorId:action.actorId,status:'infatuation',sourceId:source.actorId});return {cancelled:true,battle:next,events};
+}
+
 export function tryVolatileAction(battle,action,runtime={}){
  const flinch=tryFlinchAction(battle,action);if(flinch.cancelled)return flinch;
- const confusion=tryConfusionAction(flinch.battle,action,runtime);
- return {cancelled:confusion.cancelled,battle:confusion.battle,events:[...flinch.events,...confusion.events]};
+ const confusion=tryConfusionAction(flinch.battle,action,runtime);if(confusion.cancelled)return {cancelled:true,battle:confusion.battle,events:[...flinch.events,...confusion.events]};
+ const infatuation=tryInfatuationAction(confusion.battle,action,runtime);return {cancelled:infatuation.cancelled,battle:infatuation.battle,events:[...flinch.events,...confusion.events,...infatuation.events]};
 }

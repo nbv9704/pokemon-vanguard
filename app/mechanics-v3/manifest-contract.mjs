@@ -7,8 +7,8 @@ export const BATTLE_FORMATS=['single','double'];
 export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 const STORED_STATS=['atk','def','spa','spd','spe'];
 export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
-export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed','focus-energy','laser-focus','sound-blocked','helping-hand','torment'];
-export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double','target-grounded-electric-terrain','user-no-held-item','target-held-item-boost','user-stockpile'];
+export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed','focus-energy','laser-focus','sound-blocked','helping-hand','torment','heal-block','dragon-cheer','infatuation','curse'];
+export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double','target-grounded-electric-terrain','user-no-held-item','target-held-item-boost','user-stockpile','target-damaged-this-turn','target-damaged-user-this-turn','target-acted-this-turn','user-stats-lowered-this-turn','ally-fainted-previous-turn','previous-move-failed','target-weight-tier','user-target-weight-ratio'];
 export const WEATHER_IDS=['sun','rain','snow','sandstorm'];
 export const TERRAIN_IDS=['electric','grassy','misty','psychic'];
 export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen','aurora-veil','safeguard'];
@@ -19,13 +19,19 @@ export const TWO_TURN_MOVE_KINDS=['solar-charge','semi-invulnerable','charge'];
 export const SEMI_INVULNERABLE_MODES=['underground','underwater','airborne','vanished'];
 export const MOVE_TAG_IDS=['sound','punch','bullet','bite','slicing','pulse','powder'];
 export const SECONDARY_EFFECT_KINDS=['major-status','random-major-status','cure-major-status','volatile-status','stat-stages'];
-export const HOOKS=['onEntry','beforeAction','onTurnOrder','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyDamage','onDamage','afterDamage','afterStatus','afterStatChange','onMove','onSwitchOut','endTurn','onFaint'];
+export const HOOKS=['onEntry','beforeAction','onTurnOrder','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyWeight','modifyDamage','onDamage','afterDamage','afterStatus','afterStatChange','onMove','onSwitchOut','endTurn','onFaint'];
 
 export function validateMechanicManifest(manifest,kind){
  const problems=[];
  if(!CONTENT_KINDS.includes(kind))return [`unknown content kind: ${kind}`];
  if(!manifest||typeof manifest!=='object')return ['manifest must be an object'];
  if(typeof manifest.id!=='string'||!manifest.id)problems.push('manifest id is required');
+ if(manifest.unusable!==undefined&&typeof manifest.unusable!=='boolean')problems.push('unusable must be boolean');
+ if(manifest.reviewState!==undefined&&!['executable','fail-closed'].includes(manifest.reviewState))problems.push('reviewState must be executable or fail-closed');
+ if(manifest.dynamicTargetMode!==undefined&&!['ghost-or-self'].includes(manifest.dynamicTargetMode))problems.push('dynamicTargetMode must be ghost-or-self');
+ if(manifest.reviewState==='fail-closed'&&(typeof manifest.reviewReason!=='string'||!manifest.reviewReason))problems.push('fail-closed manifests require reviewReason');
+ if(kind==='items'&&manifest.reviewState==='fail-closed'&&!(manifest.handlers||[]).some(entry=>entry?.id==='reject-unusable-item'))problems.push('fail-closed items require reject-unusable-item');
+ if(manifest.unusable===true&&!(manifest.handlers||[]).some(entry=>entry?.id==='reject-unusable-move'))problems.push('unusable moves require reject-unusable-move');
  if(!Array.isArray(manifest.handlers)||!manifest.handlers.length)problems.push('at least one handler is required');
  const keys=new Set();
  for(const entry of manifest.handlers||[]){
@@ -34,14 +40,38 @@ export function validateMechanicManifest(manifest,kind){
   if(!HOOKS.includes(entry?.hook))problems.push(`unknown hook: ${entry?.hook}`);
   if(!Number.isInteger(entry?.order))problems.push(`handler ${entry?.id||'?'} requires an integer order`);
   if(entry?.params!==undefined&&(!entry.params||typeof entry.params!=='object'||Array.isArray(entry.params)))problems.push(`handler ${entry?.id||'?'} params must be an object`);
+  if(entry?.id==='reject-unusable-item'&&(typeof entry.params?.reason!=='string'||!entry.params.reason))problems.push('reject-unusable-item requires a reason');
   if(entry?.id==='apply-stat-stages'){
    const validateBoosts=(boosts,label)=>{const values=boosts&&typeof boosts==='object'&&!Array.isArray(boosts)?Object.entries(boosts):[];if(!values.length)problems.push(`${label} requires boosts`);for(const [stat,delta] of values){if(!BATTLE_STAGES.includes(stat))problems.push(`unknown battle stage: ${stat}`);if(!Number.isInteger(delta)||delta===0||delta<-6||delta>6)problems.push(`invalid stage delta for ${stat}`);}};
    validateBoosts(entry.params?.boosts,'apply-stat-stages');
    if(entry.params?.target!==undefined&&!['self','active-allies'].includes(entry.params.target))problems.push('apply-stat-stages target override must be self or active-allies');
    if(entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-stat-stages requireDamage must be boolean');
    if(entry.params?.requireTargetFainted!==undefined&&typeof entry.params.requireTargetFainted!=='boolean')problems.push('apply-stat-stages requireTargetFainted must be boolean');
+   if(entry.params?.requireChange!==undefined&&typeof entry.params.requireChange!=='boolean')problems.push('apply-stat-stages requireChange must be boolean');
+   const requiredAbilities=entry.params?.requireTargetAbilityIds;if(requiredAbilities!==undefined&&(!Array.isArray(requiredAbilities)||!requiredAbilities.length||new Set(requiredAbilities).size!==requiredAbilities.length||requiredAbilities.some(id=>typeof id!=='string'||!id)))problems.push('apply-stat-stages requireTargetAbilityIds must contain distinct ability ids');
    const blocked=entry.params?.blockedTargetTypes;if(blocked!==undefined&&(!Array.isArray(blocked)||new Set(blocked).size!==blocked.length||blocked.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('apply-stat-stages blockedTargetTypes must contain distinct canonical types');
    if(entry.params?.weatherBoosts!==undefined){const weatherBoosts=entry.params.weatherBoosts;if(!weatherBoosts||typeof weatherBoosts!=='object'||Array.isArray(weatherBoosts)||!Object.keys(weatherBoosts).length)problems.push('apply-stat-stages weatherBoosts must be a non-empty object');else for(const [weather,boosts] of Object.entries(weatherBoosts)){if(!WEATHER_IDS.includes(weather))problems.push(`apply-stat-stages weatherBoosts has unsupported weather: ${weather}`);validateBoosts(boosts,`apply-stat-stages weatherBoosts.${weather}`);}}
+  }
+  if(entry?.id==='apply-gravity'&&entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-gravity turns must be a positive integer');
+  if(entry?.id==='apply-weight-state'){
+   if(!Number.isInteger(entry.params?.reductionHg)||entry.params.reductionHg<1)problems.push('apply-weight-state requires positive integer reductionHg');
+   if(entry.params?.requireStatChange!==undefined&&typeof entry.params.requireStatChange!=='boolean')problems.push('apply-weight-state requireStatChange must be boolean');
+  }
+  if(entry?.id==='prepare-target-stat-heal'){
+   if(!STORED_STATS.includes(entry.params?.stat))problems.push('prepare-target-stat-heal requires a stored stat');
+   if(entry.params?.failAtStageFloor!==undefined&&typeof entry.params.failAtStageFloor!=='boolean')problems.push('prepare-target-stat-heal failAtStageFloor must be boolean');
+  }
+  if(entry?.id==='apply-prepared-stat-heal'&&entry.params?.source!==undefined&&(typeof entry.params.source!=='string'||!entry.params.source))problems.push('apply-prepared-stat-heal source must be a non-empty string');
+  if(entry?.id==='apply-recurring-stat-drop'){
+   if(!BATTLE_STAGES.includes(entry.params?.stat))problems.push('apply-recurring-stat-drop requires a battle stat');
+   if(!Number.isInteger(entry.params?.delta)||entry.params.delta===0||entry.params.delta<-6||entry.params.delta>6)problems.push('apply-recurring-stat-drop delta must be a non-zero integer from -6 to 6');
+   if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('apply-recurring-stat-drop turns must be a positive integer');
+   if(entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-recurring-stat-drop requireDamage must be boolean');
+  }
+  if(entry?.id==='prepare-gravity-power'&&(!(entry.params?.multiplier>0)||typeof entry.params.multiplier!=='number'))problems.push('prepare-gravity-power requires a positive multiplier');
+  if(entry?.id==='apply-rampage-lock'){
+   if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-rampage-lock turns must be a positive integer');
+   for(const key of ['confuseOnEnd','blocksSleep'])if(entry.params?.[key]!==undefined&&typeof entry.params[key]!=='boolean')problems.push(`apply-rampage-lock ${key} must be boolean`);
   }
   if(entry?.id==='apply-major-status'){
    if(!MAJOR_STATUS_IDS.includes(entry.params?.status))problems.push(`unsupported major status: ${entry.params?.status}`);
@@ -49,6 +79,8 @@ export function validateMechanicManifest(manifest,kind){
    if(blocked!==undefined&&(!Array.isArray(blocked)||new Set(blocked).size!==blocked.length||blocked.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('blockedTargetTypes must contain distinct canonical types');
   }
   if(entry?.id==='apply-volatile-status'&&!VOLATILE_STATUS_IDS.includes(entry.params?.volatile))problems.push(`unsupported volatile status: ${entry.params?.volatile}`);
+  if(entry?.id==='schedule-future-attack'){if(entry.params?.effect!==undefined&&entry.params.effect!=='future-attack')problems.push('schedule-future-attack only supports future-attack');if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('schedule-future-attack turns must be a positive integer');}
+  if(entry?.id==='prepare-party-hit-powers'){if(entry.params?.basePower!==undefined&&(!Number.isInteger(entry.params.basePower)||entry.params.basePower<1))problems.push('prepare-party-hit-powers basePower must be a positive integer');if(entry.params?.attackDivisor!==undefined&&(!Number.isInteger(entry.params.attackDivisor)||entry.params.attackDivisor<1))problems.push('prepare-party-hit-powers attackDivisor must be a positive integer');}
   if(entry?.id==='check-accuracy'){
    const alwaysHits=entry.params?.alwaysHitsForUserTypes;
    if(alwaysHits!==undefined&&(!Array.isArray(alwaysHits)||new Set(alwaysHits).size!==alwaysHits.length||alwaysHits.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('alwaysHitsForUserTypes must contain distinct canonical types');
@@ -57,6 +89,9 @@ export function validateMechanicManifest(manifest,kind){
    const accuracyByWeather=entry.params?.accuracyByWeather;if(accuracyByWeather!==undefined){if(!accuracyByWeather||typeof accuracyByWeather!=='object'||Array.isArray(accuracyByWeather)||!Object.keys(accuracyByWeather).length)problems.push('accuracyByWeather must be a non-empty object');else for(const [id,value] of Object.entries(accuracyByWeather)){if(!WEATHER_IDS.includes(id))problems.push(`accuracyByWeather has unsupported weather: ${id}`);if(!Number.isInteger(value)||value<1||value>100)problems.push(`accuracyByWeather.${id} must be an integer from 1 to 100`);}}
    if(entry.params?.ignoreTargetEvasion!==undefined&&typeof entry.params.ignoreTargetEvasion!=='boolean')problems.push('check-accuracy ignoreTargetEvasion must be boolean');
    if(entry.params?.ignoreSemiInvulnerable!==undefined&&typeof entry.params.ignoreSemiInvulnerable!=='boolean')problems.push('check-accuracy ignoreSemiInvulnerable must be boolean');
+   if(entry.params?.ohko!==undefined&&typeof entry.params.ohko!=='boolean')problems.push('check-accuracy ohko must be boolean');
+   if(entry.params?.smartSplit!==undefined&&typeof entry.params.smartSplit!=='boolean')problems.push('check-accuracy smartSplit must be boolean');
+   for(const key of ['ohkoImmuneTargetTypes','ohkoLowerAccuracyUnlessUserTypes']){const types=entry.params?.[key];if(types!==undefined&&(!Array.isArray(types)||new Set(types).size!==types.length||types.some(type=>!CANONICAL_TYPES.includes(type))))problems.push(`check-accuracy ${key} must contain distinct canonical types`);}
   }
   if(entry?.id==='prepare-field-move'){
    if(entry.params?.requireGrounded!==undefined&&typeof entry.params.requireGrounded!=='boolean')problems.push('prepare-field-move requireGrounded must be boolean');
@@ -74,7 +109,23 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='deal-multi-hit-damage'){
    const hits=entry.params?.hits,validFixed=Number.isInteger(hits)&&hits>=2&&hits<=10,validRange=Array.isArray(hits)&&hits.length===2&&hits[0]===2&&hits[1]===5;
    if(!validFixed&&!validRange)problems.push('deal-multi-hit-damage supports a fixed 2-10 hit count or the [2,5] distribution');
+   if(entry.params?.perHitAccuracy!==undefined&&typeof entry.params.perHitAccuracy!=='boolean')problems.push('deal-multi-hit-damage perHitAccuracy must be boolean');
+   if(entry.params?.smartSplit!==undefined&&typeof entry.params.smartSplit!=='boolean')problems.push('deal-multi-hit-damage smartSplit must be boolean');
+   if(entry.params?.powerByHit!==undefined&&(!Array.isArray(entry.params.powerByHit)||!validFixed||entry.params.powerByHit.length!==hits||entry.params.powerByHit.some(power=>!Number.isInteger(power)||power<1)))problems.push('deal-multi-hit-damage powerByHit requires one positive integer per fixed hit');
+   if(entry.params?.powerStep!==undefined&&(!Number.isFinite(entry.params.powerStep)||entry.params.powerStep<=0))problems.push('deal-multi-hit-damage powerStep must be positive');
   }
+  if(entry?.id==='prepare-consecutive-power'){
+   if(entry.params?.stateId!==undefined&&(typeof entry.params.stateId!=='string'||!entry.params.stateId))problems.push('prepare-consecutive-power stateId must be a non-empty string');
+   if(entry.params?.maxMultiplier!==undefined&&(!Number.isInteger(entry.params.maxMultiplier)||entry.params.maxMultiplier<1))problems.push('prepare-consecutive-power maxMultiplier must be a positive integer');
+  }
+  if(entry?.id==='apply-next-move-type'&&!CANONICAL_TYPES.includes(entry.params?.type))problems.push('apply-next-move-type requires a canonical type');
+  if(entry?.id==='schedule-slot-heal'){
+   if(entry.params?.effect!=='wish')problems.push('schedule-slot-heal currently supports wish');
+   if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('schedule-slot-heal turns must be a positive integer');
+   const numerator=entry.params?.numerator,denominator=entry.params?.denominator;if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1||numerator>denominator)problems.push('schedule-slot-heal requires a valid positive fraction');
+  }
+  if(entry?.id==='prepare-best-damage-category'&&Object.keys(entry.params||{}).length)problems.push('prepare-best-damage-category does not accept params');
+  if(entry?.id==='clear-user-volatile'&&(typeof entry.params?.volatile!=='string'||!entry.params.volatile))problems.push('clear-user-volatile requires a volatile id');
   if(entry?.id==='deal-direct-damage'&&entry.params?.targetRelation!==undefined&&!['foe','ally'].includes(entry.params.targetRelation))problems.push('deal-direct-damage targetRelation must be foe or ally');
   if(entry?.id==='apply-binding'){
    for(const key of ['minTurns','maxTurns','residualNumerator','residualDenominator'])if(entry.params?.[key]!==undefined&&(!Number.isInteger(entry.params[key])||entry.params[key]<1))problems.push(`apply-binding ${key} must be a positive integer`);
@@ -97,6 +148,8 @@ export function validateMechanicManifest(manifest,kind){
    if(entry.params?.rounding!==undefined&&!['floor','ceil'].includes(entry.params.rounding))problems.push('apply-heal rounding must be floor or ceil');
    if(entry.params?.failIfNoHealing!==undefined&&typeof entry.params.failIfNoHealing!=='boolean')problems.push('apply-heal failIfNoHealing must be boolean');
   }
+  if(entry?.id==='apply-rest'&&Object.keys(entry.params||{}).length)problems.push('apply-rest does not accept params');
+  if(entry?.id==='cure-party-status'&&entry.params?.sound!==undefined&&typeof entry.params.sound!=='boolean')problems.push('cure-party-status sound must be boolean');
   if(entry?.id==='require-target-status'){const statuses=entry.params?.statuses;if(!Array.isArray(statuses)||!statuses.length||new Set(statuses).size!==statuses.length||statuses.some(status=>!MAJOR_STATUS_IDS.includes(status)))problems.push('require-target-status requires distinct supported statuses');}
   if(entry?.id==='pay-hp-cost'){
    const numerator=entry.params?.numerator,denominator=entry.params?.denominator;if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1||numerator>denominator)problems.push('pay-hp-cost requires a valid positive fraction');
@@ -116,9 +169,20 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='apply-self-sacrifice'&&entry.params?.requireHit!==undefined&&typeof entry.params.requireHit!=='boolean')problems.push('apply-self-sacrifice requireHit must be boolean');
   if(entry?.id==='apply-self-sacrifice'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-self-sacrifice requireDamage must be boolean');
   if(entry?.id==='deal-fixed-damage'){
-   if(!['user-level','target-current-fraction','user-current-hp','target-user-hp-difference'].includes(entry.params?.formula))problems.push('deal-fixed-damage requires a supported formula');
+   if(!['user-level','target-current-fraction','user-current-hp','target-user-hp-difference','prepared-retaliation','target-max-hp'].includes(entry.params?.formula))problems.push('deal-fixed-damage requires a supported formula');
    if(entry.params?.formula==='target-current-fraction'&&(!Number.isInteger(entry.params?.denominator)||entry.params.denominator<2))problems.push('target-current-fraction requires denominator >= 2');
+   if(entry.params?.ohko!==undefined&&typeof entry.params.ohko!=='boolean')problems.push('deal-fixed-damage ohko must be boolean');
   }
+  if(entry?.id==='prepare-retaliation'){
+   if(!['any','physical','special'].includes(entry.params?.category))problems.push('prepare-retaliation requires any, physical, or special category');
+   const numerator=entry.params?.numerator,denominator=entry.params?.denominator;if(!Number.isInteger(numerator)||!Number.isInteger(denominator)||numerator<1||denominator<1)problems.push('prepare-retaliation requires a positive damage multiplier fraction');
+  }
+  if(entry?.id==='require-not-consecutive'&&Object.keys(entry.params||{}).length)problems.push('require-not-consecutive does not accept params');
+  if(entry?.id==='require-other-moves-used'&&Object.keys(entry.params||{}).length)problems.push('require-other-moves-used does not accept params');
+  if(entry?.id==='require-pending-damaging-action'&&entry.params?.requirePositivePriority!==undefined&&typeof entry.params.requirePositivePriority!=='boolean')problems.push('require-pending-damaging-action requirePositivePriority must be boolean');
+  if(entry?.id==='require-user-unhit'&&Object.keys(entry.params||{}).length)problems.push('require-user-unhit does not accept params');
+  if(entry?.id==='reorder-pending-action'&&!['front','back'].includes(entry.params?.position))problems.push('reorder-pending-action requires front or back position');
+  if(entry?.id==='require-user-type'&&!CANONICAL_TYPES.includes(entry.params?.type))problems.push('require-user-type requires a canonical type');
   if(entry?.id==='deal-variable-power-damage'){
    if(!VARIABLE_POWER_FORMULAS.includes(entry.params?.formula))problems.push('deal-variable-power-damage requires a supported formula');
    if(['user-hp-proportional','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double','target-grounded-electric-terrain','user-no-held-item','target-held-item-boost'].includes(entry.params?.formula)&&(!Number.isInteger(entry.params?.basePower)||entry.params.basePower<1))problems.push(`${entry.params?.formula} requires positive basePower`);
@@ -135,7 +199,7 @@ export function validateMechanicManifest(manifest,kind){
    if(entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-held-item-action requireDamage must be boolean');
   }
   if(entry?.id==='modify-active-ability'){
-   if(!['swap','copy-target','copy-source','replace-fixed'].includes(entry.params?.mode))problems.push('modify-active-ability requires a supported mode');
+   if(!['swap','copy-target','copy-source','replace-fixed','suppress'].includes(entry.params?.mode))problems.push('modify-active-ability requires a supported mode');
    if(entry.params?.mode==='replace-fixed'&&(typeof entry.params?.abilityId!=='string'||!entry.params.abilityId))problems.push('replace-fixed requires abilityId');
    for(const key of ['blockedSourceAbilityIds','blockedTargetAbilityIds','cureStatuses'])if(entry.params?.[key]!==undefined&&(!Array.isArray(entry.params[key])||entry.params[key].some(value=>typeof value!=='string'||!value)))problems.push(`modify-active-ability ${key} must be a string array`);
    if(entry.params?.cureStatuses?.some(status=>!MAJOR_STATUS_IDS.includes(status)))problems.push('modify-active-ability cureStatuses contains unsupported status');
@@ -144,6 +208,10 @@ export function validateMechanicManifest(manifest,kind){
   if(entry?.id==='apply-side-protection'&&!['wide-guard','quick-guard'].includes(entry.params?.guard))problems.push('apply-side-protection requires a supported guard');
   if(entry?.id==='apply-protection'&&entry.params?.retaliation&&!['spiky-damage','lower-attack','poison'].includes(entry.params.retaliation))problems.push('apply-protection requires a supported retaliation');
   if(entry?.id==='apply-protection'&&entry.params?.blocksStatus!==undefined&&typeof entry.params.blocksStatus!=='boolean')problems.push('apply-protection blocksStatus must be boolean');
+  if(entry?.id==='apply-endure'&&Object.keys(entry.params||{}).length)problems.push('apply-endure does not accept params');
+  if(entry?.id==='apply-charge-state'&&entry.params?.multiplier!==undefined&&(!Number.isFinite(entry.params.multiplier)||entry.params.multiplier<=1))problems.push('apply-charge-state multiplier must be > 1');
+  if(entry?.id==='apply-self-hp-damage'){const n=entry.params?.numerator,d=entry.params?.denominator;if(!Number.isInteger(n)||!Number.isInteger(d)||n<1||d<1||n>d)problems.push('apply-self-hp-damage requires a valid positive fraction');if(entry.params?.rounding!==undefined&&!['floor','ceil','round'].includes(entry.params.rounding))problems.push('apply-self-hp-damage rounding must be floor, ceil, or round');}
+  if(entry?.id==='apply-type-state'){if(!CANONICAL_TYPES.includes(entry.params?.removeType))problems.push('apply-type-state removeType must be canonical');if(!['turn','switch'].includes(entry.params?.duration))problems.push('apply-type-state duration must be turn or switch');if(entry.params?.requireHit!==undefined&&typeof entry.params.requireHit!=='boolean')problems.push('apply-type-state requireHit must be boolean');if(entry.params?.requireHealing!==undefined&&typeof entry.params.requireHealing!=='boolean')problems.push('apply-type-state requireHealing must be boolean');}
   if(entry?.id==='apply-redirection'&&!['follow-me','rage-powder'].includes(entry.params?.kind))problems.push('apply-redirection requires a supported kind');
   if(entry?.id==='apply-forced-switch'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-forced-switch requireDamage must be boolean');
   if(entry?.id==='apply-pivot-switch'&&entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-pivot-switch requireDamage must be boolean');
@@ -199,7 +267,7 @@ export function validateMechanicManifest(manifest,kind){
   }
   if(entry?.id==='cleanup-battlefield-effects'&&!['rapid-spin','defog','mortal-spin','tidy-up'].includes(entry.params?.mode))problems.push('cleanup-battlefield-effects requires a supported mode');
   if(entry?.id==='apply-persistent-effect'){
-   if(!['trapped','ingrain','aqua-ring','salt-cure','magnet-rise'].includes(entry.params?.effect))problems.push('apply-persistent-effect requires a supported effect');
+   if(!['trapped','ingrain','aqua-ring','salt-cure','magnet-rise','imprison'].includes(entry.params?.effect))problems.push('apply-persistent-effect requires a supported effect');
    if(entry.params?.target!==undefined&&!['self'].includes(entry.params.target))problems.push('apply-persistent-effect target override must be self');
    if(entry.params?.requireDamage!==undefined&&typeof entry.params.requireDamage!=='boolean')problems.push('apply-persistent-effect requireDamage must be boolean');
    if(entry.params?.turns!==undefined&&(!Number.isInteger(entry.params.turns)||entry.params.turns<1))problems.push('apply-persistent-effect turns must be a positive integer');
@@ -216,8 +284,8 @@ export function validateMechanicManifest(manifest,kind){
    if(!Number.isInteger(entry.params?.turns)||entry.params.turns<1)problems.push('screen-duration turns must be a positive integer');
   }
   if(entry?.id==='apply-secondary-effects'&&kind!=='moves')problems.push('apply-secondary-effects is only valid for moves');
-  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
-  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','weather-type-damage-boost','weather-residual-immunity','weather-incoming-accuracy-modifier','volatile-incoming-accuracy-modifier','type-immunity-boost','type-immunity-response','status-type-immunity-bypass','priority-move-immunity-aura','ally-major-status-immunity','ally-volatile-immunity','ally-stat-drop-immunity','held-item-suppression','grounding-immunity','move-type-conversion','outgoing-secondary-effect','turn-order-modifier','opponent-berry-suppression','type-immunity-bypass','end-turn-berry-restore','end-turn-ally-status-cure','item-loss-speed-boost','late-move-power-boost','berry-consumption-heal','weather-suppression','damage-response-disable','sleep-counter-rate','damage-charge-type','entry-item-reveal','stat-drop-reflect','end-turn-random-stat-shift','redirection-immunity','target-pp-pressure','pre-move-type-change','redirection-bypass','entry-fainted-ally-power-boost','stat-change-inversion','global-move-block','type-redirection','side-condition-bypass','opponent-stat-gain-copy','berry-effect-multiplier','opponent-stage-ignore','entry-ability-copy','ally-faint-ability-copy','contact-ability-replace','contact-ability-swap','indirect-damage-immunity','entry-danger-sense','opponent-ability-bypass','status-move-reflect','field-type-change','disguise-shield','stance-form-change','entry-transform','entry-illusion','end-turn-form-toggle','switch-out-form-change','received-type-damage-modifier','contact-response','damage-response','ko-stat-boost','end-turn-stat-boost','lethal-hit-survival','stat-drop-response','volatile-immunity','critical-vs-status','status-residual-heal','status-reflect','flinch-stat-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','stat-multiplier','outgoing-accuracy-modifier','contact-power-boost','recoil-power-boost','major-status-immunity','critical-ratio','critical-immunity','stab-modifier','recoil-immunity','received-damage-modifier','always-hit','burn-attack-penalty-immunity','stat-drop-immunity','ally-damage-immunity','ally-damage-reduction','ally-ability-stat-multiplier','secondary-effect-immunity','multi-hit-max','weather-status-cure','paralysis-speed-penalty-immunity','switch-out-status-cure','switch-out-heal','random-status-cure','entry-weather','entry-stat-drop','entry-screen-cleaner','entry-ally-stage-reset','entry-ally-heal','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
+  if(['item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock','item-holder-switch','item-binding-damage-boost','item-switch-escape'].includes(entry?.id)&&kind!=='items')problems.push(`${entry.id} is only valid for items`);
+  if(['low-hp-type-boost','held-damage-boost','received-type-damage-reduction','weather-stat-boost','weather-residual-damage','weather-status-immunity','weather-type-damage-boost','field-type-damage-aura','weather-residual-immunity','weather-incoming-accuracy-modifier','volatile-incoming-accuracy-modifier','type-immunity-boost','type-immunity-response','status-type-immunity-bypass','priority-move-immunity-aura','ally-major-status-immunity','ally-volatile-immunity','ally-stat-drop-immunity','held-item-suppression','grounding-immunity','move-type-conversion','outgoing-secondary-effect','turn-order-modifier','opponent-berry-suppression','type-immunity-bypass','end-turn-berry-restore','end-turn-ally-status-cure','item-loss-speed-boost','late-move-power-boost','berry-consumption-heal','weather-suppression','damage-response-disable','sleep-counter-rate','damage-charge-type','entry-item-reveal','stat-drop-reflect','end-turn-random-stat-shift','redirection-immunity','target-pp-pressure','pre-move-type-change','redirection-bypass','entry-fainted-ally-power-boost','stat-change-inversion','global-move-block','type-redirection','side-condition-bypass','opponent-stat-gain-copy','berry-effect-multiplier','opponent-stage-ignore','entry-ability-copy','ally-faint-ability-copy','contact-ability-replace','contact-ability-swap','indirect-damage-immunity','entry-danger-sense','opponent-ability-bypass','status-move-reflect','field-type-change','disguise-shield','stance-form-change','entry-transform','entry-illusion','end-turn-form-toggle','switch-out-form-change','received-type-damage-modifier','contact-response','damage-response','ko-stat-boost','end-turn-stat-boost','lethal-hit-survival','stat-drop-response','volatile-immunity','critical-vs-status','status-residual-heal','status-reflect','flinch-stat-boost','critical-damage-boost','base-power-threshold-boost','move-tag-power-boost','move-tag-immunity','remove-contact','move-type-by-tag','secondary-effect-power-boost','stat-multiplier','gender-damage-modifier','weight-modifier','outgoing-accuracy-modifier','contact-power-boost','recoil-power-boost','major-status-immunity','critical-ratio','critical-immunity','stab-modifier','recoil-immunity','received-damage-modifier','contact-protection-pierce','parental-bond','opponent-switch-trap','always-hit','burn-attack-penalty-immunity','stat-drop-immunity','ally-damage-immunity','ally-damage-reduction','ally-ability-stat-multiplier','secondary-effect-immunity','multi-hit-max','weather-status-cure','paralysis-speed-penalty-immunity','switch-out-status-cure','switch-out-heal','random-status-cure','entry-weather','entry-terrain','entry-stat-drop','entry-screen-cleaner','entry-ally-stage-reset','entry-ally-heal','item-end-turn-heal','item-threshold-heal','item-survive-lethal-hit','item-status-cure','item-post-move-recoil','item-contact-retaliation','item-damage-heal','item-speed-boost','item-choice-lock','item-holder-switch','item-binding-damage-boost','item-switch-escape'].includes(entry?.id))problems.push(...validatePassiveHandler(entry));
   if(keys.has(key))problems.push(`duplicate handler declaration: ${key}`);keys.add(key);
  }
  for(const format of BATTLE_FORMATS)if(!Array.isArray(manifest.testEvidence?.[format]))problems.push(`${format} testEvidence must be an array`);
@@ -228,9 +296,11 @@ export function validateMechanicManifest(manifest,kind){
   if(manifest.bypassSubstitute!==undefined&&typeof manifest.bypassSubstitute!=='boolean')problems.push('move bypassSubstitute must be boolean');
   if(manifest.sleepUsable!==undefined&&typeof manifest.sleepUsable!=='boolean')problems.push('move sleepUsable must be boolean');
   if(manifest.thawsUser!==undefined&&typeof manifest.thawsUser!=='boolean')problems.push('move thawsUser must be boolean');
+  if(manifest.thawsUserIfUserTypes!==undefined&&(!Array.isArray(manifest.thawsUserIfUserTypes)||!manifest.thawsUserIfUserTypes.length||new Set(manifest.thawsUserIfUserTypes).size!==manifest.thawsUserIfUserTypes.length||manifest.thawsUserIfUserTypes.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('move thawsUserIfUserTypes must contain distinct canonical types');
   if(manifest.criticalRatioStages!==undefined&&(!Number.isInteger(manifest.criticalRatioStages)||manifest.criticalRatioStages<0||manifest.criticalRatioStages>3))problems.push('move criticalRatioStages must be an integer from 0 to 3');
   if(manifest.alwaysCritical!==undefined&&typeof manifest.alwaysCritical!=='boolean')problems.push('move alwaysCritical must be boolean');
-  if(manifest.damageProfile!==undefined){const profile=manifest.damageProfile;if(!profile||typeof profile!=='object'||Array.isArray(profile))problems.push('move damageProfile must be an object');else{if(profile.offensiveStat!==undefined&&!['atk','def','spa','spd','spe'].includes(profile.offensiveStat))problems.push('move damageProfile offensiveStat must be a battle stat');if(profile.offensiveSource!==undefined&&!['user','target'].includes(profile.offensiveSource))problems.push('move damageProfile offensiveSource must be user or target');if(profile.defensiveStat!==undefined&&!['def','spd'].includes(profile.defensiveStat))problems.push('move damageProfile defensiveStat must be def or spd');if(profile.ignoreDefensiveStages!==undefined&&typeof profile.ignoreDefensiveStages!=='boolean')problems.push('move damageProfile ignoreDefensiveStages must be boolean');if(profile.minTargetHp!==undefined&&(!Number.isInteger(profile.minTargetHp)||profile.minTargetHp<0))problems.push('move damageProfile minTargetHp must be a non-negative integer');if(profile.typeEffectivenessOverrides!==undefined){const overrides=profile.typeEffectivenessOverrides;if(!overrides||typeof overrides!=='object'||Array.isArray(overrides)||!Object.keys(overrides).length)problems.push('move damageProfile typeEffectivenessOverrides must be a non-empty object');else for(const [type,value] of Object.entries(overrides)){if(!CANONICAL_TYPES.includes(type))problems.push(`move damageProfile typeEffectivenessOverrides has unknown type: ${type}`);if(![0,0.25,0.5,1,2,4].includes(value))problems.push(`move damageProfile typeEffectivenessOverrides.${type} must be a supported effectiveness multiplier`);}}}}
+  if(manifest.damageProfile!==undefined){const profile=manifest.damageProfile;if(!profile||typeof profile!=='object'||Array.isArray(profile))problems.push('move damageProfile must be an object');else{if(profile.secondaryAttackType!==undefined&&!CANONICAL_TYPES.includes(profile.secondaryAttackType))problems.push('move damageProfile secondaryAttackType must be canonical');if(profile.offensiveStat!==undefined&&!['atk','def','spa','spd','spe'].includes(profile.offensiveStat))problems.push('move damageProfile offensiveStat must be a battle stat');if(profile.offensiveSource!==undefined&&!['user','target'].includes(profile.offensiveSource))problems.push('move damageProfile offensiveSource must be user or target');if(profile.defensiveStat!==undefined&&!['def','spd'].includes(profile.defensiveStat))problems.push('move damageProfile defensiveStat must be def or spd');if(profile.ignoreDefensiveStages!==undefined&&typeof profile.ignoreDefensiveStages!=='boolean')problems.push('move damageProfile ignoreDefensiveStages must be boolean');if(profile.minTargetHp!==undefined&&(!Number.isInteger(profile.minTargetHp)||profile.minTargetHp<0))problems.push('move damageProfile minTargetHp must be a non-negative integer');if(profile.typeEffectivenessOverrides!==undefined){const overrides=profile.typeEffectivenessOverrides;if(!overrides||typeof overrides!=='object'||Array.isArray(overrides)||!Object.keys(overrides).length)problems.push('move damageProfile typeEffectivenessOverrides must be a non-empty object');else for(const [type,value] of Object.entries(overrides)){if(!CANONICAL_TYPES.includes(type))problems.push(`move damageProfile typeEffectivenessOverrides has unknown type: ${type}`);if(![0,0.25,0.5,1,2,4].includes(value))problems.push(`move damageProfile typeEffectivenessOverrides.${type} must be a supported effectiveness multiplier`);}}}}
+  if(manifest.turnOrder!==undefined){const turnOrder=manifest.turnOrder;if(!turnOrder||typeof turnOrder!=='object'||Array.isArray(turnOrder))problems.push('move turnOrder must be an object');else{const terrain=turnOrder.terrainPriority;if(terrain!==undefined){if(!terrain||typeof terrain!=='object'||Array.isArray(terrain)||!TERRAIN_IDS.includes(terrain.terrain)||!Number.isInteger(terrain.priorityDelta)||terrain.priorityDelta===0)problems.push('move turnOrder terrainPriority requires supported terrain and non-zero integer delta');if(terrain?.requireGrounded!==undefined&&typeof terrain.requireGrounded!=='boolean')problems.push('move turnOrder terrainPriority requireGrounded must be boolean');}const volatile=turnOrder.prepareVolatile;if(volatile!==undefined){if(!volatile||typeof volatile!=='object'||Array.isArray(volatile)||typeof volatile.id!=='string'||!volatile.id)problems.push('move turnOrder prepareVolatile requires an id');if(volatile?.endTurnTimer!==undefined&&(!Number.isInteger(volatile.endTurnTimer)||volatile.endTurnTimer<1))problems.push('move turnOrder prepareVolatile endTurnTimer must be positive');if(volatile?.contactBurn!==undefined&&typeof volatile.contactBurn!=='boolean')problems.push('move turnOrder prepareVolatile contactBurn must be boolean');}if(terrain===undefined&&volatile===undefined)problems.push('move turnOrder requires terrainPriority or prepareVolatile');}}
   if(manifest.tags!==undefined&&(!Array.isArray(manifest.tags)||new Set(manifest.tags).size!==manifest.tags.length||manifest.tags.some(tag=>!MOVE_TAG_IDS.includes(tag))))problems.push('move tags must contain distinct supported tags');
   if(manifest.secondaryEffects!==undefined){
    if(!Array.isArray(manifest.secondaryEffects)||!manifest.secondaryEffects.length)problems.push('move secondaryEffects must be a non-empty array when provided');
@@ -250,6 +320,7 @@ function validateSecondaryEffect(effect){
  if(!SECONDARY_EFFECT_KINDS.includes(effect.kind))problems.push(`has unsupported kind: ${effect.kind}`);
  if(!Number.isInteger(effect.chance)||effect.chance<1||effect.chance>100)problems.push('chance must be an integer from 1 to 100');
  if(effect.target!==undefined&&effect.target!=='self')problems.push('target must be self when provided');
+ if(effect.condition!==undefined&&!['target-stats-raised-this-turn'].includes(effect.condition))problems.push(`has unsupported condition: ${effect.condition}`);
  if(effect.target==='self'&&effect.kind!=='stat-stages')problems.push('self secondary effects currently require stat-stages');
  if(effect.kind==='major-status'){
   if(!MAJOR_STATUS_IDS.includes(effect.status))problems.push(`has unsupported major status: ${effect.status}`);

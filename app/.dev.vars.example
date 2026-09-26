@@ -1,0 +1,5 @@
+AUTH_SESSION_SECRET=replace-with-at-least-32-random-characters
+AUTH_ALLOW_LOCAL_BETA=true
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_replace_me
+SUPABASE_SECRET_KEY=sb_secret_replace_me

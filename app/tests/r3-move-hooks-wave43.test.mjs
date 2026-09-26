@@ -1,0 +1,29 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {applyMechanicsSwitch,compilePassiveEffects,createHeldItemState,createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS,resolveMechanicsEndTurn} from '../mechanics-v3/index.mjs';
+
+const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
+const ids=['strength-sap','syrup-bomb','tackle'],byId=Object.fromEntries(catalog.map(move=>[move.id,move])),moves=Object.fromEntries(ids.map(id=>[id,byId[id]]));
+const resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,abilityManifests:manifests,registry:createHookRegistry(HANDLER_DEFINITIONS)});
+const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0}),pp=()=>Object.fromEntries(ids.map(id=>[id,20]));
+const unit=(actorId,overrides={})=>({actorId,speciesId:actorId,types:['normal'],hp:600,maxHp:1000,stats:{hp:1000,atk:200,def:180,spa:180,spd:180,spe:100},pp:pp(),maxPp:pp(),status:null,volatiles:{},stages:stages(),passiveEffects:[],abilityState:{},buildSnapshot:{abilityId:null,itemId:null,moveIds:ids},itemState:createHeldItemState(null),...overrides});
+function fixture(format='single'){const n=format==='double'?2:1,a=[unit('a1'),unit('a2'),unit('a3')],b=[unit('b1'),unit('b2'),unit('b3')];return {id:`wave43-${format}`,format,level:50,phase:'RESOLVE',phaseRevision:1,turn:60,activeCount:n,rngState:43,eventSequence:0,events:[],result:null,field:{},sides:{A:{active:a.slice(0,n).map(x=>x.actorId),roster:a,conditions:{}},B:{active:b.slice(0,n).map(x=>x.actorId),roster:b,conditions:{}}}};}
+const action=(moveId,{side='A',actorId='a1',target={side:'B',slot:0}}={})=>({kind:'move',side,actorId,moveId,target,moveType:byId[moveId].type,moveCategory:byId[moveId].category,priority:manifests.moves[moveId]?.priority??0,speed:100});
+const runtime={nextRandom:()=>.25,hasActed:()=>false,willMove:()=>true};
+const setAbility=(target,id)=>{target.activeAbilityId=id;target.buildSnapshot.abilityId=id;target.passiveEffects=compilePassiveEffects({abilityId:id,itemId:null,manifests});};
+const evidence={single:['r3-move-hooks-wave43:single'],double:['r3-move-hooks-wave43:double']};
+
+test('r3-move-hooks-wave43:single/double promotes Strength Sap and Syrup Bomb with evidence',()=>{for(const id of ['strength-sap','syrup-bomb'])assert.deepEqual(manifests.moves[id].testEvidence,evidence,id);});
+
+test('Strength Sap snapshots the target staged Attack before lowering it and heals the user by that amount',()=>{const battle=fixture();battle.sides.A.roster[0].hp=100;battle.sides.B.roster[0].stages.atk=2;const result=resolveMove(battle,action('strength-sap'),runtime),user=result.battle.sides.A.roster[0],target=result.battle.sides.B.roster[0];assert.equal(user.hp,500);assert.equal(target.stages.atk,1);assert.ok(result.events.some(e=>e.kind==='heal'&&e.targetStatSourceId==='b1'&&e.amount===400));});
+
+test('Strength Sap fails at -6 Attack, still lowers Attack when healing is blocked, and follows Magic Bounce reflection',()=>{let battle=fixture();battle.sides.B.roster[0].stages.atk=-6;const beforeHp=battle.sides.A.roster[0].hp;let result=resolveMove(battle,action('strength-sap'),runtime);assert.equal(result.battle.sides.A.roster[0].hp,beforeHp);assert.equal(result.battle.sides.B.roster[0].stages.atk,-6);assert.ok(result.events.some(e=>e.kind==='moveFailed'&&e.reason==='targetStatFloor'));
+ battle=fixture();battle.sides.A.roster[0].hp=300;battle.sides.A.roster[0].volatiles['heal-block']={id:'heal-block',blocksHealing:true,endTurnTimer:2};result=resolveMove(battle,action('strength-sap'),runtime);assert.equal(result.battle.sides.A.roster[0].hp,300);assert.equal(result.battle.sides.B.roster[0].stages.atk,-1);assert.ok(result.events.some(e=>e.kind==='healBlocked'&&e.targetId==='a1'));
+ battle=fixture();battle.sides.B.roster[0].hp=300;setAbility(battle.sides.B.roster[0],'magic-bounce');result=resolveMove(battle,action('strength-sap'),runtime);assert.equal(result.battle.sides.A.roster[0].stages.atk,-1);assert.equal(result.battle.sides.B.roster[0].stages.atk,0);assert.equal(result.battle.sides.B.roster[0].hp,500);assert.ok(result.events.some(e=>e.kind==='moveReflected'&&e.abilityId==='magic-bounce'));});
+
+test('Syrup Bomb applies exactly three end-turn Speed drops and removes its residual state after the third tick',()=>{let battle=fixture(),result=resolveMove(battle,action('syrup-bomb'),runtime);battle=result.battle;assert.equal(battle.sides.B.roster[0].volatiles['syrup-bomb']?.endTurnTimer,3);for(let expected=-1;expected>=-3;expected--){battle.phase='END_TURN';result=resolveMechanicsEndTurn(battle,[],{manifests});battle=result.battle;assert.equal(battle.sides.B.roster[0].stages.spe,expected);}assert.equal(battle.sides.B.roster[0].volatiles['syrup-bomb'],undefined);});
+
+test('Syrup Bomb does not refresh an existing coating and ends without a Speed drop if its source leaves the field',()=>{let battle=fixture(),result=resolveMove(battle,action('syrup-bomb'),runtime);const reapplied=resolveMove(result.battle,action('syrup-bomb'),runtime);assert.equal(reapplied.battle.sides.B.roster[0].volatiles['syrup-bomb']?.endTurnTimer,3);assert.ok(reapplied.events.some(e=>e.kind==='volatileFailed'&&e.reason==='alreadyVolatile'));
+ const switched=applyMechanicsSwitch(result.battle,'A','a1','a3',{manifests});battle=switched.battle;battle.phase='END_TURN';const ended=resolveMechanicsEndTurn(battle,[],{manifests});assert.equal(ended.battle.sides.B.roster[0].stages.spe,0);assert.equal(ended.battle.sides.B.roster[0].volatiles['syrup-bomb'],undefined);assert.ok(ended.events.some(e=>e.kind==='volatileEnded'&&e.volatile==='syrup-bomb'&&e.reason==='sourceUnavailable'));});

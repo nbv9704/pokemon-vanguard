@@ -1,4 +1,5 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
+import {unitIsGrounded} from './terrain.mjs';
 import {turnOrderAbilityEffects} from './ability-hooks.mjs';
 import {prepareTurnOrderItems} from './item-hooks.mjs';
 
@@ -32,7 +33,20 @@ export function prepareTurnOrderAbilities(battle,actions=[],runtime={}){
  return {battle:next,actions:prepared,events};
 }
 
-export function prepareTurnOrderMechanics(battle,actions=[],runtime={}){
- const abilities=prepareTurnOrderAbilities(battle,actions,runtime),items=prepareTurnOrderItems(abilities.battle,abilities.actions,runtime);
- return {battle:items.battle,actions:items.actions,events:[...abilities.events,...items.events]};
+export function prepareTurnOrderMoves(battle,actions=[],runtime={},moveManifests={}){
+ const next=clone(battle),prepared=(actions||[]).map(action=>({...action})),events=[];
+ for(const action of prepared.filter(entry=>entry?.kind==='move')){
+  const actor=unitById(next,action.actorId),manifest=moveManifests?.[action.moveId],turnOrder=manifest?.turnOrder;
+  if(!actor||actor.hp<=0||!turnOrder)continue;
+  const terrain=turnOrder.terrainPriority;
+  if(terrain&&next.field?.terrain?.id===terrain.terrain&&(!terrain.requireGrounded||unitIsGrounded(actor,next))){action.priority=(action.priority??0)+(terrain.priorityDelta??0);events.push({kind:'movePriorityChanged',actorId:actor.actorId,moveId:action.moveId,reason:'terrain',terrain:terrain.terrain,priority:action.priority});}
+  const volatile=turnOrder.prepareVolatile;
+  if(volatile){actor.volatiles??={};actor.volatiles[volatile.id]={id:volatile.id,sourceId:action.moveId,endTurnTimer:volatile.endTurnTimer??1,...(volatile.contactBurn?{contactBurn:true}:{})};events.push({kind:'volatileApplied',actorId:actor.actorId,targetId:actor.actorId,moveId:action.moveId,volatile:volatile.id,reason:'turn-order-preparation'});}
+ }
+ return {battle:next,actions:prepared,events};
+}
+
+export function prepareTurnOrderMechanics(battle,actions=[],runtime={},options={}){
+ const moves=prepareTurnOrderMoves(battle,actions,runtime,options.moveManifests),abilities=prepareTurnOrderAbilities(moves.battle,moves.actions,runtime),items=prepareTurnOrderItems(abilities.battle,abilities.actions,runtime);
+ return {battle:items.battle,actions:items.actions,events:[...moves.events,...abilities.events,...items.events]};
 }

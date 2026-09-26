@@ -1,0 +1,12 @@
+const app=document.querySelector('#app');
+const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+function loginScreen(config,error=''){
+ const legacyPlayerId=localStorage.getItem('aether-player')||'';
+ const errors={storage_not_ready:'The account database is not ready yet. Run the Supabase migration, then try again.',profile_sync_failed:'Your account was verified, but its game profile could not be saved.',oauth_failed:'Login was not completed. Please try again.',invalid_oauth_response:'The login link expired. Please start again.'},errorMessage=errors[error]||errors.oauth_failed;
+ app.innerHTML=`<main class="auth-shell"><section class="auth-card"><div class="auth-brand"><img src="/logo.png" alt="Pokémon Vanguard"><div><small>VANGUARD LEAGUE</small><h1>Welcome, Challenger</h1></div></div><p class="auth-intro">Sign in to protect your adventure and continue it on another device.</p>${error?'<div class="auth-error">'+esc(errorMessage)+'</div>':''}<div class="auth-actions"><a class="auth-provider google ${config.providers.google?'':'disabled'}" ${config.providers.google?'href="/api/auth/google/start"':'aria-disabled="true"'}><span>G</span>Continue with Google</a><a class="auth-provider discord ${config.providers.discord?'':'disabled'}" ${config.providers.discord?'href="/api/auth/discord/start"':'aria-disabled="true"'}><span>◉</span>Continue with Discord</a></div>${config.devLogin?`<div class="auth-divider"><span>LOCAL BETA</span></div><form method="post" action="/api/auth/dev"><input type="hidden" name="legacyPlayerId" value="${esc(legacyPlayerId)}"><button class="auth-local" type="submit">Continue with current local save</button></form>`:''}<p class="auth-note">Only your basic profile is requested. Your Google or Discord password is never shared with the game.</p></section></main>`;
+}
+try{
+ const response=await fetch('/api/auth/session',{credentials:'same-origin',headers:{Accept:'application/json'}});if(!response.ok)throw new Error('auth unavailable');const auth=await response.json();
+ if(auth.authenticated){window.__PV_AUTH__=auth.user;await import('./client.js');}
+ else loginScreen(auth,new URLSearchParams(location.search).get('auth_error'));
+}catch{app.innerHTML='<div class="empty">Authentication service is unavailable. Restart the local server and try again.</div>';}

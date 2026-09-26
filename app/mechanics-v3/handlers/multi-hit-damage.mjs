@@ -2,6 +2,7 @@ import {clone,unitById} from '../../rules-v3/battle-state.mjs';
 import {resolveTargets} from '../targets.mjs';
 import {applyDamageHit} from '../damage-hit.mjs';
 import {abilityMaximizesMultiHit} from '../ability-hooks.mjs';
+import {repeatHitAccuracyChance} from './check-accuracy.mjs';
 
 export function selectHitCount(hits,nextRandom,{maximize=false}={}){
  if(Number.isInteger(hits))return hits;
@@ -22,11 +23,13 @@ export const multiHitDamageHandler={
   if(!targets.length)return {battle:next,payload:{...payload,totalDamage:0,targetIds:[],hitCounts:{},damagedTargetIds:[]},events:[{kind:'moveFailed',actorId:actor.actorId,moveId:move.id,reason:'noTarget'}]};
   let totalDamage=0;const hitCounts={},damagedTargetIds=[];
   for(const target of targets){
-   const plannedHits=selectHitCount(params.hits,runtime.nextRandom,{maximize:abilityMaximizesMultiHit(unitById(next,actor.actorId))}),targetId=target.actorId;let actualHits=0;
+   const dynamicPowers=Array.isArray(payload.partyHitPowers)?payload.partyHitPowers:null,smartSplitCount=params.smartSplit===true?(payload.smartSplitTargetIds||[]).length:0,plannedHits=dynamicPowers?dynamicPowers.length:smartSplitCount>1?1:selectHitCount(params.hits,runtime.nextRandom,{maximize:abilityMaximizesMultiHit(unitById(next,actor.actorId))}),targetId=target.actorId;let actualHits=0;
    for(let hit=1;hit<=plannedHits;hit++){
     const liveActor=unitById(next,actor.actorId);if(!liveActor||liveActor.hp<=0)break;
     const defender=unitById(next,targetId);if(!defender||defender.hp<=0)break;
-    const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move,mechanics,hit,moveItemMultiplier:payload.itemMoveMultiplier??1,moveItemId:payload.itemMoveItemId??null},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0&&!result.substituteAbsorbed)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
+    if(params.perHitAccuracy===true&&hit>1){const chance=repeatHitAccuracyChance(next,{actor:liveActor,target:defender,move,mechanics,runtime});if(chance!==null&&chance<100){if(typeof runtime.nextRandom!=='function')throw new Error('per-hit accuracy requires seeded nextRandom');if(runtime.nextRandom()>=chance/100){events.push({kind:'moveMissed',actorId:liveActor.actorId,targetId:defender.actorId,moveId:move.id,effectiveAccuracy:chance,hit});break;}}}
+    const hitPower=dynamicPowers?dynamicPowers[hit-1]:Array.isArray(params.powerByHit)?params.powerByHit[hit-1]:Number.isFinite(params.powerStep)?move.power+(hit-1)*params.powerStep:move.power,hitMove=hitPower===move.power?move:{...move,power:hitPower};
+    const result=applyDamageHit(next,{actorId:actor.actorId,targetId,move:hitMove,mechanics,hit,moveItemMultiplier:payload.itemMoveMultiplier??1,moveItemId:payload.itemMoveItemId??null},runtime);next=result.battle;totalDamage+=result.amount;if(result.amount>0&&!result.substituteAbsorbed)damagedTargetIds.push(targetId);events.push(...result.events);actualHits++;
     if(result.amount===0&&!result.disguiseShielded)break;
    }
    hitCounts[targetId]=actualHits;events.push({kind:'hitCount',actorId:actor.actorId,targetId,moveId:move.id,plannedHits,hitCount:actualHits});

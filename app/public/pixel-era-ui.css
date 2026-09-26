@@ -1,0 +1,864 @@
+/* R3-102 — Gen III / GBA-inspired pixel presentation pass.
+   Presentation only: DOM semantics, UI state and battle mechanics remain unchanged. */
+
+:root{
+  --px:2px;
+  --pixel-font:ui-monospace,"SFMono-Regular",Menlo,Consolas,"Liberation Mono","Courier New",monospace;
+  --pixel-navy:#10233d;
+  --pixel-blue:#244f7c;
+  --pixel-blue-mid:#3b6d99;
+  --pixel-blue-hi:#78a6c7;
+  --pixel-cream:#f7f2d7;
+  --pixel-paper:#fffbed;
+  --pixel-paper-2:#e5dfc1;
+  --pixel-ink:#18243a;
+  --pixel-muted:#536077;
+  --pixel-line:#263b59;
+  --pixel-shadow:#07101e;
+  --pixel-green:#5ea84f;
+  --pixel-yellow:#f4d35e;
+  --pixel-red:#c4544d;
+  --pixel-cyan:#78c6ce;
+  --pixel-panel:#d5d9cc;
+  --pixel-panel-dark:#9aa89d;
+  --game-ui-radius:0px;
+  --game-ui-edge:#263b59;
+  --game-ui-edge-hi:#fffbed;
+  --game-ui-shadow:#07101e;
+  --game-ui-focus:#f4d35e;
+}
+
+html{background:#091426;image-rendering:pixelated}
+body.pixel-era{
+  min-height:100vh;
+  color:var(--pixel-ink);
+  font-family:var(--pixel-font)!important;
+  font-size:calc(13px * var(--scale));
+  line-height:1.45;
+  background:
+    linear-gradient(90deg,#0d203a 0 2px,transparent 2px 100%) 0 0/16px 16px,
+    linear-gradient(#0d203a 0 2px,transparent 2px 100%) 0 0/16px 16px,
+    #132c4b;
+  image-rendering:pixelated;
+  text-rendering:geometricPrecision;
+}
+body.pixel-era *{font-family:inherit}
+body.pixel-era img,body.pixel-era canvas,body.pixel-era svg{image-rendering:pixelated}
+body.pixel-era ::selection{background:var(--pixel-yellow);color:var(--pixel-ink)}
+
+/* ---------- Pixel primitives ---------- */
+body.pixel-era button,
+body.pixel-era input,
+body.pixel-era select,
+body.pixel-era textarea{
+  border-radius:0!important;
+  font-family:var(--pixel-font)!important;
+}
+body.pixel-era button{
+  min-height:30px;
+  border:2px solid var(--pixel-line)!important;
+  padding:7px 11px;
+  background:var(--pixel-paper)!important;
+  color:var(--pixel-ink)!important;
+  box-shadow:inset 2px 2px 0 #fff,inset -2px -2px 0 #b8b8a7,3px 3px 0 var(--pixel-shadow)!important;
+  transition:none!important;
+  text-transform:uppercase;
+  letter-spacing:.02em;
+  font-weight:800;
+}
+body.pixel-era button:hover:not(:disabled){background:#fff7bd!important;transform:none!important}
+body.pixel-era button:active:not(:disabled){transform:translate(2px,2px)!important;box-shadow:inset 2px 2px 0 #b8b8a7,inset -2px -2px 0 #fff,1px 1px 0 var(--pixel-shadow)!important}
+body.pixel-era button.primary{background:#bfe29d!important;color:#162c20!important;border-color:#315d39!important}
+body.pixel-era button.orange{background:#f0bd75!important;color:#3b2917!important}
+body.pixel-era button.ghost{background:#e6e4d6!important}
+body.pixel-era button:disabled{filter:grayscale(1);opacity:.48}
+body.pixel-era input,
+body.pixel-era select,
+body.pixel-era textarea{
+  background:var(--pixel-paper)!important;
+  color:var(--pixel-ink)!important;
+  border:2px solid var(--pixel-line)!important;
+  padding:7px 9px!important;
+  box-shadow:inset 2px 2px 0 #b8b8a7,inset -1px -1px 0 #fff!important;
+}
+body.pixel-era button:focus-visible,
+body.pixel-era a:focus-visible,
+body.pixel-era input:focus-visible,
+body.pixel-era select:focus-visible,
+body.pixel-era textarea:focus-visible,
+body.pixel-era .ui-cursor-focus{
+  outline:2px solid var(--pixel-yellow)!important;
+  outline-offset:2px!important;
+}
+
+body.pixel-era .aether-window,
+body.pixel-era .panel,
+body.pixel-era .modal{
+  border-radius:0!important;
+  border:3px solid var(--pixel-line)!important;
+  background:var(--pixel-paper)!important;
+  color:var(--pixel-ink)!important;
+  box-shadow:
+    inset 0 0 0 2px #fff,
+    inset 0 0 0 4px #aeb7aa,
+    4px 4px 0 var(--pixel-shadow)!important;
+}
+body.pixel-era .aether-window:before{
+  inset:5px!important;
+  border:1px solid #6f7e76!important;
+  border-radius:0!important;
+}
+body.pixel-era .aether-window-title{
+  border-radius:0!important;
+  border-bottom:2px solid var(--pixel-line)!important;
+  background:#b7c7bc!important;
+  font-family:var(--pixel-font)!important;
+  letter-spacing:.08em;
+}
+body.pixel-era .pill,
+body.pixel-era .type,
+body.pixel-era .summary-type,
+body.pixel-era .phase-chip,
+body.pixel-era .rarity{
+  border-radius:0!important;
+}
+body.pixel-era .progress,
+body.pixel-era .party-hp,
+body.pixel-era .pokemon-hp-track,
+body.pixel-era .pokemon-hp-fill,
+body.pixel-era .summary-base-stats i{
+  border-radius:0!important;
+}
+
+/* ---------- Whole-app shell: console/game menu instead of dashboard ---------- */
+body.pixel-era .shell{
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  grid-template-rows:auto auto minmax(0,1fr);
+  min-height:100vh;
+  width:min(1280px,100%);
+  margin:0 auto;
+  border-left:4px solid #07101e;
+  border-right:4px solid #07101e;
+  background:#18375b;
+  box-shadow:0 0 0 2px #527a9f,0 0 36px #0008;
+}
+body.pixel-era .sidebar{
+  position:sticky;
+  top:0;
+  z-index:40;
+  width:100%;
+  height:auto;
+  min-height:62px;
+  padding:6px 8px;
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:8px;
+  border:0;
+  border-bottom:4px solid #07101e;
+  background:
+    repeating-linear-gradient(0deg,#2d5a87 0 4px,#315f8d 4px 8px);
+  box-shadow:inset 0 -2px 0 #7fa6c8;
+}
+body.pixel-era .brand{margin:0;padding:0 8px 0 2px;gap:7px;border-right:2px solid #173552}
+body.pixel-era .brandmark{
+  width:34px;height:34px;
+  border:2px solid #f7e58b;
+  border-radius:0;
+  background:#1c4169;
+  color:#f7e58b;
+  transform:none;
+  box-shadow:inset 2px 2px #6e91ad,inset -2px -2px #09192b;
+  font-size:20px;
+}
+body.pixel-era .brandname{
+  color:#fffbe8;
+  font-family:var(--pixel-font)!important;
+  font-size:12px;
+  line-height:1.05;
+  letter-spacing:.05em;
+  text-shadow:2px 2px #0a1b30;
+}
+body.pixel-era .brandname small{margin-top:3px;color:#f5d562;font-size:7px;letter-spacing:.16em}
+body.pixel-era .navlabel{display:none}
+body.pixel-era .navs{display:flex;min-width:0;gap:4px;overflow-x:auto;scrollbar-width:thin;padding:2px}
+body.pixel-era .nav{
+  flex:0 0 auto;
+  width:auto;
+  min-height:42px;
+  margin:0;
+  padding:5px 8px!important;
+  gap:5px;
+  border:2px solid #173552!important;
+  background:#d8e1d7!important;
+  color:#1a2d43!important;
+  box-shadow:inset 2px 2px #fff,inset -2px -2px #8a9990,2px 2px #07101e!important;
+  font-size:8px!important;
+  white-space:nowrap;
+}
+body.pixel-era .nav .icon{width:15px;font-size:12px;color:#254f72}
+body.pixel-era .nav.active{
+  background:#fff2a4!important;
+  color:#23304a!important;
+  box-shadow:inset 2px 2px #fff9cc,inset -2px -2px #b58b38,2px 2px #07101e!important;
+}
+body.pixel-era .nav.active:before{content:"▶";margin-right:1px;color:#c04a42;font-size:8px}
+body.pixel-era .nav .badge{border-radius:0;background:#c94f48;color:white;padding:1px 3px}
+body.pixel-era .sidefoot{margin:0;padding:0 4px;text-align:right;color:#d6e4e8;font-size:7px;line-height:1.2}
+body.pixel-era .sidefoot p{display:none}
+body.pixel-era .online{color:#eaf59f;font-size:7px;letter-spacing:.04em}
+
+body.pixel-era .shell>div{display:contents}
+body.pixel-era .topbar{
+  grid-row:2;
+  height:40px;
+  padding:5px 10px;
+  border:0;
+  border-bottom:3px solid #07101e;
+  background:#b9c8bd;
+  color:var(--pixel-ink);
+  box-shadow:inset 0 -2px #788a81;
+}
+body.pixel-era .breadcrumb{color:#3d4b5e;font-size:8px;font-weight:800;text-transform:uppercase}
+body.pixel-era .breadcrumb b{color:#18243a}
+body.pixel-era .resources{gap:5px}
+body.pixel-era .currency{
+  min-height:26px;
+  padding:3px 7px;
+  border:2px solid #4c5c65;
+  border-radius:0;
+  background:#f8f3dc;
+  color:#18243a;
+  box-shadow:inset 1px 1px #fff,inset -1px -1px #adb2a5;
+  font-size:8px;
+}
+body.pixel-era .currency span{color:#b88927}
+body.pixel-era .currency.crystal span{color:#7653aa}
+body.pixel-era .avatar{width:25px;height:25px;border:2px solid #374b61;border-radius:0;background:#5a8a5b;color:#fff;font-size:9px;box-shadow:inset 1px 1px #9dc98f}
+body.pixel-era .content{
+  grid-row:3;
+  width:100%;
+  max-width:none;
+  margin:0;
+  padding:14px clamp(10px,2vw,24px) 22px;
+  background:
+    linear-gradient(90deg,transparent 0 15px,#1b416a 15px 16px,transparent 16px) 0 0/32px 32px,
+    linear-gradient(transparent 0 15px,#1b416a 15px 16px,transparent 16px) 0 0/32px 32px,
+    #17395f;
+}
+body.pixel-era .heading{margin-bottom:12px;padding:10px 12px;border:3px solid #081426;background:#e9e6cf;box-shadow:inset 0 0 0 2px #fff,4px 4px #07101e}
+body.pixel-era .heading h1{margin:2px 0;font-family:var(--pixel-font)!important;font-size:19px;line-height:1.1;color:#18243a;text-transform:uppercase;letter-spacing:.03em}
+body.pixel-era .heading p,body.pixel-era p{color:#546173}
+body.pixel-era .eyebrow{font-size:7px;color:#315e86;letter-spacing:.12em}
+body.pixel-era .bottomnote{margin-top:14px;padding:8px 10px;border:2px solid #07101e;background:#0f2947;color:#d5e4e8;font-size:7px}
+
+/* ---------- Home: GBA menu composition ---------- */
+body.pixel-era .hero,
+body.pixel-era .summonhero{
+  min-height:250px;
+  padding:22px;
+  border:4px solid #07101e;
+  border-radius:0;
+  background:
+    repeating-linear-gradient(135deg,#5f91ad 0 4px,#56869f 4px 8px)!important;
+  box-shadow:inset 0 0 0 2px #bcd5d9,5px 5px 0 #07101e;
+}
+body.pixel-era .hero:before{background:linear-gradient(90deg,#102b4adf 0 43%,transparent 43%)!important}
+body.pixel-era .hero h2,body.pixel-era .summonhero h2{font-family:var(--pixel-font)!important;font-size:34px;line-height:1.1;color:#fffced;text-shadow:3px 3px #17314d}
+body.pixel-era .hero h2 em{color:#f5d65f}
+body.pixel-era .hero p,body.pixel-era .summonhero p{color:#e3edf0;font-size:9px}
+body.pixel-era .heroart .ring{border-radius:0;border:2px dashed #f8efb5;box-shadow:none;transform:rotate(-8deg)}
+body.pixel-era .heroart .art{filter:drop-shadow(5px 5px 0 #12243e80)}
+body.pixel-era .dashboard{grid-template-columns:minmax(0,1fr) 260px;gap:10px;margin-top:12px}
+body.pixel-era .sectiontitle h2{font-family:var(--pixel-font)!important;font-size:13px;text-transform:uppercase;color:#fffbed;text-shadow:2px 2px #07101e}
+body.pixel-era .sectiontitle small{color:#c5d9df;font-size:7px}
+body.pixel-era .modegrid{gap:7px}
+body.pixel-era .modecard,
+body.pixel-era .mini,
+body.pixel-era .monster,
+body.pixel-era .gym{
+  border-radius:0!important;
+  border:3px solid #273b57!important;
+  background:#f6f0d6!important;
+  color:#18243a!important;
+  box-shadow:inset 2px 2px #fff,inset -2px -2px #aba992,4px 4px #07101e!important;
+}
+body.pixel-era .modecard{min-height:130px;padding:15px}
+body.pixel-era .modecard h3{font-family:var(--pixel-font)!important;font-size:17px;color:#1d3554}
+body.pixel-era .modecard p{color:#59657a;font-size:8px}
+body.pixel-era .modecard .modeicon{color:#4f7798;font-size:44px;opacity:.35;transform:none}
+body.pixel-era .modecard small,body.pixel-era .arrow{font-size:7px;color:#3c6787}
+body.pixel-era .panel{padding:14px}
+body.pixel-era .mission{border-bottom:2px dotted #839087}
+
+/* ---------- Management screens: one pixel grammar ---------- */
+body.pixel-era .pokemon-management-surface{
+  --management-paper:#f7f2d7;
+  color:var(--pixel-ink);
+}
+body.pixel-era .summary-console-head,
+body.pixel-era .party-console-head,
+body.pixel-era .pokedex-index-head,
+body.pixel-era .ranch-index-head,
+body.pixel-era .ranch-detail-head{
+  border-radius:0!important;
+  border-bottom:3px solid #182c46!important;
+  background:#3d6e91!important;
+  color:#fffbed!important;
+  box-shadow:inset 0 -2px #173552!important;
+}
+body.pixel-era .summary-console-head *,
+body.pixel-era .party-console-head *,
+body.pixel-era .pokedex-index-head *,
+body.pixel-era .ranch-index-head *,
+body.pixel-era .ranch-detail-head *{color:inherit}
+body.pixel-era .summary-console-head strong,body.pixel-era .pokedex-index-head b,body.pixel-era .ranch-index-head b{font-size:12px;text-transform:uppercase}
+body.pixel-era .summary-tabs{border-bottom:3px solid #263b59;background:#9caf9d}
+body.pixel-era .summary-tab{
+  min-height:34px;
+  border:0!important;
+  border-right:2px solid #52665b!important;
+  background:#d8ddcc!important;
+  box-shadow:none!important;
+  color:#233249!important;
+  font-size:8px;
+}
+body.pixel-era .summary-tab b{width:14px;height:14px;border-radius:0;background:#456b78;font-size:7px}
+body.pixel-era .summary-tab.selected{background:#fff0a6!important;box-shadow:inset 0 -4px #bf6c3d!important}
+body.pixel-era .summary-tab.selected b{background:#a4513f}
+body.pixel-era .summary-page{padding:15px}
+body.pixel-era .summary-portrait,
+body.pixel-era .ranch-preview,
+body.pixel-era .pokedex-preview{
+  border-radius:0!important;
+  border:3px solid #334e63!important;
+  background:
+    linear-gradient(#dbe9dd 0 70%,#8eb381 70% 74%,#b8cba2 74%)!important;
+  box-shadow:inset 0 0 0 2px #fff,4px 4px #23344a!important;
+}
+body.pixel-era .summary-profile-hero{border-bottom:3px double #718078}
+body.pixel-era .summary-profile-hero h2{font-size:20px;text-transform:uppercase}
+body.pixel-era .summary-type,
+body.pixel-era .ranch-types span,
+body.pixel-era .pokedex-types span,
+body.pixel-era .party-types span{
+  border:2px solid #354a5b!important;
+  border-radius:0!important;
+  box-shadow:inset 1px 1px #fff8;
+  font-size:7px!important;
+}
+body.pixel-era .summary-info-grid>div,
+body.pixel-era .summary-info-grid>label,
+body.pixel-era .summary-base-stats,
+body.pixel-era .summary-stat-row,
+body.pixel-era .summary-move-card,
+body.pixel-era .summary-loadout-card,
+body.pixel-era .ranch-data>div,
+body.pixel-era .ranch-build-core>div,
+body.pixel-era .ranch-sample,
+body.pixel-era .ranch-price,
+body.pixel-era .ranch-moves>div{
+  border-radius:0!important;
+  border:2px solid #6c7b76!important;
+  background:#f7f2d7!important;
+  box-shadow:inset 1px 1px #fff!important;
+}
+body.pixel-era .point-orb,
+body.pixel-era .summary-move-index,
+body.pixel-era .summary-legality>span{
+  border-radius:0!important;
+}
+body.pixel-era .summary-save-bar,
+body.pixel-era .party-save-bar,
+body.pixel-era .ranch-actions{
+  border-top:3px solid #33485b!important;
+  background:#aab9ab!important;
+}
+
+/* Party cards */
+body.pixel-era .party-slot,
+body.pixel-era .party-build-card,
+body.pixel-era .team-slot,
+body.pixel-era .replacement-card{
+  border-radius:0!important;
+  border:3px solid #3a5066!important;
+  background:#f7f2d7!important;
+  box-shadow:inset 2px 2px #fff,inset -2px -2px #a5a795,3px 3px #122238!important;
+}
+body.pixel-era .party-slot.selected,
+body.pixel-era .party-build-card.selected,
+body.pixel-era .replacement-card.selected{
+  background:#fff0a3!important;
+  border-color:#805831!important;
+}
+
+/* Pokédex */
+body.pixel-era .pokedex-shell{gap:10px}
+body.pixel-era .pokedex-filterbar{gap:5px;background:#a5b3a8!important;border-bottom:3px solid #33485b!important}
+body.pixel-era .pokedex-grid,
+body.pixel-era .ranch-offer-grid{gap:4px!important;padding:6px!important;background:#879d96!important}
+body.pixel-era .pokedex-entry,
+body.pixel-era .ranch-offer{
+  border-radius:0!important;
+  border:2px solid #33485b!important;
+  background:#f5f0d9!important;
+  color:#18243a!important;
+  box-shadow:inset 1px 1px #fff,inset -1px -1px #9da293,2px 2px #203249!important;
+  transition:none!important;
+}
+body.pixel-era .pokedex-entry:hover,
+body.pixel-era .ranch-offer:hover{transform:none!important;background:#fff6b8!important}
+body.pixel-era .pokedex-entry.selected,
+body.pixel-era .ranch-offer.selected{background:#fff0a3!important;border-color:#714d2d!important}
+body.pixel-era .pokedex-form-tray{border-radius:0!important;background:#b5c1b4!important;border:2px solid #4f625d!important}
+body.pixel-era .pokedex-form-tray button{min-height:24px;padding:3px 6px}
+body.pixel-era .pokemon-art-placeholder{border-radius:0!important;border:2px dashed #53695f!important;background:#dbe3cf!important;text-shadow:none!important}
+
+/* ---------- Battle: 320×180-inspired composition on an HD surface ---------- */
+body.pixel-era .battle-shell-layout,
+body.pixel-era .battle-content,
+body.pixel-era .pokemon-battle-shell{
+  background:#071323!important;
+}
+body.pixel-era .pokemon-battle-shell{
+  min-height:100vh;
+  grid-template-rows:44px minmax(0,1fr);
+  color:#fffbed;
+}
+body.pixel-era .pokemon-game-header{
+  height:44px;
+  padding:5px 10px;
+  border:0;
+  border-bottom:4px solid #07101e;
+  background:#2e5d8a;
+  box-shadow:inset 0 -2px #80a7c4;
+}
+body.pixel-era .pokemon-game-header small{font-family:var(--pixel-font)!important;font-size:6px;color:#dce9e8}
+body.pixel-era .pokemon-game-header b{font-family:var(--pixel-font)!important;font-size:12px;color:#fffbed;text-shadow:2px 2px #102943}
+body.pixel-era .pokemon-game-header-actions>span{font-family:var(--pixel-font)!important;font-size:6px}
+body.pixel-era .pokemon-game-header-actions button{min-height:25px;padding:3px 7px!important}
+body.pixel-era .pokemon-game-body{padding:6px;overflow:hidden}
+body.pixel-era .pokemon-battle-ui{
+  width:min(1280px,100%);
+  height:calc(100vh - 56px);
+  min-height:580px;
+  gap:4px!important;
+  grid-template-rows:34px minmax(0,1fr) auto;
+}
+body.pixel-era .pokemon-battle-statusbar{
+  min-height:34px;
+  gap:6px;
+  padding:3px 5px;
+  border:2px solid #1a314e;
+  background:#d3d8c9;
+  color:#18243a;
+  box-shadow:inset 1px 1px #fff,2px 2px #07101e;
+}
+body.pixel-era .pokemon-battle-statusbar small{font-family:var(--pixel-font)!important;font-size:6px;color:#536477}
+body.pixel-era .pokemon-battle-statusbar strong{font-family:var(--pixel-font)!important;font-size:10px}
+body.pixel-era .pokemon-battle-statusbar .phase-chip{border:2px solid #384e62;border-radius:0;background:#fff0a3;color:#263044;padding:3px 7px;font-size:7px}
+body.pixel-era .pokemon-battle-stage{
+  min-height:0;
+  display:grid;
+  place-items:stretch;
+  border:0;
+}
+body.pixel-era .pokemon-battle-stage .v3-battle-arena{
+  height:100%;
+  min-height:340px;
+  aspect-ratio:16/9;
+  border:4px solid #10233d;
+  border-radius:0;
+  box-shadow:inset 0 0 0 2px #7fa5b8,4px 4px 0 #030914!important;
+  background:
+    linear-gradient(#78abc4 0 48%,#dce8d0 48% 50%,#76aa62 50% 72%,#4c783f 72%)!important;
+  overflow:hidden;
+}
+body.pixel-era .pokemon-battle-stage .v3-battle-arena:before{
+  background:
+    radial-gradient(ellipse at 76% 30%,#edf5df 0 16%,transparent 17%),
+    radial-gradient(ellipse at 25% 78%,#dce8ca 0 18%,transparent 19%),
+    repeating-linear-gradient(0deg,transparent 0 7px,#345f3526 7px 8px)!important;
+}
+body.pixel-era .pokemon-battle-stage .v3-battle-arena .v3-fighter:after{filter:none!important}
+body.pixel-era .pokemon-battle-stage .v3-fighter .art,
+body.pixel-era .pokemon-battle-stage .v3-fighter img{image-rendering:pixelated!important}
+body.pixel-era .pokemon-hud{
+  width:min(215px,58%);
+  padding:6px 8px 7px;
+  border:3px solid #273c58!important;
+  border-radius:0!important;
+  background:#fff9e6!important;
+  color:#18243a!important;
+  box-shadow:inset 2px 2px #fff,inset -2px -2px #b8b5a1,3px 3px #0c1c31!important;
+}
+body.pixel-era .pokemon-hud-line strong{font-size:9px;text-transform:uppercase}
+body.pixel-era .pokemon-hud-meta{font-size:6px;color:#4b5b6c}
+body.pixel-era .pokemon-hp-track{height:7px;padding:1px;border:1px solid #1d2a32;background:#24323a;box-shadow:none!important}
+body.pixel-era .pokemon-hp-fill{background:#55b74d!important;transition:width .24s steps(8,end)!important}
+body.pixel-era .pokemon-hp-fill.mid{background:#d7b945!important}
+body.pixel-era .pokemon-hp-fill.low{background:#c95649!important}
+body.pixel-era .pokemon-battle-stage .v3-fighter.is-commanding .art{filter:drop-shadow(2px 2px 0 #f5d85b) drop-shadow(-2px -2px 0 #f5d85b)!important}
+body.pixel-era .pokemon-battle-stage .v3-fighter.is-commanding .pokemon-hud{box-shadow:inset 2px 2px #fff,inset -2px -2px #b8b5a1,0 0 0 3px #f5d85b,3px 3px #0c1c31!important}
+
+body.pixel-era .pokemon-bottom-command-window{
+  margin:0!important;
+  border:4px solid #1b304b!important;
+  border-radius:0!important;
+  box-shadow:inset 0 0 0 2px #fff,4px 4px #030914!important;
+}
+body.pixel-era .pokemon-command-layout{grid-template-columns:minmax(230px,.8fr) minmax(390px,1.35fr);min-height:138px;background:#f7f2d7}
+body.pixel-era .pokemon-command-message{
+  gap:3px;
+  padding:12px 16px;
+  border-right:3px solid #263b59;
+  background:#fff9e6!important;
+}
+body.pixel-era .pokemon-command-message:after{display:none}
+body.pixel-era .pokemon-command-message small{font-family:var(--pixel-font)!important;font-size:6px;color:#3b6685}
+body.pixel-era .pokemon-command-message strong{font-family:var(--pixel-font)!important;font-size:11px;text-transform:uppercase}
+body.pixel-era .pokemon-command-message>span{font-size:7px;color:#536077}
+body.pixel-era .pokemon-command-grid,
+body.pixel-era .pokemon-move-grid,
+body.pixel-era .pokemon-target-grid,
+body.pixel-era .pokemon-party-grid{
+  gap:4px;
+  padding:6px;
+  background:#aab9ac!important;
+}
+body.pixel-era .pokemon-command-grid button,
+body.pixel-era .pokemon-target-tile,
+body.pixel-era .pokemon-party-tile,
+body.pixel-era .pokemon-move-tile,
+body.pixel-era .pokemon-review-row,
+body.pixel-era .replacement-card{
+  min-height:52px;
+  border:2px solid #31475e!important;
+  border-radius:0!important;
+  background:#fff9e6!important;
+  color:#18243a!important;
+  box-shadow:inset 1px 1px #fff,inset -1px -1px #aaa997,2px 2px #172a40!important;
+}
+body.pixel-era .pokemon-command-grid button b{font-family:var(--pixel-font)!important;font-size:10px}
+body.pixel-era .pokemon-command-grid button small{font-size:6px}
+body.pixel-era .pokemon-command-grid .danger-command{background:#eed1c5!important;border-color:#7e3f3f!important}
+body.pixel-era .pokemon-move-tile{grid-template-columns:8px 1fr auto!important;padding:6px 8px!important;border-left:6px solid var(--move-type)!important}
+body.pixel-era .pokemon-move-tile .move-type-dot{width:6px;height:6px;border-radius:0;box-shadow:none}
+body.pixel-era .pokemon-move-tile b{font-family:var(--pixel-font)!important;font-size:9px}
+body.pixel-era .pokemon-move-tile small,body.pixel-era .pokemon-move-tile em,body.pixel-era .pokemon-move-tile>span:last-child{font-size:6px}
+body.pixel-era .mega-command-toggle,body.pixel-era .command-back{border-radius:0!important;font-size:7px!important}
+body.pixel-era .pokemon-target-tile b{font-family:var(--pixel-font)!important;font-size:10px}
+body.pixel-era .pokemon-target-tile small{font-size:6px}
+body.pixel-era .pokemon-target-tile.foe{border-left:6px solid #b84e4e!important}
+body.pixel-era .pokemon-target-tile.ally{border-left:6px solid #4d8b57!important}
+body.pixel-era .pokemon-review-layout{min-height:138px;background:#f7f2d7}
+body.pixel-era .pokemon-review-list,body.pixel-era .pokemon-review-actions{background:#aab9ac}
+body.pixel-era .pokemon-review-row{grid-template-columns:100px 1fr auto;min-height:38px;margin:2px 0;padding:5px 7px}
+body.pixel-era .pokemon-review-row b{font-family:var(--pixel-font)!important;font-size:8px}
+body.pixel-era .pokemon-review-row small,body.pixel-era .pokemon-review-row em,body.pixel-era .pokemon-review-row>strong{font-size:6px}
+body.pixel-era .pokemon-battle-log{border-radius:0!important;background:#fff9e6!important;color:#18243a!important}
+body.pixel-era .pokemon-battle-log p{font-size:6px;border-bottom:1px dashed #849083}
+body.pixel-era .pokemon-replacement-overlay{background:#aab9ac;color:#18243a}
+body.pixel-era .replacement-card b{font-family:var(--pixel-font)!important;font-size:9px}
+body.pixel-era .replacement-card small,body.pixel-era .replacement-card em{font-size:6px}
+
+/* Cursor is part of the game language, not a browser-only outline. */
+body.pixel-era .pokemon-game-surface [data-ui-focusable]:focus-visible:before,
+body.pixel-era .pokemon-game-surface .ui-cursor-focus:before,
+body.pixel-era .pokemon-management-surface [data-ui-focusable]:focus-visible:before,
+body.pixel-era .pokemon-management-surface .ui-cursor-focus:before{
+  content:"▶"!important;
+  left:-13px!important;
+  color:#f3cf4f!important;
+  font-size:9px!important;
+  text-shadow:2px 2px #432a1c!important;
+  animation:pixel-cursor .6s steps(2,end) infinite;
+}
+body.pixel-era .pokemon-game-surface [data-ui-focusable]:focus-visible,
+body.pixel-era .pokemon-game-surface .ui-cursor-focus,
+body.pixel-era .pokemon-management-surface [data-ui-focusable]:focus-visible,
+body.pixel-era .pokemon-management-surface .ui-cursor-focus{
+  outline:2px solid #f3cf4f!important;
+  outline-offset:1px!important;
+  box-shadow:0 0 0 2px #17263a!important;
+}
+@keyframes pixel-cursor{50%{transform:translate(2px,-50%)}}
+body.pixel-era .aether-prompt-arrow{border-left-width:5px;border-right-width:5px;border-top-width:7px;animation:pixel-prompt .7s steps(2,end) infinite}
+@keyframes pixel-prompt{50%{transform:translateY(2px)}}
+
+/* ---------- Modal / settings ---------- */
+body.pixel-era .modalback{background:#050b14dd;backdrop-filter:none}
+body.pixel-era .modal{border-radius:0;padding:15px;background:#f7f2d7!important}
+body.pixel-era .settingsrow{border-bottom:2px dotted #7f8a82}
+body.pixel-era .mailicon{border-radius:0;background:#d4ddcf;color:#315d71}
+
+/* ---------- Responsive: keep game composition, shrink units ---------- */
+@media(max-width:1000px){
+  body.pixel-era .sidebar{grid-template-columns:auto minmax(0,1fr)}
+  body.pixel-era .sidefoot{display:none}
+  body.pixel-era .nav{font-size:7px!important;padding:4px 6px!important}
+  body.pixel-era .dashboard{grid-template-columns:1fr}
+  body.pixel-era .pokemon-battle-ui{height:auto;min-height:calc(100vh - 50px)}
+  body.pixel-era .pokemon-battle-stage .v3-battle-arena{min-height:420px;aspect-ratio:auto}
+}
+@media(max-width:720px){
+  body.pixel-era .shell{border-left:0;border-right:0}
+  body.pixel-era .sidebar{position:sticky;min-height:52px;padding:4px;grid-template-columns:auto 1fr}
+  body.pixel-era .brandname{display:none}
+  body.pixel-era .brand{padding-right:4px}
+  body.pixel-era .brandmark{width:30px;height:30px}
+  body.pixel-era .nav{min-height:34px;font-size:0!important;padding:4px!important}
+  body.pixel-era .nav .icon{width:18px;font-size:12px}
+  body.pixel-era .topbar{height:34px;padding:3px 6px}
+  body.pixel-era .breadcrumb{display:none}
+  body.pixel-era .resources{width:100%;justify-content:flex-end}
+  body.pixel-era .currency{padding:2px 4px;font-size:7px}
+  body.pixel-era .content{padding:8px 6px 14px}
+  body.pixel-era .heading{padding:7px 8px}
+  body.pixel-era .heading h1{font-size:14px}
+  body.pixel-era .hero,body.pixel-era .summonhero{min-height:220px;padding:14px}
+  body.pixel-era .hero h2,body.pixel-era .summonhero h2{font-size:24px}
+  body.pixel-era .modegrid{grid-template-columns:1fr}
+  body.pixel-era .pokemon-game-header{height:38px}
+  body.pixel-era .pokemon-game-header-actions>span{display:none}
+  body.pixel-era .pokemon-game-body{padding:3px}
+  body.pixel-era .pokemon-battle-ui{min-height:calc(100vh - 42px);grid-template-rows:30px minmax(360px,1fr) auto}
+  body.pixel-era .pokemon-battle-stage .v3-battle-arena{min-height:360px;border-width:3px}
+  body.pixel-era .pokemon-command-layout,body.pixel-era .pokemon-review-layout,body.pixel-era .pokemon-replacement-overlay{grid-template-columns:1fr}
+  body.pixel-era .pokemon-command-message{border-right:0;border-bottom:3px solid #263b59;min-height:62px;padding:8px 10px}
+  body.pixel-era .pokemon-command-grid,body.pixel-era .pokemon-move-grid,body.pixel-era .pokemon-target-grid,body.pixel-era .pokemon-party-grid{padding:4px;gap:3px}
+  body.pixel-era .pokemon-command-grid button,body.pixel-era .pokemon-target-tile,body.pixel-era .pokemon-party-tile,body.pixel-era .pokemon-move-tile{min-height:46px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  body.pixel-era *,body.pixel-era *:before,body.pixel-era *:after{scroll-behavior:auto!important;transition:none!important}
+  body.pixel-era .ui-cursor-focus:before,body.pixel-era .aether-prompt-arrow{animation:none!important}
+}
+
+
+/* Initial/loading feedback belongs to the same console surface. */
+body.pixel-era .loading{min-height:100vh;display:grid;place-content:center;justify-items:center;gap:8px;background:#132c4b;color:#fffbed;text-align:center}
+body.pixel-era .loading .brandmark{width:48px;height:48px;border:3px solid #f5d65f;border-radius:0;background:#214b74;color:#f5d65f;box-shadow:inset 2px 2px #75a0bd,inset -2px -2px #07101e,4px 4px #07101e}
+body.pixel-era .loading h1{margin:0;font-size:16px;letter-spacing:.06em;text-shadow:2px 2px #07101e}
+body.pixel-era .loading p{font-size:8px;color:#d3e2e4}
+body.pixel-era #toast{border-radius:0!important;border:3px solid #263b59!important;background:#fff9e6!important;color:#18243a!important;box-shadow:inset 2px 2px #fff,inset -2px -2px #aaa997,4px 4px #07101e!important;font-size:8px!important}
+body.pixel-era *{scrollbar-color:#81978e #173552;scrollbar-width:thin}
+
+/* R3-103 — resolution lock + asset resampling.
+   The UI is authored once at 1280×720 and uniformly fitted into the browser.
+   This keeps composition stable between 1366×768, 1080p, 1440p and 4K. */
+:root{
+  --game-logical-width:1280px;
+  --game-logical-height:720px;
+  --game-fit-scale:1;
+  --game-rendered-width:1280px;
+  --game-rendered-height:720px;
+}
+html,body.pixel-era{width:100%;height:100%;overflow:hidden}
+body.pixel-era.resolution-locked #app{
+  position:fixed;
+  inset:0;
+  overflow:hidden;
+  /* Keep the locked 1280×720 surface above the original Pixel Era viewport
+     backdrop.  The app host must stay transparent so letterbox/pillarbox
+     space shows the same blue grid background instead of a flat black fill. */
+  background:transparent;
+}
+body.pixel-era.resolution-locked #app>.shell,
+body.pixel-era.resolution-locked #app>.battle-shell-layout{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:var(--game-logical-width)!important;
+  height:var(--game-logical-height)!important;
+  min-width:var(--game-logical-width)!important;
+  min-height:var(--game-logical-height)!important;
+  max-width:none!important;
+  max-height:none!important;
+  margin:0!important;
+  transform:translate(-50%,-50%) scale(var(--game-fit-scale));
+  transform-origin:center center;
+  overflow:hidden;
+}
+body.pixel-era.resolution-locked .shell{
+  grid-template-rows:62px 40px minmax(0,1fr)!important;
+}
+body.pixel-era.resolution-locked .shell>div{min-width:0;min-height:0}
+body.pixel-era.resolution-locked .content{
+  min-width:0;
+  min-height:0;
+  height:100%;
+  overflow:auto;
+  scrollbar-gutter:stable;
+}
+body.pixel-era.resolution-locked .battle-shell-layout,
+body.pixel-era.resolution-locked .battle-content,
+body.pixel-era.resolution-locked .pokemon-game-surface,
+body.pixel-era.resolution-locked .pokemon-battle-shell{
+  width:100%;
+  height:100%;
+  min-height:0!important;
+}
+body.pixel-era.resolution-locked .pokemon-game-body{
+  height:calc(100% - 44px);
+  min-height:0;
+}
+body.pixel-era.resolution-locked .pokemon-battle-ui{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+}
+body.pixel-era.resolution-locked .pokemon-battle-stage .v3-battle-arena{
+  width:100%;
+  height:100%;
+  min-height:0!important;
+  aspect-ratio:auto!important;
+}
+
+/* Image policy: pixel UI does not mean forcing every raster through nearest-neighbour.
+   High-resolution artwork and SVG fallback stay smooth; low-res animated battle sprites
+   get crisp-edges first, with browser smoothing as a fallback to avoid jagged fractional scaling. */
+body.pixel-era img,
+body.pixel-era svg,
+body.pixel-era canvas{image-rendering:auto}
+body.pixel-era .pokemon-key-art img,
+body.pixel-era .pokedex-preview img,
+body.pixel-era .ranch-preview img,
+body.pixel-era .summary-portrait img,
+body.pixel-era .party-portrait img,
+body.pixel-era .v3-home-hero .pokemon-art img{
+  image-rendering:auto!important;
+  backface-visibility:hidden;
+}
+body.pixel-era .pokemon-battle-stage .v3-fighter .art img{
+  image-rendering:auto!important;
+  transform:translateZ(0);
+  backface-visibility:hidden;
+}
+body.pixel-era .pokemon-art-missing img{image-rendering:auto!important}
+
+/* Keep visual composition stable even when the physical browser width crosses the
+   old responsive breakpoints. The fixed logical surface owns responsiveness now. */
+@media(max-width:1000px){
+  body.pixel-era.resolution-locked .sidebar{grid-template-columns:auto minmax(0,1fr) auto!important;min-height:62px!important;padding:6px 8px!important}
+  body.pixel-era.resolution-locked .sidefoot{display:block!important}
+  body.pixel-era.resolution-locked .nav{min-height:42px!important;font-size:8px!important;padding:5px 8px!important}
+  body.pixel-era.resolution-locked .dashboard{grid-template-columns:minmax(0,1fr) minmax(260px,.38fr)!important}
+  body.pixel-era.resolution-locked .pokemon-battle-stage .v3-battle-arena{min-height:0!important}
+}
+@media(max-width:720px){
+  body.pixel-era.resolution-locked .shell{border-left:4px solid #07101e!important;border-right:4px solid #07101e!important}
+  body.pixel-era.resolution-locked .sidebar{position:sticky!important;min-height:62px!important;padding:6px 8px!important;grid-template-columns:auto minmax(0,1fr) auto!important}
+  body.pixel-era.resolution-locked .brandname{display:block!important}
+  body.pixel-era.resolution-locked .brand{padding-right:8px!important}
+  body.pixel-era.resolution-locked .brandmark{width:34px!important;height:34px!important}
+  body.pixel-era.resolution-locked .nav{min-height:42px!important;font-size:8px!important;padding:5px 8px!important}
+  body.pixel-era.resolution-locked .nav .icon{width:15px!important;font-size:12px!important}
+  body.pixel-era.resolution-locked .topbar{height:40px!important;padding:5px 10px!important}
+  body.pixel-era.resolution-locked .breadcrumb{display:block!important}
+  body.pixel-era.resolution-locked .resources{width:auto!important}
+  body.pixel-era.resolution-locked .currency{padding:3px 7px!important;font-size:8px!important}
+  body.pixel-era.resolution-locked .content{padding:14px 24px 22px!important}
+  body.pixel-era.resolution-locked .heading{padding:10px 12px!important}
+  body.pixel-era.resolution-locked .heading h1{font-size:19px!important}
+}
+
+/* Resolution lock also neutralizes legacy viewport-width media reflows. */
+body.pixel-era.resolution-locked .pokemon-battle-statusbar{grid-template-columns:minmax(0,1fr) auto auto!important}
+body.pixel-era.resolution-locked .pokemon-battle-statusbar .v3-playback-controls{grid-column:auto!important;display:flex!important}
+body.pixel-era.resolution-locked .pokemon-command-layout{grid-template-columns:minmax(230px,.8fr) minmax(390px,1.35fr)!important;min-height:138px!important}
+body.pixel-era.resolution-locked .pokemon-review-layout{grid-template-columns:.72fr 1.28fr!important;grid-template-rows:1fr auto!important;min-height:138px!important}
+body.pixel-era.resolution-locked .pokemon-replacement-overlay{grid-template-columns:minmax(220px,.7fr) minmax(0,1.3fr)!important}
+body.pixel-era.resolution-locked .pokemon-command-message{grid-row:auto!important;border-right:3px solid #263b59!important;border-bottom:0!important;min-height:0!important;padding:12px 16px!important}
+body.pixel-era.resolution-locked .pokemon-review-layout>.pokemon-command-message{grid-row:1/3!important}
+body.pixel-era.resolution-locked .pokemon-replacement-overlay>.pokemon-command-message{grid-row:1/4!important}
+body.pixel-era.resolution-locked .pokemon-review-list,
+body.pixel-era.resolution-locked .pokemon-review-actions,
+body.pixel-era.resolution-locked .replacement-slot-group,
+body.pixel-era.resolution-locked .replacement-confirm{grid-column:auto!important}
+body.pixel-era.resolution-locked .replacement-confirm{grid-column:2!important}
+body.pixel-era.resolution-locked .pokemon-review-row{grid-template-columns:100px 1fr auto!important}
+body.pixel-era.resolution-locked .pokemon-review-row>strong{display:block!important}
+body.pixel-era.resolution-locked .pokemon-battle-log{right:10px!important;top:10px!important;width:min(420px,48%)!important;max-height:65%!important}
+body.pixel-era.resolution-locked .pokemon-command-grid,
+body.pixel-era.resolution-locked .pokemon-move-grid,
+body.pixel-era.resolution-locked .pokemon-target-grid,
+body.pixel-era.resolution-locked .pokemon-party-grid,
+body.pixel-era.resolution-locked .replacement-card-grid{grid-template-columns:1fr 1fr!important}
+body.pixel-era.resolution-locked .pokemon-command-grid button{min-height:52px!important;padding:6px 8px!important}
+body.pixel-era.resolution-locked .pokemon-command-grid button b{font-size:10px!important}
+body.pixel-era.resolution-locked .pokemon-move-tile{min-height:52px!important;padding:6px 8px!important}
+body.pixel-era.resolution-locked .pokemon-move-tile b{font-size:9px!important}
+body.pixel-era.resolution-locked .pokemon-game-header{height:44px!important;padding:5px 10px!important}
+body.pixel-era.resolution-locked .pokemon-game-header b{font-size:12px!important}
+body.pixel-era.resolution-locked .pokemon-game-header-actions>span{display:inline!important}
+body.pixel-era.resolution-locked .pokemon-game-body{padding:6px!important}
+
+body.pixel-era.resolution-locked .v3-battle-arena .v2-side{width:72%!important;gap:4%!important}
+body.pixel-era.resolution-locked .v3-battle-arena .enemy-side{right:3%!important;left:auto!important;top:22px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .own-side{left:3%!important;right:auto!important;bottom:20px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .v3-fighter{width:min(390px,48%)!important;height:185px!important;min-width:0!important;flex:0 1 390px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .v3-fighter .art{width:180px!important;height:165px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .player-fighter .art{width:210px!important;height:190px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .v3-fighter:after{width:190px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .player-fighter:after{width:220px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .v3-battle-hud{width:min(205px,58%)!important;padding:6px 8px 7px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .opponent-fighter .v3-battle-hud{top:10px!important}
+body.pixel-era.resolution-locked .v3-battle-arena .player-fighter .v3-battle-hud{bottom:15px!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-single .v2-side{width:58%!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-single .enemy-side{right:5%!important;left:auto!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-single .own-side{left:5%!important;right:auto!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-double .v2-side{width:91%!important;gap:2%!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-double .v3-fighter{height:175px!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-double .v3-fighter .art{width:155px!important;height:145px!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-double .player-fighter .art{width:180px!important;height:168px!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-double .v3-fighter:after{width:170px!important}
+body.pixel-era.resolution-locked .v3-battle-arena.format-double .v3-battle-hud{width:185px!important}
+
+/* Overlay surfaces use the same logical coordinate system so dialogs/toasts do not
+   appear to change size between 1080p and 4K. */
+body.pixel-era.resolution-locked #modal{
+  position:fixed;
+  inset:0;
+  z-index:50;
+  pointer-events:none;
+}
+body.pixel-era.resolution-locked #modal>.modalback{
+  position:absolute!important;
+  inset:auto!important;
+  left:50%!important;
+  top:50%!important;
+  width:var(--game-logical-width)!important;
+  height:var(--game-logical-height)!important;
+  transform:translate(-50%,-50%) scale(var(--game-fit-scale));
+  transform-origin:center center;
+  pointer-events:auto;
+}
+body.pixel-era.resolution-locked #toast{
+  bottom:calc(var(--game-gutter-y) + 18px);
+  font-size:calc(12px * var(--game-fit-scale))!important;
+  padding:calc(10px * var(--game-fit-scale)) calc(16px * var(--game-fit-scale));
+}
+
+/* Project logo integration */
+body.pixel-era .brandmark.project-logo,
+body.pixel-era .loading .brandmark.project-logo{border:0;background:transparent;box-shadow:none}
+body.pixel-era .loading .brandmark.project-logo{width:72px;height:72px}
+body.pixel-era .pokemon-game-logo{width:32px;height:32px}
+
+/* Account menu beside the beta wallet */
+body.pixel-era .user-trigger{min-height:29px;padding:2px 5px 2px 2px!important;border:2px solid #374b61!important;border-radius:0!important;background:#f8f1cf!important;color:#26354a!important;box-shadow:inset 1px 1px #fff,2px 2px 0 #263a4f!important}
+body.pixel-era .user-trigger:hover:not(:disabled){background:#fff7bd!important}
+body.pixel-era .user-trigger .avatar,body.pixel-era .user-dropdown-head .avatar{display:grid;width:25px;height:25px;border:2px solid #374b61;border-radius:0;background:#5a8a5b;color:#fff;font-size:9px;box-shadow:inset 1px 1px #9dc98f}
+body.pixel-era .user-trigger-copy b{font-size:8px;color:#26354a}
+body.pixel-era .user-trigger-copy small{font-size:6px;color:#647083}
+body.pixel-era .user-caret{color:#374b61}
+body.pixel-era .user-dropdown{top:calc(100% + 5px);width:180px;padding:5px;border:3px solid #263a4f;background:#fff8d8;color:#26354a;box-shadow:inset 2px 2px #fff,4px 4px 0 #192a3c}
+body.pixel-era .user-dropdown-head{padding:6px;border-bottom:2px solid #9a9a82;margin-bottom:3px}
+body.pixel-era .user-dropdown-head b{font-size:8px;color:#26354a}
+body.pixel-era .user-dropdown-head small{font-size:6px;color:#647083}
+body.pixel-era .user-dropdown>button{min-height:25px;padding:5px 7px!important;border:0!important;background:transparent!important;box-shadow:none!important;color:#26354a!important;font-size:8px}
+body.pixel-era .user-dropdown>button:hover,body.pixel-era .user-dropdown>button:focus-visible{background:#fff0a6!important}
+body.pixel-era .user-dropdown>button.user-logout{color:#8e3434!important}
+@media(max-width:760px){body.pixel-era .user-trigger-copy,body.pixel-era .user-caret{display:none}body.pixel-era .user-dropdown{right:8px;top:48px}}

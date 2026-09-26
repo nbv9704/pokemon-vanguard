@@ -11,3 +11,9 @@ export function activeAbilityHolder(battle,kind){
 
 export function weatherEffectsSuppressed(battle){return Boolean(activeAbilityHolder(battle,'weather-suppression'));}
 export function effectiveWeatherId(battle){return weatherEffectsSuppressed(battle)?null:battle?.field?.weather?.id||null;}
+
+export function effectiveWeatherForUnit(battle,unit){
+ const fieldWeather=effectiveWeatherId(battle);if(!unit?.actorId)return fieldWeather;
+ const active=['A','B'].some(side=>(battle?.sides?.[side]?.active||[]).includes(unit.actorId));if(!active)return fieldWeather;
+ const override=abilityEffects(unit,'effective-weather-override')[0];return override?.weather||fieldWeather;
+}

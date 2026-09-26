@@ -3,9 +3,14 @@ import {applyHpGroup,applySwitch} from '../rules-v3/lifecycle.mjs';
 import {restoreTransientAbility} from './ability-replacement.mjs';
 import {resolveSwitchOutAbilityForms} from './ability-form.mjs';
 import {clearIllusionState,restoreTransformState} from './ability-transform.mjs';
+import {applyBatonPassState,applyShedTailTransfer} from './pivot-transfer.mjs';
 
 const maxHp=unit=>unit.maxHp??unit.stats?.hp;
 const abilityEffects=unit=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind==='ability');
+
+function clearInfatuationSource(battle,sourceId){
+ const next=clone(battle),events=[];for(const side of ['A','B'])for(const unit of next.sides?.[side]?.roster||[]){if(unit.volatiles?.infatuation?.sourceId!==sourceId)continue;delete unit.volatiles.infatuation;events.push({kind:'volatileEnded',actorId:unit.actorId,volatile:'infatuation',reason:'sourceSwitched',sourceId});}return {battle:next,events};
+}
 
 export function resolveSwitchOutAbilities(battle,{actorId,manifests=null}){
  let next=clone(battle),events=[];const initial=unitById(next,actorId);
@@ -31,6 +36,10 @@ export function resolveSwitchOutAbilities(battle,{actorId,manifests=null}){
 
 export function applyMechanicsSwitch(battle,side,actorId,toId,{manifests=null}={}){
  const preview=applySwitch(battle,side,actorId,toId);if(!preview.ok)return preview;
- const abilities=resolveSwitchOutAbilities(battle,{actorId,manifests}),switched=applySwitch(abilities.battle,side,actorId,toId);
- return {...switched,events:[...abilities.events,...switched.events]};
+ const abilities=resolveSwitchOutAbilities(battle,{actorId,manifests}),cleared=clearInfatuationSource(abilities.battle,actorId),switched=applySwitch(cleared.battle,side,actorId,toId);
+ return {...switched,events:[...abilities.events,...cleared.events,...switched.events]};
+}
+
+export function applyMechanicsReplacementSwitch(battle,side,actorId,toId,{manifests=null,request=null}={}){
+ const switched=applyMechanicsSwitch(battle,side,actorId,toId,{manifests});if(!switched.ok)return switched;let next=switched.battle,events=[...switched.events],state=request?.replacementState;if(state?.kind==='baton-pass'){const applied=applyBatonPassState(next,{sourceId:state.sourceId||actorId,targetId:toId,state:state.state,moveId:state.moveId||'baton-pass',manifests});next=applied.battle;events.push(...applied.events);}else if(state?.kind==='shed-tail'){const applied=applyShedTailTransfer(next,{sourceId:state.sourceId||actorId,targetId:toId,subHp:state.subHp,moveId:state.moveId||'shed-tail'});next=applied.battle;events.push(...applied.events);}return {ok:true,battle:next,events};
 }

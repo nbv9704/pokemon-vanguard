@@ -1,0 +1,25 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {createHeldItemState,createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS,prepareTurnOrderMechanics} from '../mechanics-v3/index.mjs';
+
+const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
+const ids=['grassy-glide','round','fury-cutter','electrify','tackle'],byId=Object.fromEntries(catalog.map(move=>[move.id,move])),moves=Object.fromEntries(ids.map(id=>[id,byId[id]]));
+const resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,abilityManifests:manifests,registry:createHookRegistry(HANDLER_DEFINITIONS)});
+const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0}),pp=()=>Object.fromEntries(ids.map(id=>[id,20]));
+const unit=(actorId,overrides={})=>({actorId,speciesId:actorId,types:['normal'],hp:1000,maxHp:1000,stats:{hp:1000,atk:180,def:180,spa:180,spd:180,spe:100},pp:pp(),maxPp:pp(),status:null,volatiles:{},stages:stages(),passiveEffects:[],abilityState:{},buildSnapshot:{abilityId:null,itemId:null,moveIds:ids},itemState:createHeldItemState(null),...overrides});
+function fixture(format='double'){const n=format==='double'?2:1,a=[unit('a1'),unit('a2'),unit('a3')],b=[unit('b1'),unit('b2'),unit('b3')];return {id:`wave39-${format}`,format,level:50,phase:'RESOLVE',phaseRevision:1,turn:20,activeCount:n,rngState:39,eventSequence:0,events:[],result:null,field:{},sides:{A:{active:a.slice(0,n).map(x=>x.actorId),roster:a,conditions:{}},B:{active:b.slice(0,n).map(x=>x.actorId),roster:b,conditions:{}}}};}
+const action=(moveId,{side='A',actorId='a1',target={side:'B',slot:0},speed=100}={})=>({kind:'move',side,actorId,moveId,target,moveType:byId[moveId].type,moveCategory:byId[moveId].category,priority:manifests.moves[moveId]?.priority??0,speed});
+const runtime=(value=.5,extra={})=>({nextRandom:()=>value,hasActed:()=>false,willMove:()=>true,...extra});
+const evidence={single:['r3-move-hooks-wave39:single'],double:['r3-move-hooks-wave39:double']};
+
+test('r3-move-hooks-wave39:single/double promotes four Wave 39 moves with evidence',()=>{for(const id of ['grassy-glide','round','fury-cutter','electrify'])assert.deepEqual(manifests.moves[id].testEvidence,evidence,id);});
+
+test('Grassy Glide gains +1 priority only while its grounded user is on Grassy Terrain',()=>{let battle=fixture('single');battle.field.terrain={id:'grassy',remaining:5};let prepared=prepareTurnOrderMechanics(battle,[action('grassy-glide')],runtime(),{moveManifests:manifests.moves});assert.equal(prepared.actions[0].priority,1);assert.ok(prepared.events.some(e=>e.kind==='movePriorityChanged'&&e.moveId==='grassy-glide'));battle.sides.A.roster[0].types=['flying'];prepared=prepareTurnOrderMechanics(battle,[action('grassy-glide')],runtime(),{moveManifests:manifests.moves});assert.equal(prepared.actions[0].priority,0);});
+
+test('Round moves the pending ally next and doubles a consecutive ally Round in the same turn',()=>{let battle=fixture('double'),reordered=null;let first=resolveMove(battle,action('round'),runtime(.5,{pendingActionFor:id=>id==='a2'?action('round',{actorId:'a2'}):null,reorderPendingAction:(id,pos)=>{reordered={id,pos};return true;}}));assert.deepEqual(reordered,{id:'a2',pos:'front'});const second=resolveMove(first.battle,action('round',{actorId:'a2'}),runtime());assert.ok(second.events.some(e=>e.kind==='movePowerChanged'&&e.moveId==='round'&&e.toPower===120));});
+
+test('Fury Cutter doubles across successful consecutive turns up to 160 and resets after a failed previous use',()=>{let battle=fixture('single');let r1=resolveMove(battle,action('fury-cutter'),runtime());battle=r1.battle;battle.turn=21;let r2=resolveMove(battle,action('fury-cutter'),runtime());assert.ok(r2.events.some(e=>e.kind==='movePowerChanged'&&e.toPower===80));battle=r2.battle;battle.turn=22;let r3=resolveMove(battle,action('fury-cutter'),runtime());assert.ok(r3.events.some(e=>e.kind==='movePowerChanged'&&e.toPower===160));battle=r3.battle;battle.turn=23;battle.sides.A.roster[0].lastMoveOutcome={moveId:'fury-cutter',turn:22,result:false};const reset=resolveMove(battle,action('fury-cutter'),runtime());assert.equal(reset.events.some(e=>e.kind==='movePowerChanged'&&e.reason==='consecutive-hit'),false);});
+
+test('Electrify changes the pending target move to Electric and consumes the one-turn state',()=>{let battle=fixture('single');let applied=resolveMove(battle,action('electrify'),runtime(.5,{willMove:id=>id==='b1'}));assert.equal(applied.battle.sides.B.roster[0].volatiles['next-move-type']?.moveType,'electric');const used=resolveMove(applied.battle,action('tackle',{side:'B',actorId:'b1',target:{side:'A',slot:0}}),runtime());assert.ok(used.events.some(e=>e.kind==='moveTypeChanged'&&e.actorId==='b1'&&e.toType==='electric'));assert.equal(used.battle.sides.B.roster[0].volatiles['next-move-type'],undefined);});

@@ -1,6 +1,6 @@
 # Pokémon Vanguard — local development
 
-The project runs directly with Node.js on the local machine. The current 36-Mon catalog is a compatibility fixture while the reviewed Pokémon Champions Regulation M-A snapshot and local sprite pipeline are implemented. See [the authoritative migration roadmap](docs/pokemon-vanguard-roadmap.md).
+The project runs directly with Node.js on the local machine. **R3-101 builds on the locked R3-100 Pokémon Champions Regulation M-A runtime: 272/272 selectable entries (213 non-Mega + 59 Mega), 490 active moves, and now 30 signature move timelines covering all 18 move types.** The old 36-Mon catalog still exists only as a compatibility fixture for legacy tests. See [the presentation roadmap](docs/ui-battle-presentation-roadmap.md) and [the R3-100 release report](docs/r3-100-ma-release-report.md).
 
 ## Chạy game
 
@@ -34,9 +34,11 @@ npm run check
 npm test
 npm run simulate -- --seed 100 --matches 10000
 npm run simulate:economy -- --seed 424242 --cycles 100000
+npm run release:validate
+npm run release:matrix
 ```
 
-`npm run check` currently validates the compatibility catalog in `app/content`. It is not the M-A production catalog. `app/content-src/pokemon-sources.json` records the target sources and locked import rules; a reviewed candidate will replace the fixture in a later gate.
+`npm run check` now verifies generated logic, compatibility content, source syntax, **490/490 Move FX timelines (30 signature + 460 parameterized + 0 legacy), 272/272 presentation-asset resolution, 277 foundation forms, 59/59 M-A Mega relations, exact 272-entry M-A scope and the R3-100 offline/runtime release gate**. `npm run release:matrix` additionally spawns all 213 non-Mega entries in both Single and Double scenarios, exercises all 59 M-A Mega presentation paths and checks every active move presentation commit.
 
 Tạo và kiểm tra một candidate Pokémon Champions mới trong `app`:
 
@@ -91,7 +93,7 @@ Bộ kiểm tra local xác nhận phục vụ trang, catalog chuyển tiếp 36 
 
 The transition build still contains 36 original fixture species, 48 moves, 24 Abilities and 13 held items so completed engine work remains testable. Production content will use the reviewed M-A Pokémon roster, the canonical type chart and locally cached Showdown sprites. Recruitment already uses eight offers, a seven-day Trial, a uniform permanent coin price and recruitment tickets; rarity summoning is disabled for schema-v2 saves.
 
-This is a local solo AI build. PvP, audio and accounts are not implemented. Runtime gameplay makes no Internet requests.
+This is a local solo AI build. PvP/accounts remain outside the current local M-A release scope. Semantic battle/UI audio is implemented locally through Web Audio, and the public runtime is checked to make no Internet requests. Pokémon front/back/artwork coverage is now 272/272 from the local PokéAPI-derived asset pack; runtime rendering remains fully offline. Source URLs, aliases, byte lengths and SHA-256 hashes are recorded in `app/content-src/presentation-asset-sources-v1.json`.
 
 ## Hoạt ảnh chiến đấu
 

@@ -1,7 +1,7 @@
 import {clone,unitById} from '../rules-v3/battle-state.mjs';
 import {applyMajorStatus} from './major-status.mjs';
 import {resolveHpThresholdItems,resolveNegativeStageResetItems} from './item-hooks.mjs';
-import {abilityPreventsIndirectDamage,abilityStatDropBlock} from './ability-hooks.mjs';
+import {abilityPreventsIndirectDamage,abilityProtectionPierce,abilityStatDropBlock} from './ability-hooks.mjs';
 import {resolveOpponentStatGainCopyAbilities,resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
 import {abilityStageChange} from './ability-stage-change.mjs';
 
@@ -12,6 +12,16 @@ export function applyProtect(battle,{actorId,moveId,retaliation=null,blocksStatu
  if(!gate.succeeded)return {battle:next,succeeded:false,events:[{kind:'protectionFailed',actorId,moveId,counter:gate.counter}]};
  actor.volatiles.protect={id:'protect',sourceId:moveId,retaliation,blocksStatus,endTurnTimer:1};
  return {battle:next,succeeded:true,events:[{kind:'protectionApplied',actorId,moveId,nextSuccessDenominator:actor.volatiles.stall.counter}]};
+}
+
+
+export function applyEndure(battle,{actorId,moveId},runtime={}){
+ const next=clone(battle),actor=unitById(next,actorId);
+ if(!actor||actor.hp<=0)return {battle:next,succeeded:false,events:[{kind:'moveFailed',actorId,moveId,reason:'actorUnavailable'}]};
+ actor.volatiles??={};const gate=stallGate(actor,runtime);
+ if(!gate.succeeded)return {battle:next,succeeded:false,events:[{kind:'protectionFailed',actorId,moveId,counter:gate.counter}]};
+ actor.volatiles.endure={id:'endure',sourceId:moveId,endTurnTimer:1};
+ return {battle:next,succeeded:true,events:[{kind:'endureApplied',actorId,moveId,nextSuccessDenominator:actor.volatiles.stall.counter}]};
 }
 
 export function applySideGuard(battle,{side,actorId,moveId,guard},runtime={}){
@@ -35,7 +45,8 @@ export function protectionBlockReason(battle,targetRef,mechanics,move=null){
 
 export function resolveProtectionBlock(battle,{targetRef,actorId,move,mechanics},runtime={}){
  const reason=protectionBlockReason(battle,targetRef,mechanics,move);if(!reason)return {battle:clone(battle),blocked:false,events:[]};
- let next=clone(battle);const target=unitById(next,targetRef.actorId),actor=unitById(next,actorId),protect=target?.volatiles?.protect;
+ let next=clone(battle);const target=unitById(next,targetRef.actorId),actor=unitById(next,actorId),protect=target?.volatiles?.protect,pierce=reason==='protect'?abilityProtectionPierce(actor,mechanics):null;
+ if(pierce)return {battle:next,blocked:false,events:[{kind:'abilityTriggered',sourceId:actor.actorId,abilityId:pierce.sourceId,effectId:pierce.kind,targetId:targetRef.actorId},{kind:'protectionPierced',actorId:actor.actorId,targetId:targetRef.actorId,moveId:move.id,protectionId:protect?.sourceId||reason,abilityId:pierce.sourceId,multiplier:pierce.multiplier}]};
  const events=[{kind:'moveBlocked',actorId,targetId:targetRef.actorId,moveId:move.id,reason,protectionId:protect?.sourceId||reason}];
  if(reason!=='protect'||!mechanics.contact||!actor||actor.hp<=0||!protect?.retaliation)return {battle:next,blocked:true,events};
  if(protect.retaliation==='spiky-damage'){

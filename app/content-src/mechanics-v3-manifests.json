@@ -335,6 +335,53 @@
         }
       ]
     },
+    "alluring-voice": {
+      "id": "alluring-voice",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 100,
+          "volatile": "confusion",
+          "condition": "target-stats-raised-this-turn"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
+        ]
+      }
+    },
     "ally-switch": {
       "id": "ally-switch",
       "targetMode": "self",
@@ -737,6 +784,41 @@
         ]
       }
     },
+    "assurance": {
+      "id": "assurance",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-damaged-this-turn",
+            "basePower": 60
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
+        ]
+      }
+    },
     "astonish": {
       "id": "astonish",
       "targetMode": "adjacentFoe",
@@ -908,6 +990,41 @@
         ],
         "double": [
           "r3-move-hooks-wave22:double"
+        ]
+      }
+    },
+    "avalanche": {
+      "id": "avalanche",
+      "targetMode": "adjacentFoe",
+      "priority": -4,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-damaged-user-this-turn",
+            "basePower": 60
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
         ]
       }
     },
@@ -2054,6 +2171,53 @@
         "bullet"
       ]
     },
+    "burning-jealousy": {
+      "id": "burning-jealousy",
+      "targetMode": "allAdjacentFoes",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 100,
+          "status": "burn",
+          "blockedTargetTypes": [
+            "fire"
+          ],
+          "condition": "target-stats-raised-this-turn"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
+        ]
+      }
+    },
     "calm-mind": {
       "id": "calm-mind",
       "targetMode": "self",
@@ -2585,6 +2749,50 @@
         ]
       }
     },
+    "comeuppance": {
+      "id": "comeuppance",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-retaliation",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "category": "any",
+            "numerator": 3,
+            "denominator": 2
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 50
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "prepared-retaliation"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave32:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave32:double"
+        ]
+      }
+    },
     "confide": {
       "id": "confide",
       "targetMode": "adjacentFoe",
@@ -2795,6 +3003,50 @@
       "tags": [
         "powder"
       ]
+    },
+    "counter": {
+      "id": "counter",
+      "targetMode": "adjacentFoe",
+      "priority": -5,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-retaliation",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "category": "physical",
+            "numerator": 2,
+            "denominator": 1
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 50
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "prepared-retaliation"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave32:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave32:double"
+        ]
+      }
     },
     "covet": {
       "id": "covet",
@@ -5941,6 +6193,45 @@
         ]
       }
     },
+    "focus-punch": {
+      "id": "focus-punch",
+      "targetMode": "adjacentFoe",
+      "priority": -3,
+      "contact": true,
+      "tags": [
+        "punch"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "require-user-unhit",
+          "hook": "onTryMove",
+          "order": 20
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 50
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave32:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave32:double"
+        ]
+      }
+    },
     "follow-me": {
       "id": "follow-me",
       "targetMode": "self",
@@ -6308,6 +6599,14 @@
           "id": "check-accuracy",
           "hook": "onMove",
           "order": 90
+        },
+        {
+          "id": "prepare-gravity-power",
+          "hook": "onMove",
+          "order": 97,
+          "params": {
+            "multiplier": 1.5
+          }
         },
         {
           "id": "deal-direct-damage",
@@ -8089,6 +8388,41 @@
         ]
       }
     },
+    "lash-out": {
+      "id": "lash-out",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-stats-lowered-this-turn",
+            "basePower": 75
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
+        ]
+      }
+    },
     "last-respects": {
       "id": "last-respects",
       "targetMode": "anyAdjacent",
@@ -8971,6 +9305,50 @@
         ]
       }
     },
+    "metal-burst": {
+      "id": "metal-burst",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-retaliation",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "category": "any",
+            "numerator": 3,
+            "denominator": 2
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 50
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "prepared-retaliation"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave32:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave32:double"
+        ]
+      }
+    },
     "metal-sound": {
       "id": "metal-sound",
       "targetMode": "adjacentFoe",
@@ -9130,6 +9508,50 @@
         ],
         "double": [
           "r3-move-hooks-wave23:double"
+        ]
+      }
+    },
+    "mirror-coat": {
+      "id": "mirror-coat",
+      "targetMode": "adjacentFoe",
+      "priority": -5,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-retaliation",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "category": "special",
+            "numerator": 2,
+            "denominator": 1
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 50
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "prepared-retaliation"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave32:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave32:double"
         ]
       }
     },
@@ -10026,6 +10448,41 @@
         ],
         "double": [
           "r3-move-hooks-wave20:double"
+        ]
+      }
+    },
+    "payback": {
+      "id": "payback",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-acted-this-turn",
+            "basePower": 50
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
         ]
       }
     },
@@ -11545,6 +12002,41 @@
         ],
         "double": [
           "r3-move-hooks-wave27:double"
+        ]
+      }
+    },
+    "retaliate": {
+      "id": "retaliate",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "ally-fainted-previous-turn",
+            "basePower": 70
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
         ]
       }
     },
@@ -13981,6 +14473,41 @@
         ]
       }
     },
+    "stomping-tantrum": {
+      "id": "stomping-tantrum",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "previous-move-failed",
+            "basePower": 75
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
+        ]
+      }
+    },
     "stone-axe": {
       "id": "stone-axe",
       "targetMode": "adjacentFoe",
@@ -15018,6 +15545,41 @@
         ],
         "double": [
           "r3-move-hooks-wave21:double"
+        ]
+      }
+    },
+    "temper-flare": {
+      "id": "temper-flare",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "previous-move-failed",
+            "basePower": 75
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave31:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave31:double"
         ]
       }
     },
@@ -17062,6 +17624,2333 @@
           "volatile": "flinch"
         }
       ]
+    },
+    "gigaton-hammer": {
+      "id": "gigaton-hammer",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "require-not-consecutive",
+          "hook": "onTryMove",
+          "order": 5
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave33:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave33:double"
+        ]
+      }
+    },
+    "last-resort": {
+      "id": "last-resort",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "require-other-moves-used",
+          "hook": "onTryMove",
+          "order": 20
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave33:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave33:double"
+        ]
+      }
+    },
+    "sucker-punch": {
+      "id": "sucker-punch",
+      "targetMode": "anyAdjacent",
+      "priority": 1,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "require-pending-damaging-action",
+          "hook": "onTryMove",
+          "order": 20
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave33:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave33:double"
+        ]
+      }
+    },
+    "upper-hand": {
+      "id": "upper-hand",
+      "targetMode": "anyAdjacent",
+      "priority": 3,
+      "contact": true,
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 100,
+          "volatile": "flinch"
+        }
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "require-pending-damaging-action",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "requirePositivePriority": true
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave33:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave33:double"
+        ]
+      }
+    },
+    "fissure": {
+      "id": "fissure",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90,
+          "params": {
+            "ohko": true
+          }
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-max-hp",
+            "ohko": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave34:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave34:double"
+        ]
+      }
+    },
+    "guillotine": {
+      "id": "guillotine",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90,
+          "params": {
+            "ohko": true
+          }
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-max-hp",
+            "ohko": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave34:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave34:double"
+        ]
+      }
+    },
+    "horn-drill": {
+      "id": "horn-drill",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90,
+          "params": {
+            "ohko": true
+          }
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-max-hp",
+            "ohko": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave34:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave34:double"
+        ]
+      }
+    },
+    "sheer-cold": {
+      "id": "sheer-cold",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90,
+          "params": {
+            "ohko": true,
+            "ohkoImmuneTargetTypes": [
+              "ice"
+            ],
+            "ohkoLowerAccuracyUnlessUserTypes": [
+              "ice"
+            ]
+          }
+        },
+        {
+          "id": "deal-fixed-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-max-hp",
+            "ohko": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave34:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave34:double"
+        ]
+      }
+    },
+    "rest": {
+      "id": "rest",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-rest",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave35:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave35:double"
+        ]
+      }
+    },
+    "heal-bell": {
+      "id": "heal-bell",
+      "targetMode": "userSide",
+      "priority": 0,
+      "contact": false,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "cure-party-status",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "sound": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave35:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave35:double"
+        ]
+      }
+    },
+    "magnetic-flux": {
+      "id": "magnetic-flux",
+      "targetMode": "userSide",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "target": "active-allies",
+            "boosts": {
+              "def": 1,
+              "spd": 1
+            },
+            "requireTargetAbilityIds": [
+              "plus",
+              "minus"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave35:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave35:double"
+        ]
+      }
+    },
+    "after-you": {
+      "id": "after-you",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "bypassesProtect": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "reorder-pending-action",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "position": "front"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave36:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave36:double"
+        ]
+      }
+    },
+    "quash": {
+      "id": "quash",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "reorder-pending-action",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "position": "back"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave36:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave36:double"
+        ]
+      }
+    },
+    "gastro-acid": {
+      "id": "gastro-acid",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "modify-active-ability",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "mode": "suppress",
+            "reflectable": true,
+            "blockedTargetAbilityIds": [
+              "disguise",
+              "forecast",
+              "hunger-switch",
+              "imposter",
+              "mimicry",
+              "stance-change",
+              "zero-to-hero"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave36:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave36:double"
+        ]
+      }
+    },
+    "imprison": {
+      "id": "imprison",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-persistent-effect",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "effect": "imprison",
+            "target": "self"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave36:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave36:double"
+        ]
+      }
+    },
+    "endure": {
+      "id": "endure",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-endure",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave37:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave37:double"
+        ]
+      }
+    },
+    "steel-beam": {
+      "id": "steel-beam",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-self-hp-damage",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "numerator": 1,
+            "denominator": 2,
+            "rounding": "round"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave37:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave37:double"
+        ]
+      }
+    },
+    "charge": {
+      "id": "charge",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-charge-state",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "multiplier": 2
+          }
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "target": "self",
+            "boosts": {
+              "spd": 1
+            }
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave37:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave37:double"
+        ]
+      }
+    },
+    "roost": {
+      "id": "roost",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-heal",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "target": "self",
+            "numerator": 1,
+            "denominator": 2
+          }
+        },
+        {
+          "id": "apply-type-state",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "removeType": "flying",
+            "duration": "turn",
+            "stateId": "roost",
+            "requireHealing": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave38:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave38:double"
+        ]
+      }
+    },
+    "burn-up": {
+      "id": "burn-up",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "thawsUser": true,
+      "thawsUserIfUserTypes": [
+        "fire"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "require-user-type",
+          "hook": "onTryMove",
+          "order": 20,
+          "params": {
+            "type": "fire"
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-type-state",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "removeType": "fire",
+            "duration": "switch",
+            "requireHit": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave38:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave38:double"
+        ]
+      }
+    },
+    "psychic-noise": {
+      "id": "psychic-noise",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "volatile-status",
+          "chance": 100,
+          "volatile": "heal-block"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave38:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave38:double"
+        ]
+      }
+    },
+    "dragon-cheer": {
+      "id": "dragon-cheer",
+      "targetMode": "adjacentAlly",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-volatile-status",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "volatile": "dragon-cheer"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave38:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave38:double"
+        ]
+      }
+    },
+    "grassy-glide": {
+      "id": "grassy-glide",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "turnOrder": {
+        "terrainPriority": {
+          "terrain": "grassy",
+          "priorityDelta": 1,
+          "requireGrounded": true
+        }
+      },
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave39:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave39:double"
+        ]
+      }
+    },
+    "round": {
+      "id": "round",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-round-chain",
+          "hook": "onMove",
+          "order": 80
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave39:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave39:double"
+        ]
+      }
+    },
+    "fury-cutter": {
+      "id": "fury-cutter",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "tags": [
+        "slicing"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-consecutive-power",
+          "hook": "onMove",
+          "order": 80,
+          "params": {
+            "stateId": "fury-cutter",
+            "maxMultiplier": 4
+          }
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave39:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave39:double"
+        ]
+      }
+    },
+    "electrify": {
+      "id": "electrify",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-next-move-type",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "type": "electric",
+            "stateId": "next-move-type"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave39:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave39:double"
+        ]
+      }
+    },
+    "wish": {
+      "id": "wish",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "schedule-slot-heal",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "effect": "wish",
+            "turns": 2,
+            "numerator": 1,
+            "denominator": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave40:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave40:double"
+        ]
+      }
+    },
+    "flying-press": {
+      "id": "flying-press",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "damageProfile": {
+        "secondaryAttackType": "flying"
+      },
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave40:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave40:double"
+        ]
+      }
+    },
+    "shell-side-arm": {
+      "id": "shell-side-arm",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-best-damage-category",
+          "hook": "onMove",
+          "order": 80
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-secondary-effects",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "secondaryEffects": [
+        {
+          "kind": "major-status",
+          "chance": 20,
+          "status": "poison"
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave40:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave40:double"
+        ]
+      }
+    },
+    "triple-axel": {
+      "id": "triple-axel",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": 3,
+            "perHitAccuracy": true,
+            "powerByHit": [
+              20,
+              40,
+              60
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave41:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave41:double"
+        ]
+      }
+    },
+    "population-bomb": {
+      "id": "population-bomb",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "tags": [
+        "slicing"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": 10,
+            "perHitAccuracy": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave41:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave41:double"
+        ]
+      }
+    },
+    "beak-blast": {
+      "id": "beak-blast",
+      "targetMode": "adjacentFoe",
+      "priority": -3,
+      "contact": false,
+      "tags": [
+        "bullet"
+      ],
+      "turnOrder": {
+        "prepareVolatile": {
+          "id": "beak-blast",
+          "endTurnTimer": 1,
+          "contactBurn": true
+        }
+      },
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "clear-user-volatile",
+          "hook": "onMove",
+          "order": 150,
+          "params": {
+            "volatile": "beak-blast"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave41:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave41:double"
+        ]
+      }
+    },
+    "autotomize": {
+      "id": "autotomize",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "boosts": {
+              "spe": 2
+            },
+            "target": "self",
+            "requireChange": true
+          }
+        },
+        {
+          "id": "apply-weight-state",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "reductionHg": 1000,
+            "requireStatChange": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave42:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave42:double"
+        ]
+      }
+    },
+    "gravity": {
+      "id": "gravity",
+      "targetMode": "field",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-gravity",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "turns": 5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave42:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave42:double"
+        ]
+      }
+    },
+    "strength-sap": {
+      "id": "strength-sap",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "prepare-target-stat-heal",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "stat": "atk",
+            "failAtStageFloor": true
+          }
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -1
+            }
+          }
+        },
+        {
+          "id": "apply-prepared-stat-heal",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "source": "strength-sap"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave43:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave43:double"
+        ]
+      }
+    },
+    "syrup-bomb": {
+      "id": "syrup-bomb",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "tags": [
+        "bullet"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-recurring-stat-drop",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "volatile": "syrup-bomb",
+            "stat": "spe",
+            "delta": -1,
+            "turns": 3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave43:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave43:double"
+        ]
+      }
+    },
+    "uproar": {
+      "id": "uproar",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "tags": [
+        "sound"
+      ],
+      "bypassSubstitute": true,
+      "handlers": [
+        {
+          "id": "apply-rampage-lock",
+          "hook": "onTryMove",
+          "order": 5,
+          "params": {
+            "turns": 3,
+            "confuseOnEnd": false,
+            "blocksSleep": true
+          }
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-direct-damage",
+          "hook": "onMove",
+          "order": 100
+        },
+        {
+          "id": "apply-rampage-lock",
+          "hook": "onMove",
+          "order": 120,
+          "params": {
+            "turns": 3,
+            "confuseOnEnd": false,
+            "blocksSleep": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave44:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave44:double"
+        ]
+      }
+    },
+    "healing-wish": {
+      "id": "healing-wish",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-healing-wish",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave45:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave45:double"
+        ]
+      }
+    },
+    "destiny-bond": {
+      "id": "destiny-bond",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "require-destiny-bond-ready",
+          "hook": "onTryMove",
+          "order": 5
+        },
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-destiny-bond",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave45:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave45:double"
+        ]
+      }
+    },
+    "dragon-darts": {
+      "id": "dragon-darts",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90,
+          "params": {
+            "smartSplit": true
+          }
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": 2,
+            "smartSplit": true
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave46:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave46:double"
+        ]
+      }
+    },
+    "shed-tail": {
+      "id": "shed-tail",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-shed-tail",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave47:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave47:double"
+        ]
+      }
+    },
+    "frustration": {
+      "id": "frustration",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "hidden-power": {
+      "id": "hidden-power",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "natural-gift": {
+      "id": "natural-gift",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "pursuit": {
+      "id": "pursuit",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "return": {
+      "id": "return",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "secret-power": {
+      "id": "secret-power",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "snatch": {
+      "id": "snatch",
+      "targetMode": "self",
+      "priority": 4,
+      "contact": false,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "telekinesis": {
+      "id": "telekinesis",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave48:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave48:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "explicitly-unusable-in-current-runtime"
+    },
+    "future-sight": {
+      "id": "future-sight",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "schedule-future-attack",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "effect": "future-attack",
+            "turns": 3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave49:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave49:double"
+        ]
+      }
+    },
+    "beat-up": {
+      "id": "beat-up",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "prepare-party-hit-powers",
+          "hook": "onMove",
+          "order": 95,
+          "params": {
+            "basePower": 5,
+            "attackDivisor": 10
+          }
+        },
+        {
+          "id": "deal-multi-hit-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "hits": 6
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave49:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave49:double"
+        ]
+      }
+    },
+    "tera-blast": {
+      "id": "tera-blast",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "unusable": true,
+      "handlers": [
+        {
+          "id": "reject-unusable-move",
+          "hook": "onTryMove",
+          "order": 1
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave50:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave50:double"
+        ]
+      },
+      "reviewState": "fail-closed",
+      "reviewReason": "champions-terastallization-unavailable"
+    },
+    "simple-beam": {
+      "id": "simple-beam",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "modify-active-ability",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "mode": "replace-fixed",
+            "abilityId": "simple",
+            "reflectable": true,
+            "blockedTargetAbilityIds": [
+              "as-one",
+              "battle-bond",
+              "comatose",
+              "disguise",
+              "gulp-missile",
+              "ice-face",
+              "multitype",
+              "power-construct",
+              "rks-system",
+              "schooling",
+              "shields-down",
+              "simple",
+              "stance-change",
+              "tera-shift",
+              "truant",
+              "zen-mode",
+              "zero-to-hero"
+            ]
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave52:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave52:double"
+        ]
+      },
+      "reviewState": "executable"
+    },
+    "baton-pass": {
+      "id": "baton-pass",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-baton-pass",
+          "hook": "onMove",
+          "order": 120
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave52:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave52:double"
+        ]
+      },
+      "reviewState": "executable"
+    },
+    "copycat": {
+      "id": "copycat",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "call-copycat-move",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave53:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave53:double"
+        ]
+      },
+      "reviewState": "executable"
+    },
+    "curse": {
+      "id": "curse",
+      "targetMode": "self",
+      "dynamicTargetMode": "ghost-or-self",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "redirectable": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "apply-curse",
+          "hook": "onMove",
+          "order": 110
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave52:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave52:double"
+        ]
+      },
+      "reviewState": "executable"
+    },
+    "instruct": {
+      "id": "instruct",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "call-instruct-move",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave53:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave53:double"
+        ]
+      },
+      "reviewState": "executable",
+      "bypassSubstitute": true
+    },
+    "parting-shot": {
+      "id": "parting-shot",
+      "targetMode": "anyAdjacent",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "tags": [
+        "sound"
+      ],
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-stat-stages",
+          "hook": "onMove",
+          "order": 110,
+          "params": {
+            "boosts": {
+              "atk": -1,
+              "spa": -1
+            }
+          }
+        },
+        {
+          "id": "apply-parting-shot-switch",
+          "hook": "onMove",
+          "order": 120
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave52:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave52:double"
+        ]
+      },
+      "reviewState": "executable"
+    },
+    "sleep-talk": {
+      "id": "sleep-talk",
+      "targetMode": "self",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "call-sleep-talk-move",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave53:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave53:double"
+        ]
+      },
+      "reviewState": "executable",
+      "sleepUsable": true
+    },
+    "attract": {
+      "id": "attract",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "bypassSubstitute": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "apply-infatuation",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave51:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave51:double"
+        ]
+      }
+    },
+    "fling": {
+      "id": "fling",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": false,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "prepare-fling",
+          "hook": "onTryMove",
+          "order": 20
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-fling-damage",
+          "hook": "onMove",
+          "order": 100
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave51:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave51:double"
+        ]
+      }
+    },
+    "low-kick": {
+      "id": "low-kick",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-weight-tier"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave51:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave51:double"
+        ]
+      }
+    },
+    "grass-knot": {
+      "id": "grass-knot",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "target-weight-tier"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave51:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave51:double"
+        ]
+      }
+    },
+    "heavy-slam": {
+      "id": "heavy-slam",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-target-weight-ratio"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave51:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave51:double"
+        ]
+      }
+    },
+    "heat-crash": {
+      "id": "heat-crash",
+      "targetMode": "adjacentFoe",
+      "priority": 0,
+      "contact": true,
+      "handlers": [
+        {
+          "id": "spend-pp",
+          "hook": "onTryMove",
+          "order": 10
+        },
+        {
+          "id": "check-accuracy",
+          "hook": "onMove",
+          "order": 90
+        },
+        {
+          "id": "deal-variable-power-damage",
+          "hook": "onMove",
+          "order": 100,
+          "params": {
+            "formula": "user-target-weight-ratio"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-move-hooks-wave51:single"
+        ],
+        "double": [
+          "r3-move-hooks-wave51:double"
+        ]
+      }
     }
   },
   "abilities": {
@@ -19237,7 +22126,8 @@
           "hook": "modifyDamage",
           "order": 40,
           "params": {
-            "requireFullHp": true
+            "requireFullHp": true,
+            "blocksOhko": true
           }
         }
       ],
@@ -20346,7 +23236,8 @@
           "order": 40,
           "params": {
             "volatiles": [
-              "taunt"
+              "taunt",
+              "infatuation"
             ]
           }
         },
@@ -20974,7 +23865,41 @@
             },
             "defaultTypes": [
               "normal"
-            ]
+            ],
+            "forms": {
+              "sun": {
+                "speciesId": "castform-sunny",
+                "name": "Castform (Sunny)",
+                "spriteKey": "castform-sunny",
+                "types": [
+                  "fire"
+                ]
+              },
+              "rain": {
+                "speciesId": "castform-rainy",
+                "name": "Castform (Rainy)",
+                "spriteKey": "castform-rainy",
+                "types": [
+                  "water"
+                ]
+              },
+              "snow": {
+                "speciesId": "castform-snowy",
+                "name": "Castform (Snowy)",
+                "spriteKey": "castform-snowy",
+                "types": [
+                  "ice"
+                ]
+              }
+            },
+            "defaultForm": {
+              "speciesId": "castform",
+              "name": "Castform",
+              "spriteKey": "castform",
+              "types": [
+                "normal"
+              ]
+            }
           }
         }
       ],
@@ -21023,7 +23948,16 @@
           "order": 40,
           "params": {
             "breakNumerator": 1,
-            "breakDenominator": 8
+            "breakDenominator": 8,
+            "bustedForm": {
+              "speciesId": "mimikyu-busted",
+              "name": "Mimikyu (Busted)",
+              "spriteKey": "mimikyu-busted",
+              "types": [
+                "ghost",
+                "fairy"
+              ]
+            }
           }
         }
       ],
@@ -21221,6 +24155,93 @@
         ],
         "double": [
           "r3-ability-hooks-wave17:double"
+        ]
+      }
+    },
+    "cute-charm": {
+      "id": "cute-charm",
+      "handlers": [
+        {
+          "id": "contact-response",
+          "hook": "afterDamage",
+          "order": 40,
+          "params": {
+            "response": "volatile",
+            "volatile": "infatuation",
+            "chance": 0.3
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave18:double"
+        ]
+      }
+    },
+    "rivalry": {
+      "id": "rivalry",
+      "handlers": [
+        {
+          "id": "gender-damage-modifier",
+          "hook": "modifyPower",
+          "order": 24,
+          "params": {
+            "sameGenderMultiplier": 1.25,
+            "oppositeGenderMultiplier": 0.75
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave18:double"
+        ]
+      }
+    },
+    "heavy-metal": {
+      "id": "heavy-metal",
+      "handlers": [
+        {
+          "id": "weight-modifier",
+          "hook": "modifyWeight",
+          "order": 10,
+          "params": {
+            "multiplier": 2
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave18:double"
+        ]
+      }
+    },
+    "light-metal": {
+      "id": "light-metal",
+      "handlers": [
+        {
+          "id": "weight-modifier",
+          "hook": "modifyWeight",
+          "order": 10,
+          "params": {
+            "multiplier": 0.5
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-ability-hooks-wave18:single"
+        ],
+        "double": [
+          "r3-ability-hooks-wave18:double"
         ]
       }
     }
@@ -23092,6 +26113,1865 @@
         ],
         "double": [
           "r3-weather:double"
+        ]
+      }
+    },
+    "binding-band": {
+      "id": "binding-band",
+      "handlers": [
+        {
+          "id": "item-binding-damage-boost",
+          "hook": "endTurn",
+          "order": 45,
+          "params": {
+            "numerator": 1,
+            "denominator": 6
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle-wave8:single"
+        ],
+        "double": [
+          "r3-item-lifecycle-wave8:double"
+        ]
+      }
+    },
+    "shed-shell": {
+      "id": "shed-shell",
+      "handlers": [
+        {
+          "id": "item-switch-escape",
+          "hook": "onSwitchOut",
+          "order": 20,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle-wave8:single"
+        ],
+        "double": [
+          "r3-item-lifecycle-wave8:double"
+        ]
+      }
+    },
+    "abomasite": {
+      "id": "abomasite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "abomasnow",
+            "megaSpeciesId": "abomasnow-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "absolite": {
+      "id": "absolite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "absol",
+            "megaSpeciesId": "absol-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "absolite-z": {
+      "id": "absolite-z",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "absol",
+            "megaSpeciesId": "absol-mega-z"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "aerodactylite": {
+      "id": "aerodactylite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "aerodactyl",
+            "megaSpeciesId": "aerodactyl-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave5:single"
+        ],
+        "double": [
+          "r6-mega-wave5:double"
+        ]
+      }
+    },
+    "aggronite": {
+      "id": "aggronite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "aggron",
+            "megaSpeciesId": "aggron-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "alakazite": {
+      "id": "alakazite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "alakazam",
+            "megaSpeciesId": "alakazam-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave5:single"
+        ],
+        "double": [
+          "r6-mega-wave5:double"
+        ]
+      }
+    },
+    "altarianite": {
+      "id": "altarianite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "altaria",
+            "megaSpeciesId": "altaria-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "ampharosite": {
+      "id": "ampharosite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "ampharos",
+            "megaSpeciesId": "ampharos-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave5:single"
+        ],
+        "double": [
+          "r6-mega-wave5:double"
+        ]
+      }
+    },
+    "audinite": {
+      "id": "audinite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "audino",
+            "megaSpeciesId": "audino-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "banettite": {
+      "id": "banettite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "banette",
+            "megaSpeciesId": "banette-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "barbaracite": {
+      "id": "barbaracite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "baxcalibrite": {
+      "id": "baxcalibrite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "beedrillite": {
+      "id": "beedrillite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "beedrill",
+            "megaSpeciesId": "beedrill-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave2:single"
+        ],
+        "double": [
+          "r6-mega-wave2:double"
+        ]
+      }
+    },
+    "blastoisinite": {
+      "id": "blastoisinite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "blastoise",
+            "megaSpeciesId": "blastoise-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave2:single"
+        ],
+        "double": [
+          "r6-mega-wave2:double"
+        ]
+      }
+    },
+    "blazikenite": {
+      "id": "blazikenite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "cameruptite": {
+      "id": "cameruptite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "camerupt",
+            "megaSpeciesId": "camerupt-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave4:single"
+        ],
+        "double": [
+          "r6-mega-wave4:double"
+        ]
+      }
+    },
+    "chandelurite": {
+      "id": "chandelurite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "chandelure",
+            "megaSpeciesId": "chandelure-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "charizardite-x": {
+      "id": "charizardite-x",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "charizard",
+            "megaSpeciesId": "charizard-mega-x"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave2:single"
+        ],
+        "double": [
+          "r6-mega-wave2:double"
+        ]
+      }
+    },
+    "charizardite-y": {
+      "id": "charizardite-y",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "charizard",
+            "megaSpeciesId": "charizard-mega-y"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave2:single"
+        ],
+        "double": [
+          "r6-mega-wave2:double"
+        ]
+      }
+    },
+    "chesnaughtite": {
+      "id": "chesnaughtite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "chesnaught",
+            "megaSpeciesId": "chesnaught-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave2:single"
+        ],
+        "double": [
+          "r6-mega-wave2:double"
+        ]
+      }
+    },
+    "chimechite": {
+      "id": "chimechite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "chimecho",
+            "megaSpeciesId": "chimecho-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "clefablite": {
+      "id": "clefablite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "clefable",
+            "megaSpeciesId": "clefable-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "crabominite": {
+      "id": "crabominite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "crabominable",
+            "megaSpeciesId": "crabominable-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "delphoxite": {
+      "id": "delphoxite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "delphox",
+            "megaSpeciesId": "delphox-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "dragalgite": {
+      "id": "dragalgite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "dragoninite": {
+      "id": "dragoninite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "dragonite",
+            "megaSpeciesId": "dragonite-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "drampanite": {
+      "id": "drampanite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "drampa",
+            "megaSpeciesId": "drampa-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "eelektrossite": {
+      "id": "eelektrossite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "emboarite": {
+      "id": "emboarite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "emboar",
+            "megaSpeciesId": "emboar-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "excadrite": {
+      "id": "excadrite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "excadrill",
+            "megaSpeciesId": "excadrill-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "falinksite": {
+      "id": "falinksite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "feraligite": {
+      "id": "feraligite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "feraligatr",
+            "megaSpeciesId": "feraligatr-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave3:single"
+        ],
+        "double": [
+          "r6-mega-wave3:double"
+        ]
+      }
+    },
+    "floettite": {
+      "id": "floettite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "floette",
+            "megaSpeciesId": "floette-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "froslassite": {
+      "id": "froslassite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "froslass",
+            "megaSpeciesId": "froslass-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "galladite": {
+      "id": "galladite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "gallade",
+            "megaSpeciesId": "gallade-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "garchompite": {
+      "id": "garchompite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "garchomp",
+            "megaSpeciesId": "garchomp-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave5:single"
+        ],
+        "double": [
+          "r6-mega-wave5:double"
+        ]
+      }
+    },
+    "garchompite-z": {
+      "id": "garchompite-z",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "garchomp",
+            "megaSpeciesId": "garchomp-mega-z"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "gardevoirite": {
+      "id": "gardevoirite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "gardevoir",
+            "megaSpeciesId": "gardevoir-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "gengarite": {
+      "id": "gengarite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "gengar",
+            "megaSpeciesId": "gengar-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "glalitite": {
+      "id": "glalitite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "glalie",
+            "megaSpeciesId": "glalie-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "glimmoranite": {
+      "id": "glimmoranite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "glimmora",
+            "megaSpeciesId": "glimmora-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "golisopite": {
+      "id": "golisopite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "golurkite": {
+      "id": "golurkite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "golurk",
+            "megaSpeciesId": "golurk-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "greninjite": {
+      "id": "greninjite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "greninja",
+            "megaSpeciesId": "greninja-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "gyaradosite": {
+      "id": "gyaradosite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "gyarados",
+            "megaSpeciesId": "gyarados-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave5:single"
+        ],
+        "double": [
+          "r6-mega-wave5:double"
+        ]
+      }
+    },
+    "hawluchanite": {
+      "id": "hawluchanite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "hawlucha",
+            "megaSpeciesId": "hawlucha-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "heracronite": {
+      "id": "heracronite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "heracross",
+            "megaSpeciesId": "heracross-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave4:single"
+        ],
+        "double": [
+          "r6-mega-wave4:double"
+        ]
+      }
+    },
+    "houndoominite": {
+      "id": "houndoominite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "houndoom",
+            "megaSpeciesId": "houndoom-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "kangaskhanite": {
+      "id": "kangaskhanite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "kangaskhan",
+            "megaSpeciesId": "kangaskhan-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "lopunnite": {
+      "id": "lopunnite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "lopunny",
+            "megaSpeciesId": "lopunny-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "lucarionite": {
+      "id": "lucarionite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "lucario",
+            "megaSpeciesId": "lucario-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave6:single"
+        ],
+        "double": [
+          "r6-mega-wave6:double"
+        ]
+      }
+    },
+    "lucarionite-z": {
+      "id": "lucarionite-z",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "lucario",
+            "megaSpeciesId": "lucario-mega-z"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "malamarite": {
+      "id": "malamarite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "manectite": {
+      "id": "manectite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "manectric",
+            "megaSpeciesId": "manectric-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave5:single"
+        ],
+        "double": [
+          "r6-mega-wave5:double"
+        ]
+      }
+    },
+    "mawilite": {
+      "id": "mawilite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "medichamite": {
+      "id": "medichamite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "medicham",
+            "megaSpeciesId": "medicham-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave4:single"
+        ],
+        "double": [
+          "r6-mega-wave4:double"
+        ]
+      }
+    },
+    "meganiumite": {
+      "id": "meganiumite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "meganium",
+            "megaSpeciesId": "meganium-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave3:single"
+        ],
+        "double": [
+          "r6-mega-wave3:double"
+        ]
+      }
+    },
+    "meowsticite": {
+      "id": "meowsticite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "meowstic",
+            "megaSpeciesId": "meowstic-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "metagrossite": {
+      "id": "metagrossite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "pidgeotite": {
+      "id": "pidgeotite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "pidgeot",
+            "megaSpeciesId": "pidgeot-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "pinsirite": {
+      "id": "pinsirite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "pinsir",
+            "megaSpeciesId": "pinsir-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "pyroarite": {
+      "id": "pyroarite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "raichunite": {
+      "id": "raichunite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "raichu",
+            "megaSpeciesId": "raichu-mega-y"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "raichunite-x": {
+      "id": "raichunite-x",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "raichu",
+            "megaSpeciesId": "raichu-mega-x"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "sablenite": {
+      "id": "sablenite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "sableye",
+            "megaSpeciesId": "sableye-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "salamencite": {
+      "id": "salamencite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "sceptilite": {
+      "id": "sceptilite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "scizorite": {
+      "id": "scizorite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "scizor",
+            "megaSpeciesId": "scizor-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave2:single"
+        ],
+        "double": [
+          "r6-mega-wave2:double"
+        ]
+      }
+    },
+    "scolipite": {
+      "id": "scolipite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "scovillainite": {
+      "id": "scovillainite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "scovillain",
+            "megaSpeciesId": "scovillain-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "scraftinite": {
+      "id": "scraftinite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "sharpedonite": {
+      "id": "sharpedonite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "sharpedo",
+            "megaSpeciesId": "sharpedo-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "skarmorite": {
+      "id": "skarmorite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "skarmory",
+            "megaSpeciesId": "skarmory-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "slowbronite": {
+      "id": "slowbronite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "slowbro",
+            "megaSpeciesId": "slowbro-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "staraptite": {
+      "id": "staraptite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "starminite": {
+      "id": "starminite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "starmie",
+            "megaSpeciesId": "starmie-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "steelixite": {
+      "id": "steelixite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "steelix",
+            "megaSpeciesId": "steelix-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave4:single"
+        ],
+        "double": [
+          "r6-mega-wave4:double"
+        ]
+      }
+    },
+    "swampertite": {
+      "id": "swampertite",
+      "reviewState": "fail-closed",
+      "reviewReason": "mega-relation-not-promoted",
+      "handlers": [
+        {
+          "id": "reject-unusable-item",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "reason": "mega-relation-not-promoted"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "tyranitarite": {
+      "id": "tyranitarite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "tyranitar",
+            "megaSpeciesId": "tyranitar-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave7:single"
+        ],
+        "double": [
+          "r6-mega-wave7:double"
+        ]
+      }
+    },
+    "venusaurite": {
+      "id": "venusaurite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "venusaur",
+            "megaSpeciesId": "venusaur-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-review-wave9:single"
+        ],
+        "double": [
+          "r3-item-review-wave9:double"
+        ]
+      }
+    },
+    "victreebelite": {
+      "id": "victreebelite",
+      "handlers": [
+        {
+          "id": "mega-stone",
+          "hook": "beforeAction",
+          "order": 1,
+          "params": {
+            "baseSpeciesId": "victreebel",
+            "megaSpeciesId": "victreebel-mega"
+          }
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r6-mega-wave8:single"
+        ],
+        "double": [
+          "r6-mega-wave8:double"
+        ]
+      }
+    },
+    "eject-button": {
+      "id": "eject-button",
+      "handlers": [
+        {
+          "id": "item-holder-switch",
+          "hook": "afterDamage",
+          "order": 60,
+          "params": {}
+        }
+      ],
+      "testEvidence": {
+        "single": [
+          "r3-item-lifecycle-wave10:single"
+        ],
+        "double": [
+          "r3-item-lifecycle-wave10:double"
         ]
       }
     }

@@ -30,7 +30,7 @@ test('r3-move-hooks-wave23:single all 19 declarations use Wave 23 evidence and g
  assert.deepEqual(manifests.moves['magic-powder'].tags,['powder']);assert.equal(manifests.moves.snore.sleepUsable,true);
  assert.equal(manifests.moves['guard-swap'].bypassSubstitute,true);assert.equal(manifests.moves['power-swap'].bypassSubstitute,true);
  assert.equal(manifests.moves['sparkling-aria'].secondaryEffects[0].kind,'cure-major-status');
- assert.equal(manifests.moves['parting-shot'],undefined,'reflected pivot remains fail-closed');
+ assert.equal(manifests.moves['parting-shot']?.reviewState,'executable','Parting Shot is promoted by Wave 52');assert.equal(manifests.moves['parting-shot']?.handlers?.[0]?.id,'spend-pp');assert.deepEqual(manifests.moves['parting-shot']?.testEvidence,{single:['r3-move-hooks-wave52:single'],double:['r3-move-hooks-wave52:double']});
 });
 
 test('damage profiles cover Body Press, Psyshock, Sacred Sword, and Darkest Lariat without move-id branches',()=>{

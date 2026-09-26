@@ -1,5 +1,6 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {abilityPreventsIndirectDamage} from './ability-hooks.mjs';
+import {heldItemEffectActive} from './item-hooks.mjs';
 
 const maxHp=unit=>unit?.maxHp??unit?.stats?.hp;
 const sideOf=(battle,actorId)=>['A','B'].find(side=>battle.sides?.[side]?.roster?.some(unit=>unit.actorId===actorId))||null;
@@ -11,7 +12,7 @@ export function prepareBindingResidualEndTurn(battle){
   const source=unitById(next,state.sourceActorId),sourceSide=sideOf(next,state.sourceActorId),sourceActive=source&&source.hp>0&&sourceSide&&(next.sides?.[sourceSide]?.active||[]).includes(source.actorId);
   if(!sourceActive){delete unit.volatiles.bound;events.push({kind:'volatileEnded',actorId:unit.actorId,volatile:'bound',sourceMoveId:state.sourceId,reason:'sourceUnavailable'});continue;}
   if(abilityPreventsIndirectDamage(unit))continue;
-  const numerator=state.residualNumerator??1,denominator=state.residualDenominator??8,amount=Math.max(1,Math.floor(maxHp(unit)*numerator/denominator));changes.push({actorId:unit.actorId,delta:-amount});
+  const boost=(source.passiveEffects||[]).find(effect=>effect?.kind==='item-binding-damage-boost'&&heldItemEffectActive(source,effect,next)),numerator=boost?.numerator??state.residualNumerator??1,denominator=boost?.denominator??state.residualDenominator??8,amount=Math.max(1,Math.floor(maxHp(unit)*numerator/denominator));changes.push({actorId:unit.actorId,delta:-amount});
  }
  return {battle:next,group:{id:'binding-residual',changes},events};
 }

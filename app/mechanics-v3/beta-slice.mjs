@@ -1,15 +1,16 @@
 import {NATURES,validateStatPoints} from '../rules-v3/stats.mjs';
 
 const byId=list=>new Map((list||[]).map(entry=>[entry.id,entry]));
+const MAX_EXPANDED_CATALOG_MEMBERS=256;
 
 export function validateBetaSlice(slice,catalog,coverage){
  const problems=[],formats=slice?.formats,team=slice?.team,expanded=(slice?.schemaVersion||0)>=2;
- if(![1,2,3].includes(slice?.schemaVersion))problems.push('unsupported beta slice schemaVersion');
+ if(![1,2,3,4].includes(slice?.schemaVersion))problems.push('unsupported beta slice schemaVersion');
  if(typeof slice?.id!=='string'||!slice.id)problems.push('beta slice id is required');
  if(typeof slice?.snapshotId!=='string'||!slice.snapshotId)problems.push('beta slice snapshotId is required');
  if(slice?.regulationSet!=='m-a')problems.push('beta slice requires regulationSet m-a');
  if(!Array.isArray(formats)||formats.length!==2||!formats.includes('single')||!formats.includes('double'))problems.push('beta slice must support single and double');
- if(!Array.isArray(team)||(expanded?team.length<8||team.length>24:team.length!==6))problems.push(expanded?'expanded beta slice requires 8-24 catalog members':'beta slice requires exactly six team members');
+ if(!Array.isArray(team)||(expanded?team.length<8||team.length>MAX_EXPANDED_CATALOG_MEMBERS:team.length!==6))problems.push(expanded?`expanded beta slice requires 8-${MAX_EXPANDED_CATALOG_MEMBERS} catalog members`:'beta slice requires exactly six team members');
  const starterIds=expanded?slice.starterTeamSpeciesIds:team?.map(member=>member.speciesId);
  if(expanded&&(!Array.isArray(starterIds)||starterIds.length!==6||new Set(starterIds).size!==6))problems.push('beta slice requires six distinct starterTeamSpeciesIds');
  if(expanded&&Array.isArray(team)&&Array.isArray(starterIds)&&starterIds.some(id=>!team.some(member=>member.speciesId===id)))problems.push('starter team species must exist in the beta catalog');
@@ -20,7 +21,7 @@ export function validateBetaSlice(slice,catalog,coverage){
   if(!mon){problems.push(`unknown species ${member.speciesId}`);continue;}
   if(seenSpecies.has(mon.id))problems.push(`duplicate species ${mon.id}`);seenSpecies.add(mon.id);
   if(!mon.regulationSets?.includes(slice.regulationSet))problems.push(`${mon.id} is not in M-A`);
-  if(!Array.isArray(member.moveIds)||member.moveIds.length!==4||new Set(member.moveIds).size!==4)problems.push(`${mon.id} requires four distinct moves`);
+  const requiredMoveCount=Math.min(4,mon.moveIds.length);if(!Array.isArray(member.moveIds)||member.moveIds.length!==requiredMoveCount||new Set(member.moveIds).size!==requiredMoveCount)problems.push(`${mon.id} requires ${requiredMoveCount} distinct move${requiredMoveCount===1?'':'s'}`);
   const pointProblems=validateStatPoints(member.statPoints);if(pointProblems.length)problems.push(...pointProblems.map(problem=>`${mon.id} ${problem}`));
   else if(Object.values(member.statPoints).reduce((sum,value)=>sum+value,0)!==66)problems.push(`${mon.id} requires exactly 66 stat points`);
   if(!NATURES[member.natureId])problems.push(`${mon.id} has unknown nature ${member.natureId}`);
@@ -29,9 +30,23 @@ export function validateBetaSlice(slice,catalog,coverage){
   const item=items.get(member.itemId);if(!item)problems.push(`unknown item ${member.itemId}`);else if(item.availableInChampions!==true)problems.push(`item ${member.itemId} is unavailable in Champions`);else requireCoverage(coverageByKey,'item',member.itemId,formats,problems);
   if(member.itemId!=='none'){allItems.add(member.itemId);if(starterIds.includes(member.speciesId)){if(starterItems.has(member.itemId))problems.push(`duplicate held item ${member.itemId}`);starterItems.add(member.itemId);}}
  }
- if(slice.schemaVersion===3)validateEnabledContent(slice.enabledContent,{team,species,moves,abilities,items,coverageByKey,formats,problems});
- const enabled=slice.enabledContent||{},types=[...new Set(team.flatMap(member=>species.get(member.speciesId)?.types||[]))].sort();
- return {ok:problems.length===0,problems,summary:{members:team.length,starters:starterIds.length,types,moveIds:[...new Set([...team.flatMap(member=>member.moveIds||[]),...(enabled.moveIds||[])])].sort(),abilityIds:[...new Set([...team.map(member=>member.abilityId),...(enabled.abilityIds||[])])].sort(),itemIds:[...new Set([...allItems,...(enabled.itemIds||[])])].sort()}};
+ if(slice.schemaVersion>=3)validateEnabledContent(slice.enabledContent,{team,species,moves,abilities,items,coverageByKey,formats,problems});
+ const enabled=slice.enabledContent||{},moveIds=[...new Set([...team.flatMap(member=>member.moveIds||[]),...(enabled.moveIds||[])])].sort(),abilityIds=[...new Set([...team.map(member=>member.abilityId),...(enabled.abilityIds||[])])].sort(),itemIds=[...new Set([...allItems,...(enabled.itemIds||[])])].sort();
+ if(slice.schemaVersion>=4)validateCompleteSpecies(slice.completeSpeciesIds,{team,species,moves,abilities,coverageByKey,formats,moveIds,abilityIds,problems});
+ const types=[...new Set(team.flatMap(member=>species.get(member.speciesId)?.types||[]))].sort();
+ return {ok:problems.length===0,problems,summary:{members:team.length,starters:starterIds.length,types,moveIds,abilityIds,itemIds,completeSpeciesIds:[...(slice.completeSpeciesIds||[])]}};
+}
+
+
+function validateCompleteSpecies(ids,{team,species,moves,abilities,coverageByKey,formats,moveIds,abilityIds,problems}){
+ if(!Array.isArray(ids)||ids.length===0||new Set(ids).size!==ids.length){problems.push('beta slice v4 requires distinct completeSpeciesIds');return;}
+ const teamIds=new Set(team.map(member=>member.speciesId)),enabledMoves=new Set(moveIds),enabledAbilities=new Set(abilityIds);
+ for(const id of ids){
+  const mon=species.get(id);if(!mon){problems.push(`complete species ${id} is unknown`);continue;}
+  if(!teamIds.has(id))problems.push(`complete species ${id} is not in the playable beta catalog`);
+  for(const moveId of mon.moveIds||[]){if(!moves.has(moveId))problems.push(`complete species ${id} references unknown move ${moveId}`);if(!enabledMoves.has(moveId))problems.push(`complete species ${id} missing legal move ${moveId}`);else requireCoverage(coverageByKey,'move',moveId,formats,problems);}
+  for(const abilityId of mon.abilityIds||[]){if(!abilities.has(abilityId))problems.push(`complete species ${id} references unknown ability ${abilityId}`);if(!enabledAbilities.has(abilityId))problems.push(`complete species ${id} missing legal ability ${abilityId}`);else requireCoverage(coverageByKey,'ability',abilityId,formats,problems);}
+ }
 }
 
 function validateEnabledContent(enabled,{team,species,moves,abilities,items,coverageByKey,formats,problems}){

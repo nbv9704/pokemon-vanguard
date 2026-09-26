@@ -1,0 +1,1150 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-21T10:14:32.807Z",
+  "count": 141,
+  "sheet": {
+    "file": "itemicons-sheet.png",
+    "width": 384,
+    "height": 1152,
+    "cellWidth": 24,
+    "cellHeight": 24,
+    "columns": 16
+  },
+  "sources": {
+    "pokemon-showdown": {
+      "label": "Pokémon Showdown item sprite sheet and item data",
+      "sheetUrl": "https://play.pokemonshowdown.com/sprites/itemicons-sheet.png",
+      "dataUrl": "https://raw.githubusercontent.com/smogon/pokemon-showdown/master/data/items.ts"
+    }
+  },
+  "items": [
+    {
+      "id": "air-balloon",
+      "name": "Air Balloon",
+      "spriteNumber": 6,
+      "column": 6,
+      "row": 0,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "aspear-berry",
+      "name": "Aspear Berry",
+      "spriteNumber": 13,
+      "column": 13,
+      "row": 0,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "babiri-berry",
+      "name": "Babiri Berry",
+      "spriteNumber": 17,
+      "column": 1,
+      "row": 1,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "big-root",
+      "name": "Big Root",
+      "spriteNumber": 29,
+      "column": 13,
+      "row": 1,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "black-belt",
+      "name": "Black Belt",
+      "spriteNumber": 32,
+      "column": 0,
+      "row": 2,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "black-glasses",
+      "name": "Black Glasses",
+      "spriteNumber": 35,
+      "column": 3,
+      "row": 2,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "bright-powder",
+      "name": "Bright Powder",
+      "spriteNumber": 51,
+      "column": 3,
+      "row": 3,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "charcoal",
+      "name": "Charcoal",
+      "spriteNumber": 61,
+      "column": 13,
+      "row": 3,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "charti-berry",
+      "name": "Charti Berry",
+      "spriteNumber": 62,
+      "column": 14,
+      "row": 3,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "cheri-berry",
+      "name": "Cheri Berry",
+      "spriteNumber": 63,
+      "column": 15,
+      "row": 3,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "chesto-berry",
+      "name": "Chesto Berry",
+      "spriteNumber": 65,
+      "column": 1,
+      "row": 4,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "chilan-berry",
+      "name": "Chilan Berry",
+      "spriteNumber": 66,
+      "column": 2,
+      "row": 4,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "choice-scarf",
+      "name": "Choice Scarf",
+      "spriteNumber": 69,
+      "column": 5,
+      "row": 4,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "chople-berry",
+      "name": "Chople Berry",
+      "spriteNumber": 71,
+      "column": 7,
+      "row": 4,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "coba-berry",
+      "name": "Coba Berry",
+      "spriteNumber": 76,
+      "column": 12,
+      "row": 4,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "colbur-berry",
+      "name": "Colbur Berry",
+      "spriteNumber": 78,
+      "column": 14,
+      "row": 4,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "damp-rock",
+      "name": "Damp Rock",
+      "spriteNumber": 88,
+      "column": 8,
+      "row": 5,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "dragon-fang",
+      "name": "Dragon Fang",
+      "spriteNumber": 106,
+      "column": 10,
+      "row": 6,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "electric-seed",
+      "name": "Electric Seed",
+      "spriteNumber": 664,
+      "column": 8,
+      "row": 41,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "expert-belt",
+      "name": "Expert Belt",
+      "spriteNumber": 132,
+      "column": 4,
+      "row": 8,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "fairy-feather",
+      "name": "Fairy Feather",
+      "spriteNumber": 754,
+      "column": 2,
+      "row": 47,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "focus-band",
+      "name": "Focus Band",
+      "spriteNumber": 150,
+      "column": 6,
+      "row": 9,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "focus-sash",
+      "name": "Focus Sash",
+      "spriteNumber": 151,
+      "column": 7,
+      "row": 9,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "grassy-seed",
+      "name": "Grassy Seed",
+      "spriteNumber": 667,
+      "column": 11,
+      "row": 41,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "haban-berry",
+      "name": "Haban Berry",
+      "spriteNumber": 185,
+      "column": 9,
+      "row": 11,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "hard-stone",
+      "name": "Hard Stone",
+      "spriteNumber": 187,
+      "column": 11,
+      "row": 11,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "heat-rock",
+      "name": "Heat Rock",
+      "spriteNumber": 193,
+      "column": 1,
+      "row": 12,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "icy-rock",
+      "name": "Icy Rock",
+      "spriteNumber": 221,
+      "column": 13,
+      "row": 13,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "iron-ball",
+      "name": "Iron Ball",
+      "spriteNumber": 224,
+      "column": 0,
+      "row": 14,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "kasib-berry",
+      "name": "Kasib Berry",
+      "spriteNumber": 233,
+      "column": 9,
+      "row": 14,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "kebia-berry",
+      "name": "Kebia Berry",
+      "spriteNumber": 234,
+      "column": 10,
+      "row": 14,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "kings-rock",
+      "name": "King’s Rock",
+      "spriteNumber": 236,
+      "column": 12,
+      "row": 14,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "leek",
+      "name": "Leek",
+      "spriteNumber": 475,
+      "column": 11,
+      "row": 29,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "leftovers",
+      "name": "Leftovers",
+      "spriteNumber": 242,
+      "column": 2,
+      "row": 15,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "leppa-berry",
+      "name": "Leppa Berry",
+      "spriteNumber": 244,
+      "column": 4,
+      "row": 15,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "life-orb",
+      "name": "Life Orb",
+      "spriteNumber": 249,
+      "column": 9,
+      "row": 15,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "light-ball",
+      "name": "Light Ball",
+      "spriteNumber": 251,
+      "column": 11,
+      "row": 15,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "light-clay",
+      "name": "Light Clay",
+      "spriteNumber": 252,
+      "column": 12,
+      "row": 15,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "lum-berry",
+      "name": "Lum Berry",
+      "spriteNumber": 262,
+      "column": 6,
+      "row": 16,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "magnet",
+      "name": "Magnet",
+      "spriteNumber": 273,
+      "column": 1,
+      "row": 17,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "mental-herb",
+      "name": "Mental Herb",
+      "spriteNumber": 285,
+      "column": 13,
+      "row": 17,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "metal-coat",
+      "name": "Metal Coat",
+      "spriteNumber": 286,
+      "column": 14,
+      "row": 17,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "metronome",
+      "name": "Metronome",
+      "spriteNumber": 289,
+      "column": 1,
+      "row": 18,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "miracle-seed",
+      "name": "Miracle Seed",
+      "spriteNumber": 292,
+      "column": 4,
+      "row": 18,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "misty-seed",
+      "name": "Misty Seed",
+      "spriteNumber": 666,
+      "column": 10,
+      "row": 41,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "muscle-band",
+      "name": "Muscle Band",
+      "spriteNumber": 297,
+      "column": 9,
+      "row": 18,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "mystic-water",
+      "name": "Mystic Water",
+      "spriteNumber": 300,
+      "column": 12,
+      "row": 18,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "never-melt-ice",
+      "name": "Never-Melt Ice",
+      "spriteNumber": 305,
+      "column": 1,
+      "row": 19,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "normal-gem",
+      "name": "Normal Gem",
+      "spriteNumber": 307,
+      "column": 3,
+      "row": 19,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "occa-berry",
+      "name": "Occa Berry",
+      "spriteNumber": 311,
+      "column": 7,
+      "row": 19,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "oran-berry",
+      "name": "Oran Berry",
+      "spriteNumber": 319,
+      "column": 15,
+      "row": 19,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "passho-berry",
+      "name": "Passho Berry",
+      "spriteNumber": 329,
+      "column": 9,
+      "row": 20,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "payapa-berry",
+      "name": "Payapa Berry",
+      "spriteNumber": 330,
+      "column": 10,
+      "row": 20,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "pecha-berry",
+      "name": "Pecha Berry",
+      "spriteNumber": 333,
+      "column": 13,
+      "row": 20,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "persim-berry",
+      "name": "Persim Berry",
+      "spriteNumber": 334,
+      "column": 14,
+      "row": 20,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "poison-barb",
+      "name": "Poison Barb",
+      "spriteNumber": 343,
+      "column": 7,
+      "row": 21,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "psychic-seed",
+      "name": "Psychic Seed",
+      "spriteNumber": 665,
+      "column": 9,
+      "row": 41,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "quick-claw",
+      "name": "Quick Claw",
+      "spriteNumber": 373,
+      "column": 5,
+      "row": 23,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "rawst-berry",
+      "name": "Rawst Berry",
+      "spriteNumber": 381,
+      "column": 13,
+      "row": 23,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "red-card",
+      "name": "Red Card",
+      "spriteNumber": 387,
+      "column": 3,
+      "row": 24,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "rindo-berry",
+      "name": "Rindo Berry",
+      "spriteNumber": 409,
+      "column": 9,
+      "row": 25,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "rocky-helmet",
+      "name": "Rocky Helmet",
+      "spriteNumber": 417,
+      "column": 1,
+      "row": 26,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "roseli-berry",
+      "name": "Roseli Berry",
+      "spriteNumber": 603,
+      "column": 11,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "scope-lens",
+      "name": "Scope Lens",
+      "spriteNumber": 429,
+      "column": 13,
+      "row": 26,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "sharp-beak",
+      "name": "Sharp Beak",
+      "spriteNumber": 436,
+      "column": 4,
+      "row": 27,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "shell-bell",
+      "name": "Shell Bell",
+      "spriteNumber": 438,
+      "column": 6,
+      "row": 27,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "shuca-berry",
+      "name": "Shuca Berry",
+      "spriteNumber": 443,
+      "column": 11,
+      "row": 27,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "silk-scarf",
+      "name": "Silk Scarf",
+      "spriteNumber": 444,
+      "column": 12,
+      "row": 27,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "silver-powder",
+      "name": "Silver Powder",
+      "spriteNumber": 447,
+      "column": 15,
+      "row": 27,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "sitrus-berry",
+      "name": "Sitrus Berry",
+      "spriteNumber": 448,
+      "column": 0,
+      "row": 28,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "smooth-rock",
+      "name": "Smooth Rock",
+      "spriteNumber": 453,
+      "column": 5,
+      "row": 28,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "soft-sand",
+      "name": "Soft Sand",
+      "spriteNumber": 456,
+      "column": 8,
+      "row": 28,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "spell-tag",
+      "name": "Spell Tag",
+      "spriteNumber": 461,
+      "column": 13,
+      "row": 28,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "tanga-berry",
+      "name": "Tanga Berry",
+      "spriteNumber": 487,
+      "column": 7,
+      "row": 30,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "terrain-extender",
+      "name": "Terrain Extender",
+      "spriteNumber": 662,
+      "column": 6,
+      "row": 41,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "twisted-spoon",
+      "name": "Twisted Spoon",
+      "spriteNumber": 520,
+      "column": 8,
+      "row": 32,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "wacan-berry",
+      "name": "Wacan Berry",
+      "spriteNumber": 526,
+      "column": 14,
+      "row": 32,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "white-herb",
+      "name": "White Herb",
+      "spriteNumber": 535,
+      "column": 7,
+      "row": 33,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "wide-lens",
+      "name": "Wide Lens",
+      "spriteNumber": 537,
+      "column": 9,
+      "row": 33,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "wise-glasses",
+      "name": "Wise Glasses",
+      "spriteNumber": 539,
+      "column": 11,
+      "row": 33,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "yache-berry",
+      "name": "Yache Berry",
+      "spriteNumber": 567,
+      "column": 7,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "zoom-lens",
+      "name": "Zoom Lens",
+      "spriteNumber": 574,
+      "column": 14,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "venusaurite",
+      "name": "Venusaurite",
+      "spriteNumber": 608,
+      "column": 0,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "blastoisinite",
+      "name": "Blastoisinite",
+      "spriteNumber": 583,
+      "column": 7,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "beedrillite",
+      "name": "Beedrillite",
+      "spriteNumber": 628,
+      "column": 4,
+      "row": 39,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "charizardite-x",
+      "name": "Charizardite X",
+      "spriteNumber": 585,
+      "column": 9,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "charizardite-y",
+      "name": "Charizardite Y",
+      "spriteNumber": 586,
+      "column": 10,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "chesnaughtite",
+      "name": "Chesnaughtite",
+      "spriteNumber": 558,
+      "column": 14,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "scizorite",
+      "name": "Scizorite",
+      "spriteNumber": 605,
+      "column": 13,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "feraligite",
+      "name": "Feraligite",
+      "spriteNumber": 549,
+      "column": 5,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "meganiumite",
+      "name": "Meganiumite",
+      "spriteNumber": 548,
+      "column": 4,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "steelixite",
+      "name": "Steelixite",
+      "spriteNumber": 621,
+      "column": 13,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "cameruptite",
+      "name": "Cameruptite",
+      "spriteNumber": 625,
+      "column": 1,
+      "row": 39,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "heracronite",
+      "name": "Heracronite",
+      "spriteNumber": 590,
+      "column": 14,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "medichamite",
+      "name": "Medichamite",
+      "spriteNumber": 599,
+      "column": 7,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "alakazite",
+      "name": "Alakazite",
+      "spriteNumber": 579,
+      "column": 3,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "aerodactylite",
+      "name": "Aerodactylite",
+      "spriteNumber": 577,
+      "column": 1,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "garchompite",
+      "name": "Garchompite",
+      "spriteNumber": 573,
+      "column": 13,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "gyaradosite",
+      "name": "Gyaradosite",
+      "spriteNumber": 589,
+      "column": 13,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "ampharosite",
+      "name": "Ampharosite",
+      "spriteNumber": 580,
+      "column": 4,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "manectite",
+      "name": "Manectite",
+      "spriteNumber": 596,
+      "column": 4,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "abomasite",
+      "name": "Abomasite",
+      "spriteNumber": 575,
+      "column": 15,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "absolite",
+      "name": "Absolite",
+      "spriteNumber": 576,
+      "column": 0,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "altarianite",
+      "name": "Altarianite",
+      "spriteNumber": 615,
+      "column": 7,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "audinite",
+      "name": "Audinite",
+      "spriteNumber": 617,
+      "column": 9,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "banettite",
+      "name": "Banettite",
+      "spriteNumber": 582,
+      "column": 6,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "galladite",
+      "name": "Galladite",
+      "spriteNumber": 616,
+      "column": 8,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "gardevoirite",
+      "name": "Gardevoirite",
+      "spriteNumber": 587,
+      "column": 11,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "glalitite",
+      "name": "Glalitite",
+      "spriteNumber": 623,
+      "column": 15,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "houndoominite",
+      "name": "Houndoominite",
+      "spriteNumber": 591,
+      "column": 15,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "lucarionite",
+      "name": "Lucarionite",
+      "spriteNumber": 594,
+      "column": 2,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "lopunnite",
+      "name": "Lopunnite",
+      "spriteNumber": 626,
+      "column": 2,
+      "row": 39,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "pidgeotite",
+      "name": "Pidgeotite",
+      "spriteNumber": 622,
+      "column": 14,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "sablenite",
+      "name": "Sablenite",
+      "spriteNumber": 614,
+      "column": 6,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "sharpedonite",
+      "name": "Sharpedonite",
+      "spriteNumber": 619,
+      "column": 11,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "slowbronite",
+      "name": "Slowbronite",
+      "spriteNumber": 620,
+      "column": 12,
+      "row": 38,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "tyranitarite",
+      "name": "Tyranitarite",
+      "spriteNumber": 607,
+      "column": 15,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "chandelurite",
+      "name": "Chandelurite",
+      "spriteNumber": 557,
+      "column": 13,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "dragoninite",
+      "name": "Dragoninite",
+      "spriteNumber": 547,
+      "column": 3,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "clefablite",
+      "name": "Clefablite",
+      "spriteNumber": 544,
+      "column": 0,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "froslassite",
+      "name": "Froslassite",
+      "spriteNumber": 551,
+      "column": 7,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "hawluchanite",
+      "name": "Hawluchanite",
+      "spriteNumber": 566,
+      "column": 6,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "starminite",
+      "name": "Starminite",
+      "spriteNumber": 546,
+      "column": 2,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "delphoxite",
+      "name": "Delphoxite",
+      "spriteNumber": 559,
+      "column": 15,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "aggronite",
+      "name": "Aggronite",
+      "spriteNumber": 578,
+      "column": 2,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "chimechite",
+      "name": "Chimechite",
+      "spriteNumber": 498,
+      "column": 2,
+      "row": 31,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "crabominite",
+      "name": "Crabominite",
+      "spriteNumber": 507,
+      "column": 11,
+      "row": 31,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "drampanite",
+      "name": "Drampanite",
+      "spriteNumber": 569,
+      "column": 9,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "emboarite",
+      "name": "Emboarite",
+      "spriteNumber": 552,
+      "column": 8,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "excadrite",
+      "name": "Excadrite",
+      "spriteNumber": 553,
+      "column": 9,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "floettite",
+      "name": "Floettite",
+      "spriteNumber": 562,
+      "column": 2,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "gengarite",
+      "name": "Gengarite",
+      "spriteNumber": 588,
+      "column": 12,
+      "row": 36,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "glimmoranite",
+      "name": "Glimmoranite",
+      "spriteNumber": 512,
+      "column": 0,
+      "row": 32,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "golurkite",
+      "name": "Golurkite",
+      "spriteNumber": 505,
+      "column": 9,
+      "row": 31,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "greninjite",
+      "name": "Greninjite",
+      "spriteNumber": 560,
+      "column": 0,
+      "row": 35,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "kangaskhanite",
+      "name": "Kangaskhanite",
+      "spriteNumber": 592,
+      "column": 0,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "meowsticite",
+      "name": "Meowsticite",
+      "spriteNumber": 506,
+      "column": 10,
+      "row": 31,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "pinsirite",
+      "name": "Pinsirite",
+      "spriteNumber": 602,
+      "column": 10,
+      "row": 37,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "scovillainite",
+      "name": "Scovillainite",
+      "spriteNumber": 511,
+      "column": 15,
+      "row": 31,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "skarmorite",
+      "name": "Skarmorite",
+      "spriteNumber": 550,
+      "column": 6,
+      "row": 34,
+      "source": "pokemon-showdown"
+    },
+    {
+      "id": "victreebelite",
+      "name": "Victreebelite",
+      "spriteNumber": 545,
+      "column": 1,
+      "row": 34,
+      "source": "pokemon-showdown"
+    }
+  ]
+}

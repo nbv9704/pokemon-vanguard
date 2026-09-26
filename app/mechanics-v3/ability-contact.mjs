@@ -6,13 +6,14 @@ import {abilityStageChange} from './ability-stage-change.mjs';
 import {resolveOpponentStatGainCopyAbilities,resolveStatDropResponseAbilities} from './ability-stage-response.mjs';
 import {resolveContactAbilityReplacement} from './ability-replacement.mjs';
 import {resolveNegativeStageResetItems} from './item-hooks.mjs';
+import {applyInfatuation} from './infatuation.mjs';
 
 const maxHp=unit=>unit?.maxHp??unit?.stats?.hp;
 const clampStage=value=>Math.max(-6,Math.min(6,value));
 const contactEffects=unit=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind==='ability'&&effect.kind==='contact-response');
 
 export function resolveContactAbilityResponses(battle,{attackerId,targetId,moveId,mechanics,damage=0,hit=null,ignoreTargetAbility=false}={},runtime={}){
- let next=clone(battle),events=[];if(!mechanics?.contact||damage<=0||ignoreTargetAbility)return {battle:next,events};
+ let next=clone(battle),events=[];if(!mechanics?.contact||damage<=0)return {battle:next,events};
  for(const effect of contactEffects(unitById(next,targetId))){
   const attacker=unitById(next,attackerId),holder=unitById(next,targetId);if(!attacker||!holder)break;
   if(effect.requireHolderFainted===true&&holder.hp>0)continue;
@@ -24,6 +25,9 @@ export function resolveContactAbilityResponses(battle,{attackerId,targetId,moveI
   }
   if(effect.response==='status'){
    if(attacker.hp<=0)continue;const applied=applyMajorStatus(next,{actorId:holder.actorId,targetId:attacker.actorId,moveId:`ability:${effect.sourceId}`,status:effect.status},runtime);next=applied.battle;events.push(...applied.events.map(event=>({...event,abilityId:effect.sourceId,reason:event.reason||'contact'})));continue;
+  }
+  if(effect.response==='volatile'){
+   if(attacker.hp<=0)continue;const applied=applyInfatuation(next,{sourceId:holder.actorId,targetId:attacker.actorId,moveId:`ability:${effect.sourceId}`,sourceAbilityId:effect.sourceId,ignoreTargetAbility:false});next=applied.battle;events.push(...applied.events);continue;
   }
   if(effect.response==='stat'){
    if(attacker.hp<=0)continue;attacker.stages??={};const stat=effect.stat,changed=abilityStageChange(attacker,effect.stages),requestedDelta=changed.requestedDelta;if(changed.sourceAbilityId)events.push({kind:'abilityTriggered',sourceId:attacker.actorId,abilityId:changed.sourceAbilityId,effectId:changed.effectId,trigger:'stat-change'});

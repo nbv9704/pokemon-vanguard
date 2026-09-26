@@ -1,6 +1,6 @@
 import {clone,unitById} from '../../rules-v3/battle-state.mjs';
 
-const supported=new Set(['trapped','ingrain','aqua-ring','salt-cure','magnet-rise']);
+const supported=new Set(['trapped','ingrain','aqua-ring','salt-cure','magnet-rise','imprison']);
 
 export const applyPersistentEffectHandler={
  id:'apply-persistent-effect',hooks:['onMove'],

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Pokémon artwork placeholder">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#24344d"/><stop offset="1" stop-color="#111a29"/></linearGradient></defs>
+  <rect width="256" height="256" rx="32" fill="url(#g)"/>
+  <circle cx="128" cy="112" r="70" fill="#cfe9ff" opacity=".14"/>
+  <path d="M71 177c10-39 35-59 57-59s47 20 57 59c-16 15-35 23-57 23s-41-8-57-23Z" fill="#d9ecff" opacity=".34"/>
+  <circle cx="103" cy="104" r="9" fill="#eaf6ff" opacity=".72"/><circle cx="153" cy="104" r="9" fill="#eaf6ff" opacity=".72"/>
+  <path d="M97 72 82 39l35 22M159 72l15-33-35 22" fill="#d9ecff" opacity=".34"/>
+  <path d="M35 220h186" stroke="#b9f58a" stroke-width="4" opacity=".55"/>
+  <text x="128" y="238" text-anchor="middle" font-family="system-ui,sans-serif" font-size="14" fill="#d9ecff" opacity=".72">ASSET PENDING</text>
+</svg>

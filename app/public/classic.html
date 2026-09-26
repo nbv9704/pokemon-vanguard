@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173f48">
+  <title>Pokémon Vanguard · Aether GBA UI</title>
+  <meta name="description" content="An alternate pixel-game interface for Pokémon Vanguard.">
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/battle-animation.css">
+  <link rel="stylesheet" href="/training-editor.css">
+  <link rel="stylesheet" href="/box-view.css">
+  <link rel="stylesheet" href="/team-builder.css">
+  <link rel="stylesheet" href="/recruitment.css">
+  <link rel="stylesheet" href="/v2-battle.css">
+  <link rel="stylesheet" href="/damage-inspector.css">
+  <link rel="stylesheet" href="/v2-tutorial.css">
+  <link rel="stylesheet" href="/v3-overview.css">
+  <link rel="stylesheet" href="/pokedex.css">
+  <link rel="stylesheet" href="/pokemon-ui.css">
+  <link rel="stylesheet" href="/v3-battle-arena.css">
+  <link rel="stylesheet" href="/v3-move-fx.css">
+  <link rel="stylesheet" href="/v3-playback.css">
+  <link rel="stylesheet" href="/v3-field-effects.css">
+  <link rel="stylesheet" href="/pokemon-battle-shell.css">
+  <link rel="stylesheet" href="/r3-release-polish.css">
+  <link rel="stylesheet" href="/classic-ui.css">
+</head>
+<body class="aether-gba">
+  <div id="app">
+    <div class="loading">
+      <div class="brandmark project-logo"><img src="/logo.png" alt="Pokémon Vanguard logo"></div>
+      <h1>POKÉMON VANGUARD</h1>
+      <p id="connection">Loading Aether GBA interface…</p>
+    </div>
+  </div>
+  <div id="toast" role="status"></div>
+  <div id="modal"></div>
+  <button class="gba-menu-toggle" type="button" aria-expanded="false" aria-label="Open game menu">
+    <span>START</span>
+    MENU
+  </button>
+  <a class="classic-ui-switch" href="/" aria-label="Open current interface">CURRENT UI</a>
+  <script type="module" src="/classic-ui.js"></script>
+  <script type="module" src="/client.js"></script>
+</body>
+</html>

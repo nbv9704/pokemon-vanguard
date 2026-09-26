@@ -1,0 +1,7 @@
+/* R3-99 release polish: explicit fallback assets, audio/settings ergonomics and touch/accessibility hardening. */
+.pokemon-art-missing{position:relative}.pokemon-art-missing img{object-fit:contain;filter:saturate(.55) contrast(.92);opacity:.82}.pokemon-art-missing::after{content:'LOCAL FALLBACK';position:absolute;right:6px;bottom:6px;padding:2px 5px;border:1px solid #b9f58a55;border-radius:4px;background:#0d1423cc;color:#cfe6d5;font:700 7px/1.2 monospace;letter-spacing:.08em;pointer-events:none}
+.audio-volume-row input[type=range]{width:min(260px,42vw);accent-color:var(--accent)}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+@media(pointer:coarse){button,[data-ui-focusable],select,input[type=checkbox]{min-height:44px}.pokedex-entry,.ranch-offer,.summary-party-slot,.party-member{min-height:48px}}
+@media(max-width:640px){.settingsrow{gap:14px}.audio-volume-row{align-items:flex-start;flex-direction:column}.audio-volume-row input[type=range]{width:100%}.pokemon-art-missing::after{font-size:6px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*{transition-duration:.001ms!important;animation-duration:.001ms!important;animation-iteration-count:1!important}}

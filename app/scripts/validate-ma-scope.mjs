@@ -1,0 +1,34 @@
+import {readFile} from 'node:fs/promises';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {loadMegaBetaCatalog} from '../server/v3-mega-catalog.mjs';
+import {applyMaCanonicalOverlay} from '../content-import/ma-canonical.mjs';
+
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
+const readJson=file=>readFile(file,'utf8').then(JSON.parse);
+const active=await readJson(path.join(root,'content-active','active.json'));
+const catalog=await readJson(path.join(root,'content-active',active.catalogFile));
+const snapshotId=catalog.metadata.snapshotId;
+const rawSpecies=await readJson(path.join(root,'content-candidates',snapshotId,'normalized','species.json'));
+const canonical=await readJson(path.join(root,'content-src','ma-canonical-v1.json'));
+const species=snapshotId===canonical.snapshotId?applyMaCanonicalOverlay(rawSpecies,canonical):rawSpecies;
+const mega=loadMegaBetaCatalog();
+const nonMega=species.filter(entry=>entry.regulationSets?.includes('m-a'));
+const relations=(mega.relations||[]).filter(entry=>entry.regulationSets?.includes('m-a'));
+const bases=new Set(relations.map(entry=>entry.baseSpeciesId));
+const forms=new Set(relations.map(entry=>entry.megaSpeciesId));
+const problems=[];
+if(nonMega.length!==213)problems.push(`expected 213 canonical non-Mega M-A entries, got ${nonMega.length}`);
+const actualIds=nonMega.map(entry=>entry.id).sort(),expectedIds=[...(canonical.expectedNonMegaIds||[])].sort();if(actualIds.length!==expectedIds.length||actualIds.some((id,i)=>id!==expectedIds[i]))problems.push('canonical non-Mega M-A IDs do not match reviewed source-of-truth');
+for(const id of canonical.excludedSnapshotIds||[])if(actualIds.includes(id))problems.push(`non-selectable snapshot artifact leaked into M-A scope: ${id}`);
+for(const form of canonical.addedForms||[])if(!actualIds.includes(form.id))problems.push(`canonical selectable form missing from M-A scope: ${form.id}`);
+if(relations.length!==59)problems.push(`expected 59 M-A Mega relations/forms, got ${relations.length}`);
+if(forms.size!==59)problems.push(`expected 59 distinct M-A Mega forms, got ${forms.size}`);
+if(bases.size!==58)problems.push(`expected 58 distinct M-A Mega bases, got ${bases.size}`);
+if(nonMega.length+forms.size!==272)problems.push(`expected 272 total M-A entries, got ${nonMega.length+forms.size}`);
+const charizard=relations.filter(entry=>entry.baseSpeciesId==='charizard');
+if(charizard.length!==2||!charizard.some(entry=>entry.megaSpeciesId==='charizard-mega-x')||!charizard.some(entry=>entry.megaSpeciesId==='charizard-mega-y'))problems.push('M-A must contain exactly Mega Charizard X and Y as the sole double-Mega base');
+const expectedExcluded=new Map([['raichu-mega-x','m-b'],['raichu-mega-y','m-b'],['absol-mega-z','m-c'],['garchomp-mega-z','m-c'],['lucario-mega-z','m-c']]);
+for(const [id,regulation] of expectedExcluded){const relation=(mega.relations||[]).find(entry=>entry.megaSpeciesId===id);if(!relation)problems.push(`missing retained out-of-scope Mega implementation: ${id}`);else if(JSON.stringify(relation.regulationSets)!==JSON.stringify([regulation]))problems.push(`${id} must be tagged only ${regulation}, got ${JSON.stringify(relation.regulationSets)}`);}
+if(problems.length)throw new Error(`M-A scope validation failed:\n${problems.map(problem=>`  • ${problem}`).join('\n')}`);
+console.log(`M-A scope OK — ${nonMega.length} canonical non-Mega + ${forms.size} Mega = ${nonMega.length+forms.size} entries; ${bases.size} Mega bases`);

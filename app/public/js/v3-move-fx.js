@@ -1,33 +1,9 @@
-import {sceneTracks,sceneTrackStyle} from './v3-scene-anchors.js';
+import {createMovePresentationPlan} from './presentation/move-presentation.js';
+import {renderPresentationEffects} from './presentation/presentation-renderer.js';
+import {moveFxProfile,V3_FX_TYPES,v3MoveFxCoverage} from './v3-move-fx-profile.js';
 
 const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-
-export const V3_FX_TYPES=['normal','fire','water','electric','grass','ice','fighting','poison','ground','flying','psychic','bug','rock','ghost','dragon','dark','steel','fairy'];
-
-const OVERRIDES={
- 'aerial-ace':'slash','brave-bird':'rush','bullet-seed':'barrage','charm':'aura','dragon-tail':'rush',
- 'drain-punch':'drain-contact','draining-kiss':'drain','dual-wingbeat':'slash','eruption':'field-burst',
- 'feint':'slash','flip-turn':'rush','giga-drain':'drain','gyro-ball':'rush','hard-press':'impact',
- 'hex':'aura','leech-seed':'seed','protect':'barrier','quick-guard':'barrier','scale-shot':'barrage',
- 'sing':'notes','yawn':'notes','perish-song':'notes','hyper-voice':'notes','waterfall':'rush','crunch':'rush','liquidation':'rush','ice-punch':'impact','body-slam':'impact','rock-slide':'field-burst','water-pulse':'orb','ice-fang':'rush','bulldoze':'field-burst','dig':'rush','fly':'rush','dive':'rush','phantom-force':'aura','solar-beam':'beam','solar-blade':'slash','hydro-cannon':'beam','frenzy-plant':'impact','blast-burn':'field-burst','hyper-beam':'beam','giga-impact':'rush','spiky-shield':'barrier','stored-power':'beam','taunt':'notes','u-turn':'rush',
- 'defog':'field-burst','magic-room':'field-burst','trick-room':'field-burst','wonder-room':'field-burst','electric-terrain':'field-burst','grassy-terrain':'field-burst','light-screen':'barrier','misty-terrain':'field-burst','psychic-terrain':'field-burst','spikes':'field-burst','toxic-spikes':'field-burst','stealth-rock':'field-burst','rain-dance':'field-burst','rapid-spin':'rush','reflect':'barrier','sunny-day':'field-burst','tailwind':'field-burst','water-spout':'field-burst','wild-charge':'rush','will-o-wisp':'orb'
-};
-
-const SELF_TARGETS=new Set(['self','userSide','field','foeSide']);
-const PROFILE_PRIMITIVES={
- projectile:['orb','trail','trail'],beam:['beam','ring','spark'],slash:['slash','slash','spark'],rush:['rush','ring','spark'],
- barrage:['pellet','pellet','pellet'],impact:['ring','burst','spark'],aura:['ring','ring','spark'],barrier:['shield','shield','spark'],
- drain:['orb','orb','trail'],'drain-contact':['rush','orb','trail'],seed:['seed','vine','spark'],notes:['note','note','ring'],
- 'field-burst':['wave','burst','spark']
-};
-
-export function moveFxProfile(move){
- if(!move)return {id:'minimal',source:'fallback',type:'normal'};
- const override=OVERRIDES[move.id];
- if(override)return {id:override,source:'override',type:move.type||'normal'};
- if(move.category==='status')return {id:SELF_TARGETS.has(move.actionProfile?.targetMode)?'aura':'orb',source:'category-fallback',type:move.type||'normal'};
- return {id:move.category==='physical'?'impact':'projectile',source:'category-fallback',type:move.type||'normal'};
-}
+export {moveFxProfile,V3_FX_TYPES,v3MoveFxCoverage};
 
 export function outcomeOf(events){
  if(events.some(event=>event.kind==='moveMissed'))return 'miss';
@@ -54,13 +30,12 @@ function overallOutcome(events,outcomes){if(events.some(event=>event.kind==='hea
 
 export function renderV3BattleFx(playback,catalog){
  if(!playback)return '';
- const mega=playback.events?.find(event=>event.kind==='megaEvolved');
- if(mega)return `<div class="v3-mega-fx from-${actorSide(mega.actorId)}${playback.speed===2?' speed-2':''}"><i></i><i></i><i></i><strong>MEGA EVOLUTION</strong></div>`;
- if(!['cast','impact'].includes(playback.stage)||!playback.moveId)return '';
- const move=catalog.moves.find(entry=>entry.id===playback.moveId),profile=moveFxProfile(move),events=playback.events||[],tracks=sceneTracks(playback.snapshot||{},playback.actorId,targetIdsFor(playback,move)),primitives=PROFILE_PRIMITIVES[profile.id]||['orb','ring','spark'];
- const outcomes=tracks.map(track=>playback.stage==='cast'?'pending':targetOutcome(events,track.targetId)),outcome=playback.stage==='cast'?'pending':overallOutcome(events,outcomes);
- const marks=tracks.flatMap((track,targetIndex)=>primitives.map((primitive,index)=>`<i class="fx-${primitive} fx-outcome-${outcomes[targetIndex]}" data-fx-target="${escapeHtml(track.targetId)}" style="${sceneTrackStyle(track)};--fx-index:${index};--target-index:${targetIndex}"></i>`)).join('');
- return `<div class="v3-move-fx from-${actorSide(playback.actorId)} stage-${playback.stage} outcome-${outcome}${playback.speed===2?' speed-2':''}" data-fx-profile="${profile.id}" data-fx-source="${profile.source}" data-move-type="${profile.type}" data-target-count="${tracks.length}">${marks}<strong>${escapeHtml(move?.name||playback.moveId)}</strong><span>${escapeHtml(outcome==='pending'?'Cast':outcome)}</span></div>`;
+ const mega=playback.events?.find(event=>event.kind==='megaEvolved'),special=playback.presentation?.specialEvents?.length;
+ if(!['cast','impact'].includes(playback.stage)||!playback.moveId){
+  if(!special&&!mega)return '';
+  const plan=playback.presentation,marks=renderPresentationEffects(playback,plan,[]),label=mega?'MEGA EVOLUTION':playback.events?.some(event=>event.kind==='transformed')?'TRANSFORM':playback.events?.some(event=>event.kind==='illusionBroken')?'ILLUSION BROKEN':playback.events?.some(event=>event.kind==='abilityFormChanged')?'FORM CHANGE':playback.events?.some(event=>event.kind==='twoTurnMovePrepared')?'VANISHED':playback.events?.some(event=>event.kind==='twoTurnMoveReleased')?'RETURNED':'BATTLE STATE';
+  return `<div class="v3-move-fx presentation-runtime special-presentation from-${actorSide(playback.actorId||mega?.actorId)} stage-${escapeHtml(playback.stage||'system')}${playback.speed===2?' speed-2':''}" data-presentation-definition="${escapeHtml(plan?.id||'special-event')}" data-presentation-tier="${escapeHtml(plan?.tier||'special-event')}" data-presentation-template="${escapeHtml(plan?.template||'special-event')}">${marks}<strong>${escapeHtml(label)}</strong></div>`;
+ }
+ const move=catalog.moves.find(entry=>entry.id===playback.moveId),profile=moveFxProfile(move),events=playback.events||[],targetIds=targetIdsFor(playback,move),outcomes=(targetIds.length?targetIds:['field']).map(targetId=>playback.stage==='cast'?'pending':targetOutcome(events,targetId)),outcome=playback.stage==='cast'?'pending':overallOutcome(events,outcomes),plan=playback.presentation||createMovePresentationPlan({...playback,targetIds},catalog),marks=renderPresentationEffects({...playback,targetIds},plan,outcomes);
+ return `<div class="v3-move-fx presentation-runtime from-${actorSide(playback.actorId)} stage-${playback.stage} outcome-${outcome}${playback.speed===2?' speed-2':''}" data-presentation-definition="${escapeHtml(plan?.id||'legacy')}" data-presentation-tier="${escapeHtml(plan?.tier||'legacy-adapter')}" data-presentation-template="${escapeHtml(plan?.template||'legacy')}" data-fx-profile="${profile.id}" data-fx-source="${profile.source}" data-move-type="${profile.type}" data-target-count="${targetIds.length||1}">${marks}<strong>${escapeHtml(move?.name||playback.moveId)}</strong><span>${escapeHtml(outcome==='pending'?'Cast':outcome)}</span></div>`;
 }
-
-export function v3MoveFxCoverage(moves=[]){return moves.map(move=>({moveId:move.id,...moveFxProfile(move)}));}

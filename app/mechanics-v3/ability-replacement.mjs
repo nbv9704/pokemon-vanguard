@@ -1,6 +1,7 @@
 import {activeUnits,clone,otherSide,unitById} from '../rules-v3/battle-state.mjs';
 import {nextRandom} from '../rules-v3/rng.mjs';
 import {compilePassiveEffects} from './passive-effects.mjs';
+import {hasTransientAbilityProfile} from './transient-ability-profiles.mjs';
 
 const abilityEffects=unit=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind==='ability');
 const itemEffects=unit=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind!=='ability');
@@ -15,7 +16,7 @@ function blocked(effect,abilityId){
 }
 
 function canAdopt(manifests,effect,abilityId){
- return Boolean(abilityId&&!blocked(effect,abilityId)&&manifests?.abilities?.[abilityId]);
+ return Boolean(abilityId&&!blocked(effect,abilityId)&&(manifests?.abilities?.[abilityId]||hasTransientAbilityProfile(abilityId)));
 }
 
 function rememberOriginal(unit){
@@ -33,6 +34,14 @@ export function replaceActiveAbility(battle,{actorId,abilityId,manifests,effect=
  if(!unit||unit.hp<=0||before===abilityId||!canAdopt(manifests,effect,abilityId))return {battle:next,replaced:false,events:[]};
  rememberOriginal(unit);applyAbility(unit,abilityId,manifests);
  return {battle:next,replaced:true,events:[{kind:'abilityChanged',actorId,targetId:actorId,sourceId:sourceId||actorId,abilityId,previousAbilityId:before,reason}]};
+}
+
+
+export function suppressActiveAbility(battle,{actorId,sourceId=null,reason='ability-suppress'}={}){
+ const next=clone(battle),unit=unitById(next,actorId),before=activeAbilityId(unit);
+ if(!unit||unit.hp<=0||!before||before==='none')return {battle:next,suppressed:false,events:[]};
+ rememberOriginal(unit);unit.activeAbilityId='none';unit.passiveEffects=[...itemEffects(unit)];
+ return {battle:next,suppressed:true,events:[{kind:'abilitySuppressed',actorId,targetId:actorId,sourceId:sourceId||actorId,previousAbilityId:before,reason}]};
 }
 
 export function swapActiveAbilities(battle,{leftId,rightId,manifests,effect=null,sourceId=null,reason='ability-swap'}={}){

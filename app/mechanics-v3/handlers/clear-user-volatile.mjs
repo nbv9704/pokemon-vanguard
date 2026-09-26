@@ -1,0 +1,2 @@
+import {clone,unitById} from '../../rules-v3/battle-state.mjs';
+export const clearUserVolatileHandler={id:'clear-user-volatile',hooks:['onMove'],run({battle,payload,params={}}){const next=clone(battle),actor=unitById(next,payload.action.actorId),events=[];if(actor?.volatiles?.[params.volatile]){delete actor.volatiles[params.volatile];events.push({kind:'volatileEnded',actorId:actor.actorId,volatile:params.volatile,reason:'move-completed'});}return {battle:next,payload,events};}};

@@ -10,7 +10,7 @@ export function applyHpGroup(battle,changes,source){
   const unit=unitById(next,change.actorId);if(!unit||unit.hp<=0)continue;
   if(!Number.isInteger(change.delta))throw new Error('HP delta must be an integer');
   const limit=maxHp(unit);if(!Number.isInteger(limit)||limit<1)throw new Error(`invalid max HP for ${unit.actorId}`);
-  const before=unit.hp,after=Math.max(0,Math.min(limit,before+change.delta));unit.hp=after;
+  const before=unit.hp,healingBlocked=change.delta>0&&Object.values(unit.volatiles||{}).some(state=>state?.blocksHealing===true);if(healingBlocked){events.push({kind:'healBlocked',targetId:unit.actorId,source});continue;}const after=Math.max(0,Math.min(limit,before+change.delta));unit.hp=after;
   if(after===before)continue;
   events.push({kind:after<before?'damage':'heal',targetId:unit.actorId,hpBefore:before,hpAfter:after,amount:Math.abs(after-before),source});
   if(after===0)events.push({kind:'fainted',targetId:unit.actorId,source});
@@ -28,11 +28,27 @@ export function checkBattleResult(battle){
  return {battle:next,events:[{kind:'battleEnded',winner,reason,receiptId:next.result.receiptId}]};
 }
 
+const validForcedReplacementRequests=(battle,side)=>(battle.forcedReplacements?.[side]||[]).filter(request=>{
+ const actorId=battle.sides?.[side]?.active?.[request.slot],unit=actorId&&unitById(battle,actorId);return actorId===request.actorId&&unit?.hp>0;
+});
+const mandatoryReplacementSlots=(battle,side)=>{
+ const empty=activeUnits(battle,side,{includeFainted:true}).filter(entry=>entry.unit.hp<=0),missing=(battle.sides[side].active||[]).map((actorId,slot)=>({actorId,slot})).filter(entry=>!entry.actorId);
+ return [...new Set([...empty.map(entry=>entry.slot),...missing.map(entry=>entry.slot)])].sort((a,b)=>a-b);
+};
+
+export function requestForcedReplacement(battle,{actorId,reason='forced-replacement',itemId=null,replacementState=null}={}){
+ const next=clone(battle),side=['A','B'].find(id=>next.sides?.[id]?.active?.includes(actorId));if(!side)return {battle:next,requested:false,reason:'actorNotActive'};
+ const slot=next.sides[side].active.indexOf(actorId),unit=unitById(next,actorId);if(!unit||unit.hp<=0)return {battle:next,requested:false,reason:'actorUnavailable'};
+ const existing=validForcedReplacementRequests(next,side).find(request=>request.actorId===actorId);if(existing)return {battle:next,requested:true,request:clone(existing)};
+ const reserves=reserveUnits(next,side),occupied=new Set([...mandatoryReplacementSlots(next,side),...validForcedReplacementRequests(next,side).map(request=>request.slot)]);
+ if(reserves.length<=occupied.size)return {battle:next,requested:false,reason:'noReserve'};
+ next.forcedReplacements??={A:[],B:[]};next.forcedReplacements[side]??=[];const request={side,slot,actorId,reason,...(itemId?{itemId}:{}),...(replacementState?{replacementState:clone(replacementState)}:{})};next.forcedReplacements[side].push(request);
+ return {battle:next,requested:true,request:clone(request)};
+}
+
 export function replacementRequirements(battle,side){
- const reserves=reserveUnits(battle,side),empty=activeUnits(battle,side,{includeFainted:true}).filter(entry=>entry.unit.hp<=0);
- const missing=(battle.sides[side].active||[]).map((actorId,slot)=>({actorId,slot})).filter(entry=>!entry.actorId);
- const slots=[...empty.map(entry=>entry.slot),...missing.map(entry=>entry.slot)].sort((a,b)=>a-b);
- return {slots,count:Math.min(slots.length,reserves.length),reserveIds:reserves.map(unit=>unit.actorId)};
+ const reserves=reserveUnits(battle,side),forced=validForcedReplacementRequests(battle,side),slots=[...new Set([...mandatoryReplacementSlots(battle,side),...forced.map(request=>request.slot)])].sort((a,b)=>a-b);
+ return {slots,count:Math.min(slots.length,reserves.length),reserveIds:reserves.map(unit=>unit.actorId),forced:clone(forced)};
 }
 
 export function validateReplacements(battle,side,choices){
@@ -48,17 +64,24 @@ export function applySwitch(battle,side,actorId,toId){
  if(slot<0||!reserve)return {ok:false,code:'INVALID_SWITCH'};
  const next=clone(battle),outgoing=unitById(next,actorId);
  if(outgoing.status?.id==='bad-poison')outgoing.status.toxicCounter=0;
+ for(const state of Object.values(outgoing.volatiles||{}))if(state?.restoreTypesOnEndTurn===true&&Array.isArray(state.restoreTypes))outgoing.types=[...state.restoreTypes];
+ const originalTypes=outgoing.volatiles?.['type-change-state']?.originalTypes;if(Array.isArray(originalTypes))outgoing.types=[...originalTypes];
  const originalStats=outgoing.volatiles?.['stored-stat-overrides']?.originalStats;if(originalStats&&typeof originalStats==='object')for(const [stat,value] of Object.entries(originalStats))if(Number.isInteger(value)&&outgoing.stats&&stat in outgoing.stats)outgoing.stats[stat]=value;
  outgoing.stages={atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0};outgoing.volatiles={};next.sides[side].active[slot]=toId;const incoming=unitById(next,toId);incoming.volatiles??={};incoming.volatiles['fresh-entry']={id:'fresh-entry',eligibleTurn:next.turn+1,endTurnTimer:2};
  return {ok:true,battle:next,events:[{kind:'switchOut',actorId,side,slot},{kind:'switchIn',actorId:toId,side,slot}]};
 }
 
-export function applyReplacements(battle,choicesBySide){
+export function applyReplacements(battle,choicesBySide,{applyLiveSwitch=applySwitch}={}){
  let next=clone(battle);const events=[];
  for(const side of ['A','B']){
   const valid=validateReplacements(next,side,choicesBySide[side]||[]);if(!valid.ok)return valid;
-  for(const choice of valid.choices.sort((a,b)=>a.slot-b.slot)){next.sides[side].active[choice.slot]=choice.actorId;const incoming=unitById(next,choice.actorId);incoming.volatiles??={};incoming.volatiles['fresh-entry']={id:'fresh-entry',eligibleTurn:next.turn+1,endTurnTimer:2};events.push({kind:'switchIn',actorId:choice.actorId,side,slot:choice.slot,replacement:true});}
+  for(const choice of valid.choices.sort((a,b)=>a.slot-b.slot)){
+   const forced=validForcedReplacementRequests(next,side).find(request=>request.slot===choice.slot);
+   if(forced){const switched=applyLiveSwitch(next,side,forced.actorId,choice.actorId,clone(forced));if(!switched?.ok)return switched||{ok:false,code:'INVALID_SWITCH'};next=clone(switched.battle);events.push(...(switched.events||[]).map(event=>({...event,replacement:true,forced:true,replacementReason:forced.reason,...(forced.itemId?{itemId:forced.itemId}:{})})));if(next.forcedReplacements?.[side])next.forcedReplacements[side]=next.forcedReplacements[side].filter(request=>request.actorId!==forced.actorId||request.slot!==forced.slot);continue;}
+   next.sides[side].active[choice.slot]=choice.actorId;const incoming=unitById(next,choice.actorId);incoming.volatiles??={};incoming.volatiles['fresh-entry']={id:'fresh-entry',eligibleTurn:next.turn+1,endTurnTimer:2};events.push({kind:'switchIn',actorId:choice.actorId,side,slot:choice.slot,replacement:true});
+  }
  }
+ if(next.forcedReplacements){for(const side of ['A','B'])next.forcedReplacements[side]=validForcedReplacementRequests(next,side);if(!(next.forcedReplacements.A?.length||next.forcedReplacements.B?.length))delete next.forcedReplacements;}
  next.phase='ENTRY';next.phaseRevision=(next.phaseRevision||0)+1;if(!next.pendingResolution)next.turn++;
  const committed=commitEvents(next,events);return {ok:true,...committed};
 }
@@ -103,7 +126,7 @@ export function resolveEndTurn(battle,groups,{initialEvents=[],afterEachGroup=nu
     delete entry.unit.volatiles[volatile];events.push({kind:'volatileEnded',actorId:entry.actorId,volatile,reason:'noPP'});continue;
    }
    state.endTurnTimer--;
-   if(state.endTurnTimer<=0){delete entry.unit.volatiles[volatile];events.push({kind:'volatileEnded',actorId:entry.actorId,volatile,reason:'duration'});}
+   if(state.endTurnTimer<=0){if(state.restoreTypesOnEndTurn===true&&Array.isArray(state.restoreTypes)){const beforeTypes=[...(entry.unit.types||[])];entry.unit.types=[...state.restoreTypes];events.push({kind:'typesRestored',actorId:entry.actorId,volatile,beforeTypes,afterTypes:[...entry.unit.types],reason:'duration'});}delete entry.unit.volatiles[volatile];events.push({kind:'volatileEnded',actorId:entry.actorId,volatile,reason:'duration'});}
   }
  }
  for(const side of ['A','B'])for(const [condition,state] of Object.entries(next.sides?.[side]?.conditions||{})){
@@ -118,6 +141,7 @@ export function resolveEndTurn(battle,groups,{initialEvents=[],afterEachGroup=nu
  }
  if(next.field?.rooms&&!Object.keys(next.field.rooms).length)delete next.field.rooms;
  const fairyLock=next.field?.fairyLock;if(fairyLock&&Number.isInteger(fairyLock.remaining)){fairyLock.remaining--;if(fairyLock.remaining<=0){delete next.field.fairyLock;events.push({kind:'fieldConditionEnded',condition:'fairy-lock',reason:'duration'});}}
+ const gravity=next.field?.gravity;if(gravity&&Number.isInteger(gravity.remaining)){gravity.remaining--;if(gravity.remaining<=0){delete next.field.gravity;events.push({kind:'fieldConditionEnded',condition:'gravity',reason:'duration'});}}
  const weather=next.field?.weather;if(weather&&Number.isInteger(weather.remaining)){
   weather.remaining--;if(weather.remaining<=0){delete next.field.weather;events.push({kind:'weatherEnded',weather:weather.id,reason:'duration'});}
  }

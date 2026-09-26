@@ -5,7 +5,7 @@ import {resolveStatusCureItems,resolveVolatileCureItems} from './item-hooks.mjs'
 import {abilitySideConditionBypass,abilityVolatileBlock} from './ability-hooks.mjs';
 import {actorSide} from './side-conditions.mjs';
 
-function initialVolatileState(volatile,moveId,runtime,source){
+function initialVolatileState(volatile,moveId,runtime,source,target){
  const state={id:volatile,sourceId:moveId};
  if(volatile==='confusion'){
   if(typeof runtime?.nextRandom!=='function')throw new Error('confusion application requires seeded nextRandom');
@@ -13,9 +13,11 @@ function initialVolatileState(volatile,moveId,runtime,source){
  }
  if(volatile==='flinch')state.timer=1;
  if(volatile==='focus-energy')state.criticalRatioStages=2;
+ if(volatile==='dragon-cheer')state.criticalRatioStages=(target?.types||[]).includes('dragon')?2:1;
  if(volatile==='laser-focus'){state.alwaysCritical=true;state.consumeOnDamagingMove=true;state.endTurnTimer=2;}
  if(volatile==='sound-blocked'){state.blockedMoveTags=['sound'];state.endTurnTimer=2;}
  if(volatile==='helping-hand'){state.damageMultiplier=1.5;state.consumeOnDamagingMove=true;state.endTurnTimer=1;}
+ if(volatile==='heal-block'){state.blocksHealing=true;state.endTurnTimer=2;}
  if(volatile==='taunt'||volatile==='encore')state.endTurnTimer=runtime?.hasActed?.(runtime.targetId)?4:3;
  if(volatile==='disable')state.endTurnTimer=runtime?.hasActed?.(runtime.targetId)?5:4;
  if(volatile==='leech-seed'){state.sourceSide=source.side;state.sourceSlot=source.slot;}
@@ -41,13 +43,14 @@ export function applyVolatileStatus(battle,{actorId,targetId,moveId,volatile,ign
  if(volatile==='leech-seed'&&(target.types||[]).includes('grass'))return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'typeImmune'}]};
  const terrainReason=terrainVolatileBlockReason(next,target,volatile);if(terrainReason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:terrainReason}]};
  const sourceSide=actorSide(next,actorId),targetSide=actorSide(next,targetId),sourceUnit=unitById(next,actorId);if(actorId!==targetId&&sourceSide&&targetSide&&sourceSide!==targetSide&&next.sides?.[targetSide]?.conditions?.safeguard&&!abilitySideConditionBypass(sourceUnit,'safeguard'))return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'safeguard'}]};
- if(target.volatiles[volatile])return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'alreadyVolatile'}]};
+ if((volatile==='dragon-cheer'&&target.volatiles['focus-energy'])||(volatile==='focus-energy'&&target.volatiles['dragon-cheer']))return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'conflictingCriticalState'}]};
+ if(target.volatiles[volatile])return volatile==='heal-block'&&moveId==='psychic-noise'?{battle:next,events:[]}:{battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'alreadyVolatile'}]};
  const reason=bindingFailure(volatile,target);
  if(reason)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason}]};
  const source=['A','B'].flatMap(side=>activeUnits(next,side)).find(entry=>entry.actorId===actorId);
  if(!source)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,reason:'sourceUnavailable'}]};
  const abilityBlock=ignoreTargetAbility?null:abilityVolatileBlock(target,volatile,next);if(abilityBlock)return {battle:next,events:[{kind:'volatileFailed',actorId,targetId,moveId,volatile,...abilityBlock}]};
- const state=initialVolatileState(volatile,moveId,{...runtime,targetId},source);
+ const state=initialVolatileState(volatile,moveId,{...runtime,targetId},source,target);
  if(volatile==='encore'||volatile==='disable')state.moveId=target.lastMoveId;
  if(volatile==='encore')state.endsWhenMoveHasNoPp=true;
  target.volatiles[volatile]=state;

@@ -1,8 +1,14 @@
-import {activeUnits,otherSide} from './battle-state.mjs';
+import {activeUnits,otherSide,unitById} from './battle-state.mjs';
 import {selectRedirection} from './redirection.mjs';
 
 export const TARGET_MODES=['self','adjacentAlly','adjacentAllyOrSelf','adjacentFoe','anyAdjacent','allAdjacentFoes','allAdjacent','userSide','foeSide','field'];
 const targetRefs=(battle,side)=>activeUnits(battle,side).map(({unit,...target})=>target);
+
+export function effectiveTargetMode(battle,{actorId,mechanics}){
+ const mode=mechanics?.targetMode;if(mechanics?.dynamicTargetMode==='ghost-or-self')return (unitById(battle,actorId)?.types||[]).includes('ghost')?'anyAdjacent':'self';
+ return mode;
+}
+
 
 export function legalTargets(battle,{side,actorId,targetMode}){
  if(!TARGET_MODES.includes(targetMode))throw new Error(`unknown target mode: ${targetMode}`);

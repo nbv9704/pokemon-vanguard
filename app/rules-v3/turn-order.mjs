@@ -4,6 +4,7 @@ const ACTION_RANK={replace:3,switch:2,move:1};
 
 export function compareTurnActions(left,right,{trickRoom=false}={}){
  const rank=(ACTION_RANK[right.kind]??0)-(ACTION_RANK[left.kind]??0);if(rank)return rank;
+ const queueOverride=(right.queueOrderOverride??0)-(left.queueOrderOverride??0);if(queueOverride)return queueOverride;
  const priority=(right.priority??0)-(left.priority??0);if(priority)return priority;
  const orderBoost=(right.orderBoost??0)-(left.orderBoost??0);if(orderBoost)return orderBoost;
  const speed=trickRoom?(left.speed??0)-(right.speed??0):(right.speed??0)-(left.speed??0);if(speed)return speed;

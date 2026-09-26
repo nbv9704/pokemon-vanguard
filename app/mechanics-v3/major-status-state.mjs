@@ -1,4 +1,4 @@
-import {clone,unitById} from '../rules-v3/battle-state.mjs';
+import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {MAJOR_STATUS_IDS} from './manifest-contract.mjs';
 import {terrainMajorStatusBlockReason} from './terrain.mjs';
 import {abilitySideConditionBypass,abilityStatusBlock,abilityStatusReflect,abilityStatusTypeImmunityBypass} from './ability-hooks.mjs';
@@ -17,6 +17,7 @@ const intrinsicImmunities={
 export function majorStatusBlockReason(status,target,blockedTargetTypes=[],battle=null,source=null,{ignoreTargetAbility=false}={}){
  if(!MAJOR_STATUS_IDS.includes(status))throw new Error(`unsupported major status: ${status}`);
  if(target.status)return 'alreadyStatus';
+ if(status==='sleep'&&battle&&['A','B'].some(side=>activeUnits(battle,side).some(({unit})=>unit.volatiles?.rampage?.blocksSleep===true)))return 'uproarBlocked';
  const sourceSide=battle&&source?actorSide(battle,source.actorId):null,targetSide=battle?actorSide(battle,target.actorId):null;if(source&&source.actorId!==target.actorId&&sourceSide&&targetSide&&sourceSide!==targetSide&&battle.sides?.[targetSide]?.conditions?.safeguard&&!abilitySideConditionBypass(source,'safeguard'))return 'safeguard';
  const abilityReason=!ignoreTargetAbility&&battle&&abilityStatusBlock(battle,target,status,{sourceId:source?.actorId||null});if(abilityReason)return abilityReason.reason;
  const terrainReason=battle&&terrainMajorStatusBlockReason(battle,target,status);if(terrainReason)return terrainReason;

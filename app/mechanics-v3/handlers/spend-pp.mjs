@@ -16,12 +16,12 @@ export const spendPpHandler={
  run({battle,payload}){
   const next=clone(battle),actor=unitById(next,payload.action.actorId),moveId=payload.move.id,remaining=actor?.pp?.[moveId];
   const rampageContinuation=actor?.volatiles?.rampage?.moveId===moveId;
-  if(payload.skipPp===true||rampageContinuation)return {battle:next,payload:{...payload,ppSkipped:true},events:[{kind:'ppSpendSkipped',actorId:payload.action.actorId,moveId,reason:rampageContinuation?'rampageContinuation':'twoTurnRelease'}]};
+  if(payload.skipPp===true||rampageContinuation)return {battle:next,payload:{...payload,ppSkipped:true},events:[{kind:'ppSpendSkipped',actorId:payload.action.actorId,moveId,reason:rampageContinuation?'rampageContinuation':payload.skipPpReason||'twoTurnRelease'}]};
   if(!Number.isInteger(remaining))throw new Error(`missing PP state for ${payload.action.actorId}:${moveId}`);
   if(remaining<=0)return {battle:next,payload:{...payload,cancelled:true},events:[{kind:'moveFailed',actorId:payload.action.actorId,moveId,reason:'noPP'}]};
-  const holders=pressureHolders(next,payload),cost=1+holders.length,after=Math.max(0,remaining-cost);actor.pp[moveId]=after;
+  const holders=pressureHolders(next,payload),cost=1+holders.length,after=Math.max(0,remaining-cost),previousUsedMoveIdSinceEntry=actor.lastUsedMoveIdSinceEntry||null;actor.pp[moveId]=after;actor.usedMoveIdsSinceEntry=[...new Set([...(actor.usedMoveIdsSinceEntry||[]),moveId])];actor.lastUsedMoveIdSinceEntry=moveId;
   const events=[...holders.map(({unit,effect})=>({kind:'abilityTriggered',sourceId:unit.actorId,abilityId:effect.sourceId,effectId:effect.kind,targetId:actor.actorId,moveId})),{kind:'ppSpent',actorId:actor.actorId,moveId,ppBefore:remaining,ppAfter:after,amount:remaining-after,...(holders.length?{pressureSources:holders.map(({unit})=>unit.actorId)}:{})}];
-  if(after===0){const restored=resolvePpRestoreItems(next,{actorIds:[actor.actorId],preferredMoveId:moveId,trigger:`move:${moveId}`});events.push(...restored.events);return {battle:restored.battle,payload:{...payload,ppBefore:remaining,ppAfter:after},events};}
-  return {battle:next,payload:{...payload,ppBefore:remaining,ppAfter:after},events};
+  if(after===0){const restored=resolvePpRestoreItems(next,{actorIds:[actor.actorId],preferredMoveId:moveId,trigger:`move:${moveId}`});events.push(...restored.events);return {battle:restored.battle,payload:{...payload,ppBefore:remaining,ppAfter:after,previousUsedMoveIdSinceEntry},events};}
+  return {battle:next,payload:{...payload,ppBefore:remaining,ppAfter:after,previousUsedMoveIdSinceEntry},events};
  }
 };

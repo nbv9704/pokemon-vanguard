@@ -1,5 +1,5 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
-import {applyHpGroup} from '../rules-v3/lifecycle.mjs';
+import {applyHpGroup,requestForcedReplacement} from '../rules-v3/lifecycle.mjs';
 import {TYPE_CHART,typeEffectiveness} from '../rules-v3/type-chart.mjs';
 import {nextRandom} from '../rules-v3/rng.mjs';
 import {applyForcedSwitches} from './switching.mjs';
@@ -7,6 +7,7 @@ import {abilityStageChange} from './ability-stage-change.mjs';
 import {resolveOpponentStatGainCopyAbilities} from './ability-stage-response.mjs';
 import {roomActive} from './rooms.mjs';
 import {abilityBerryConsumptionHeal,abilityBerryEffectMultiplier,abilityBlocksSecondaryEffects,abilityGroundingImmunity,abilityPreventsIndirectDamage,abilitySuppressesHeldItems,abilityTypeImmunityBypass,abilityVolatileBlock,opposingBerrySuppression} from './ability-hooks.mjs';
+import {gravityActive} from './gravity.mjs';
 
 const maxHp=unit=>unit?.maxHp??unit?.stats?.hp;
 const battleStageIds=['atk','def','spa','spd','spe','accuracy','evasion'];
@@ -151,6 +152,23 @@ function applyConsumedBerryEffects(battle,{actorId,itemId,effects,reason}){
  return {battle:next,events};
 }
 
+export function consumeHeldItemForFling(battle,{actorId,itemId}={}){
+ let next=clone(battle),events=[],unit=unitById(next,actorId);if(!unit||unit.hp<=0)return {battle:next,consumed:false,events};
+ const current=heldItemId(unit);if(!current||current!==itemId)return {battle:next,consumed:false,events};
+ const effects=itemEffectSnapshot(unit,itemId),state=ensureItemState(unit),wasRevealed=state.revealed===true;recordConsumedItem(unit,itemId,next,{reason:'fling',effects});markItemLost(unit,itemId,'fling');
+ if(!wasRevealed)events.push({kind:'itemRevealed',sourceId:actorId,itemId,reason:'fling'});events.push({kind:'itemConsumed',sourceId:actorId,itemId,reason:'fling'});
+ const passed=resolveImmediateAllyItemPass(next,{actorId,reason:'fling'});next=passed.battle;events.push(...passed.events);
+ return {battle:next,consumed:true,itemId,effects,events};
+}
+
+export function applyThrownBerryEffects(battle,{sourceId,targetId,itemId,effects=[]}={}){
+ let next=clone(battle),events=[],target=unitById(next,targetId);if(!target||target.hp<=0)return {battle:next,applied:false,events};
+ const suppression=opposingBerrySuppression(next,target);if(suppression)return {battle:next,applied:false,events:[{kind:'abilityTriggered',sourceId:suppression.holder.actorId,abilityId:suppression.effect.sourceId,effectId:suppression.effect.kind,targetId},{kind:'itemActivationBlocked',sourceId:targetId,itemId,reason:'opponentAbility',abilityId:suppression.effect.sourceId,fromFling:true}]};
+ const state=ensureItemState(target);state.consumedBerryEver=true;scheduleBerryReplay(target,itemId,next,effects);events.push({kind:'flingBerryActivated',sourceId,targetId,itemId});
+ const cheek=abilityBerryConsumptionHeal(target);if(cheek&&target.hp>0&&target.hp<maxHp(target)){const before=target.hp,amount=Math.max(1,Math.floor(maxHp(target)*cheek.numerator/cheek.denominator));target.hp=Math.min(maxHp(target),target.hp+amount);events.push({kind:'abilityTriggered',sourceId:targetId,abilityId:cheek.sourceId,effectId:cheek.kind,itemId},{kind:'heal',targetId,hpBefore:before,hpAfter:target.hp,amount:target.hp-before,source:`ability:${cheek.sourceId}`,abilityId:cheek.sourceId,trigger:'berry-consumed'});}
+ const applied=applyConsumedBerryEffects(next,{actorId:targetId,itemId,effects,reason:'fling'});next=applied.battle;events.push(...applied.events);return {battle:next,applied:true,events};
+}
+
 export function consumeHeldBerry(battle,{holderId,consumerId=holderId,reason='forced-berry-consumption',ignoreBerrySuppression=false}={}){
  let next=clone(battle);const events=[],holder=unitById(next,holderId),consumer=unitById(next,consumerId);if(!holder||!consumer||consumer.hp<=0)return {battle:next,consumed:false,events};const itemId=heldItemId(holder);if(!itemId?.endsWith('-berry'))return {battle:next,consumed:false,events};
  const effects=itemEffectSnapshot(holder,itemId);
@@ -177,7 +195,7 @@ export function heldItemHasEffect(unit,kind,battle){return itemEffects(unit,kind
 
 export function typeEffectivenessWithHeldItems(attackType,defender,battle,{attacker=null,ignoreDefenderAbility=false,typeEffectivenessOverrides=null}={}){
  if(!defender)return 1;
- const forcedGrounded=attackType==='ground'&&Boolean(defender.volatiles?.['forced-grounded']),grounded=attackType==='ground'&&(forcedGrounded||heldItemHasEffect(defender,'item-grounding',battle));
+ const forcedGrounded=attackType==='ground'&&(gravityActive(battle)||Boolean(defender.volatiles?.['forced-grounded'])),grounded=attackType==='ground'&&(forcedGrounded||heldItemHasEffect(defender,'item-grounding',battle));
  if(attackType==='ground'&&!grounded&&(heldItemHasEffect(defender,'item-airborne',battle)||(!ignoreDefenderAbility&&abilityGroundingImmunity(defender))))return 0;
  let types=[...(defender.types||[])];if(grounded)types=types.filter(type=>type!=='flying');
  const bypass=attacker&&abilityTypeImmunityBypass(attacker,attackType,defender);if(bypass)types=types.filter(type=>!(bypass.targetTypes||[]).includes(type));
@@ -363,7 +381,14 @@ export function resolveFlinchItems(battle,{actorId,move,mechanics,damagedTargetI
 
 export function resolveReactiveSwitchItems(battle,{actorId,move,mechanics,damagedTargetIds=[]}={},runtime={}){
  let next=clone(battle);const events=[];if(!actorId||!move||move.category==='status'||mechanics?.handlers?.some(handler=>handler?.id==='apply-forced-switch'))return {battle:next,events};
- for(const targetId of damagedTargetIds||[]){const target=unitById(next,targetId),actor=unitById(next,actorId);if(!target||target.hp<=0||!actor||actor.hp<=0)continue;const effect=itemEffects(target,'item-force-attacker-switch',next)[0];if(!effect)continue;
+ for(const targetId of damagedTargetIds||[]){
+  const target=unitById(next,targetId);if(!target||target.hp<=0)continue;
+  const holderSwitch=itemEffects(target,'item-holder-switch',next)[0];
+  if(holderSwitch){
+   const requested=requestForcedReplacement(next,{actorId:targetId,reason:'held-item',itemId:holderSwitch.sourceId});if(!requested.requested)continue;
+   const activated=activateHeldItem(requested.battle,{actorId:targetId,itemId:holderSwitch.sourceId,reason:'holder-switch',consume:true,activationKey:`holder-switch:${next.turn}:${targetId}:${move.id}`});if(!activated.applied)continue;next=activated.battle;events.push(...activated.events,{kind:'forcedReplacementRequested',actorId:targetId,itemId:holderSwitch.sourceId,triggerMoveId:move.id,side:requested.request.side,slot:requested.request.slot});continue;
+  }
+  const actor=unitById(next,actorId);if(!actor||actor.hp<=0)continue;const effect=itemEffects(target,'item-force-attacker-switch',next)[0];if(!effect)continue;
   const actorSide=['A','B'].find(side=>next.sides?.[side]?.active?.includes(actorId));if(!actorSide)continue;const reserves=(next.sides?.[actorSide]?.roster||[]).filter(unit=>unit.hp>0&&!next.sides[actorSide].active.includes(unit.actorId));if(!reserves.length)continue;
   const activated=activateHeldItem(next,{actorId:targetId,itemId:effect.sourceId,reason:'force-attacker-switch',consume:true,activationKey:`force-attacker-switch:${next.turn}:${targetId}:${actorId}:${move.id}`});next=activated.battle;events.push(...activated.events);if(!activated.applied)continue;
   const switched=applyForcedSwitches(next,{actorId:targetId,targetIds:[actorId],moveId:effect.sourceId,requireDamage:false,totalDamage:1},runtime);next=switched.battle;events.push(...switched.events.map(event=>({...event,itemId:effect.sourceId,triggerMoveId:move.id})));

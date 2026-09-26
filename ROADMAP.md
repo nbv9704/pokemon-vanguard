@@ -1335,3 +1335,41 @@ Các liên kết kỹ thuật ở mục 4, 10, 12 đã được tra cứu khi l�
 | Ascension | Biến hình đặc biệt riêng của Aether |
 
 **Điểm bắt đầu thực thi: M0-01. Mục tiêu bàn giao đầu tiên: Local Tactical Alpha ở cuối M3.**
+
+## R3-101 — Signature Move Presentation Wave 2 + type-aware audio
+
+- Status: DONE after the R3-100 M-A release gate; mechanics scope remains locked.
+- Move presentation: 490/490 timelines = **30 signature + 460 parameterized + 0 legacy**, with signature-quality coverage across all 18 move types.
+- Architecture: signature authoring is data-driven through `public/js/presentation/signature-move-specs.js` and reusable presentation families rather than per-move runtime branches.
+- Audio: move cues now use deterministic type-aware local synthesis; signature cues receive a stronger envelope without external audio dependencies.
+- Validation: `npm run check` passes; focused R3-101/release/battle/UI gate 68/68; full regression **1095/1095**.
+- Next: continue presentation/asset quality waves while preserving the R3-100 release gate and exact M-A scope.
+
+## R3-102 — Gen III / GBA Pixel Presentation Rebaseline
+
+- Status: visual candidate; functional gates pass, final aesthetic acceptance requires user browser review.
+- Adds a final-loaded pixel presentation layer that converts the global shell, battle, Party/Summary/Training, Pokédex and Ranch to one Gen III/GBA-inspired grammar without reopening mechanics.
+- Battle uses a 320×180-inspired 16:9 composition, square HUD/windows, hard shadows, stepped HP display and the existing R3-92+ cursor/input state architecture.
+- Global navigation becomes a compact horizontal game menu instead of the old dashboard sidebar presentation.
+- Keeps offline runtime constraints: no external font/runtime assets added.
+- Gate: `npm run check` pass; full regression **1100/1100**.
+- Next decision: user visual acceptance. If direction is approved, fold stable overrides into component styles and continue sprite/asset quality; if not, revise palette/density/window proportions before additional polish.
+
+
+## R3-103 — Resolution Lock + Image Resampling
+
+- Status: DONE as the first user-feedback correction after the R3-102 pixel visual candidate.
+- Presentation is authored at a fixed **1280×720 logical resolution** and uniformly scaled to the physical viewport; aspect mismatch produces letterboxing/pillarboxing rather than a different UI layout.
+- High-resolution artwork/SVG and current cropped battle GIFs are no longer forced through global nearest-neighbour scaling, eliminating the visible jagged outlines reported in R3-102.
+- Legacy viewport media-query reflows are neutralized under the resolution lock so desktop composition stays stable across common resolutions.
+- Validation: targeted UI **31/31**, `npm run check` pass, full regression **1105/1105**.
+- Next decision: user visual QA at multiple resolutions; keep this baseline if scale/composition now matches the intended PokéRogue-like behavior.
+
+## R3-104 — Locked-Surface Backdrop Restore
+
+- Status: DONE as a narrow visual regression fix on top of R3-103.
+- Keeps the fixed 1280×720 logical viewport and uniform fit scale unchanged.
+- Restores the accepted Pixel Era blue-grid viewport backdrop in letterbox/pillarbox space by making the full-viewport `#app` host transparent instead of flat dark/black.
+- Regression test rejects reintroducing an opaque `#071323` resolution-lock host.
+- Validation: focused Pixel Era/resolution tests **10/10**, `npm run check` pass, full regression **1105/1105**.
+- Next decision: user visual QA; continue from this backdrop + fixed-resolution baseline if accepted.

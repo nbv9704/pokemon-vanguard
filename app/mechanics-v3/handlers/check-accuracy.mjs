@@ -7,7 +7,8 @@ import {opponentAbilitiesIgnoredFor,statusMoveReflectionForTarget} from '../abil
 import {substituteBlocksStatusMove} from '../substitute.mjs';
 import {abilityIgnoresOpponentStage} from '../ability-stage-change.mjs';
 import {accuracyWithHeldItems} from '../item-hooks.mjs';
-import {effectiveWeatherId} from '../ability-field.mjs';
+import {effectiveWeatherForUnit} from '../ability-field.mjs';
+import {gravityAccuracyMultiplier} from '../gravity.mjs';
 
 const clampStage=value=>Math.max(-6,Math.min(6,value));
 
@@ -18,12 +19,21 @@ export function effectiveAccuracy(baseAccuracy,accuracyStage=0,evasionStage=0){
  return Math.min(100,Math.trunc(stage>=0?baseAccuracy*(3+stage)/3:baseAccuracy*3/(3-stage)));
 }
 
+export function repeatHitAccuracyChance(battle,{actor,target,move,mechanics=null,runtime={}}){
+ const ignoreTargetAbility=opponentAbilitiesIgnoredFor(battle,actor.actorId,target.actorId,mechanics),targetLock=actor.volatiles?.['target-lock'],lockAlwaysHits=targetLock?.alwaysHitsTarget===true&&targetLock.targetActorId===target.actorId,abilityAlwaysHits=abilityForcesHit(actor)||(!ignoreTargetAbility&&abilityForcesHit(target));
+ if(abilityAlwaysHits||lockAlwaysHits||move.accuracy===null)return null;
+ const accuracyStage=!ignoreTargetAbility&&abilityIgnoresOpponentStage(target,'accuracy','defending')?0:(actor.stages?.accuracy||0),evasionStage=abilityIgnoresOpponentStage(actor,'evasion','attacking')?0:(target.stages?.evasion||0),stagedAccuracy=effectiveAccuracy(move.accuracy,accuracyStage,evasionStage),outgoingAccuracy=Math.min(100,Math.max(1,Math.floor(stagedAccuracy*abilityOutgoingAccuracyModifier(actor,move)))),abilityAccuracy=Math.max(1,Math.floor(outgoingAccuracy*abilityIncomingAccuracyModifier(target,battle,{ignoreAbility:ignoreTargetAbility})));
+ const gravityAccuracy=abilityAccuracy===null?null:Math.min(100,Math.max(1,Math.floor(abilityAccuracy*gravityAccuracyMultiplier(battle))));
+ return accuracyWithHeldItems(gravityAccuracy,actor,battle,{target,targetHasActed:runtime?.hasActed?.(target.actorId)===true,targetWillMove:typeof runtime?.willMove==='function'?runtime.willMove(target.actorId):null});
+}
+
 export const checkAccuracyHandler={
  id:'check-accuracy',hooks:['onMove'],
  run({battle,payload,params={},runtime}){
   let next=clone(battle);const {action,move,mechanics}=payload,actor=unitById(next,action.actorId);
   if(!actor||actor.hp<=0)return {battle:next,payload:{...payload,accuracyResolved:true,resolvedTargetIds:[],hitTargetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'actorUnavailable'}]};
-  const targets=resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false,move});
+  let targets=resolveTargets(next,{side:action.side,actorId:action.actorId,targetMode:mechanics.targetMode,target:action.target},{redirectable:mechanics.redirectable!==false,move});
+  if(params.smartSplit===true&&next.format==='double'&&targets.length===1){const foe=action.side==='A'?'B':'A',chosen=targets[0]?.actorId,others=(next.sides?.[foe]?.active||[]).filter(actorId=>actorId&&actorId!==chosen).map(actorId=>unitById(next,actorId)).filter(unit=>unit?.hp>0);if(others.length)targets=[targets[0],...others.map(unit=>({actorId:unit.actorId}))];}
   if(!targets.length)return {battle:next,payload:{...payload,accuracyResolved:true,resolvedTargetIds:[],hitTargetIds:[]},events:[{kind:'moveFailed',actorId:actor.actorId,moveId:move.id,reason:'noTarget'}]};
   const hitTargetIds=[],reflectedStatusHits=[],events=[];
   for(const targetRef of targets){
@@ -32,9 +42,10 @@ export const checkAccuracyHandler={
    const protection=target.actorId===actor.actorId?null:resolveProtectionBlock(next,{targetRef,actorId:actor.actorId,move,mechanics},runtime);if(protection?.blocked){next=protection.battle;events.push(...protection.events);continue;}
    if(target.actorId!==actor.actorId&&substituteBlocksStatusMove(target,actor,move,mechanics)){events.push({kind:'moveBlocked',actorId:actor.actorId,targetId:target.actorId,moveId:move.id,reason:'substitute'});continue;}
    const abilityBlock=target.actorId===actor.actorId||ignoreTargetAbility?null:resolveTargetAbilityBlock(next,{actorId:actor.actorId,targetId:target.actorId,move,mechanics});if(abilityBlock?.blocked){next=abilityBlock.battle;events.push(...abilityBlock.events);continue;}
-   const weather=effectiveWeatherId(next),alwaysHits=abilityAlwaysHits||lockAlwaysHits||(params.alwaysHitsForUserTypes||[]).some(type=>(actor.types||[]).includes(type))||(params.alwaysHitsInWeather||[]).includes(weather),baseAccuracy=params.accuracyByWeather?.[weather]??move.accuracy;
-   const accuracyStage=!ignoreTargetAbility&&abilityIgnoresOpponentStage(target,'accuracy','defending')?0:(actor.stages?.accuracy||0),evasionStage=params.ignoreTargetEvasion?0:abilityIgnoresOpponentStage(actor,'evasion','attacking')?0:(target.stages?.evasion||0),stagedAccuracy=effectiveAccuracy(baseAccuracy,accuracyStage,evasionStage),outgoingAccuracy=stagedAccuracy===null?null:Math.min(100,Math.max(1,Math.floor(stagedAccuracy*abilityOutgoingAccuracyModifier(actor,move)))),abilityAccuracy=outgoingAccuracy===null?null:Math.max(1,Math.floor(outgoingAccuracy*abilityIncomingAccuracyModifier(target,next,{ignoreAbility:ignoreTargetAbility})));
-   const chance=alwaysHits?null:accuracyWithHeldItems(abilityAccuracy,actor,next,{target,targetHasActed:runtime?.hasActed?.(target.actorId)===true,targetWillMove:typeof runtime?.willMove==='function'?runtime.willMove(target.actorId):null});
+   const actorLevel=actor.level??next.level??50,targetLevel=target.level??next.level??50;if(params.ohko===true&&actorLevel<targetLevel){events.push({kind:'moveMissed',actorId:actor.actorId,targetId:target.actorId,moveId:move.id,reason:'ohkoLevel',actorLevel,targetLevel});continue;}const ohkoImmuneType=params.ohko===true?(params.ohkoImmuneTargetTypes||[]).find(type=>(target.types||[]).includes(type)):null;if(ohkoImmuneType){events.push({kind:'moveBlocked',actorId:actor.actorId,targetId:target.actorId,moveId:move.id,reason:'ohkoTypeImmune',type:ohkoImmuneType});continue;}
+   const weather=effectiveWeatherForUnit(next,actor),alwaysHits=abilityAlwaysHits||lockAlwaysHits||(params.alwaysHitsForUserTypes||[]).some(type=>(actor.types||[]).includes(type))||(params.alwaysHitsInWeather||[]).includes(weather),ohkoBase=params.ohko===true?(((params.ohkoLowerAccuracyUnlessUserTypes||[]).length&&!(params.ohkoLowerAccuracyUnlessUserTypes||[]).some(type=>(actor.types||[]).includes(type)))?20:30)+(actorLevel-targetLevel):null,baseAccuracy=params.ohko===true?Math.min(100,ohkoBase):params.accuracyByWeather?.[weather]??move.accuracy;
+   const accuracyStage=!ignoreTargetAbility&&abilityIgnoresOpponentStage(target,'accuracy','defending')?0:(actor.stages?.accuracy||0),evasionStage=params.ignoreTargetEvasion?0:abilityIgnoresOpponentStage(actor,'evasion','attacking')?0:(target.stages?.evasion||0),stagedAccuracy=params.ohko===true?baseAccuracy:effectiveAccuracy(baseAccuracy,accuracyStage,evasionStage),outgoingAccuracy=stagedAccuracy===null?null:Math.min(100,Math.max(1,Math.floor(stagedAccuracy*abilityOutgoingAccuracyModifier(actor,move)))),abilityAccuracy=outgoingAccuracy===null?null:Math.max(1,Math.floor(outgoingAccuracy*abilityIncomingAccuracyModifier(target,next,{ignoreAbility:ignoreTargetAbility})));
+   const gravityAccuracy=abilityAccuracy===null?null:Math.min(100,Math.max(1,Math.floor(abilityAccuracy*gravityAccuracyMultiplier(next)))),chance=alwaysHits?null:accuracyWithHeldItems(gravityAccuracy,actor,next,{target,targetHasActed:runtime?.hasActed?.(target.actorId)===true,targetWillMove:typeof runtime?.willMove==='function'?runtime.willMove(target.actorId):null});
    const hit=chance===null||chance>=100||(typeof runtime.nextRandom==='function'&&runtime.nextRandom()<chance/100);
    if(chance!==null&&chance<100&&typeof runtime.nextRandom!=='function')throw new Error('check-accuracy requires seeded nextRandom');
    if(hit){
@@ -51,6 +62,6 @@ export const checkAccuracyHandler={
     }else hitTargetIds.push(target.actorId);
    }else events.push({kind:'moveMissed',actorId:actor.actorId,targetId:target.actorId,moveId:move.id,effectiveAccuracy:chance});
   }
-  return {battle:next,payload:{...payload,accuracyResolved:true,resolvedTargetIds:targets.map(target=>target.actorId),hitTargetIds,reflectedStatusHits},events};
+  return {battle:next,payload:{...payload,accuracyResolved:true,resolvedTargetIds:targets.map(target=>target.actorId),hitTargetIds,reflectedStatusHits,...(params.smartSplit===true?{smartSplitTargetIds:targets.map(target=>target.actorId)}:{})},events};
  }
 };

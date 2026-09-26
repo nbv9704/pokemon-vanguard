@@ -5,6 +5,8 @@ import {resolveNegativeStageResetItems} from './item-hooks.mjs';
 import {applyWeather} from './weather.mjs';
 import {abilityStageChange} from './ability-stage-change.mjs';
 import {resolveOpponentStatGainCopyAbilities} from './ability-stage-response.mjs';
+import {applyMajorStatus} from './major-status-state.mjs';
+import {abilityPreventsIndirectDamage} from './ability-hooks.mjs';
 
 const STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
 const maxHp=unit=>unit?.maxHp??unit?.stats?.hp;
@@ -35,7 +37,9 @@ export function resolveDamageResponseAbilities(battle,{actorId,targetId,move,dam
   events.push({kind:'abilityTriggered',sourceId:target.actorId,abilityId:effect.sourceId,effectId:effect.kind,targetId:actorId});
   if(effect.boosts||effect.setStages){const changes=stageEvents(target,effect,{boosts:effect.boosts,setStages:effect.setStages,trigger:'damage'});events.push(...changes);const copied=resolveOpponentStatGainCopyAbilities(next,{targetId:target.actorId,changes,trigger:`ability:${effect.sourceId}:damage`});next=copied.battle;events.push(...copied.events);const reset=resolveNegativeStageResetItems(next,{actorIds:[target.actorId],trigger:`ability:${effect.sourceId}:damage-response`});next=reset.battle;events.push(...reset.events);continue;}
   if(effect.weather){const applied=applyWeather(next,{actorId:target.actorId,moveId:`ability:${effect.sourceId}`,weather:effect.weather,defaultTurns:effect.turns||5});next=applied.battle;events.push(...applied.events.map(event=>({...event,abilityId:effect.sourceId,trigger:'damage'})));continue;}
-  if(effect.hazard){const applied=applyHazard(next,{actorId:target.actorId,moveId:`ability:${effect.sourceId}`,hazard:effect.hazard,allowFainted:true});next=applied.battle;events.push(...applied.events.map(event=>({...event,abilityId:effect.sourceId,trigger:'damage'})));}
+  if(effect.hazard){const applied=applyHazard(next,{actorId:target.actorId,moveId:`ability:${effect.sourceId}`,hazard:effect.hazard,allowFainted:true});next=applied.battle;events.push(...applied.events.map(event=>({...event,abilityId:effect.sourceId,trigger:'damage'})));continue;}
+  if(effect.attackerStatus){const attacker=unitById(next,actorId);if(attacker?.hp>0){const applied=applyMajorStatus(next,{actorId:target.actorId,targetId:attacker.actorId,moveId:`ability:${effect.sourceId}`,status:effect.attackerStatus},runtime);next=applied.battle;events.push(...applied.events.map(event=>({...event,abilityId:effect.sourceId,trigger:'damage'})));}continue;}
+  if(effect.faintAttackerDamage==='hp-before'&&hpAfter===0){const attacker=unitById(next,actorId);if(!attacker||attacker.hp<=0)continue;const guard=abilityPreventsIndirectDamage(attacker);if(guard){events.push({kind:'abilityTriggered',sourceId:attacker.actorId,abilityId:guard.sourceId,effectId:guard.kind,trigger:`ability:${effect.sourceId}`});continue;}const before=attacker.hp,amount=Math.min(before,Math.max(0,hpBefore||0));attacker.hp-=amount;events.push({kind:'damage',actorId:target.actorId,targetId:attacker.actorId,moveId:`ability:${effect.sourceId}`,hpBefore:before,hpAfter:attacker.hp,amount,source:'ability',abilityId:effect.sourceId});if(attacker.hp===0)events.push({kind:'fainted',targetId:attacker.actorId,source:`ability:${effect.sourceId}`});continue;}
  }
  target=unitById(next,targetId);
  if(damage>0&&target){
@@ -53,6 +57,10 @@ export function resolveKoAbilityEffects(battle,{actorId,targetId,moveId}={}){
  let next=clone(battle),events=[];const actor=unitById(next,actorId),target=unitById(next,targetId);if(!actor||actor.hp<=0||!target||target.hp>0)return {battle:next,events};
  for(const effect of abilityEffects(actor,'ko-stat-boost')){events.push({kind:'abilityTriggered',sourceId:actor.actorId,abilityId:effect.sourceId,effectId:effect.kind,targetId});const changes=stageEvents(actor,effect,{boosts:{[effect.stat]:effect.stages},trigger:'knockout'});events.push(...changes);const copied=resolveOpponentStatGainCopyAbilities(next,{targetId:actor.actorId,changes,trigger:`ability:${effect.sourceId}:knockout`});next=copied.battle;events.push(...copied.events);const reset=resolveNegativeStageResetItems(next,{actorIds:[actor.actorId],trigger:`ability:${effect.sourceId}:knockout`});next=reset.battle;events.push(...reset.events);}
  return {battle:next,events};
+}
+
+export function resolveOhkoAbilityBlock(battle,{targetId,moveId,ignoreAbility=false}={}){
+ const next=clone(battle),target=unitById(next,targetId);if(ignoreAbility||!target||target.hp<=0)return {battle:next,blocked:false,events:[],abilityId:null};const effect=abilityEffects(target,'lethal-hit-survival').find(entry=>entry.blocksOhko===true);if(!effect)return {battle:next,blocked:false,events:[],abilityId:null};return {battle:next,blocked:true,abilityId:effect.sourceId,events:[{kind:'abilityTriggered',sourceId:target.actorId,abilityId:effect.sourceId,effectId:effect.kind,trigger:'ohko'},{kind:'moveBlocked',targetId:target.actorId,moveId,reason:'ohkoAbility',abilityId:effect.sourceId}]};
 }
 
 export function applyLethalHitSurvivalAbility(battle,{targetId,damage,moveId,hit=null,ignoreAbility=false}={}){

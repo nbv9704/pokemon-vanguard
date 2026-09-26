@@ -1,8 +1,10 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
+import {applyHpGroup} from '../rules-v3/lifecycle.mjs';
 import {nextRandom} from '../rules-v3/rng.mjs';
 import {applyMajorStatus} from './major-status.mjs';
 import {unitIsGrounded} from './terrain.mjs';
 import {abilityStatusBlock} from './ability-hooks.mjs';
+import {applyDamageHit} from './damage-hit.mjs';
 
 export const DELAYED_EFFECT_IDS=['yawn','perish-song'];
 
@@ -65,6 +67,45 @@ function resolvePerishSong(next,target,state,events){
  return next;
 }
 
+
+export function resolveSlotEffectsOnEntry(battle,switchEvents=[]){
+ let next=clone(battle);const events=[];
+ for(const entry of switchEvents||[]){
+  if(entry?.kind!=='switchIn'||!entry.actorId||!entry.side||!Number.isInteger(entry.slot))continue;
+  const bucket=next.sides?.[entry.side]?.slotEffects?.[String(entry.slot)],wish=bucket?.['healing-wish'],target=unitById(next,entry.actorId);if(!wish||!target||target.hp<=0)continue;
+  const status=target.status?.id||target.status,needsHealing=target.hp<(target.maxHp??target.stats?.hp)||Boolean(status);if(!needsHealing){events.push({kind:'slotEffectDeferred',actorId:wish.sourceActorId,targetId:target.actorId,side:entry.side,slot:entry.slot,moveId:wish.sourceId,effect:'healing-wish',reason:'targetHealthy'});continue;}
+  const hpBefore=target.hp,limit=target.maxHp??target.stats?.hp;target.hp=limit;target.status=null;delete bucket['healing-wish'];if(!Object.keys(bucket).length)delete next.sides[entry.side].slotEffects[String(entry.slot)];
+  events.push({kind:'slotEffectResolved',actorId:wish.sourceActorId,targetId:target.actorId,side:entry.side,slot:entry.slot,moveId:wish.sourceId,effect:'healing-wish'});if(target.hp>hpBefore)events.push({kind:'heal',actorId:wish.sourceActorId,targetId:target.actorId,moveId:wish.sourceId,hpBefore,hpAfter:target.hp,amount:target.hp-hpBefore,source:'healing-wish'});if(status)events.push({kind:'statusCured',actorId:wish.sourceActorId,targetId:target.actorId,status,moveId:wish.sourceId,reason:'healing-wish'});
+ }
+ return {battle:next,events};
+}
+
+function resolveSlotEffectsEndTurn(battle){
+ let next=clone(battle);const events=[];
+ for(const side of ['A','B'])for(const [slotKey,bucket] of Object.entries(next.sides?.[side]?.slotEffects||{})){
+  const slot=Number(slotKey);if(!Number.isInteger(slot)||!bucket||typeof bucket!=='object')continue;
+  const wish=bucket.wish;if(wish){wish.remaining--;if(wish.remaining>0)events.push({kind:'slotEffectTick',side,slot,effect:'wish',remaining:wish.remaining});else{delete bucket.wish;const targetId=next.sides?.[side]?.active?.[slot],target=targetId&&unitById(next,targetId);events.push({kind:'slotEffectResolved',actorId:wish.sourceActorId,targetId:target?.actorId??null,side,slot,moveId:wish.sourceId,effect:'wish'});if(target?.hp>0){const healed=applyHpGroup(next,[{actorId:target.actorId,delta:wish.amount}],'wish');next=healed.battle;events.push(...healed.events);}}}
+  if(!Object.keys(bucket).length)delete next.sides[side].slotEffects[slotKey];
+ }
+ return {battle:next,events};
+}
+
+
+export function resolveFutureAttacksEndTurn(battle,{moves=null,manifests=null}={}){
+ let next=clone(battle);const events=[];
+ for(const side of ['A','B'])for(const [slotKey,bucket] of Object.entries(next.sides?.[side]?.slotEffects||{})){
+  const slot=Number(slotKey),future=bucket?.['future-attack'];if(!Number.isInteger(slot)||!future)continue;
+  future.remaining--;
+  if(future.remaining>0){events.push({kind:'slotEffectTick',side,slot,effect:'future-attack',remaining:future.remaining,moveId:future.sourceId});continue;}
+  delete bucket['future-attack'];if(!Object.keys(bucket).length)delete next.sides[side].slotEffects[slotKey];
+  const targetId=next.sides?.[side]?.active?.[slot]||null,target=targetId&&unitById(next,targetId),move=Array.isArray(moves)?moves.find(entry=>entry.id===future.sourceId):moves?.[future.sourceId],mechanics=manifests?.moves?.[future.sourceId]||manifests?.[future.sourceId];
+  events.push({kind:'slotEffectResolved',actorId:future.sourceActorId,targetId:target?.actorId??null,side,slot,moveId:future.sourceId,effect:'future-attack'});
+  if(!target||target.hp<=0||!move||!mechanics)continue;
+  const rngCarrier=next,runtime=seededRuntime(rngCarrier),hit=applyDamageHit(next,{actorId:future.sourceActorId,targetId:target.actorId,move,mechanics,allowFaintedActor:true},runtime);hit.battle.rngState=rngCarrier.rngState;next=hit.battle;events.push(...hit.events.map(event=>({...event,delayedEffect:'future-attack'})));
+ }
+ return {battle:next,events};
+}
+
 export function resolveDelayedEffectsEndTurn(battle){
  let next=clone(battle);const events=[];
  // Snapshot actor IDs so simultaneous delayed effects are resolved in stable side/slot order.
@@ -76,5 +117,6 @@ export function resolveDelayedEffectsEndTurn(battle){
   const perish=target.volatiles?.['perish-song'];
   if(perish)next=resolvePerishSong(next,target,perish,events);
  }
+ const slots=resolveSlotEffectsEndTurn(next);next=slots.battle;events.push(...slots.events);
  return {battle:next,events};
 }

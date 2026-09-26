@@ -8,6 +8,7 @@ import {abilityStageChange} from './ability-stage-change.mjs';
 import {heldItemId,revealHeldItem,resolveNegativeStageResetItems} from './item-hooks.mjs';
 import {effectiveBattleSpeed} from './speed.mjs';
 import {applyWeather} from './weather.mjs';
+import {applyTerrain} from './terrain.mjs';
 import {resolveEntryAbilityCopies} from './ability-replacement.mjs';
 import {resolveEntryIllusionAbility,resolveEntryTransformAbility} from './ability-transform.mjs';
 
@@ -23,6 +24,11 @@ function orderedEntries(battle,switchEvents){
 
 function applyEntryWeather(battle,unit,effect,trigger='entry'){
  const applied=applyWeather(battle,{actorId:unit.actorId,moveId:`ability:${effect.sourceId}`,weather:effect.weather,defaultTurns:effect.turns||5});
+ return {battle:applied.battle,events:[{kind:'abilityTriggered',sourceId:unit.actorId,abilityId:effect.sourceId,effectId:effect.kind},...applied.events.map(event=>({...event,sourceAbilityId:effect.sourceId,trigger}))]};
+}
+
+function applyEntryTerrain(battle,unit,effect,trigger='entry'){
+ const applied=applyTerrain(battle,{actorId:unit.actorId,moveId:`ability:${effect.sourceId}`,terrain:effect.terrain,defaultTurns:effect.turns||5});
  return {battle:applied.battle,events:[{kind:'abilityTriggered',sourceId:unit.actorId,abilityId:effect.sourceId,effectId:effect.kind},...applied.events.map(event=>({...event,sourceAbilityId:effect.sourceId,trigger}))]};
 }
 
@@ -98,6 +104,7 @@ export function resolveAbilityStartEffects(battle,{actorId,slot=null,manifests=n
  for(const effect of abilityEffects(unit)){
   let result=null;
   if(effect.kind==='entry-weather')result=applyEntryWeather(next,unit,effect,trigger);
+  else if(effect.kind==='entry-terrain')result=applyEntryTerrain(next,unit,effect,trigger);
   else if(effect.kind==='entry-stat-drop')result=applyEntryStatDrop(next,unit,effect,trigger);
   else if(effect.kind==='entry-screen-cleaner')result=applyEntryScreenCleaner(next,unit,effect,trigger);
   else if(effect.kind==='entry-ally-stage-reset')result=applyEntryAllyStageReset(next,unit,effect,trigger);

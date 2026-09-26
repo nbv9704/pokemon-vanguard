@@ -47,7 +47,7 @@ export function resolveStatusMoveReflection(battle,{action,move,mechanics}){
  }
  if(!holder)return {battle:next,reflected:false,action,mechanics,events:[]};
  const originalTarget=targetRefForActor(next,action.actorId);if(!originalTarget&&mechanics?.targetMode!=='foeSide')return {battle:next,reflected:false,action,mechanics,events:[]};
- const reflectedAction={...action,side:holder.side,actorId:holder.unit.actorId,...(mechanics.targetMode==='foeSide'?{target:undefined}:{target:originalTarget})};
+ const reflectedAction={...action,side:holder.side,actorId:holder.unit.actorId,reflectedFromActorId:action.actorId,reflectedFromSide:action.side,...(mechanics.targetMode==='foeSide'?{target:undefined}:{target:originalTarget})};
  const reflectedMechanics={...mechanics,statusMoveReflected:true,opponentAbilitiesIgnored:false};
  return {battle:next,reflected:true,action:reflectedAction,mechanics:reflectedMechanics,events:[
   {kind:'abilityTriggered',sourceId:holder.unit.actorId,abilityId:holder.effect.sourceId,effectId:holder.effect.kind,targetId:action.actorId,moveId:move.id},

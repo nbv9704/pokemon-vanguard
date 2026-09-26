@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,mkdir,readFile,rm,writeFile} from 'node:fs/promises';
 import os from 'node:os';import path from 'node:path';
 import {JsonAdventureStorage} from '../server/storage-json.mjs';
+import {HybridAdventureStorage,SupabaseAdventureStorage} from '../server/storage-supabase.mjs';
 import {setup,applyAction} from '../server/legacy/logic-v1.js';
 import {migrateV1ToV2} from '../server/migrations.mjs';
 
@@ -16,6 +17,15 @@ test('JSON storage saves atomically, backs up and restores validated state',asyn
   assert.equal((await storage.load('room')).coins,20);assert.equal((await storage.restore('room',backup)).coins,10);assert.equal((await storage.load('room')).coins,10);
   await assert.rejects(storage.load('../escape'),/Invalid adventure room name/);
   await writeFile(storage.pathFor('broken'),'{bad json');await assert.rejects(storage.load('broken'),/JSON/);assert.equal(await readFile(storage.pathFor('broken'),'utf8'),'{bad json');
+ }finally{await rm(root,{recursive:true,force:true});}
+});
+
+test('Supabase storage persists authenticated UUID saves while beta rooms stay local',async()=>{
+ const rows=new Map(),backups=[],calls=[],fetchImpl=async(url,init={})=>{calls.push({url:String(url),init});const target=new URL(url),body=init.body?JSON.parse(init.body):null;if(target.pathname.endsWith('/game_saves')){if(init.method==='POST'){rows.set(body.user_id,body.state);return new Response(null,{status:201});}const userId=target.searchParams.get('user_id')?.replace(/^eq\./,'');return Response.json(rows.has(userId)?[{state:rows.get(userId)}]:[]);}if(target.pathname.endsWith('/game_save_backups')&&init.method==='POST'){const row={id:backups.length+1,...body};backups.push(row);return Response.json([row],{status:201});}return Response.json([]);};
+ const root=await mkdtemp(path.join(os.tmpdir(),'aether-hybrid-storage-')),local=new JsonAdventureStorage(root),remote=new SupabaseAdventureStorage({url:'https://project.supabase.co',secretKey:'server-secret',fetchImpl}),storage=new HybridAdventureStorage({local,remote}),userId='33333333-3333-4333-8333-333333333333';
+ try{
+  await storage.save(userId,{schemaVersion:3,coins:50});assert.equal((await storage.load(userId)).coins,50);assert.equal(calls[0].init.headers.apikey,'server-secret');
+  await storage.save('aether-local-player',{coins:10});assert.equal((await storage.load('aether-local-player')).coins,10);assert.equal(calls.length,2);
  }finally{await rm(root,{recursive:true,force:true});}
 });
 

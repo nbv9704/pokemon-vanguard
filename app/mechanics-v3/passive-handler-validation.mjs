@@ -44,6 +44,11 @@ export function validatePassiveHandler(entry){
   if(!Number.isFinite(params.multiplier)||params.multiplier<=1)problems.push('weather-type-damage-boost requires multiplier > 1');
   return problems;
  }
+ if(entry.id==='field-type-damage-aura'){
+  if(!CANONICAL_TYPES.includes(params.type))problems.push('field-type-damage-aura requires a canonical type');
+  if(!Number.isFinite(params.multiplier)||params.multiplier<=1)problems.push('field-type-damage-aura requires multiplier > 1');
+  return problems;
+ }
  if(entry.id==='weather-residual-immunity'){
   if(!SUPPORTED_WEATHERS.includes(params.weather))problems.push('weather-residual-immunity requires supported weather');
   return problems;
@@ -105,6 +110,10 @@ export function validatePassiveHandler(entry){
   if(!Number.isFinite(params.multiplier)||params.multiplier<=1)problems.push('move-type-conversion requires multiplier > 1');
   return problems;
  }
+ if(entry.id==='effective-weather-override'){
+  if(!SUPPORTED_WEATHERS.includes(params.weather))problems.push('effective-weather-override requires supported weather');
+  return problems;
+ }
  if(entry.id==='outgoing-secondary-effect'){
   if(!Number.isFinite(params.chance)||params.chance<=0||params.chance>1)problems.push('outgoing-secondary-effect requires chance in (0, 1]');
   const responses=Number(typeof params.status==='string')+Number(typeof params.volatile==='string');if(responses!==1)problems.push('outgoing-secondary-effect requires exactly one status or volatile');
@@ -145,11 +154,12 @@ export function validatePassiveHandler(entry){
   return problems;
  }
  if(entry.id==='contact-response'){
-  if(!['damage','status','stat'].includes(params.response))problems.push('contact-response requires damage, status, or stat response');
+  if(!['damage','status','stat','volatile'].includes(params.response))problems.push('contact-response requires damage, status, stat, or volatile response');
   if(params.chance!==undefined&&(!Number.isFinite(params.chance)||params.chance<=0||params.chance>1))problems.push('contact-response chance must be in (0, 1]');
   if(params.requireHolderFainted!==undefined&&typeof params.requireHolderFainted!=='boolean')problems.push('contact-response requireHolderFainted must be boolean');
   if(params.response==='damage'&&(!Number.isInteger(params.numerator)||!Number.isInteger(params.denominator)||params.numerator<1||params.denominator<1||params.numerator>params.denominator))problems.push('contact-response damage requires a valid positive fraction');
   if(params.response==='status'&&!['burn','paralysis','poison','sleep','freeze','bad-poison'].includes(params.status))problems.push('contact-response status requires a supported major status');
+  if(params.response==='volatile'&&params.volatile!=='infatuation')problems.push('contact-response volatile currently requires infatuation');
   if(params.response==='stat'){
    if(!['atk','def','spa','spd','spe','accuracy','evasion'].includes(params.stat))problems.push('contact-response stat requires a battle stage');
    if(!Number.isInteger(params.stages)||params.stages===0||params.stages<-6||params.stages>6)problems.push('contact-response stat requires non-zero stages from -6 to 6');
@@ -161,10 +171,12 @@ export function validatePassiveHandler(entry){
   if(params.moveType!==undefined&&!CANONICAL_TYPES.includes(params.moveType))problems.push('damage-response moveType must be canonical');
   if(params.category!==undefined&&!['physical','special'].includes(params.category))problems.push('damage-response category must be physical or special');
   if(params.thresholdCross!==undefined){const value=params.thresholdCross;if(!value||!Number.isInteger(value.numerator)||!Number.isInteger(value.denominator)||value.numerator<1||value.denominator<1||value.numerator>value.denominator)problems.push('damage-response thresholdCross requires a valid positive fraction');}
-  const responses=[params.boosts!==undefined,params.setStages!==undefined,params.weather!==undefined,params.hazard!==undefined].filter(Boolean).length;if(responses!==1)problems.push('damage-response requires exactly one response');
+  const responses=[params.boosts!==undefined,params.setStages!==undefined,params.weather!==undefined,params.hazard!==undefined,params.attackerStatus!==undefined,params.faintAttackerDamage!==undefined].filter(Boolean).length;if(responses!==1)problems.push('damage-response requires exactly one response');
   for(const field of ['boosts','setStages'])if(params[field]!==undefined){const entries=params[field]&&typeof params[field]==='object'&&!Array.isArray(params[field])?Object.entries(params[field]):[];if(!entries.length)problems.push(`damage-response ${field} requires stages`);for(const [stat,value] of entries){if(!['atk','def','spa','spd','spe','accuracy','evasion'].includes(stat))problems.push(`damage-response ${field} has unsupported stat`);if(!Number.isInteger(value)||value<-6||value>6||(field==='boosts'&&value===0))problems.push(`damage-response ${field} has invalid stage value`);}}
   if(params.weather!==undefined&&!SUPPORTED_WEATHERS.includes(params.weather))problems.push('damage-response weather must be supported');
   if(params.hazard!==undefined&&!['stealth-rock','spikes','toxic-spikes'].includes(params.hazard))problems.push('damage-response hazard must be supported');
+  if(params.attackerStatus!==undefined&&!['burn','paralysis','poison','sleep','freeze','bad-poison'].includes(params.attackerStatus))problems.push('damage-response attackerStatus must be supported');
+  if(params.faintAttackerDamage!==undefined&&params.faintAttackerDamage!=='hp-before')problems.push('damage-response faintAttackerDamage must be hp-before');
   return problems;
  }
  if(entry.id==='ko-stat-boost'||entry.id==='end-turn-stat-boost'){
@@ -175,6 +187,7 @@ export function validatePassiveHandler(entry){
  }
  if(entry.id==='lethal-hit-survival'){
   if(params.requireFullHp!==undefined&&typeof params.requireFullHp!=='boolean')problems.push('lethal-hit-survival requireFullHp must be boolean');
+  if(params.blocksOhko!==undefined&&typeof params.blocksOhko!=='boolean')problems.push('lethal-hit-survival blocksOhko must be boolean');
   return problems;
  }
  if(entry.id==='critical-damage-boost'){
@@ -208,6 +221,15 @@ export function validatePassiveHandler(entry){
   if(params.terrain!==undefined&&!['electric','grassy','misty','psychic'].includes(params.terrain))problems.push('stat-multiplier terrain must be a supported terrain');
   return problems;
  }
+ if(entry.id==='gender-damage-modifier'){
+  if(!Number.isFinite(params.sameGenderMultiplier)||params.sameGenderMultiplier<=1)problems.push('gender-damage-modifier requires sameGenderMultiplier > 1');
+  if(!Number.isFinite(params.oppositeGenderMultiplier)||params.oppositeGenderMultiplier<=0||params.oppositeGenderMultiplier>=1)problems.push('gender-damage-modifier requires oppositeGenderMultiplier between 0 and 1');
+  return problems;
+ }
+ if(entry.id==='weight-modifier'){
+  if(!Number.isFinite(params.multiplier)||params.multiplier<=0||params.multiplier===1)problems.push('weight-modifier requires a positive non-1 multiplier');
+  return problems;
+ }
  if(entry.id==='outgoing-accuracy-modifier'){
   if(!Number.isFinite(params.multiplier)||params.multiplier<=0)problems.push('outgoing-accuracy-modifier requires multiplier > 0');
   if(params.category!==undefined&&!['physical','special'].includes(params.category))problems.push('outgoing-accuracy-modifier category must be physical or special');
@@ -236,7 +258,8 @@ export function validatePassiveHandler(entry){
   if(!Number.isFinite(params.multiplier)||params.multiplier<=0||params.multiplier>=1)problems.push('received-damage-modifier requires multiplier between 0 and 1');
   if(params.requireFullHp!==undefined&&typeof params.requireFullHp!=='boolean')problems.push('received-damage-modifier requireFullHp must be boolean');
   if(params.superEffective!==undefined&&typeof params.superEffective!=='boolean')problems.push('received-damage-modifier superEffective must be boolean');
-  if(params.requireFullHp!==true&&params.superEffective!==true)problems.push('received-damage-modifier requires a supported condition');
+  if(params.requireContact!==undefined&&typeof params.requireContact!=='boolean')problems.push('received-damage-modifier requireContact must be boolean');
+  if(params.requireFullHp!==true&&params.superEffective!==true&&params.requireContact!==true)problems.push('received-damage-modifier requires a supported condition');
   return problems;
  }
  if(entry.id==='always-hit'||entry.id==='burn-attack-penalty-immunity')return problems;
@@ -252,7 +275,7 @@ export function validatePassiveHandler(entry){
   return problems;
  }
  if(entry.id==='volatile-immunity'){
-  if(!Array.isArray(params.volatiles)||!params.volatiles.length||new Set(params.volatiles).size!==params.volatiles.length||params.volatiles.some(id=>!['confusion','flinch','taunt','encore','disable','leech-seed'].includes(id)))problems.push('volatile-immunity requires distinct supported volatiles');
+  if(!Array.isArray(params.volatiles)||!params.volatiles.length||new Set(params.volatiles).size!==params.volatiles.length||params.volatiles.some(id=>!['confusion','flinch','taunt','encore','disable','leech-seed','infatuation'].includes(id)))problems.push('volatile-immunity requires distinct supported volatiles');
   return problems;
  }
  if(entry.id==='critical-vs-status'||entry.id==='status-residual-heal'||entry.id==='status-reflect'){
@@ -290,9 +313,27 @@ export function validatePassiveHandler(entry){
   if(!Number.isInteger(params.chanceNumerator)||!Number.isInteger(params.chanceDenominator)||params.chanceNumerator<1||params.chanceDenominator<1||params.chanceNumerator>params.chanceDenominator)problems.push('random-status-cure requires a valid chance fraction');
   return problems;
  }
+ if(entry.id==='contact-protection-pierce'){
+  if(!Number.isFinite(params.multiplier)||params.multiplier<=0||params.multiplier>=1)problems.push('contact-protection-pierce requires multiplier between 0 and 1');
+  return problems;
+ }
+ if(entry.id==='parental-bond'){
+  if(!Number.isFinite(params.secondHitMultiplier)||params.secondHitMultiplier<=0||params.secondHitMultiplier>=1)problems.push('parental-bond requires secondHitMultiplier between 0 and 1');
+  return problems;
+ }
+ if(entry.id==='opponent-switch-trap'){
+  if(params.exemptTypes!==undefined&&(!Array.isArray(params.exemptTypes)||new Set(params.exemptTypes).size!==params.exemptTypes.length||params.exemptTypes.some(type=>!CANONICAL_TYPES.includes(type))))problems.push('opponent-switch-trap exemptTypes must contain distinct canonical types');
+  if(params.exemptSameAbility!==undefined&&typeof params.exemptSameAbility!=='boolean')problems.push('opponent-switch-trap exemptSameAbility must be boolean');
+  return problems;
+ }
  if(entry.id==='entry-weather'){
   if(!SUPPORTED_WEATHERS.includes(params.weather))problems.push('entry-weather requires supported weather');
   if(!Number.isInteger(params.turns)||params.turns<1)problems.push('entry-weather requires positive turns');
+  return problems;
+ }
+ if(entry.id==='entry-terrain'){
+  if(!['electric','grassy','psychic','misty'].includes(params.terrain))problems.push('entry-terrain requires supported terrain');
+  if(!Number.isInteger(params.turns)||params.turns<1)problems.push('entry-terrain requires positive turns');
   return problems;
  }
  if(entry.id==='entry-stat-drop'){
@@ -350,6 +391,7 @@ export function validatePassiveHandler(entry){
   return problems;
  }
  if(entry.id==='stat-change-inversion'||entry.id==='opponent-stat-gain-copy')return problems;
+ if(entry.id==='stat-change-multiplier'){if(!Number.isInteger(params.multiplier)||params.multiplier<2||params.multiplier>6)problems.push('stat-change-multiplier requires integer multiplier from 2 to 6');return problems;}
  if(entry.id==='global-move-block'){
   if(!Array.isArray(params.moveIds)||!params.moveIds.length||new Set(params.moveIds).size!==params.moveIds.length||params.moveIds.some(id=>typeof id!=='string'||!id))problems.push('global-move-block requires distinct moveIds');
   if(params.blockContactFaintResponse!==undefined&&typeof params.blockContactFaintResponse!=='boolean')problems.push('global-move-block blockContactFaintResponse must be boolean');
@@ -485,7 +527,12 @@ export function validatePassiveHandler(entry){
   return problems;
  }
  if(entry.id==='item-grounding')return problems;
- if(entry.id==='item-force-attacker-switch')return problems;
+ if(entry.id==='item-force-attacker-switch'||entry.id==='item-holder-switch')return problems;
+ if(entry.id==='item-binding-damage-boost'){
+  if(!Number.isInteger(params.numerator)||!Number.isInteger(params.denominator)||params.numerator<1||params.denominator<1||params.numerator>params.denominator)problems.push('item-binding-damage-boost requires a valid positive fraction');
+  return problems;
+ }
+ if(entry.id==='item-switch-escape')return problems;
  if(entry.id==='item-one-shot-damage-boost'){
   if(!CANONICAL_TYPES.includes(params.type))problems.push('item-one-shot-damage-boost requires a canonical type');
   if(!Number.isFinite(params.multiplier)||params.multiplier<=1)problems.push('item-one-shot-damage-boost requires multiplier > 1');

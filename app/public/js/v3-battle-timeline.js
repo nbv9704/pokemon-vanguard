@@ -11,7 +11,7 @@ function hpChange(event){
 }
 function effectiveness(value){if(value===0)return ' It had no effect.';if(value>1)return ' It was super effective!';if(value>0&&value<1)return ' It was not very effective.';return '';}
 
-export function applyBattleEvent(snapshot,event){
+export function applyBattleEvent(snapshot,event,catalog=null){
  const next=clone(snapshot),target=findMon(next,event.targetId||event.actorId);
  if(event.kind==='damage'||event.kind==='heal'){
   if(target&&Number.isFinite(event.hpAfter))target.hp=event.hpAfter;
@@ -25,6 +25,15 @@ export function applyBattleEvent(snapshot,event){
  if(event.kind==='switchOut'&&target)target.activeSlot=-1;
  if(event.kind==='switchIn'&&target)target.activeSlot=event.slot;
  if(event.kind==='megaEvolved'&&target){target.speciesId=event.toSpeciesId;target.name=event.name;target.spriteKey=event.spriteKey;target.types=[...event.types];target.hp=event.hpAfter;target.maxHp=event.maxHpAfter;target.megaEvolved=true;}
+ const identity=(mon,{speciesId,name,spriteKey,types}={})=>{if(!mon)return;if(speciesId)mon.speciesId=speciesId;if(name)mon.name=name;if(spriteKey)mon.spriteKey=spriteKey;if(Array.isArray(types))mon.types=[...types];};
+ const species=id=>catalog?.species?.find(entry=>entry.id===id)||catalog?.megaForms?.find(entry=>entry.id===id)||null;
+ if(event.kind==='transformed'){const actorMon=findMon(next,event.actorId),source=findMon(next,event.targetId),profile=species(event.speciesId);identity(actorMon,{speciesId:event.speciesId,name:event.name||source?.name||profile?.name,spriteKey:event.spriteKey||source?.spriteKey||profile?.spriteKey,types:event.types||source?.types||profile?.types});}
+ if(event.kind==='transformEnded'&&target){const profile=species(event.toSpeciesId);identity(target,{speciesId:event.toSpeciesId,name:event.name||profile?.name,spriteKey:event.spriteKey||profile?.spriteKey,types:event.types||profile?.types});}
+ if(event.kind==='abilityFormChanged'&&target){const profile=species(event.toSpeciesId);identity(target,{speciesId:event.toSpeciesId,name:event.name||profile?.name,spriteKey:event.spriteKey||profile?.spriteKey||event.toSpeciesId,types:event.types||profile?.types});if(Number.isFinite(event.hpAfter))target.hp=event.hpAfter;if(Number.isFinite(event.maxHpAfter))target.maxHp=event.maxHpAfter;}
+ if(event.kind==='illusionStarted'&&target)target.illusionState={abilityId:event.abilityId,sourceActorId:event.sourceActorId||event.targetId,speciesId:event.displaySpeciesId,name:event.displayName,spriteKey:event.displaySpriteKey,types:[...(event.displayTypes||[])]};
+ if((event.kind==='illusionBroken'||event.kind==='illusionEnded')&&target){delete target.illusionState;if(event.revealedSpeciesId)identity(target,{speciesId:event.revealedSpeciesId,name:event.revealedName,spriteKey:event.revealedSpriteKey,types:event.revealedTypes});}
+ if(event.kind==='twoTurnMovePrepared'&&target&&event.semiInvulnerable)target.battlePresentation={semiInvulnerable:event.semiInvulnerable,moveId:event.moveId};
+ if((event.kind==='twoTurnMoveReleased'||event.kind==='twoTurnMoveAborted')&&target)delete target.battlePresentation;
  if(event.kind==='positionsSwapped'){
   const actor=findMon(next,event.actorId),ally=findMon(next,event.allyId);
   if(actor)actor.activeSlot=event.toSlot;if(ally)ally.activeSlot=event.fromSlot;
@@ -83,6 +92,12 @@ export function battleEventText(event,snapshot,catalog){
    }
    case 'megaEvolved':return `${actor} Mega Evolved into ${event.name}! Its Ability became ${label(event.abilityId)}.`;
    case 'megaFailed':return `${actor} could not Mega Evolve: ${label(event.reason)}.`;
+   case 'transformed':return `${actor} transformed into ${event.name||nameOf(snapshot,event.targetId)}!`;
+   case 'transformEnded':return `${actor} returned to its original form.`;
+   case 'illusionStarted':return `${actor} took on the appearance of ${event.displayName||'an ally'}.`;
+   case 'illusionBroken':return `${actor}'s Illusion was broken!`;
+   case 'disguiseBroken':return `${actor}'s Disguise was busted!`;
+   case 'abilityFormChanged':return `${actor} changed form${event.name?` into ${event.name}`:''}.`;
    case 'ppSpent':return `${move}: ${event.ppAfter}/${event.ppBefore} PP remaining.`;
    case 'ppSpendSkipped':return `${move} continued without spending additional PP.`;
    case 'twoTurnMovePrepared':return event.semiInvulnerable==='underground'?`${actor} burrowed underground with ${move}.`:event.semiInvulnerable==='underwater'?`${actor} dove underwater with ${move}.`:event.semiInvulnerable==='airborne'?`${actor} flew out of reach with ${move}.`:event.semiInvulnerable==='vanished'?`${actor} vanished with ${move}.`:`${actor} began charging ${move}.`;
@@ -147,7 +162,8 @@ export function battleEventText(event,snapshot,catalog){
    case 'hazardTriggered':return event.hazard==='toxic-spikes'?`${label(event.hazard)} triggered on ${target}${event.status?`, inflicting ${label(event.status)}`:''}.`:`${target} was hurt by ${label(event.hazard)} for ${event.amount} HP${event.hazard==='stealth-rock'?effectiveness(event.effectiveness):'.'}`;
    case 'hazardRemoved':return event.reason==='poison-type-absorption'?`${target} absorbed ${label(event.hazard)} from ${event.side==='A'?'your':'the opposing'} side.`:`${label(event.hazard)} was cleared from ${event.side==='A'?'your':'the opposing'} side${move?` by ${move}`:''}.`;
    case 'entryReplacementRequired':return 'Entry effects caused a faint; another replacement is required.';
-   case 'turnSuspended':return 'The turn paused for an entry replacement.';
+   case 'forcedReplacementRequested':return `${actor}'s ${label(event.itemId)||'held item'} forced a replacement choice.`;
+   case 'turnSuspended':return event.reason==='forcedReplacement'?'The turn paused for a forced replacement.':'The turn paused for an entry replacement.';
    case 'entryCompleted':return event.resume?'The replacement entered; the interrupted turn will continue.':'All replacements entered the battle.';
    case 'turnResumed':return 'The interrupted turn resumed.';
    case 'endTurnStarted':return 'End-of-turn effects resolved.';
@@ -162,15 +178,16 @@ export function battleLog(events=[],snapshot,catalog){
  return events.map(event=>{if(event.kind==='turnStarted'&&event.turn)turn=event.turn;const entry={id:event.id||`${turn}:${event.kind}`,turn,text:battleEventText(event,snapshot,catalog),kind:event.kind};if(event.kind==='turnEnded'&&event.turn)turn=event.turn+1;return entry;});
 }
 
-export function createTurnFrames(initialSnapshot,events,{reduced=false}={}){
+export function createTurnFrames(initialSnapshot,events,{reduced=false,catalog=null}={}){
  let snapshot=clone(initialSnapshot),visible=events.filter(event=>event.kind==='turnStarted'),action=0;const groups=groupTurnEvents(events),total=groups.filter(group=>['move','switch','cancelled','recharge'].includes(group.kind)).length,frames=[];
  for(const group of groups){
   if(['move','switch','cancelled','recharge'].includes(group.kind))action++;
   if(group.kind==='move'){
-   const [started,...effects]=group.events,context={actorId:group.actorId,moveId:group.moveId,targetIds:visualTargetIds(effects,group.actorId)};visible=[...visible,started];frames.push({snapshot:clone(snapshot),events:[started],visibleEvents:[...visible],stage:'cast',...context,action,total,duration:reduced?0:1050});
-   for(const event of effects)snapshot=applyBattleEvent(snapshot,event);visible.push(...effects);frames.push({snapshot:clone(snapshot),events:effects,visibleEvents:[...visible],stage:'impact',...context,action,total,duration:reduced?0:420});
+   const [started,...effects]=group.events,preCast=effects.filter(event=>event.kind==='abilityFormChanged'&&event.trigger==='before-move'),impactEffects=effects.filter(event=>!preCast.includes(event)),context={actorId:group.actorId,moveId:group.moveId,targetIds:visualTargetIds(effects,group.actorId)};
+   for(const event of preCast)snapshot=applyBattleEvent(snapshot,event,catalog);visible=[...visible,started,...preCast];frames.push({snapshot:clone(snapshot),events:[started,...preCast],visibleEvents:[...visible],stage:'cast',...context,action,total,duration:reduced?0:1050});
+   for(const event of impactEffects)snapshot=applyBattleEvent(snapshot,event,catalog);visible.push(...impactEffects);frames.push({snapshot:clone(snapshot),events:impactEffects,visibleEvents:[...visible],stage:'impact',...context,action,total,duration:reduced?0:420});
   }else{
-   for(const event of group.events)snapshot=applyBattleEvent(snapshot,event);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:reduced?0:group.kind==='mega'?1000:500});
+   for(const event of group.events)snapshot=applyBattleEvent(snapshot,event,catalog);visible.push(...group.events);frames.push({snapshot:clone(snapshot),events:group.events,visibleEvents:[...visible],stage:group.kind,action,total,duration:reduced?0:group.kind==='mega'?1000:500});
   }
  }
  return frames;

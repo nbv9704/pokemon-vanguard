@@ -113,6 +113,7 @@ export function abilityPowerModifiers(unit,move,mechanics,{battle=null,runtime=n
   if(effect.kind==='entry-fainted-ally-power-boost'){
    const count=unit?.abilityState?.[`fainted-allies:${effect.sourceId}`]?.count??0;if(count>0){active=true;multiplier=1+effect.increment*Math.min(effect.maxCount,count);}
   }
+  if(effect.kind==='gender-damage-modifier'&&target){const userGender=unit?.gender,targetGender=target?.gender;if(['male','female'].includes(userGender)&&['male','female'].includes(targetGender)){active=true;multiplier=userGender===targetGender?effect.sameGenderMultiplier:effect.oppositeGenderMultiplier;}}
   if(!active)continue;values.push(multiplier);applied.push({sourceKind:'ability',sourceId:effect.sourceId,kind:effect.kind,multiplier});
  }
  return {values,applied,apply(power){let next=power;for(const multiplier of values)next=Math.max(1,pokeRound(next*multiplier));return next;}};
@@ -132,6 +133,13 @@ export function abilityForcesHit(unit){return abilityEffects(unit).some(effect=>
 export function abilityIgnoresBurnAttackPenalty(unit){return abilityEffects(unit).some(effect=>effect.kind==='burn-attack-penalty-immunity');}
 export function abilityIgnoresParalysisSpeedPenalty(unit){return abilityEffects(unit).some(effect=>effect.kind==='paralysis-speed-penalty-immunity');}
 export function abilityMaximizesMultiHit(unit){return abilityEffects(unit).some(effect=>effect.kind==='multi-hit-max');}
+export function abilityParentalBond(unit){return abilityEffects(unit).find(effect=>effect.kind==='parental-bond')||null;}
+export function abilityProtectionPierce(unit,mechanics){return mechanics?.contact===true&&mechanics?.bypassesProtect!==true?abilityEffects(unit).find(effect=>effect.kind==='contact-protection-pierce')||null:null;}
+export function opponentSwitchTrap(battle,unit){
+ const side=sideOf(battle,unit?.actorId);if(!side)return null;const opposing=side==='A'?'B':'A';
+ for(const holder of activeSideUnits(battle,opposing)){const effect=abilityEffects(holder).find(entry=>entry.kind==='opponent-switch-trap');if(!effect)continue;if((effect.exemptTypes||[]).some(type=>(unit.types||[]).includes(type)))continue;if(effect.exemptSameAbility&&abilityEffects(unit).some(entry=>entry.sourceId===effect.sourceId))continue;return {holder,effect};}
+ return null;
+}
 export function abilityBlocksSecondaryEffects(unit){return abilityEffects(unit).some(effect=>effect.kind==='secondary-effect-immunity');}
 export function abilityBerryConsumptionHeal(unit){return abilityEffects(unit).find(effect=>effect.kind==='berry-consumption-heal')||null;}
 export function abilityBerryEffectMultiplier(unit){return abilityEffects(unit).find(effect=>effect.kind==='berry-effect-multiplier')?.multiplier??1;}

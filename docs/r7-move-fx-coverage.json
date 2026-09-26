@@ -1,8 +1,9 @@
 {
-  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v22-mega-beta-v1",
+  "catalogVersion": "pv-ma-2026-09-12-beta2-beta-slice-v35-mega-beta-v8",
   "generatedBy": "app/scripts/generate-move-fx-coverage.mjs",
-  "moveCount": 67,
-  "coveredMoveCount": 67,
+  "moveCount": 490,
+  "coveredMoveCount": 490,
+  "presentationMoveCount": 490,
   "typePalette": [
     "normal",
     "fire",
@@ -34,412 +35,7421 @@
     "impact",
     "notes",
     "orb",
+    "projectile",
     "rush",
     "seed",
     "slash"
   ],
+  "presentationTiers": [
+    "parameterized-template",
+    "signature-timeline"
+  ],
+  "presentationSummary": {
+    "commitMarkers": 490,
+    "castCueCount": 1999,
+    "impactCueCount": 2223,
+    "tierCounts": {
+      "parameterized-template": 460,
+      "signature-timeline": 30
+    },
+    "templateCounts": {
+      "aura": 75,
+      "barrier": 4,
+      "beam": 2,
+      "drain": 3,
+      "field-wave": 14,
+      "hazard": 4,
+      "impact": 161,
+      "multi-hit": 15,
+      "projectile": 159,
+      "rush": 15,
+      "signature:air-slash": 1,
+      "signature:aura-sphere": 1,
+      "signature:blizzard": 1,
+      "signature:bug-buzz": 1,
+      "signature:close-combat": 1,
+      "signature:dark-pulse": 1,
+      "signature:dragon-pulse": 1,
+      "signature:earthquake": 1,
+      "signature:extreme-speed": 1,
+      "signature:fire-blast": 1,
+      "signature:flamethrower": 1,
+      "signature:flash-cannon": 1,
+      "signature:focus-blast": 1,
+      "signature:hydro-pump": 1,
+      "signature:hyper-beam": 1,
+      "signature:ice-beam": 1,
+      "signature:iron-head": 1,
+      "signature:leaf-blade": 1,
+      "signature:moonblast": 1,
+      "signature:power-gem": 1,
+      "signature:protect": 1,
+      "signature:psychic": 1,
+      "signature:shadow-ball": 1,
+      "signature:sludge-bomb": 1,
+      "signature:solar-beam": 1,
+      "signature:stone-edge": 1,
+      "signature:surf": 1,
+      "signature:thunder": 1,
+      "signature:thunderbolt": 1,
+      "signature:will-o-wisp": 1,
+      "slash": 3,
+      "weather": 5
+    },
+    "signatureMoveCount": 30,
+    "parameterizedMoveCount": 460,
+    "legacyMoveCount": 0
+  },
   "moves": [
+    {
+      "moveId": "accelerock",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "accelerock",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "acid-armor",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "acid-armor",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "acid-spray",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "acid-spray",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "acrobatics",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "acrobatics",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "acupressure",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "acupressure",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
     {
       "moveId": "aerial-ace",
       "id": "slash",
       "source": "override",
-      "type": "flying"
+      "type": "flying",
+      "presentation": {
+        "moveId": "aerial-ace",
+        "tier": "parameterized-template",
+        "template": "slash",
+        "profile": "slash",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "after-you",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "after-you",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "agility",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "agility",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "air-cutter",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "air-cutter",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "air-slash",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "air-slash",
+        "tier": "signature-timeline",
+        "template": "signature:air-slash",
+        "profile": "projectile",
+        "castCues": 3,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "alluring-voice",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "alluring-voice",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ally-switch",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "ally-switch",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "amnesia",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "amnesia",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ancient-power",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "ancient-power",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "apple-acid",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "apple-acid",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aqua-cutter",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "aqua-cutter",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aqua-jet",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "aqua-jet",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aqua-ring",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "aqua-ring",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aqua-step",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "aqua-step",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aqua-tail",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "aqua-tail",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "armor-cannon",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "armor-cannon",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aromatic-mist",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "aromatic-mist",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "assurance",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "assurance",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "attract",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "attract",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aura-sphere",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "aura-sphere",
+        "tier": "signature-timeline",
+        "template": "signature:aura-sphere",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aura-wheel",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "aura-wheel",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "aurora-veil",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "aurora-veil",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "avalanche",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "avalanche",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "axe-kick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "axe-kick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "baby-doll-eyes",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "baby-doll-eyes",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "baneful-bunker",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "baneful-bunker",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "baton-pass",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "baton-pass",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "beak-blast",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "beak-blast",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "beat-up",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "beat-up",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "belch",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "belch",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "belly-drum",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "belly-drum",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bind",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "bind",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bite",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "bite",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bitter-blade",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "bitter-blade",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bitter-malice",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "bitter-malice",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "blast-burn",
       "id": "field-burst",
       "source": "override",
-      "type": "fire"
+      "type": "fire",
+      "presentation": {
+        "moveId": "blast-burn",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "blaze-kick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "blaze-kick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "blizzard",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "blizzard",
+        "tier": "signature-timeline",
+        "template": "signature:blizzard",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "block",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "block",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "body-press",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "body-press",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "body-slam",
       "id": "impact",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "body-slam",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bone-rush",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "bone-rush",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "boomburst",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "boomburst",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bounce",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "bounce",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "brave-bird",
       "id": "rush",
       "source": "override",
-      "type": "flying"
+      "type": "flying",
+      "presentation": {
+        "moveId": "brave-bird",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "breaking-swipe",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "breaking-swipe",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "brick-break",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "brick-break",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "brutal-swing",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "brutal-swing",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bug-bite",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "bug-bite",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bug-buzz",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "bug-buzz",
+        "tier": "signature-timeline",
+        "template": "signature:bug-buzz",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bulk-up",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "bulk-up",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "bulldoze",
       "id": "field-burst",
       "source": "override",
-      "type": "ground"
+      "type": "ground",
+      "presentation": {
+        "moveId": "bulldoze",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "bullet-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "bullet-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "bullet-seed",
       "id": "barrage",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "bullet-seed",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "barrage",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "burn-up",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "burn-up",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "burning-jealousy",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "burning-jealousy",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "calm-mind",
       "id": "aura",
       "source": "category-fallback",
-      "type": "psychic"
+      "type": "psychic",
+      "presentation": {
+        "moveId": "calm-mind",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ceaseless-edge",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "ceaseless-edge",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "charge",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "charge",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "charge-beam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "charge-beam",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "charm",
       "id": "aura",
       "source": "override",
-      "type": "fairy"
+      "type": "fairy",
+      "presentation": {
+        "moveId": "charm",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "chilling-water",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "chilling-water",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "chilly-reception",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "chilly-reception",
+        "tier": "parameterized-template",
+        "template": "weather",
+        "profile": "aura",
+        "castCues": 5,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "circle-throw",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "circle-throw",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "clanging-scales",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "clanging-scales",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "clangorous-soul",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "clangorous-soul",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "clear-smog",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "clear-smog",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "close-combat",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "close-combat",
+        "tier": "signature-timeline",
+        "template": "signature:close-combat",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "coaching",
       "id": "orb",
       "source": "category-fallback",
-      "type": "fighting"
+      "type": "fighting",
+      "presentation": {
+        "moveId": "coaching",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "coil",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "coil",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "comeuppance",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "comeuppance",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "confuse-ray",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "confuse-ray",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "copycat",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "copycat",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "corrosive-gas",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "corrosive-gas",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "cosmic-power",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "cosmic-power",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "cotton-guard",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "cotton-guard",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "cotton-spore",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "cotton-spore",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "counter",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "counter",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "covet",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "covet",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "crabhammer",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "crabhammer",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "cross-chop",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "cross-chop",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "cross-poison",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "cross-poison",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "crunch",
       "id": "rush",
       "source": "override",
-      "type": "dark"
+      "type": "dark",
+      "presentation": {
+        "moveId": "crunch",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "crush-claw",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "crush-claw",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "curse",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "curse",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dark-pulse",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "dark-pulse",
+        "tier": "signature-timeline",
+        "template": "signature:dark-pulse",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "darkest-lariat",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "darkest-lariat",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dazzling-gleam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "dazzling-gleam",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "decorate",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "decorate",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "defog",
       "id": "field-burst",
       "source": "override",
-      "type": "flying"
+      "type": "flying",
+      "presentation": {
+        "moveId": "defog",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "destiny-bond",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "destiny-bond",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "detect",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "detect",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "dig",
       "id": "rush",
       "source": "override",
-      "type": "ground"
+      "type": "ground",
+      "presentation": {
+        "moveId": "dig",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dire-claw",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "dire-claw",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "disable",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "disable",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "discharge",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "discharge",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "dive",
       "id": "rush",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "dive",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "double-edge",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "double-edge",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "double-hit",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "double-hit",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "double-team",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "double-team",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "draco-meteor",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "draco-meteor",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dragon-cheer",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-cheer",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dragon-claw",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-claw",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dragon-dance",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-dance",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dragon-darts",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-darts",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dragon-pulse",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-pulse",
+        "tier": "signature-timeline",
+        "template": "signature:dragon-pulse",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dragon-rush",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-rush",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "dragon-tail",
       "id": "rush",
       "source": "override",
-      "type": "dragon"
+      "type": "dragon",
+      "presentation": {
+        "moveId": "dragon-tail",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "drain-punch",
       "id": "drain-contact",
       "source": "override",
-      "type": "fighting"
+      "type": "fighting",
+      "presentation": {
+        "moveId": "drain-punch",
+        "tier": "parameterized-template",
+        "template": "drain",
+        "profile": "drain-contact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "draining-kiss",
       "id": "drain",
       "source": "override",
-      "type": "fairy"
+      "type": "fairy",
+      "presentation": {
+        "moveId": "draining-kiss",
+        "tier": "parameterized-template",
+        "template": "drain",
+        "profile": "drain",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "drill-peck",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "drill-peck",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "drill-run",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "drill-run",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "dual-wingbeat",
       "id": "slash",
       "source": "override",
-      "type": "flying"
+      "type": "flying",
+      "presentation": {
+        "moveId": "dual-wingbeat",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "slash",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "dynamic-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "dynamic-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "earth-power",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "earth-power",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "earthquake",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "earthquake",
+        "tier": "signature-timeline",
+        "template": "signature:earthquake",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "eerie-impulse",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "eerie-impulse",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "eerie-spell",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "eerie-spell",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "electric-terrain",
+      "id": "field-burst",
+      "source": "override",
+      "type": "electric",
+      "presentation": {
+        "moveId": "electric-terrain",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "electrify",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "electrify",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "electro-ball",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "electro-ball",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "electro-shot",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "electro-shot",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "electroweb",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "electroweb",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "encore",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "encore",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "endeavor",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "endeavor",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "endure",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "endure",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "energy-ball",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "energy-ball",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "entrainment",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "entrainment",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "eruption",
       "id": "field-burst",
       "source": "override",
-      "type": "fire"
+      "type": "fire",
+      "presentation": {
+        "moveId": "eruption",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "expanding-force",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "expanding-force",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "explosion",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "explosion",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "extrasensory",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "extrasensory",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "extreme-speed",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "extreme-speed",
+        "tier": "signature-timeline",
+        "template": "signature:extreme-speed",
+        "profile": "impact",
+        "castCues": 3,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "facade",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "facade",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fairy-lock",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "fairy-lock",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fake-out",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "fake-out",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fake-tears",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "fake-tears",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "feather-dance",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "feather-dance",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "feint",
       "id": "slash",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "feint",
+        "tier": "parameterized-template",
+        "template": "slash",
+        "profile": "slash",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fell-stinger",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "fell-stinger",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fickle-beam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "fickle-beam",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fiery-dance",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "fiery-dance",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "final-gambit",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "final-gambit",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fire-blast",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "fire-blast",
+        "tier": "signature-timeline",
+        "template": "signature:fire-blast",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fire-fang",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "fire-fang",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fire-lash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "fire-lash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fire-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "fire-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fire-spin",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "fire-spin",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "first-impression",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "first-impression",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fissure",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "fissure",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flail",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "flail",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flame-charge",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "flame-charge",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flamethrower",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "flamethrower",
+        "tier": "signature-timeline",
+        "template": "signature:flamethrower",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flare-blitz",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "flare-blitz",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flash-cannon",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "flash-cannon",
+        "tier": "signature-timeline",
+        "template": "signature:flash-cannon",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flatter",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "flatter",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "fling",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "fling",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "flip-turn",
       "id": "rush",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "flip-turn",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flower-trick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "flower-trick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "fly",
       "id": "rush",
       "source": "override",
-      "type": "flying"
+      "type": "flying",
+      "presentation": {
+        "moveId": "fly",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "flying-press",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "flying-press",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "focus-blast",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "focus-blast",
+        "tier": "signature-timeline",
+        "template": "signature:focus-blast",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "focus-energy",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "focus-energy",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "focus-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "focus-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "follow-me",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "follow-me",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "forests-curse",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "forests-curse",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "foul-play",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "foul-play",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "freeze-dry",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "freeze-dry",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "frenzy-plant",
       "id": "impact",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "frenzy-plant",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "frost-breath",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "frost-breath",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "future-sight",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "future-sight",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "gastro-acid",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "gastro-acid",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "giga-drain",
       "id": "drain",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "giga-drain",
+        "tier": "parameterized-template",
+        "template": "drain",
+        "profile": "drain",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "giga-impact",
       "id": "rush",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "giga-impact",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "gigaton-hammer",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "gigaton-hammer",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "glare",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "glare",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "grass-knot",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "grass-knot",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "grassy-glide",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "grassy-glide",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "grassy-terrain",
       "id": "field-burst",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "grassy-terrain",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "grav-apple",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "grav-apple",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "gravity",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "gravity",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "growth",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "growth",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "guard-split",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "guard-split",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "guard-swap",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "guard-swap",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "guillotine",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "guillotine",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "gunk-shot",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "gunk-shot",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "gyro-ball",
       "id": "rush",
       "source": "override",
-      "type": "steel"
+      "type": "steel",
+      "presentation": {
+        "moveId": "gyro-ball",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "hammer-arm",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "hammer-arm",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "hard-press",
       "id": "impact",
       "source": "override",
-      "type": "steel"
+      "type": "steel",
+      "presentation": {
+        "moveId": "hard-press",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "haze",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "haze",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "head-smash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "head-smash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "headlong-rush",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "headlong-rush",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "heal-bell",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "heal-bell",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "heal-pulse",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "heal-pulse",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "healing-wish",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "healing-wish",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "heat-crash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "heat-crash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "heat-wave",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "heat-wave",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "heavy-slam",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "heavy-slam",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "helping-hand",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "helping-hand",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "hex",
       "id": "aura",
       "source": "override",
-      "type": "ghost"
+      "type": "ghost",
+      "presentation": {
+        "moveId": "hex",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "high-horsepower",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "high-horsepower",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "high-jump-kick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "high-jump-kick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "horn-drill",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "horn-drill",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "horn-leech",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "horn-leech",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "howl",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "howl",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "hurricane",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "hurricane",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "hydro-cannon",
       "id": "beam",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "hydro-cannon",
+        "tier": "parameterized-template",
+        "template": "beam",
+        "profile": "beam",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "hydro-pump",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "hydro-pump",
+        "tier": "signature-timeline",
+        "template": "signature:hydro-pump",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
     },
     {
       "moveId": "hyper-beam",
       "id": "beam",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "hyper-beam",
+        "tier": "signature-timeline",
+        "template": "signature:hyper-beam",
+        "profile": "beam",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
     },
     {
       "moveId": "hyper-voice",
       "id": "notes",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "hyper-voice",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "notes",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "hypnosis",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "hypnosis",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ice-beam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "ice-beam",
+        "tier": "signature-timeline",
+        "template": "signature:ice-beam",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
     },
     {
       "moveId": "ice-fang",
       "id": "rush",
       "source": "override",
-      "type": "ice"
+      "type": "ice",
+      "presentation": {
+        "moveId": "ice-fang",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ice-hammer",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "ice-hammer",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "ice-punch",
       "id": "impact",
       "source": "override",
-      "type": "ice"
+      "type": "ice",
+      "presentation": {
+        "moveId": "ice-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ice-shard",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "ice-shard",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ice-spinner",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "ice-spinner",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "icicle-crash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "icicle-crash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "icicle-spear",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "icicle-spear",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "icy-wind",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "icy-wind",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "imprison",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "imprison",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "infernal-parade",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "infernal-parade",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "inferno",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "inferno",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "infestation",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "infestation",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "ingrain",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "ingrain",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "instruct",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "instruct",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "iron-defense",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "iron-defense",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "iron-head",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "iron-head",
+        "tier": "signature-timeline",
+        "template": "signature:iron-head",
+        "profile": "impact",
+        "castCues": 3,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "iron-tail",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "iron-tail",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "jet-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "jet-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "kings-shield",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "kings-shield",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "knock-off",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "knock-off",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "kowtow-cleave",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "kowtow-cleave",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "lash-out",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "lash-out",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "last-resort",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "last-resort",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "last-respects",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "last-respects",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "lava-plume",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "lava-plume",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "leaf-blade",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "leaf-blade",
+        "tier": "signature-timeline",
+        "template": "signature:leaf-blade",
+        "profile": "impact",
+        "castCues": 3,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "leaf-storm",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "leaf-storm",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "leech-life",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "leech-life",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "leech-seed",
       "id": "seed",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "leech-seed",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "seed",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "life-dew",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "life-dew",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "light-of-ruin",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "light-of-ruin",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "light-screen",
       "id": "barrier",
       "source": "override",
-      "type": "psychic"
+      "type": "psychic",
+      "presentation": {
+        "moveId": "light-screen",
+        "tier": "parameterized-template",
+        "template": "barrier",
+        "profile": "barrier",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "liquidation",
       "id": "rush",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "liquidation",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "lock-on",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "lock-on",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "low-kick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "low-kick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "low-sweep",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "low-sweep",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "lumina-crash",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "lumina-crash",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "lunge",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "lunge",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mach-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "mach-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "magic-powder",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "magic-powder",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "magic-room",
+      "id": "field-burst",
+      "source": "override",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "magic-room",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "magnet-rise",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "magnet-rise",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "magnetic-flux",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "magnetic-flux",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "matcha-gotcha",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "matcha-gotcha",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mean-look",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "mean-look",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mega-kick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "mega-kick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "megahorn",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "megahorn",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "memento",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "memento",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "metal-burst",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "metal-burst",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "metal-sound",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "metal-sound",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "meteor-beam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "meteor-beam",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "meteor-mash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "meteor-mash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "minimize",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "minimize",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mirror-coat",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "mirror-coat",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "misty-explosion",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "misty-explosion",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "misty-terrain",
       "id": "field-burst",
       "source": "override",
-      "type": "fairy"
+      "type": "fairy",
+      "presentation": {
+        "moveId": "misty-terrain",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "moonblast",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "moonblast",
+        "tier": "signature-timeline",
+        "template": "signature:moonblast",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "moonlight",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "moonlight",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "morning-sun",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "morning-sun",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mortal-spin",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "mortal-spin",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mountain-gale",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "mountain-gale",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mud-shot",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "mud-shot",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mud-slap",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "mud-slap",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "muddy-water",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "muddy-water",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "mystical-fire",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "mystical-fire",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "nasty-plot",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "nasty-plot",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "night-daze",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "night-daze",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "night-shade",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "night-shade",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "night-slash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "night-slash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "noble-roar",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "noble-roar",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "nuzzle",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "nuzzle",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "outrage",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dragon",
+      "presentation": {
+        "moveId": "outrage",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "overheat",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "overheat",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "pain-split",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "pain-split",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "parabolic-charge",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "parabolic-charge",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "parting-shot",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "parting-shot",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "payback",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "payback",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "perish-song",
       "id": "notes",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "perish-song",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "notes",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "petal-blizzard",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "petal-blizzard",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "petal-dance",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "petal-dance",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "phantom-force",
       "id": "aura",
       "source": "override",
-      "type": "ghost"
+      "type": "ghost",
+      "presentation": {
+        "moveId": "phantom-force",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "pin-missile",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "pin-missile",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "play-rough",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "play-rough",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "pluck",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "pluck",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "poison-fang",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "poison-fang",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "poison-jab",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "poison-jab",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "poison-powder",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "poison-powder",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "pollen-puff",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "pollen-puff",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "poltergeist",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "poltergeist",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "population-bomb",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "population-bomb",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "pounce",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "pounce",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "power-gem",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "power-gem",
+        "tier": "signature-timeline",
+        "template": "signature:power-gem",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "power-split",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "power-split",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "power-swap",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "power-swap",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "power-trick",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "power-trick",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "power-trip",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "power-trip",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "power-whip",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "power-whip",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "protect",
       "id": "barrier",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "protect",
+        "tier": "signature-timeline",
+        "template": "signature:protect",
+        "profile": "barrier",
+        "castCues": 4,
+        "impactCues": 3,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psych-up",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "psych-up",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psychic",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psychic",
+        "tier": "signature-timeline",
+        "template": "signature:psychic",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psychic-fangs",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psychic-fangs",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psychic-noise",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psychic-noise",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psychic-terrain",
+      "id": "field-burst",
+      "source": "override",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psychic-terrain",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psycho-cut",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psycho-cut",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psyshield-bash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psyshield-bash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "psyshock",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "psyshock",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "quash",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "quash",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "quick-attack",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "quick-attack",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "quick-guard",
       "id": "barrier",
       "source": "override",
-      "type": "fighting"
+      "type": "fighting",
+      "presentation": {
+        "moveId": "quick-guard",
+        "tier": "parameterized-template",
+        "template": "barrier",
+        "profile": "barrier",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "quiver-dance",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "quiver-dance",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rage-powder",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "rage-powder",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "raging-bull",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "raging-bull",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "raging-fury",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "raging-fury",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "rain-dance",
       "id": "field-burst",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "rain-dance",
+        "tier": "parameterized-template",
+        "template": "weather",
+        "profile": "field-burst",
+        "castCues": 5,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "rapid-spin",
       "id": "rush",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "rapid-spin",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "razor-shell",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "razor-shell",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "recover",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "recover",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "recycle",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "recycle",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "reflect",
       "id": "barrier",
       "source": "override",
-      "type": "psychic"
+      "type": "psychic",
+      "presentation": {
+        "moveId": "reflect",
+        "tier": "parameterized-template",
+        "template": "barrier",
+        "profile": "barrier",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "reflect-type",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "reflect-type",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rest",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "rest",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "reversal",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "reversal",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rising-voltage",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "rising-voltage",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "roar",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "roar",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rock-blast",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "rock-blast",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rock-polish",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "rock-polish",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "rock-slide",
       "id": "field-burst",
       "source": "override",
-      "type": "rock"
+      "type": "rock",
+      "presentation": {
+        "moveId": "rock-slide",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rock-tomb",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "rock-tomb",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "rock-wrecker",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "rock-wrecker",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "role-play",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "role-play",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "roost",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "roost",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "round",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "round",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sacred-sword",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "sacred-sword",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "safeguard",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "safeguard",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "salt-cure",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "salt-cure",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sand-tomb",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "sand-tomb",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "sandstorm",
       "id": "aura",
       "source": "category-fallback",
-      "type": "rock"
+      "type": "rock",
+      "presentation": {
+        "moveId": "sandstorm",
+        "tier": "parameterized-template",
+        "template": "weather",
+        "profile": "aura",
+        "castCues": 5,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "scald",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "scald",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "scale-shot",
       "id": "barrage",
       "source": "override",
-      "type": "dragon"
+      "type": "dragon",
+      "presentation": {
+        "moveId": "scale-shot",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "barrage",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "scary-face",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "scary-face",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "scorching-sands",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "scorching-sands",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "screech",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "screech",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "seed-bomb",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "seed-bomb",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "seismic-toss",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "seismic-toss",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "self-destruct",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "self-destruct",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shadow-ball",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "shadow-ball",
+        "tier": "signature-timeline",
+        "template": "signature:shadow-ball",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shadow-claw",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "shadow-claw",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shadow-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "shadow-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shadow-sneak",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "shadow-sneak",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shed-tail",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "shed-tail",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sheer-cold",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "sheer-cold",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shell-side-arm",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "shell-side-arm",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shell-smash",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "shell-smash",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "shelter",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "shelter",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "simple-beam",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "simple-beam",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "sing",
       "id": "notes",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "sing",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "notes",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "skill-swap",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "skill-swap",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "skitter-smack",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "skitter-smack",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sky-attack",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "flying",
+      "presentation": {
+        "moveId": "sky-attack",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "slack-off",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "slack-off",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "slash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "slash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sleep-powder",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "sleep-powder",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sleep-talk",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "sleep-talk",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sludge-bomb",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "sludge-bomb",
+        "tier": "signature-timeline",
+        "template": "signature:sludge-bomb",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sludge-wave",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "sludge-wave",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "smack-down",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "smack-down",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "smart-strike",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "smart-strike",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "snap-trap",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "snap-trap",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "snarl",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "snarl",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "snore",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "snore",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "snowscape",
       "id": "aura",
       "source": "category-fallback",
-      "type": "ice"
+      "type": "ice",
+      "presentation": {
+        "moveId": "snowscape",
+        "tier": "parameterized-template",
+        "template": "weather",
+        "profile": "aura",
+        "castCues": 5,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "soak",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "soak",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "solar-beam",
       "id": "beam",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "solar-beam",
+        "tier": "signature-timeline",
+        "template": "signature:solar-beam",
+        "profile": "beam",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
     },
     {
       "moveId": "solar-blade",
       "id": "slash",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "solar-blade",
+        "tier": "parameterized-template",
+        "template": "slash",
+        "profile": "slash",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sparkling-aria",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "sparkling-aria",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "speed-swap",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "speed-swap",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "spicy-extract",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "spicy-extract",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "spikes",
       "id": "field-burst",
       "source": "override",
-      "type": "ground"
+      "type": "ground",
+      "presentation": {
+        "moveId": "spikes",
+        "tier": "parameterized-template",
+        "template": "hazard",
+        "profile": "field-burst",
+        "castCues": 6,
+        "impactCues": 3,
+        "commit": true
+      }
     },
     {
       "moveId": "spiky-shield",
       "id": "barrier",
       "source": "override",
-      "type": "grass"
+      "type": "grass",
+      "presentation": {
+        "moveId": "spiky-shield",
+        "tier": "parameterized-template",
+        "template": "barrier",
+        "profile": "barrier",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "spirit-shackle",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "spirit-shackle",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "spit-up",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "spit-up",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "spite",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "spite",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "stealth-rock",
       "id": "field-burst",
       "source": "override",
-      "type": "rock"
+      "type": "rock",
+      "presentation": {
+        "moveId": "stealth-rock",
+        "tier": "parameterized-template",
+        "template": "hazard",
+        "profile": "field-burst",
+        "castCues": 6,
+        "impactCues": 3,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "steel-beam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "steel-beam",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "steel-roller",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "steel-roller",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "steel-wing",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "steel",
+      "presentation": {
+        "moveId": "steel-wing",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sticky-web",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "sticky-web",
+        "tier": "parameterized-template",
+        "template": "hazard",
+        "profile": "aura",
+        "castCues": 6,
+        "impactCues": 3,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "stockpile",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "stockpile",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "stomping-tantrum",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ground",
+      "presentation": {
+        "moveId": "stomping-tantrum",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "stone-axe",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "stone-axe",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "stone-edge",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "stone-edge",
+        "tier": "signature-timeline",
+        "template": "signature:stone-edge",
+        "profile": "impact",
+        "castCues": 3,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "stored-power",
       "id": "beam",
       "source": "override",
-      "type": "psychic"
+      "type": "psychic",
+      "presentation": {
+        "moveId": "stored-power",
+        "tier": "parameterized-template",
+        "template": "beam",
+        "profile": "beam",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "storm-throw",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "storm-throw",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "strength-sap",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "strength-sap",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "string-shot",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "string-shot",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "struggle-bug",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "struggle-bug",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "stuff-cheeks",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "stuff-cheeks",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "stun-spore",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "stun-spore",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "substitute",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "substitute",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sucker-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "sucker-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "sunny-day",
       "id": "field-burst",
       "source": "override",
-      "type": "fire"
+      "type": "fire",
+      "presentation": {
+        "moveId": "sunny-day",
+        "tier": "parameterized-template",
+        "template": "weather",
+        "profile": "field-burst",
+        "castCues": 5,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "super-fang",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "super-fang",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "supercell-slam",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "supercell-slam",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "superpower",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "superpower",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "surf",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "surf",
+        "tier": "signature-timeline",
+        "template": "signature:surf",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "swagger",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "swagger",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "swallow",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "swallow",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sweet-kiss",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "fairy",
+      "presentation": {
+        "moveId": "sweet-kiss",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "sweet-scent",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "sweet-scent",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "switcheroo",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "switcheroo",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "swords-dance",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "swords-dance",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "synthesis",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "synthesis",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "syrup-bomb",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "syrup-bomb",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "tail-slap",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "tail-slap",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "tailwind",
       "id": "field-burst",
       "source": "override",
-      "type": "flying"
+      "type": "flying",
+      "presentation": {
+        "moveId": "tailwind",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
     },
     {
       "moveId": "taunt",
       "id": "notes",
       "source": "override",
-      "type": "dark"
+      "type": "dark",
+      "presentation": {
+        "moveId": "taunt",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "notes",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "tearful-look",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "tearful-look",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "teatime",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "teatime",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "teeter-dance",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "teeter-dance",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "temper-flare",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "temper-flare",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "terrain-pulse",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "terrain-pulse",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thief",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "thief",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thrash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "thrash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "throat-chop",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "throat-chop",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thunder",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "thunder",
+        "tier": "signature-timeline",
+        "template": "signature:thunder",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thunder-fang",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "thunder-fang",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thunder-punch",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "thunder-punch",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thunder-wave",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "thunder-wave",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "thunderbolt",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "thunderbolt",
+        "tier": "signature-timeline",
+        "template": "signature:thunderbolt",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "tickle",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "tickle",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "tidy-up",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "tidy-up",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "torch-song",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fire",
+      "presentation": {
+        "moveId": "torch-song",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "torment",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "dark",
+      "presentation": {
+        "moveId": "torment",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "toxic",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "toxic",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "toxic-spikes",
       "id": "field-burst",
       "source": "override",
-      "type": "poison"
+      "type": "poison",
+      "presentation": {
+        "moveId": "toxic-spikes",
+        "tier": "parameterized-template",
+        "template": "hazard",
+        "profile": "field-burst",
+        "castCues": 6,
+        "impactCues": 3,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "toxic-thread",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "toxic-thread",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "trailblaze",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "trailblaze",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "transform",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "transform",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "tri-attack",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "tri-attack",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "trick",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "trick",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "trick-or-treat",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "ghost",
+      "presentation": {
+        "moveId": "trick-or-treat",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "trick-room",
+      "id": "field-burst",
+      "source": "override",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "trick-room",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "triple-arrows",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "triple-arrows",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "triple-axel",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "ice",
+      "presentation": {
+        "moveId": "triple-axel",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "impact",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "trop-kick",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "trop-kick",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "twin-beam",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "twin-beam",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "u-turn",
       "id": "rush",
       "source": "override",
-      "type": "bug"
+      "type": "bug",
+      "presentation": {
+        "moveId": "u-turn",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "upper-hand",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "upper-hand",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "uproar",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "uproar",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "vacuum-wave",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "fighting",
+      "presentation": {
+        "moveId": "vacuum-wave",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "venoshock",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "poison",
+      "presentation": {
+        "moveId": "venoshock",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "volt-switch",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "volt-switch",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "volt-tackle",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "volt-tackle",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "water-pulse",
       "id": "orb",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "water-pulse",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "water-shuriken",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "water-shuriken",
+        "tier": "parameterized-template",
+        "template": "multi-hit",
+        "profile": "projectile",
+        "castCues": 5,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "water-spout",
       "id": "field-burst",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "water-spout",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
     },
     {
       "moveId": "waterfall",
       "id": "rush",
       "source": "override",
-      "type": "water"
+      "type": "water",
+      "presentation": {
+        "moveId": "waterfall",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "wave-crash",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "wave-crash",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "weather-ball",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "weather-ball",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "whirlpool",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "water",
+      "presentation": {
+        "moveId": "whirlpool",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "whirlwind",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "whirlwind",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "wide-guard",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "rock",
+      "presentation": {
+        "moveId": "wide-guard",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "wild-charge",
       "id": "rush",
       "source": "override",
-      "type": "electric"
+      "type": "electric",
+      "presentation": {
+        "moveId": "wild-charge",
+        "tier": "parameterized-template",
+        "template": "rush",
+        "profile": "rush",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "will-o-wisp",
       "id": "orb",
       "source": "override",
-      "type": "fire"
+      "type": "fire",
+      "presentation": {
+        "moveId": "will-o-wisp",
+        "tier": "signature-timeline",
+        "template": "signature:will-o-wisp",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 3,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "wish",
+      "id": "aura",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "wish",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "aura",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
     },
     {
       "moveId": "wonder-room",
       "id": "field-burst",
       "source": "override",
-      "type": "psychic"
+      "type": "psychic",
+      "presentation": {
+        "moveId": "wonder-room",
+        "tier": "parameterized-template",
+        "template": "field-wave",
+        "profile": "field-burst",
+        "castCues": 4,
+        "impactCues": 6,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "wood-hammer",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "wood-hammer",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "worry-seed",
+      "id": "orb",
+      "source": "category-fallback",
+      "type": "grass",
+      "presentation": {
+        "moveId": "worry-seed",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "orb",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "wrap",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "normal",
+      "presentation": {
+        "moveId": "wrap",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "x-scissor",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "bug",
+      "presentation": {
+        "moveId": "x-scissor",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     },
     {
       "moveId": "yawn",
       "id": "notes",
       "source": "override",
-      "type": "normal"
+      "type": "normal",
+      "presentation": {
+        "moveId": "yawn",
+        "tier": "parameterized-template",
+        "template": "aura",
+        "profile": "notes",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "zap-cannon",
+      "id": "projectile",
+      "source": "category-fallback",
+      "type": "electric",
+      "presentation": {
+        "moveId": "zap-cannon",
+        "tier": "parameterized-template",
+        "template": "projectile",
+        "profile": "projectile",
+        "castCues": 4,
+        "impactCues": 4,
+        "commit": true
+      }
+    },
+    {
+      "moveId": "zen-headbutt",
+      "id": "impact",
+      "source": "category-fallback",
+      "type": "psychic",
+      "presentation": {
+        "moveId": "zen-headbutt",
+        "tier": "parameterized-template",
+        "template": "impact",
+        "profile": "impact",
+        "castCues": 4,
+        "impactCues": 5,
+        "commit": true
+      }
     }
   ]
 }

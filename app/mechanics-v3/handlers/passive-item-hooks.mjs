@@ -25,6 +25,7 @@ export const itemPpRestoreHandler=declaration('item-pp-restore',['beforeAction']
 export const itemAirborneHandler=declaration('item-airborne',['onEntry','onDamage']);
 export const itemGroundingHandler=declaration('item-grounding',['onEntry']);
 export const itemForceAttackerSwitchHandler=declaration('item-force-attacker-switch',['afterDamage']);
+export const itemHolderSwitchHandler=declaration('item-holder-switch',['afterDamage']);
 export const itemOneShotDamageBoostHandler=declaration('item-one-shot-damage-boost',['modifyPower']);
 export const itemSpeciesStatModifierHandler=declaration('item-species-stat-modifier',['modifyAttack']);
 export const itemSpeciesCriticalRatioHandler=declaration('item-species-critical-ratio',['onDamage']);
@@ -32,3 +33,6 @@ export const itemConsecutiveMovePowerHandler=declaration('item-consecutive-move-
 export const itemFlinchChanceHandler=declaration('item-flinch-chance',['afterDamage']);
 export const itemVolatileCureHandler=declaration('item-volatile-cure',['afterStatus']);
 export const itemQuickOrderHandler=declaration('item-quick-order',['onTurnOrder']);
+
+export const itemBindingDamageBoostHandler=declaration('item-binding-damage-boost',['endTurn']);
+export const itemSwitchEscapeHandler=declaration('item-switch-escape',['onSwitchOut']);

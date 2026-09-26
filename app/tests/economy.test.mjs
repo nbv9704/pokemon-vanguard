@@ -23,7 +23,7 @@ test('ledger supports recruitment tickets and rejects negative balances atomical
 });
 
 test('mail claims are action-idempotent and never credit twice',()=>{
- const state=migrated('economy-mail'),before=structuredClone(state.wallet),action={type:'mail.claim',mailId:0,actionId:'mail:first'},first=applyV2EconomyAction(state,action,v2Catalog);assert.equal(first.ok,true);assert.equal(first.state.wallet.coins,before.coins+500);assert.equal(first.state.wallet.crystals,before.crystals+500);assert.equal(first.state.wallet.recruitmentTickets,before.recruitmentTickets);const duplicate=applyV2EconomyAction(first.state,action,v2Catalog);assert.equal(duplicate.duplicate,true);assert.deepEqual(duplicate.state.wallet,first.state.wallet);assert.equal(duplicate.state.economyLedger.length,1);
+ const state=migrated('economy-mail'),before=structuredClone(state.wallet),action={type:'mail.claim',mailId:0,actionId:'mail:first'},first=applyV2EconomyAction(state,action,v2Catalog);assert.equal(first.ok,true);assert.equal(first.state.wallet.coins,before.coins+500);assert.equal(first.state.wallet.crystals,before.crystals+500);assert.equal(first.state.wallet.recruitmentTickets,before.recruitmentTickets+3);const duplicate=applyV2EconomyAction(first.state,action,v2Catalog);assert.equal(duplicate.duplicate,true);assert.deepEqual(duplicate.state.wallet,first.state.wallet);assert.equal(duplicate.state.economyLedger.length,1);
 });
 
 test('battle settlement uses the shared ledger and remains idempotent',()=>{

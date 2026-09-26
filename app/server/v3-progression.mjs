@@ -2,13 +2,14 @@ import {NATURES,validateStatPoints} from '../rules-v3/stats.mjs';
 
 const clone=value=>structuredClone(value);
 const totalPoints=points=>Object.values(points||{}).reduce((sum,value)=>sum+(Number.isInteger(value)?value:0),0);
+export function v3TrainingCost(current,candidate){const statPoints=Object.keys(current?.statPoints||{}).reduce((sum,key)=>sum+Math.max(0,(candidate?.statPoints?.[key]||0)-(current.statPoints[key]||0)),0),moves=(candidate?.moveIds||[]).filter(id=>!(current?.moveIds||[]).includes(id)).length;return {statPoints,nature:current?.natureId!==candidate?.natureId?1:0,ability:current?.abilityId!==candidate?.abilityId?1:0,moves,total:statPoints*5+(current?.natureId!==candidate?.natureId?500:0)+(current?.abilityId!==candidate?.abilityId?500:0)+moves*250};}
 
 export function validateV3Build(build,progression,catalog){
  const problems=[],mon=progression.mons.find(entry=>entry.monId===build?.monId),species=catalog.speciesById[mon?.speciesId];
  if(!mon||!species)problems.push('MON_NOT_FOUND');
  if(!NATURES[build?.natureId])problems.push('NATURE_INVALID');
  if(validateStatPoints(build?.statPoints).length||totalPoints(build?.statPoints)!==catalog.regulations[0].statPointBudget)problems.push('STAT_POINTS_INVALID');
- if(!Array.isArray(build?.moveIds)||build.moveIds.length!==4||new Set(build.moveIds).size!==4)problems.push('MOVE_COUNT_INVALID');
+ const requiredMoveCount=Math.min(4,species?.moveIds?.length||4);if(!Array.isArray(build?.moveIds)||build.moveIds.length!==requiredMoveCount||new Set(build.moveIds).size!==requiredMoveCount)problems.push('MOVE_COUNT_INVALID');
  else if(build.moveIds.some(id=>!species?.moveIds.includes(id)||!catalog.movesById[id]?.enabledForBattle))problems.push('MOVE_ILLEGAL');
  if(!species?.abilityIds.includes(build?.abilityId)||!catalog.abilitiesById[build?.abilityId]?.enabledForBattle)problems.push('ABILITY_ILLEGAL');
  if(!catalog.itemsById[build?.itemId]?.enabledForBattle)problems.push('ITEM_ILLEGAL');
@@ -53,6 +54,14 @@ export function applyV3ProgressionAction(progression,action,catalog){
   if(action.expectedRevision!==current.revision)return {ok:false,code:'STALE_REVISION'};
   const candidate={...clone(action.team),teamId:current.teamId,revision:current.revision},problems=validateV3Team(candidate,progression,catalog);if(problems.length)return {ok:false,code:'TEAM_ILLEGAL',details:problems};
   const next=clone(progression),index=next.teams.findIndex(team=>team.teamId===current.teamId);candidate.revision++;next.teams[index]=candidate;next.revision++;return {ok:true,progression:next,team:clone(candidate)};
+ }
+ if(action?.type==='replicaV3.apply'){
+  if(action.expectedRevision!==progression.revision)return {ok:false,code:'STALE_REVISION'};
+  const replica=action.replica;if(replica?.version!==1||!Array.isArray(replica.members)||replica.members.length!==catalog.regulations[0].rosterSize)return {ok:false,code:'REPLICA_INVALID'};
+  const speciesIds=replica.members.map(member=>member?.speciesId);if(new Set(speciesIds).size!==speciesIds.length)return {ok:false,code:'REPLICA_SPECIES_CLAUSE'};
+  const next=clone(progression),buildIds=[];
+  for(const member of replica.members){const mon=next.mons.find(entry=>entry.speciesId===member.speciesId&&entry.ownership==='permanent')||next.mons.find(entry=>entry.speciesId===member.speciesId&&entry.ownership==='trial'&&!entry.trialExpired);if(!mon)return {ok:false,code:'REPLICA_POKEMON_NOT_OWNED',details:[member.speciesId]};const current=next.builds.find(entry=>entry.monId===mon.monId);if(!current)return {ok:false,code:'REPLICA_BUILD_NOT_FOUND',details:[member.speciesId]};const candidate={...current,name:typeof member.buildName==='string'&&member.buildName.trim()?member.buildName.slice(0,40):current.name,natureId:member.natureId,statPoints:clone(member.statPoints),moveIds:[...member.moveIds],abilityId:member.abilityId,itemId:member.itemId,revision:current.revision};const problems=validateV3Build(candidate,next,catalog);if(problems.length)return {ok:false,code:'REPLICA_BUILD_ILLEGAL',details:[member.speciesId,...problems]};candidate.revision++;next.builds[next.builds.findIndex(entry=>entry.buildId===current.buildId)]=candidate;buildIds.push(candidate.buildId);}
+  const currentTeam=next.teams[0];if(!currentTeam)return {ok:false,code:'TEAM_NOT_FOUND'};const team={...currentTeam,name:typeof replica.name==='string'&&replica.name.trim()?replica.name.slice(0,40):'Replica Team',buildIds,revision:currentTeam.revision},problems=validateV3Team(team,next,catalog);if(problems.length)return {ok:false,code:'REPLICA_TEAM_ILLEGAL',details:problems};team.revision++;next.teams[0]=team;next.revision++;return {ok:true,progression:next,team:clone(team),replica:true};
  }
  return {ok:false,code:'UNKNOWN_V3_PROGRESSION_ACTION'};
 }
