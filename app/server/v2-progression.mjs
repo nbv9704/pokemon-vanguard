@@ -2,8 +2,11 @@ import {applyBlueprintImport,applyTeamSave} from './v2-team-actions.mjs';
 import {debitV2Coins,getV2ProgressionState,storeV2Progression,v2Coins} from './v2-progression-state.mjs';
 import {markV2Tutorial} from './v2-release.mjs';
 import {trialIsExpired} from './v2-recruitment-state.mjs';
+import {prepareDurableAccountAction,recordDurableAccountAction} from './durable-account-action.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const stats=['hp','atk','def','spa','spd','spe'];
+const actionTypes=new Set(['build.save','team.save','blueprint.import']);
+export const isV2ProgressionAction=action=>actionTypes.has(action?.type);
 export function getV2Progression(state,catalog){return getV2ProgressionState(state,catalog);}
 
 export function validateBuildInput(build,mon,catalog){
@@ -18,7 +21,9 @@ export function validateBuildInput(build,mon,catalog){
 
 const battleFields=build=>JSON.stringify({points:build.points,alignment:build.alignment,abilityId:build.abilityId,moveIds:build.moveIds,itemId:build.itemId});
 export function applyV2ProgressionAction(state,action,catalog){
- const base=clone(state),progression=getV2Progression(base,catalog);
+ if(!isV2ProgressionAction(action))return {ok:false,code:'UNKNOWN_V2_ACTION'};
+ const prepared=prepareDurableAccountAction(state,action,'v2-player',{optional:true});if(!prepared.ok)return prepared;if(prepared.duplicate)return {ok:true,state:prepared.base,duplicate:true,receipt:prepared.receipt};
+ const base=prepared.base,progression=getV2Progression(base,catalog),finish=result=>{if(!result.ok||prepared.legacy)return result;const receipt=recordDurableAccountAction(result.state,action,'v2-player',prepared.fingerprint,{progressionRevision:result.state.progressionRevision??result.state.progressionV2?.revision??0,cost:result.cost||0,...(result.build?{buildId:result.build.buildId}:{}),...(result.team?{teamId:result.team.teamId}:{}),...(result.blueprint?{blueprintId:result.blueprint.blueprintId}:{})});return {...result,duplicate:false,receipt};};
  if(action?.type==='build.save'){
   const input=action.build;if(!input||typeof input!=='object')return {ok:false,code:'INVALID_BUILD'};
   const mon=progression.mons.find(entry=>entry.monId===input.monId);if(!mon)return {ok:false,code:'MON_NOT_OWNED'};if(mon.ownership==='trial')return {ok:false,code:'TRIAL_READ_ONLY'};
@@ -28,18 +33,17 @@ export function applyV2ProgressionAction(state,action,catalog){
   if(existing&&action.expectedRevision!==existing.revision)return {ok:false,code:'STALE_REVISION',latest:clone(existing)};
   const ownedBuilds=progression.builds.filter(entry=>entry.monId===mon.monId);if(!existing&&ownedBuilds.length>=3)return {ok:false,code:'BUILD_LIMIT'};
   const normalized={...clone(input),name:input.name.trim()};delete normalized.revision;
-  if(existing){const comparable={...existing};delete comparable.revision;if(JSON.stringify(comparable)===JSON.stringify(normalized))return {ok:true,state:base,cost:0,noOp:true,build:clone(existing)};}
+  if(existing){const comparable={...existing};delete comparable.revision;if(JSON.stringify(comparable)===JSON.stringify(normalized))return finish({ok:true,state:base,cost:0,noOp:true,build:clone(existing)});}
   const saveCost=Math.max(0,Math.trunc(catalog.economy?.build?.saveCostCoins??10)),contentChanged=!existing||battleFields(existing)!==battleFields(normalized),cost=contentChanged&&(existing||ownedBuilds.length>0)?saveCost:0;
   if(v2Coins(base)<cost)return {ok:false,code:'INSUFFICIENT_COINS'};
   const saved={...normalized,buildId:existing?.buildId||`build-custom-${progression.nextBuildId++}`,revision:(existing?.revision||0)+1};
   if(existing)progression.builds[progression.builds.findIndex(entry=>entry.buildId===existing.buildId)]=saved;else progression.builds.push(saved);
-  progression.revision++;debitV2Coins(base,cost);storeV2Progression(base,progression);markV2Tutorial(base,'build');return {ok:true,state:base,cost,build:clone(saved)};
+  progression.revision++;debitV2Coins(base,cost);storeV2Progression(base,progression);markV2Tutorial(base,'build');return finish({ok:true,state:base,cost,build:clone(saved)});
  }
  if(action?.type==='team.save'){
-  const result=applyTeamSave(base,progression,action);if(result.ok)markV2Tutorial(result.state,'team');return result;
+  const result=applyTeamSave(base,progression,action);if(result.ok)markV2Tutorial(result.state,'team');return finish(result);
  }
- if(action?.type==='blueprint.import')return applyBlueprintImport(base,progression,action,catalog);
- return {ok:false,code:'UNKNOWN_V2_ACTION'};
+ if(action?.type==='blueprint.import')return finish(applyBlueprintImport(base,progression,action,catalog));
 }
 
 const publicMon=(mon,now)=>({monId:mon.monId,speciesId:mon.speciesId,ownership:mon.ownership,trialExpiresAt:mon.trialExpiresAt??null,trialExpired:mon.ownership==='trial'&&now!==undefined?trialIsExpired(mon,now):!!mon.trialExpired,legacyLevel:mon.legacyLevel??undefined,acquiredBy:mon.acquiredBy??undefined});

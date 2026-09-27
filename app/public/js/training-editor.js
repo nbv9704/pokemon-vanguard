@@ -10,7 +10,7 @@ function statsFor(species,build){
 }
 
 export class TrainingEditor{
- constructor({fetchImpl,onChange,sendAction}){this.fetch=fetchImpl;this.onChange=onChange;this.send=sendAction;this.catalog=null;this.monId=null;this.buildId=null;this.draft=null;this.base=null;}
+ constructor({fetchImpl,onChange,sendAction,createActionId=()=>`v2-training:${Date.now()}`}){this.fetch=fetchImpl;this.onChange=onChange;this.send=sendAction;this.createActionId=createActionId;this.catalog=null;this.monId=null;this.buildId=null;this.draft=null;this.base=null;}
  async load(){const response=await this.fetch('/api/v2/catalog');if(!response.ok)throw new Error('Unable to load the Training catalog');this.catalog=await response.json();this.onChange();}
  select(view,monId,buildId){const builds=view.builds.filter(build=>build.monId===monId),saved=builds.find(build=>build.buildId===buildId)||builds[0];this.monId=monId;this.buildId=saved?.buildId||null;this.base=saved?clone(saved):null;this.draft=saved?clone(saved):null;this.onChange();}
  reconcile(view){
@@ -35,7 +35,7 @@ export class TrainingEditor{
   if(action==='mon')this.select(view,element.dataset.monId);if(action==='build')this.select(view,this.monId,element.dataset.buildId);
   if(action==='copy'){const builds=view.builds.filter(build=>build.monId===this.monId);this.base=null;this.buildId=null;this.draft={...clone(builds[0]),buildId:undefined,name:`Build ${builds.length+1}`,revision:undefined};this.onChange();}
   if(action==='reset'){this.draft=clone(this.base);this.onChange();}
-  if(action==='save')this.send({type:'build.save',build:clone(this.draft),expectedRevision:this.base?.revision});
+  if(action==='save')this.send({type:'build.save',build:clone(this.draft),expectedRevision:this.base?.revision,actionId:this.createActionId('build-save')});
   return true;
  }
  handleInput(target){

@@ -134,9 +134,9 @@ const trainingPvpState=state=>({...state,battleV3:state?.trainingPvpV1?.battleV3
 const rankedActive=state=>completedBattleResults.isRankedActive(state);
 const trainingPvpActive=state=>completedBattleResults.isTrainingPvpActive(state);
 const redrawWorkspace=()=>{if(V&&['home','training','collection','teams','recruitment','shop','bag','missions','gym','guide'].includes(router.current))draw();};
-const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send});
+const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:commerceRetry.send,createActionId:kind=>economyActionId(kind)});
 const boxView=new BoxView({onChange:redrawWorkspace});
-const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:send});
+const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:commerceRetry.send,createActionId:kind=>economyActionId(kind)});
 const v2BattleScreen=new V2BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:send});
 const damageInspector=new DamageInspector({fetchImpl:(...args)=>fetch(...args),getDraft:()=>trainingEditor.draft});
 const recruitmentView=new RecruitmentView({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});

@@ -263,9 +263,9 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if(message.action.actionId!==undefined)send(ws,{type:'action-ack',actionId:message.action.actionId,actionType:message.action.type,committedRevision:result.state.revision,duplicate:!!result.duplicate});return;
         }
         if (['build.save','team.save','blueprint.import'].includes(message.action?.type)) {
-          const result=applyV2ProgressionAction(room.state,message.action,v2Catalog);
+          const result=await commitReceiptCommand({accountId:name,liveState:room.state,load:id=>storage.load(id),persist,action:message.action,apply:(state,action)=>applyV2ProgressionAction(state,action,v2Catalog)});
           if (!result.ok) return fail(result.code);
-          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+          room.state=result.state;broadcast(room);if(message.action.actionId!==undefined)send(ws,{type:'action-ack',actionId:message.action.actionId,actionType:message.action.type,committedRevision:result.state.revision,duplicate:!!result.duplicate});return;
         }
         if (room.state.schemaVersion>=2&&isV2RecruitmentAction(message.action)) {
           const result=applyV2RecruitmentAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});

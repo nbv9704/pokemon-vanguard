@@ -38,6 +38,10 @@ test('team builder has six slots and exports no save identity or economy fields'
  const blueprint=builder.exportBlueprint(state.trainingV2,publicV2Catalog),json=JSON.stringify(blueprint);for(const forbidden of ['monId','buildId','coins','ownership','session'])assert.equal(json.includes(forbidden),false);assert.equal(blueprint.schemaVersion,1);
 });
 
+test('schema-2 team save and blueprint import UI commands carry stable action IDs',()=>{
+ const {state}=fixture(),sent=[],builder=new TeamBuilder({onChange(){},sendAction:action=>sent.push(action),createActionId:kind=>`v2:${kind}`});builder.render(state,publicV2Catalog,{art});builder.handleClick({dataset:{team:'save'}},state,publicV2Catalog);assert.equal(sent[0].actionId,'v2:team-save');builder.importText=JSON.stringify(builder.exportBlueprint(state.trainingV2,publicV2Catalog));builder.handleClick({dataset:{team:'import'}},state,publicV2Catalog);assert.equal(sent[1].actionId,'v2:blueprint-import');
+});
+
 test('Gate M2 saves physical-fast and support builds while preserving another team',()=>{
  let state=setup(['m2-gate']);state.progressionV2=getV2Progression(state,v2Catalog);state.progressionV2.teams.push({teamId:'team-archive',name:'Đội cũ',buildIds:[state.progressionV2.builds[0].buildId],revision:1});
  for(const speciesId of ['emberlyn','mossprout']){const mon=state.progressionV2.mons.find(entry=>entry.speciesId===speciesId),base=state.progressionV2.builds.find(entry=>entry.monId===mon.monId),species=v2Catalog.speciesById[speciesId],build={...structuredClone(base),name:speciesId==='emberlyn'?'Vật lý tốc độ':'Hỗ trợ sân',points:speciesId==='emberlyn'?{hp:0,atk:16,def:0,spa:0,spd:0,spe:16}:{hp:16,atk:0,def:0,spa:0,spd:16,spe:0}};const result=applyV2ProgressionAction(state,{type:'build.save',build,expectedRevision:base.revision},v2Catalog);assert.equal(result.ok,true);assert.equal(species.role,speciesId==='emberlyn'?'physical-fast':'support');state=result.state;}

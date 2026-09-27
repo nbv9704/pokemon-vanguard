@@ -1,6 +1,6 @@
 // Money/ticket actions require a durable server receipt before clearing pending.
 // Retain exactly one intent in the current tab and never replay it automatically.
-const TYPES=new Set(['shopV3.buy','recruitV3.refresh','recruitV3.trial','recruitV3.permanent','battleV3.preview.start','battleV3.preview.lock','battleV3.commands','battleV3.replacements','battleV3.surrender','battleV3.dismiss','mission.claim','mission.claimAll','adminGift.claim','bagV1.rankProtection']);
+const TYPES=new Set(['shopV3.buy','recruitV3.refresh','recruitV3.trial','recruitV3.permanent','battleV3.preview.start','battleV3.preview.lock','battleV3.commands','battleV3.replacements','battleV3.surrender','battleV3.dismiss','mission.claim','mission.claimAll','adminGift.claim','bagV1.rankProtection','build.save','team.save','blueprint.import']);
 const validId=id=>typeof id==='string'&&/^[A-Za-z0-9:_-]{1,128}$/.test(id);
 const battlePayloadValid=a=>{
  if(!a.type.startsWith('battleV3.'))return true;
@@ -9,8 +9,8 @@ const battlePayloadValid=a=>{
  if(a.type==='battleV3.commands'||a.type==='battleV3.replacements')return Number.isSafeInteger(a.phaseRevision)&&a.phaseRevision>=0&&Array.isArray(a[a.type==='battleV3.commands'?'commands':'replacements'])&&a[a.type==='battleV3.commands'?'commands':'replacements'].length>0;
  return a.type==='battleV3.surrender'||a.type==='battleV3.dismiss';
 };
-const accountPayloadValid=a=>a.type==='bagV1.rankProtection'?typeof a.enabled==='boolean':a.type==='adminGift.claim'?typeof a.giftId==='string'&&a.giftId.length>0&&a.giftId.length<=128:a.type==='mission.claim'?typeof a.category==='string'&&typeof a.missionId==='string':a.type==='mission.claimAll'?typeof a.category==='string':true;
-const valid=action=>action&&typeof action==='object'&&!Array.isArray(action)&&TYPES.has(action.type)&&validId(action.actionId)&&JSON.stringify(action).length<=8192&&battlePayloadValid(action)&&accountPayloadValid(action);
+const accountPayloadValid=a=>a.type==='bagV1.rankProtection'?typeof a.enabled==='boolean':a.type==='adminGift.claim'?typeof a.giftId==='string'&&a.giftId.length>0&&a.giftId.length<=128:a.type==='mission.claim'?typeof a.category==='string'&&typeof a.missionId==='string':a.type==='mission.claimAll'?typeof a.category==='string':a.type==='build.save'?a.build&&typeof a.build==='object':a.type==='team.save'?a.team&&typeof a.team==='object':a.type==='blueprint.import'?typeof a.blueprint==='string'&&a.blueprint.length<=65536:true;
+const valid=action=>action&&typeof action==='object'&&!Array.isArray(action)&&TYPES.has(action.type)&&validId(action.actionId)&&JSON.stringify(action).length<=(action.type==='blueprint.import'?70*1024:8192)&&battlePayloadValid(action)&&accountPayloadValid(action);
 export function commerceActionLabel(action){
  if(action?.type?.startsWith('battleV3.'))return 'PvE battle action';
  if(action?.type==='shopV3.buy')return action.payment==='ticket'?'Shop Ticket purchase':'VP purchase';
@@ -20,6 +20,9 @@ export function commerceActionLabel(action){
  if(action?.type?.startsWith('mission.'))return 'Mission reward';
  if(action?.type==='adminGift.claim')return 'Mailbox gift claim';
  if(action?.type==='bagV1.rankProtection')return 'Rank protection setting';
+ if(action?.type==='build.save')return 'Legacy Training save';
+ if(action?.type==='team.save')return 'Legacy Team save';
+ if(action?.type==='blueprint.import')return 'Legacy Blueprint import';
  return 'action';
 }
 export class CommercePendingActions{

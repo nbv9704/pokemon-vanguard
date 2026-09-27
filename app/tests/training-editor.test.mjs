@@ -8,10 +8,10 @@ const species=catalog.species[0],base={buildId:'build-emberlyn-1',monId:'mon-emb
 const state={trainingV2:{mons:[{monId:'mon-emberlyn',speciesId:'emberlyn',ownership:'permanent'}],builds:[base],teams:[],activeTeamId:null}};
 
 test('training editor renders stat diff, resets draft and sends a complete build',async()=>{
- let changes=0,sent=null;const editor=new TrainingEditor({fetchImpl:async()=>({ok:true,json:async()=>catalog}),onChange:()=>changes++,sendAction:value=>{sent=value;}});await editor.load();
+ let changes=0,sent=null;const editor=new TrainingEditor({fetchImpl:async()=>({ok:true,json:async()=>catalog}),onChange:()=>changes++,sendAction:value=>{sent=value;},createActionId:()=> 'v2:build'});await editor.load();
  let html=editor.render(state,{art:id=>`<i>${id}</i>`});assert.match(html,/BUILD EDITOR/);assert.match(html,/Remaining 66\/66 points/);
  editor.handleInput({dataset:{trainingStat:'atk'},value:'32'});editor.handleInput({dataset:{trainingStat:'spe'},value:'32'});editor.handleInput({dataset:{trainingStat:'hp'},value:'2'});html=editor.render(state,{art:id=>`<i>${id}</i>`});assert.match(html,/Remaining 0\/66 points/);assert.match(html,/Save build · 10 coins/);assert.match(html,/No held item/);assert.match(html,/Sets Sun for 5 turns on entry/);
- editor.handleClick({dataset:{training:'save'}},state);assert.equal(sent.type,'build.save');assert.equal(sent.build.points.atk,32);assert.equal(sent.build.moveIds.length,4);assert.equal(sent.expectedRevision,1);
+ editor.handleClick({dataset:{training:'save'}},state);assert.equal(sent.type,'build.save');assert.equal(sent.build.points.atk,32);assert.equal(sent.build.moveIds.length,4);assert.equal(sent.expectedRevision,1);assert.equal(sent.actionId,'v2:build');
  editor.handleClick({dataset:{training:'reset'}},state);assert.equal(editor.draft.points.atk,0);assert.ok(changes>=4);
 });
 
