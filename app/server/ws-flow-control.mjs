@@ -11,7 +11,10 @@ export function createInboundLimiter({maxPending=WS_LIMITS.pendingMessagesPerSoc
  };
 }
 export function sendBounded(ws,message,{maxBufferedBytes=WS_LIMITS.maxBufferedBytes,openState=1}={}){
+ return sendSerializedBounded(ws,JSON.stringify(message),{maxBufferedBytes,openState});
+}
+export function sendSerializedBounded(ws,serialized,{maxBufferedBytes=WS_LIMITS.maxBufferedBytes,openState=1}={}){
  if(ws.readyState!==openState)return false;
  if(ws.bufferedAmount>maxBufferedBytes){try{ws.terminate();}catch{}return false;}
- ws.send(JSON.stringify(message));return true;
+ ws.send(serialized);return true;
 }

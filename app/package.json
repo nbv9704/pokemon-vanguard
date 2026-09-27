@@ -44,6 +44,7 @@
     "check:syntax": "node --experimental-vm-modules --no-warnings scripts/check-source-syntax.mjs",
     "test:inventory": "node scripts/run-tests-batched.mjs --list-json",
     "content:inventory": "node scripts/content-dependency-inventory.mjs",
+    "benchmark:hot-state": "node scripts/benchmark-hot-state-b12.mjs",
     "release:verify": "node scripts/run-verify-release.mjs"
   },
   "engines": {

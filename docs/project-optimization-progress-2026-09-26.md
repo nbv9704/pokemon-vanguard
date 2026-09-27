@@ -17,12 +17,12 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | Trạng thái | Số lượng |
 | --- | ---: |
 | DONE | 9 |
-| IN PROGRESS | 17 |
-| TODO | 7 |
+| IN PROGRESS | 19 |
+| TODO | 5 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B11 — public DTO allowlist và privacy regression**. Hạng mục P1 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B12 — hot-state baseline và coalesce broadcast cùng audience**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -36,14 +36,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–06: Admin/Social/Ranked/Training/Team/Shop/Recruitment receipts. B07: bổ sung PvE schema-3 battle receipts + lost-ACK retry đọc save; còn legacy commands, PvP per-turn durable receipts và archival |
-| 09 | Giới hạn dữ liệu nóng | P2 | TODO | Đo save synthetic trước |
+| 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo synthetic 1k/10k/100k: 100k ~65,26 MB, serialize p50 258,149 ms, JSON durable write 1.446,791 ms; chưa compact vì cần archive/index giữ dedupe bền |
 | 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline join + cap socket/account; B08 quota; B10 chỉ tin XFF từ proxy IP allowlist; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
 | 15 | Public projection allowlist/pure | P1 | DONE | B11 root save, Training V2/V3, Battle V2/V3 và preview dùng allowlist fail-closed; negative sentinel + WebSocket thật chứng minh receipt/field tương lai không lọt ra public |
-| 16 | Giảm full-state broadcast/render | P2 | TODO | Đo trước |
+| 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab chỉ project + serialize một lần mỗi broadcast, spectator short-circuit; benchmark 4→1 projection; còn delta/cursor và browser render baseline |
 | 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
 | 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–06: Social/management/Shop/Recruitment. B07: PvE schema-3 durable ACK + một outbox retry chủ đích; còn ACK toàn bộ legacy/PvP action, multi-device/browser QA |
@@ -242,6 +242,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** focused projection/battle **73/73 PASS**; receipt privacy bổ sung **29/29 PASS** (22 Admin/projection + 7 Ranked/Social); `npm run check` PASS; full regression **1.346/1.346 PASS trên 207 file**, 0 fail/skip/todo. Tài liệu: `app/docs/public-projection-b11.md`.
 - **Hosted CI:** run [`36316200849`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36316200849) cho commit `b8be44b`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** Admin API được xác thực là management DTO riêng, không thuộc player-public projection. Chưa thay thế browser/network inspection qua proxy/account stack thật hoặc Supabase staging; các hạng mục đó vẫn giữ trạng thái riêng.
+
+### 27/09/2026 — B12: hot-state baseline và coalesce broadcast
+
+- **#09 chuyển `IN PROGRESS`:** thêm benchmark synthetic lặp lại được ở `scripts/benchmark-hot-state-b12.mjs`; không đọc save thật, dùng temp JSON storage rồi xóa. Trên Windows/Node v22.15.0, 100k entry mỗi nhánh không giới hạn tạo save **65.263.022 B**, serialize p50/p95 **258,149/261,540 ms**, durable JSON write **1.446,791 ms**; ledger 30.777.782 B, action receipts 21.477.781 B, battle events 11.946.577 B. Xác nhận cần archive/index nhưng chưa cắt receipt/tombstone vì sẽ làm hỏng chống trùng.
+- **#16 một phần:** thêm `state-broadcast.mjs`; nhiều socket cùng audience trong một room dùng chung đúng một projection và chuỗi JSON. Spectator short-circuit trước các owner projector. `sendSerializedBounded()` vẫn giữ kiểm tra backpressure. Với fixture 4 tab, số projection/serialization giảm **4 → 1**; frame history 100k event giảm CPU synthetic p50 từ **1.014,269 ms** xuống **244,529 ms** nhưng số byte mạng không đổi.
+- **Kiểm thử:** broadcast/flow-control/local/WebSocket/privacy **14/14 PASS**; `npm run check` PASS; full regression **1.348/1.348 PASS trên 208 file**, 0 fail/skip/todo. Tài liệu và cách chạy benchmark: `app/docs/hot-state-broadcast-b12.md`.
+- **Giới hạn:** chưa có cursor/delta/resync, chưa archive receipt/ledger, chưa browser long-task/render baseline theo từng route và chưa soak multi-process/Supabase. Vì vậy #09 và #16 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
 
