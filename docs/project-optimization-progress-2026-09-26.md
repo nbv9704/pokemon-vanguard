@@ -266,6 +266,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#08:** thêm receipt fingerprint riêng cho `mission.claim`, `mission.claimAll`, `adminGift.claim` và `bagV1.rankProtection`. Retry luôn đọc save bền; cùng ID/cùng payload trả duplicate, cùng ID/khác payload trả `ACTION_ID_REUSED`; không grant reward hoặc thay setting lần hai sau lost ACK.
 - **#19:** ba luồng đi qua `commitReceiptCommand`, chỉ gửi `action-ack` sau persist. Client dùng chung explicit `sessionStorage` outbox, giữ nguyên payload/ID qua reload/reconnect, không tự replay và chỉ xóa khi ACK đúng ID. Admin Gift/Bag không ID vẫn tương thích client cũ nhưng không có bảo đảm receipt xuyên restart.
 - **Kiểm thử:** synthetic commit-thành-công/mất-ACK + restart + collision, outbox reload và WebSocket thật trước/sau restart; focused **53/53 PASS**; `npm run check` PASS; full regression **1.357/1.357 PASS trên 210 file**, 0 fail/skip/todo. Tài liệu: `app/docs/account-command-retry-b14.md`.
+- **Hosted CI:** run [`36333278519`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36333278519) cho commit `deaf171`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** schema-2 Training/Team/import và PvP per-turn chưa được bao phủ; mailbox mark-read là metadata idempotent nên không đưa vào commerce outbox. Chưa smoke Supabase/multi-process hoặc multi-device browser, vì vậy #08/#19 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này

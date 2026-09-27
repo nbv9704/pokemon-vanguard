@@ -55,8 +55,9 @@ npm test
 ```
 
 The focused suite passed 53/53. `npm run check` passed, and the full suite passed
-1,357/1,357 on 210 test files with zero failures, skips, or todos. Hosted CI is
-recorded in the optimization progress log after completion.
+1,357/1,357 on 210 test files with zero failures, skips, or todos. Hosted CI run
+[`36333278519`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36333278519)
+for commit `deaf171` passed on Ubuntu, Windows, and `release-smoke`.
 
 ## Remaining work
 
