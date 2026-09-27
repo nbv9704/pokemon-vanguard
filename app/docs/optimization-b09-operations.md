@@ -1,6 +1,6 @@
 # B09 — HTTP/public caching, verified release, inventory and CI
 
-Status: local code + clean-package tests validated. Hosted CI was triggered on 27/09/2026, but GitHub blocked both runners before their first step because the account is locked for a billing issue; end-to-end browser metrics and a successful hosted rerun remain pending.
+Status: local code, clean-package tests and hosted Linux/Windows CI validated on 27/09/2026. End-to-end browser metrics remain pending.
 No production deployment, save migration or asset deletion occurs in this batch.
 
 ## Active developer workflow
@@ -51,14 +51,16 @@ runtime deployment artifact and deliberately omits npm dependencies; run `npm ci
 after unpacking. Python helper requires Python 3.11+ for `Path.is_relative_to`.
 
 `.github/workflows/verify-release.yml` defines Linux/Windows npm-ci/check/tests and
-an Ubuntu fresh-unpack source-release smoke job. This workflow has not yet been run
-on a hosted runner in the current environment. Use `PV_TEST_FORCE_EXIT=0` for a
-separate handle-leak check: the main batched suite still force-exits on purpose.
+an Ubuntu fresh-unpack source-release smoke job. Hosted run 36305711464 passed all
+three jobs. Use `PV_TEST_FORCE_EXIT=0` for a separate handle-leak check: the main
+batched suite still force-exits on purpose.
 
 B09-fix1 was verified locally on Windows after a clean `npm ci`: `npm run check`
 and all 1,333 tests in 205 runnable files passed. Symlink security fixtures use a
 Windows junction and the packager rejects both symlinks and reparse points. This
-local result does not replace the still-pending hosted Linux/Windows workflow.
+was repeated from a clean Windows clone; hosted Linux/Windows validation and the
+Ubuntu exact-unpack release smoke also passed. Archive members always use the
+stable `PokemonVanguard` root, independent of the checkout directory name.
 
 ## Content inventory
 

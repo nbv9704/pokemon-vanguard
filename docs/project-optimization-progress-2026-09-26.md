@@ -16,8 +16,8 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 5 |
-| IN PROGRESS | 20 |
+| DONE | 6 |
+| IN PROGRESS | 19 |
 | TODO | 8 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
@@ -53,14 +53,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
 | 24 | Tách module theo trách nhiệm | P2 | TODO | Làm sau correctness |
 | 25 | Lint/type contracts | P2 | TODO | Thiết lập baseline |
-| 26 | CI/test đúng artifact phát hành | P1/P2 | IN PROGRESS | B09-fix1: npm ci + full 205 file/1.333 test PASS trên Windows local; workflow hosted đã được trigger nhưng runner Linux/Windows bị GitHub chặn trước step đầu do billing account |
+| 26 | CI/test đúng artifact phát hành | P1/P2 | DONE | Run #10: Ubuntu + Windows npm-ci/check/inventory/1.333 test PASS; Ubuntu đóng gói, verify, clean-unpack và handle-leak PASS |
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
 | 29 | Social capacity/profile offline | P1 | IN PROGRESS | B03 WAL/cloud pair RPC; B04 durable Social receipts; B05 WS commit ACK + sessionStorage pending outbox theo tài khoản và retry cùng mã qua reconnect/reload (không tự gửi lại); còn Supabase thật/multi-process smoke và QA trình duyệt |
 | 30 | Quan sát lỗi/benchmark | P1/P2 | IN PROGRESS | B09: baseline catalog raw/gzip/br và serialize CPU JSON có script lặp lại; chưa metrics persist, room, heap, load/soak |
 | 31 | UX/accessibility/storage fallback | P2 | IN PROGRESS | localStorage lỗi chuyển memory fallback và báo không persistent; còn browser/a11y QA |
 | 32 | Workflow/tài liệu thống nhất | P2 | IN PROGRESS | B09: thay app/AGENTS template cloud lỗi thời bằng Node local contract; README + operations mới; cần clean-clone/đội review |
-| 33 | Release tái lập/clean environment | P2 | IN PROGRESS | B09-fix1: ZIP normalized metadata, manifest/verifier/dry-run; packager chặn cả symlink và Windows junction; còn hosted CI/cross-OS checksum |
+| 33 | Release tái lập/clean environment | P2 | IN PROGRESS | B09-fix1 + hosted run #10: stable archive root, normalized metadata, manifest/verifier/dry-run, clean-unpack PASS; còn so checksum nén cross-zlib/macOS nếu muốn cam kết whole-ZIP byte-identical |
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
 
 ## Nhật ký triển khai
@@ -216,6 +216,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Commit `f429a2b` (`feat: integrate optimization B01-B09 fix1`) đã được push lên `origin/main`; trước commit, `npm run check` PASS và phạm vi stage không chứa `.dev.vars`, `.local-data`, `node_modules`, `content-candidates`, log hoặc ZIP.
 - GitHub Actions run `36300290729` đã được tạo cho workflow **Verify game and source release**. Cả job `validate (ubuntu-latest)` và `validate (windows-latest)` bị GitHub dừng trước step đầu với thông báo account bị khóa do billing; `release-smoke` vì vậy bị skip.
 - Đây là chặn hạ tầng tài khoản, chưa phải lỗi source hay workflow. Giữ #26/#33 `IN PROGRESS`; sau khi billing GitHub được xử lý, rerun workflow và chỉ cập nhật PASS khi matrix Linux/Windows cùng clean-unpack hoàn tất.
+
+### 27/09/2026 — Hosted CI đa hệ điều hành và release sạch
+
+- Sau khi payment method được verify, runner GitHub hoạt động bình thường. Các run trung gian phát hiện lỗi portability thật: Git checkout Windows đổi LF/CRLF làm sai hash/generated comparison; temporary root của hosted Windows đi qua junction; tên thư mục checkout GitHub viết thường làm ZIP root không khớp smoke contract.
+- Chuẩn hóa toàn bộ text checkout bằng `.gitattributes` (`* text=auto eol=lf`); static server so containment giữa `realpath(root)` và `realpath(file)` bằng `path.relative`, vẫn chặn linked directory thoát public root; ZIP luôn dùng archive root `PokemonVanguard` bất kể tên checkout. Test runner phát annotation TAP ngắn cho lỗi hosted.
+- Clean clone Windows độc lập: `npm ci`, `npm run check`, `npm test` **1.333/1.333 PASS trên 205 file**. Test mục tiêu HTTP/release/reward đều PASS sau bản sửa cuối.
+- GitHub Actions run [`36305711464`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36305711464) cho commit `13b7ac0`: `validate (ubuntu-latest)` PASS, `validate (windows-latest)` PASS, `release-smoke` PASS gồm package manifest/CRC/security, clean-unpack, npm-ci/check và handle-leak. Đánh dấu #26 `DONE`.
+- #33 giữ `IN PROGRESS` theo tiêu chí thận trọng: hash từng file trong manifest là contract portable đã PASS; chưa cam kết toàn bộ byte ZIP giống nhau giữa zlib/OS và chưa chạy macOS. Cảnh báo action runtime Node 20 bị GitHub ép Node 24 là cảnh báo maintenance, không làm thất bại run.
 
 ## Cách cập nhật file này
 
