@@ -14,7 +14,7 @@ const sha256url=value=>createHash('sha256').update(value).digest('base64url');
 const validUuid=value=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||'');
 const apiKeyHeaders=key=>({apikey:key,...(String(key).startsWith('eyJ')?{Authorization:`Bearer ${key}`}:{})});
 
-export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionSecret=false,now=()=>Date.now(),onLogout=()=>{}}={}){
+export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionSecret=false,now=()=>Date.now(),onLogout=()=>{},originAllowed=()=>true}={}){
  const secret=String(env.AUTH_SESSION_SECRET||'');
  const unsafeSecrets=new Set(['pokemon-vanguard-local-beta-session-secret','replace-with-at-least-32-random-characters']);
  if(requireSessionSecret&&(secret.trim().length<32||unsafeSecrets.has(secret)))throw new Error('AUTH_SESSION_SECRET must contain at least 32 non-default characters when authentication is required');
@@ -26,6 +26,7 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionS
  const devLogin=env.AUTH_ALLOW_LOCAL_BETA==='true';
  const adminIds=new Set(String(env.ADMIN_ACCOUNT_IDS||'').split(',').map(value=>value.trim()).filter(Boolean));
  const allowLocalAdmin=env.ADMIN_ALLOW_LOCAL_BETA==='true';
+ const configuredDeadline=Number(env.PV_OAUTH_TIMEOUT_MS),oauthTimeoutMs=Number.isSafeInteger(configuredDeadline)&&configuredDeadline>=100&&configuredDeadline<=60_000?configuredDeadline:10_000;
  const isAdmin=session=>!!session&&(adminIds.has(session.accountId)||(allowLocalAdmin&&session.provider==='local'));
  const revoked=new Map();
  const sessionValid=session=>{
@@ -41,17 +42,28 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionS
  const json=(res,status,body,headers={})=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers});res.end(JSON.stringify(body));};
  const redirect=(res,location,setCookie)=>{res.writeHead(303,{Location:location,'Cache-Control':'no-store',...(setCookie?{'Set-Cookie':setCookie}:{})});res.end();};
  const secure=url=>url.protocol==='https:';
+ async function deadlineOperation(work,authCode){
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),oauthTimeoutMs);timer.unref?.();
+  try{
+   return await Promise.race([
+    work(controller.signal),
+    new Promise((_,reject)=>{controller.signal.addEventListener('abort',()=>{const error=new Error('authentication upstream timed out');error.authCode=authCode;reject(error);},{once:true});})
+   ]);
+  }catch(error){if(controller.signal.aborted&&!error.authCode)error.authCode=authCode;throw error;
+  }finally{clearTimeout(timer);}
+ }
  async function syncProfile(user,profile){
   if(!serviceKey)return;
-  const response=await fetchImpl(`${supabaseUrl}/rest/v1/profiles?on_conflict=user_id`,{method:'POST',headers:{...apiKeyHeaders(serviceKey),'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,display_name:profile.name,avatar_url:profile.avatar,updated_at:new Date().toISOString()})});
+  const response=await deadlineOperation(signal=>fetchImpl(`${supabaseUrl}/rest/v1/profiles?on_conflict=user_id`,{method:'POST',headers:{...apiKeyHeaders(serviceKey),'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:user.id,display_name:profile.name,avatar_url:profile.avatar,updated_at:new Date().toISOString()}),signal}),'profile_sync_timeout');
   if(!response.ok){const error=new Error('profile sync failed');error.authCode=response.status===404?'storage_not_ready':'profile_sync_failed';throw error;}
  }
  async function handle(req,res,url){
   if(url.pathname==='/api/auth/session'){
    const session=readSession(req);json(res,200,{authenticated:!!session,user:session?{accountId:session.accountId,playerId:session.playerId,roomId:session.roomId,name:session.name,avatar:session.avatar,provider:session.provider,admin:isAdmin(session)}:null,providers:{google:cloudSaveConfigured,discord:cloudSaveConfigured},devLogin,supabaseConfigured,cloudSaveConfigured});return true;
   }
-  if(url.pathname==='/api/auth/logout'&&req.method==='POST'){revokeSession(readSession(req));redirect(res,'/',cookie(SESSION_COOKIE,'',{maxAge:0,secure:secure(url)}));return true;}
+  if(url.pathname==='/api/auth/logout'&&req.method==='POST'){if(!originAllowed(req,url)){json(res,403,{error:'ORIGIN_MISMATCH'});return true;}revokeSession(readSession(req));redirect(res,'/',cookie(SESSION_COOKIE,'',{maxAge:0,secure:secure(url)}));return true;}
   if(url.pathname==='/api/auth/dev'&&req.method==='POST'&&devLogin){
+   if(!originAllowed(req,url)){json(res,403,{error:'ORIGIN_MISMATCH'});return true;}
    let body='';for await(const chunk of req){body+=chunk;if(body.length>4096)break;}const legacy=new URLSearchParams(body).get('legacyPlayerId'),valid=/^[A-Za-z0-9_-]{1,128}$/.test(legacy||'');
    const playerId=valid?legacy:`local-${randomBytes(12).toString('hex')}`,roomId=valid?`aether-${legacy}`:`aether-${playerId}`,session={accountId:`dev:${playerId}`,playerId,roomId,name:'Local Beta Tester',avatar:null,provider:'local'};
    redirect(res,'/',cookie(SESSION_COOKIE,issueSession(session),{maxAge:SESSION_AGE,secure:secure(url)}));return true;
@@ -68,9 +80,8 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionS
    const flow=readSigned(cookies(req)[FLOW_COOKIE],secret),code=url.searchParams.get('code');
    if(!flow||!['google','discord'].includes(flow.provider)||!flow.verifier||flow.exp<=now()/1000||!code){redirect(res,'/?auth_error=invalid_oauth_response',cookie(FLOW_COOKIE,'',{maxAge:0,path:'/auth/callback',secure:secure(url)}));return true;}
    try{
-    const tokenResponse=await fetchImpl(`${supabaseUrl}/auth/v1/token?grant_type=pkce`,{method:'POST',headers:{...apiKeyHeaders(publishableKey),'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({auth_code:code,code_verifier:flow.verifier})});
-    if(!tokenResponse.ok)throw new Error('Supabase code exchange failed');
-    const token=await tokenResponse.json(),user=token.user;if(!validUuid(user?.id))throw new Error('Invalid Supabase user');
+    const token=await deadlineOperation(async signal=>{const response=await fetchImpl(`${supabaseUrl}/auth/v1/token?grant_type=pkce`,{method:'POST',headers:{...apiKeyHeaders(publishableKey),'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({auth_code:code,code_verifier:flow.verifier}),signal});if(!response.ok)throw new Error('Supabase code exchange failed');return response.json();},'oauth_timeout');
+    const user=token.user;if(!validUuid(user?.id))throw new Error('Invalid Supabase user');
     const meta=user.user_metadata||{},identity=user.identities?.find(item=>item.provider===flow.provider),identityData=identity?.identity_data||{};
     const name=clean(meta.full_name||meta.name||meta.user_name||identityData.full_name||identityData.name||identityData.user_name||user.email?.split('@')[0]||'Vanguard Trainer');
     const avatar=clean(meta.avatar_url||meta.picture||identityData.avatar_url||identityData.picture)||null;

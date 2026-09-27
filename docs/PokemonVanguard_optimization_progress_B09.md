@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 6 |
-| IN PROGRESS | 19 |
-| TODO | 8 |
+| DONE | 8 |
+| IN PROGRESS | 18 |
+| TODO | 7 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B09 — nhóm độc lập hiệu năng, CI, dữ liệu và release** theo yêu cầu không để #18 và Supabase staging chặn tiến độ. Hạng mục P1 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B10 — public origin, trusted proxy, OAuth deadline và graceful shutdown**. Hạng mục P1 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -37,11 +37,11 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–06: Admin/Social/Ranked/Training/Team/Shop/Recruitment receipts. B07: bổ sung PvE schema-3 battle receipts + lost-ACK retry đọc save; còn legacy commands, PvP per-turn durable receipts và archival |
 | 09 | Giới hạn dữ liệu nóng | P2 | TODO | Đo save synthetic trước |
-| 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue 32/socket, buffer 8 MiB, maxPayload 70 KiB; B07 thêm deadline join 12 s và cap 4 socket/account; B08 thêm quota tin nhắn theo account/IP/socket, IP upgrade/socket và HTTP inspector; còn WebSocket integration/soak, distributed cap và proxy trust |
+| 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline join + cap socket/account; B08 quota; B10 chỉ tin XFF từ proxy IP allowlist; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
-| 12 | Origin/cookie qua HTTPS proxy | P1 | TODO | Cần contract public origin |
+| 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
-| 14 | Deadline I/O và phân loại lỗi | P1 | IN PROGRESS | B02: deadline Supabase fetch; B08 mở rộng deadline cả body và giới hạn đọc 16 MiB, phân loại bad JSON/oversize; icon proxy allowlist + coalescing + timeout + giới hạn PNG; còn OAuth/profile deadline và graceful shutdown |
+| 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
 | 15 | Public projection allowlist/pure | P1 | IN PROGRESS | Các projection trọng yếu clone/deep-freeze; B02 chặn Admin mutation receipts; B04 chặn Social và Ranked settlement receipts khỏi WebSocket public; còn DTO allowlist/negative privacy test |
 | 16 | Giảm full-state broadcast/render | P2 | TODO | Đo trước |
 | 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
@@ -224,6 +224,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Clean clone Windows độc lập: `npm ci`, `npm run check`, `npm test` **1.333/1.333 PASS trên 205 file**. Test mục tiêu HTTP/release/reward đều PASS sau bản sửa cuối.
 - GitHub Actions run [`36305711464`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36305711464) cho commit `13b7ac0`: `validate (ubuntu-latest)` PASS, `validate (windows-latest)` PASS, `release-smoke` PASS gồm package manifest/CRC/security, clean-unpack, npm-ci/check và handle-leak. Đánh dấu #26 `DONE`.
 - #33 giữ `IN PROGRESS` theo tiêu chí thận trọng: hash từng file trong manifest là contract portable đã PASS; chưa cam kết toàn bộ byte ZIP giống nhau giữa zlib/OS và chưa chạy macOS. Cảnh báo action runtime Node 20 bị GitHub ép Node 24 là cảnh báo maintenance, không làm thất bại run.
+
+### 27/09/2026 — B10: origin/proxy và shutdown
+
+- **#12 DONE:** thêm canonical `PUBLIC_ORIGIN`; OAuth callback và cờ cookie `Secure` không còn phụ thuộc `Host` nội bộ. Mutation trình duyệt và WebSocket kiểm tra exact origin/scheme/port; `Sec-Fetch-Site: cross-site` bị chặn.
+- **#10 một phần:** `X-Forwarded-For` chỉ được dùng khi transport peer nằm trong allowlist IP `PV_TRUSTED_PROXY_IPS`; client trực tiếp không thể spoof IP quota. Distributed socket cap và soak vẫn mở nên #10 giữ `IN PROGRESS`.
+- **#14 DONE:** token exchange/profile sync có deadline + mã lỗi ổn định; shutdown dừng accept, drain queue, đóng WS và force-close trong một budget, đồng thời idempotent.
+- **Kiểm thử:** bộ mục tiêu `proxy-origin-b10`, `local` và `request-quotas-b08`: 17/17 PASS; `npm run check` PASS; full regression **1.341/1.341 PASS trên 206 file**. Tài liệu vận hành: `app/docs/proxy-origin-shutdown-b10.md`.
+- **Giới hạn:** chưa thay thế smoke-test qua reverse proxy/OAuth/Supabase thật; không tuyên bố multi-process drain hay khôi phục PvP giữa trận.
 
 ## Cách cập nhật file này
 

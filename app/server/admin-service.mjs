@@ -21,8 +21,8 @@ async function pooled(items,limit,worker){
 }
 
 export class AdminService{
- constructor({storage,catalog,clock={now:()=>Date.now()},isAdmin=()=>false,isOnline=()=>false,listOnlineAccountIds=()=>[],getLiveState=()=>null,setLiveState=()=>{},notify=()=>{},disconnect=()=>{},withAccountLock=async(_accountId,work)=>work(),liveOperations={overview:async()=>({}),statusForPlayer:()=>null,stopForPlayer:async()=>({ok:false})},backupDir='.admin-backups'}){
-  Object.assign(this,{storage,catalog,clock,isAdmin,isOnline,listOnlineAccountIds,getLiveState,setLiveState,notify,disconnect,withAccountLock,liveOperations,backupDir});
+ constructor({storage,catalog,clock={now:()=>Date.now()},isAdmin=()=>false,isOnline=()=>false,listOnlineAccountIds=()=>[],getLiveState=()=>null,setLiveState=()=>{},notify=()=>{},disconnect=()=>{},withAccountLock=async(_accountId,work)=>work(),liveOperations={overview:async()=>({}),statusForPlayer:()=>null,stopForPlayer:async()=>({ok:false})},originAllowed=(req,url)=>{if(!req.headers.origin)return true;try{return new URL(req.headers.origin).origin===url.origin;}catch{return false;}},backupDir='.admin-backups'}){
+  Object.assign(this,{storage,catalog,clock,isAdmin,isOnline,listOnlineAccountIds,getLiveState,setLiveState,notify,disconnect,withAccountLock,liveOperations,originAllowed,backupDir});
   this.campaigns=new Map();this.campaignTasks=new Map();
  }
  async record(userId){const state=this.getLiveState(userId)||await this.storage.load(userId),profile=await this.storage.profile?.(userId);if(!state&&!profile)return null;return {userId,displayName:profile?.displayName||state?.owner||userId,avatarUrl:profile?.avatarUrl||null,createdAt:profile?.createdAt||null,updatedAt:profile?.updatedAt||null,schemaVersion:state?.schemaVersion||null,revision:state?.revision||0,state};}
@@ -119,7 +119,7 @@ export class AdminService{
  }
  async handle(req,res,url,session){
   if(!url.pathname.startsWith('/api/admin'))return false;if(!session)return json(res,401,{error:'AUTH_REQUIRED'}),true;if(!this.isAdmin(session))return json(res,403,{error:'ADMIN_REQUIRED'}),true;
-  if(req.method==='POST'&&req.headers.origin){try{if(new URL(req.headers.origin).host!==url.host)return json(res,403,{error:'ORIGIN_MISMATCH'}),true;}catch{return json(res,403,{error:'ORIGIN_MISMATCH'}),true;}}
+  if(req.method==='POST'&&!this.originAllowed(req,url))return json(res,403,{error:'ORIGIN_MISMATCH'}),true;
   if(url.pathname==='/api/admin/overview'&&req.method==='GET'){json(res,200,await this.overview());return true;}
   if(url.pathname==='/api/admin/catalog'&&req.method==='GET'){json(res,200,{items:this.catalog.items.filter(item=>item.enabledForBattle).map(item=>({id:item.id,name:item.name,category:item.category})),pokemon:this.catalog.species.filter(species=>species.enabledForBattle).map(species=>({id:species.id,name:species.name})),missions:MISSION_DEFINITIONS,rankTiers:RANKED_TIERS,mailRetentionPresets:Object.values(MAIL_RETENTION_PRESETS).map(preset=>({id:preset.id,name:preset.label,unreadDays:mailboxDurationDays(preset.unreadTtlMs),readDays:mailboxDurationDays(preset.readTtlMs)}))});return true;}
   if(url.pathname==='/api/admin/live'&&req.method==='GET'){json(res,200,await this.liveOperations.overview());return true;}

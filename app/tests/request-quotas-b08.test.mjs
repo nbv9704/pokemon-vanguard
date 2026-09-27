@@ -26,9 +26,9 @@ test('account, IP, and socket quotas are independent and cannot starve unrelated
  tick+=60_001;quotas.prune();assert.equal(quotas.upgrade('ip1').ok,true);
 });
 
-test('the local-server wires lightweight pre-queue quotas and never trusts user-supplied forwarded IP',async()=>{
+test('the local-server wires lightweight pre-queue quotas through the B10 trusted-proxy policy',async()=>{
  const {readFile}=await import('node:fs/promises');const server=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
  assert.match(server,/quotas\.message\(/);assert.match(server,/quotas\.upgrade\(/);assert.match(server,/quotas\.inspector\(/);
- assert.match(server,/req\.socket\.remoteAddress/);assert.doesNotMatch(server,/req\.headers\[['"]x-forwarded-for['"]\]/);
+ assert.match(server,/requestPolicy\.clientIp\(req\)/);assert.doesNotMatch(server,/req\.headers\[['"]x-forwarded-for['"]\]/);
  assert.ok(server.indexOf('quotas.message(')<server.indexOf('inbound.acquire(ws)'));
 });
