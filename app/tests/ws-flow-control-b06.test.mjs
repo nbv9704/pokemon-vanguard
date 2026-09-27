@@ -11,9 +11,10 @@ test('burst of 1,000 synthetic actions cannot exceed per-socket in-process queue
  assert.equal(limiter.pending(socket),0);assert.equal(limiter.acquire(socket),true);
 });
 test('backpressure terminates a slow consumer rather than buffering unlimited state frames',()=>{
- const ws={readyState:1,bufferedAmount:WS_LIMITS.maxBufferedBytes+1,send(){throw Error('should never send');},terminate(){this.terminated=true;}};
- assert.equal(sendBounded(ws,{type:'state'}),false);assert.equal(ws.terminated,true);
+ const drops=[],ws={readyState:1,bufferedAmount:WS_LIMITS.maxBufferedBytes+1,send(){throw Error('should never send');},terminate(){this.terminated=true;}};
+ assert.equal(sendBounded(ws,{type:'state'},{onDrop:reason=>drops.push(reason)}),false);assert.equal(ws.terminated,true);
  const good={readyState:1,bufferedAmount:0,frames:[],send(text){this.frames.push(JSON.parse(text));}};
  assert.equal(sendBounded(good,{type:'action-ack',actionId:'id'}),true);assert.deepEqual(good.frames,[{type:'action-ack',actionId:'id'}]);
- good.readyState=3;assert.equal(sendBounded(good,{type:'state'}),false);
+ good.readyState=3;assert.equal(sendBounded(good,{type:'state'},{onDrop:reason=>drops.push(reason)}),false);
+ const broken={readyState:1,bufferedAmount:0,send(){throw Error('synthetic send failure');},terminate(){this.terminated=true;}};assert.equal(sendBounded(broken,{type:'state'},{onDrop:reason=>drops.push(reason)}),false);assert.equal(broken.terminated,true);assert.deepEqual(drops,['backpressure','closed','error']);
 });

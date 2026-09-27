@@ -24,6 +24,6 @@ test('room hard cap rejects active overflow, then LRU-evicts detached saves and 
   const port=await app.listen(0);a=await joined(port,'alpha');assert.equal(app.resourceSnapshot().rooms,1);
   assert.equal(await rejectedStatus(port,'bravo'),503);assert.equal(app.resourceSnapshot().capacityRejected,1);assert.equal(app.resourceSnapshot().rooms,1);
   await close(a.ws);await settled(app);b=await joined(port,'bravo');let snapshot=app.resourceSnapshot();assert.equal(snapshot.rooms,1);assert.equal(snapshot.evictions.capacity,1);
-  await close(b.ws);await settled(app);reloaded=await joined(port,'alpha');snapshot=app.resourceSnapshot();assert.equal(snapshot.rooms,1);assert.equal(snapshot.evictions.capacity,2);assert.equal(reloaded.state.you,'alpha');
+  await close(b.ws);await settled(app);reloaded=await joined(port,'alpha');snapshot=app.resourceSnapshot();assert.equal(snapshot.rooms,1);assert.equal(snapshot.evictions.capacity,2);assert.equal(reloaded.state.you,'alpha');assert.ok(snapshot.runtime.persist.samples>=3);assert.ok(snapshot.runtime.broadcast.frames>=3);assert.ok(snapshot.runtime.broadcast.bytes>0);
  }finally{await close(a?.ws);await close(b?.ws);await close(reloaded?.ws);await app.close();await rm(dir,{recursive:true,force:true});}
 });

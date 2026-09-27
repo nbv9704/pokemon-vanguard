@@ -50,6 +50,7 @@ import {pruneDetachedRooms,roomResourceSnapshot,DETACHED_ROOM_RETENTION_MS} from
 import {createCatalogHttpResponse,createStaticHttpResponse} from './server/http-public-assets.mjs';
 import {createPublicOriginPolicy} from './server/public-origin-policy.mjs';
 import {legacyAdventurePublicView} from './server/player-public-view.mjs';
+import {RuntimeMetrics,instrumentPersistence} from './server/runtime-metrics.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 export const BETA_TEST_WALLET=Object.freeze({coins:999999,crystals:999999,recruitmentTickets:999});
@@ -66,8 +67,9 @@ async function readJsonBody(req,maxBytes=32*1024){let size=0,chunks=[];for await
 export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock(), betaTestFunds = false, authRequired = false, authEnv = process.env, authFetch = fetch, storageFetch = fetch, websocketHeartbeatMs = 10_000, websocketJoinDeadlineMs = 12_000, maxSocketsPerAccount = 4, maxSocketsPerIp = 24, maxResidentRooms = 1000, requestRateLimits = {}, roomRetentionMs = DETACHED_ROOM_RETENTION_MS, shutdownDeadlineMs = 10_000 } = {}) {
   const rooms = new Map();
   const accounts=new AccountCoordinator();
+  const runtimeMetrics=new RuntimeMetrics();
   let broadcast=()=>{};
-  const storage = new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})});
+  const storage = instrumentPersistence(new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})}),runtimeMetrics);
   const requestPolicy=createPublicOriginPolicy({env:authEnv});
   const auth=createLocalAuth({env:authEnv,fetchImpl:authFetch,requireSessionSecret:authRequired,now:()=>clock.now(),originAllowed:(req,url)=>requestPolicy.browserMutationAllowed(req,url),onLogout:session=>{
    for(const room of rooms.values())for(const ws of new Set([...room.clients.keys(),...(room.pendingSockets||[])]))if(ws.authSessionId===session.sid)closeAuthSocket(ws,'AUTH_REVOKED');
@@ -83,13 +85,14 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const roomBusy=id=>ranked.busy(id)||trainingPvp.busy(id);
   const onRoomEvict=(id,reason)=>{roomCounters[reason]=(roomCounters[reason]||0)+1;ranked.presence.delete(id);trainingPvp.presence.delete(id);social.presence.delete(id);};
   const sweepRooms=targetSize=>pruneDetachedRooms(rooms,{now:clock.now(),retentionMs:roomRetentionMs,targetSize,isBusy:roomBusy,onEvict:onRoomEvict});
-  const resourceSnapshot=()=>roomResourceSnapshot(rooms,{maxRooms:roomLimit,counters:roomCounters,isBusy:roomBusy});
+  const resourceSnapshot=()=>({...roomResourceSnapshot(rooms,{maxRooms:roomLimit,counters:roomCounters,isBusy:roomBusy}),runtime:runtimeMetrics.snapshot()});
   let lifecycleTicking=false,lastRoomSweep=clock.now();
   const lifecycleTimer=setInterval(()=>{if(lifecycleTicking)return;lifecycleTicking=true;Promise.resolve().then(()=>ranked.tick()).then(()=>trainingPvp.tick()).then(()=>{
    const now=clock.now();if(now-lastRoomSweep<60_000)return;lastRoomSweep=now;quotas.prune();
    sweepRooms(roomLimit);
   }).catch(error=>console.error('PvP lifecycle tick failed:',error.message)).finally(()=>{lifecycleTicking=false;});},1000);
   lifecycleTimer.unref?.();
+  let eventLoopExpected=performance.now()+1000;const eventLoopTimer=setInterval(()=>{const measured=performance.now();runtimeMetrics.observeEventLoopLag(Math.max(0,measured-eventLoopExpected));eventLoopExpected=measured+1000;},1000);eventLoopTimer.unref?.();
   const pveLive=()=>[...rooms.entries()].flatMap(([accountId,room])=>{const v3=room.state?.battleV3,v2=room.state?.battleV2;if(v3&&v3.phase!=='FINISHED')return [{kind:'pve',id:v3.id||`pve:${accountId}`,accountId,name:room.state.owner||accountId,mode:v3.mode||'single',status:v3.phase,difficulty:v3.difficulty||'normal'}];if(v2&&v2.phase!=='FINISHED')return [{kind:'pve-v2',id:v2.id||`pve-v2:${accountId}`,accountId,name:room.state.owner||accountId,mode:v2.mode||'single',status:v2.phase,difficulty:v2.difficulty||'normal'}];return [];});
   const liveOperations={
     overview:async()=>({ranked:ranked.adminOverview(),friendly:trainingPvp.adminOverview(),pve:pveLive(),resources:resourceSnapshot()}),
@@ -146,12 +149,13 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     if(!rooms.has(match[1])){sweepRooms(roomLimit-1);if(rooms.size>=roomLimit){roomCounters.capacityRejected++;socket.end('HTTP/1.1 503 Service Unavailable\r\nRetry-After: 5\r\n\r\n');return;}}
     wss.handleUpgrade(req, socket, head, ws => {ws.remoteIp=remoteIp;wss.emit('connection', ws, {name:match[1],session});});
   });
-  const send = (ws, message) => sendBounded(ws,message,{openState:WebSocket.OPEN});
-  const sendFrame=(ws,encoded)=>sendSerializedBounded(ws,encoded,{openState:WebSocket.OPEN});
+  const onSocketDrop=reason=>runtimeMetrics.observeSocketDrop(reason);
+  const send = (ws, message) => sendBounded(ws,message,{openState:WebSocket.OPEN,onDrop:onSocketDrop});
+  const sendFrame=(ws,encoded)=>sendSerializedBounded(ws,encoded,{openState:WebSocket.OPEN,onDrop:onSocketDrop});
   const inbound=createInboundLimiter();
   broadcast = room => {
     const serverNow=clock.now();
-    broadcastSharedFrames(room.clients,{project:player=>{
+    const stats=broadcastSharedFrames(room.clients,{project:player=>{
       const legacyView=viewFor(room.state,player);
       if(legacyView.spectator)return {type:'state',status:'playing',seats:[room.state.owner],you:player,connected:room.clients.size,view:{spectator:true},result:null,meta};
       const publicAdventure=legacyAdventurePublicView(legacyView);
@@ -159,7 +163,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
       const recruitmentV3=v3RecruitmentView(room.state,v3Catalog,{serverNow}),adminGifts=room.state.progressionV3?adminGiftView(room.state,v3Catalog,{now:serverNow}):null,systemMailbox=systemMailboxView(room.state,v2Catalog,{now:serverNow}),mailboxV1={version:1,unreadCount:systemMailbox.unreadCount+(adminGifts?.unreadCount||0),pendingCount:systemMailbox.pendingCount+(adminGifts?.pendingCount||0),system:systemMailbox.mails};
       const view={...publicAdventure,recruitmentTickets:room.state.wallet?.recruitmentTickets||0,missions:missionView(room.state,serverNow),trainingV2:v2TrainingView(room.state,v2Catalog,{now:viewNow}),trainingV3:room.state.progressionV3?v3TrainingView(room.state.progressionV3,v3Catalog):null,bagV1:room.state.progressionV3?ticketBagView(room.state,v3Catalog):null,shopV3:room.state.progressionV3?v3ShopView(room.state,v3Catalog):null,profileV1:room.state.progressionV3?profileView(room.state,v3Catalog,{serverNow}):null,rankedV1:room.state.progressionV3?ranked.viewFor(room.name,room.state):null,trainingPvpV1:room.state.progressionV3?trainingPvp.viewFor(room.name):null,socialV1:room.state.progressionV3?social.viewFor(room.name,room.state):null,mailboxV1,adminGiftsV1:adminGifts,recruitmentV2,recruitmentV3,battleV2:v2BattleView(room.state,v2Catalog),battleV3:v3BattleView(room.state)};
       return {type:'state',status:'playing',seats:[room.state.owner],you:player,connected:room.clients.size,view,result:null,meta};
-    },send:sendFrame});
+    },send:sendFrame});runtimeMetrics.observeBroadcast(stats);
   };
   async function persist(name, state) {
     await storage.save(name,state);
@@ -174,7 +178,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     const expiryTimer=expiryMs===null?null:setTimeout(()=>closeAuthSocket(ws),Math.min(expiryMs,2**31-1));expiryTimer?.unref?.();
     const joinTimer=setTimeout(()=>{if(!ws.joinedToRoom&&ws.readyState===WebSocket.OPEN)ws.close(4000,'join deadline exceeded');},joinDeadlineMs);joinTimer.unref?.();
     markWebSocketAlive(ws);
-    if (!rooms.has(name)) rooms.set(name, { name, state:null, clients:new Map(), pendingSockets:new Set(), queue:new SerialTaskQueue(), dirty:false, lastActiveAt:clock.now(), lastDetachedAt:null });
+    if (!rooms.has(name)) rooms.set(name, { name, state:null, clients:new Map(), pendingSockets:new Set(), queue:new SerialTaskQueue({now:()=>clock.now()}), dirty:false, lastActiveAt:clock.now(), lastDetachedAt:null });
     const room = rooms.get(name);room.pendingSockets.add(ws);room.lastActiveAt=clock.now();
     ws.on('error', () => {});
     ws.on('message', raw => {
@@ -311,7 +315,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     server,
     resourceSnapshot,
     listen: (port = 3100) => new Promise((resolve,reject) => {server.once('error',reject); server.listen(port,'127.0.0.1',()=>{server.off('error',reject);resolve(server.address().port);});}),
-    close: async () => closePromise||(closePromise=(async()=>{closing=true;clearInterval(lifecycleTimer);clearInterval(websocketHeartbeatTimer);const budget=Number.isSafeInteger(shutdownDeadlineMs)?Math.max(100,Math.min(60_000,shutdownDeadlineMs)):10_000,endsAt=Date.now()+budget,remaining=()=>Math.max(1,endsAt-Date.now());const serverClosed=!server.listening?Promise.resolve():new Promise(resolve=>server.close(()=>resolve()));for(const ws of wss.clients)ws.close(1001,'server shutting down');await bounded(Promise.all([...rooms.values()].map(r=>r.queue.idle())),remaining());for(const ws of wss.clients)ws.terminate();await bounded(new Promise(resolve=>wss.close(resolve)),remaining());server.closeAllConnections?.();await bounded(serverClosed,remaining());})())
+    close: async () => closePromise||(closePromise=(async()=>{closing=true;clearInterval(lifecycleTimer);clearInterval(eventLoopTimer);clearInterval(websocketHeartbeatTimer);const budget=Number.isSafeInteger(shutdownDeadlineMs)?Math.max(100,Math.min(60_000,shutdownDeadlineMs)):10_000,endsAt=Date.now()+budget,remaining=()=>Math.max(1,endsAt-Date.now());const serverClosed=!server.listening?Promise.resolve():new Promise(resolve=>server.close(()=>resolve()));for(const ws of wss.clients)ws.close(1001,'server shutting down');await bounded(Promise.all([...rooms.values()].map(r=>r.queue.idle())),remaining());for(const ws of wss.clients)ws.terminate();await bounded(new Promise(resolve=>wss.close(resolve)),remaining());server.closeAllConnections?.();await bounded(serverClosed,remaining());})())
   };
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

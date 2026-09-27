@@ -17,11 +17,11 @@ export function pruneDetachedRooms(rooms,{now,retentionMs=DETACHED_ROOM_RETENTIO
 }
 
 export function roomResourceSnapshot(rooms,{maxRooms,counters={},isBusy=()=>false}={}){
- let connectedSockets=0,pendingSockets=0,queuedJobs=0,activeRooms=0,detachedRooms=0,dirtyRooms=0,busyRooms=0;
+ let connectedSockets=0,pendingSockets=0,queuedJobs=0,oldestQueueWaitMs=0,activeRooms=0,detachedRooms=0,dirtyRooms=0,busyRooms=0;
  for(const [accountId,room] of rooms){
-  connectedSockets+=room.clients.size;pendingSockets+=room.pendingSockets?.size||0;queuedJobs+=room.queue.depth||0;
+  connectedSockets+=room.clients.size;pendingSockets+=room.pendingSockets?.size||0;queuedJobs+=room.queue.depth||0;oldestQueueWaitMs=Math.max(oldestQueueWaitMs,room.queue.snapshot?.().oldestWaitMs||0);
   if(room.clients.size||room.pendingSockets?.size)activeRooms++;else detachedRooms++;
   if(room.dirty)dirtyRooms++;if(isBusy(accountId))busyRooms++;
  }
- return {rooms:rooms.size,maxRooms,activeRooms,detachedRooms,dirtyRooms,busyRooms,connectedSockets,pendingSockets,queuedJobs,evictions:{ttl:counters.ttl||0,capacity:counters.capacity||0},capacityRejected:counters.capacityRejected||0};
+ return {rooms:rooms.size,maxRooms,activeRooms,detachedRooms,dirtyRooms,busyRooms,connectedSockets,pendingSockets,queuedJobs,oldestQueueWaitMs,evictions:{ttl:counters.ttl||0,capacity:counters.capacity||0},capacityRejected:counters.capacityRejected||0};
 }

@@ -10,11 +10,11 @@ export function createInboundLimiter({maxPending=WS_LIMITS.pendingMessagesPerSoc
   pending(socket){return counts.get(socket)||0;}
  };
 }
-export function sendBounded(ws,message,{maxBufferedBytes=WS_LIMITS.maxBufferedBytes,openState=1}={}){
- return sendSerializedBounded(ws,JSON.stringify(message),{maxBufferedBytes,openState});
+export function sendBounded(ws,message,{maxBufferedBytes=WS_LIMITS.maxBufferedBytes,openState=1,onDrop}={}){
+ return sendSerializedBounded(ws,JSON.stringify(message),{maxBufferedBytes,openState,onDrop});
 }
-export function sendSerializedBounded(ws,serialized,{maxBufferedBytes=WS_LIMITS.maxBufferedBytes,openState=1}={}){
- if(ws.readyState!==openState)return false;
- if(ws.bufferedAmount>maxBufferedBytes){try{ws.terminate();}catch{}return false;}
- ws.send(serialized);return true;
+export function sendSerializedBounded(ws,serialized,{maxBufferedBytes=WS_LIMITS.maxBufferedBytes,openState=1,onDrop=()=>{}}={}){
+ if(ws.readyState!==openState){onDrop('closed');return false;}
+ if(ws.bufferedAmount>maxBufferedBytes){onDrop('backpressure');try{ws.terminate();}catch{}return false;}
+ try{ws.send(serialized);return true;}catch{onDrop('error');try{ws.terminate();}catch{}return false;}
 }

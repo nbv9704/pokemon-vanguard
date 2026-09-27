@@ -19,6 +19,6 @@ test('capacity cleanup evicts least-recently-active safe rooms and reports reaso
 
 test('resource snapshot exposes bounded aggregate counts without account details',()=>{
  const rooms=new Map([['a',room({clients:2,jobs:1,detached:null})],['b',room({pending:1,dirty:true})],['c',room()]]),snapshot=roomResourceSnapshot(rooms,{maxRooms:8,counters:{ttl:2,capacity:3,capacityRejected:4},isBusy:id=>id==='c'});
- assert.deepEqual(snapshot,{rooms:3,maxRooms:8,activeRooms:2,detachedRooms:1,dirtyRooms:1,busyRooms:1,connectedSockets:2,pendingSockets:1,queuedJobs:1,evictions:{ttl:2,capacity:3},capacityRejected:4});
+ assert.deepEqual(snapshot,{rooms:3,maxRooms:8,activeRooms:2,detachedRooms:1,dirtyRooms:1,busyRooms:1,connectedSockets:2,pendingSockets:1,queuedJobs:1,oldestQueueWaitMs:0,evictions:{ttl:2,capacity:3},capacityRejected:4});
  assert.equal(Object.hasOwn(snapshot,'a'),false);assert.equal(Object.hasOwn(snapshot,'b'),false);assert.equal(Object.hasOwn(snapshot,'c'),false);
 });

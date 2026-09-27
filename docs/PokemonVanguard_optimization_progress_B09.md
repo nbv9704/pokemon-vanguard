@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B17 — bounded room lifecycle và resource observability**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B18 — runtime persistence/queue/transport observability**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -37,7 +37,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–15 bao phủ schema-3/account/schema-2 management; B16 thêm toàn chuỗi schema-2 PvE battle; còn PvP per-turn và archival |
 | 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
-| 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline join + cap socket/account; B08 quota; B10 chỉ tin XFF từ proxy IP allowlist; còn soak và distributed cap |
+| 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline/cap; B08 quota; B10 trusted proxy; B18 đếm broadcast bytes và drop theo backpressure/closed/error; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
@@ -57,7 +57,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
 | 29 | Social capacity/profile offline | P1 | IN PROGRESS | B03 WAL/cloud pair RPC; B04 durable Social receipts; B05 WS commit ACK + sessionStorage pending outbox theo tài khoản và retry cùng mã qua reconnect/reload (không tự gửi lại); còn Supabase thật/multi-process smoke và QA trình duyệt |
-| 30 | Quan sát lỗi/benchmark | P1/P2 | IN PROGRESS | B09 baseline HTTP/serialize; B17 Admin Live có room/socket/queue/dirty/busy, eviction và capacity rejection aggregate; còn persist latency, event-loop lag, heap, slow-consumer và load/soak |
+| 30 | Quan sát lỗi/benchmark | P1/P2 | IN PROGRESS | B09 baseline; B17 room/socket/capacity; B18 persist p50/p95/error, queue wait, loop lag, heap/RSS, broadcast bytes và socket drops trong Admin Live; còn shared export/alert, settlement age và load/soak thật |
 | 31 | UX/accessibility/storage fallback | P2 | IN PROGRESS | localStorage lỗi chuyển memory fallback và báo không persistent; còn browser/a11y QA |
 | 32 | Workflow/tài liệu thống nhất | P2 | IN PROGRESS | B09: thay app/AGENTS template cloud lỗi thời bằng Node local contract; README + operations mới; cần clean-clone/đội review |
 | 33 | Release tái lập/clean environment | P2 | IN PROGRESS | B09-fix1 + hosted run #10: stable archive root, normalized metadata, manifest/verifier/dry-run, clean-unpack PASS; còn so checksum nén cross-zlib/macOS nếu muốn cam kết whole-ZIP byte-identical |
@@ -292,6 +292,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** mọi guard eviction, TTL, LRU ổn định, privacy aggregate, active-cap rejection, hai vòng capacity eviction và durable reload; focused server/admin **28/28 PASS**; `npm run check` PASS; full regression **1.370/1.370 PASS trên 213 file**, 0 fail/skip/todo. Tài liệu: `app/docs/room-capacity-observability-b17.md`.
 - **Hosted CI:** run [`36336206506`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36336206506) cho commit `e4cb74a`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** hard cap/metrics vẫn theo từng process; distributed admission/presence thuộc #10/#18. #30 còn persist latency, event-loop lag, heap, slow-consumer và load/soak nên giữ `IN PROGRESS`.
+
+### 28/09/2026 — B18: runtime persistence/queue/transport observability
+
+- **#30:** instrument một lần tại Hybrid storage boundary để đo save/pair-save/restore p50/p95/max/count/error; distribution giữ tối đa 512 mẫu gần nhất. Room queues báo tổng depth và oldest wait; sampler 1 giây đo event-loop lag; snapshot có heap/RSS. Admin Live hiển thị toàn bộ aggregate, không đưa vào player projection.
+- **#10/#30:** shared broadcast đếm successful deliveries/bytes; bounded send phân loại drop do backpressure, socket đã đóng hoặc send error mà vẫn giữ hành vi terminate slow consumer. Graceful shutdown dọn event-loop sampler.
+- **Kiểm thử:** success/failure persistence, percentile bounded, queue wait clock giả, broadcast bytes/drop reason, aggregate privacy, Admin UI và WebSocket/server thật; focused **34/34 PASS**; `npm run check` PASS; full regression **1.371/1.371 PASS trên 214 file**, 0 fail/skip/todo. Tài liệu: `app/docs/runtime-observability-b18.md`.
+- **Giới hạn:** metrics reset theo process, chưa shared export/alert, settlement-pending age, load/soak dài hoặc Supabase latency thật; #10/#30 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
 
