@@ -53,7 +53,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
 | 24 | Tách module theo trách nhiệm | P2 | TODO | Làm sau correctness |
 | 25 | Lint/type contracts | P2 | TODO | Thiết lập baseline |
-| 26 | CI/test đúng artifact phát hành | P1/P2 | IN PROGRESS | B09-fix1: npm ci + full 205 file/1.333 test PASS trên Windows local; workflow hosted Linux/Windows vẫn chưa chạy |
+| 26 | CI/test đúng artifact phát hành | P1/P2 | IN PROGRESS | B09-fix1: npm ci + full 205 file/1.333 test PASS trên Windows local; workflow hosted đã được trigger nhưng runner Linux/Windows bị GitHub chặn trước step đầu do billing account |
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
 | 29 | Social capacity/profile offline | P1 | IN PROGRESS | B03 WAL/cloud pair RPC; B04 durable Social receipts; B05 WS commit ACK + sessionStorage pending outbox theo tài khoản và retry cùng mã qua reconnect/reload (không tự gửi lại); còn Supabase thật/multi-process smoke và QA trình duyệt |
@@ -210,6 +210,12 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu ZIP sạch:** sửa wrapper đóng gói để nhận đúng output path qua npm trên Windows; ZIP giải nén sang thư mục mới, `npm ci`, `npm run check` và `npm test` đều PASS **1.333/1.333**. Manifest/CRC/security verifier PASS.
 - **Tích hợp bản chính:** đồng bộ 86 file mới và 95 file cập nhật vào `D:\\Mon\\PokemonVanguard` bằng hash, không xóa file chỉ có ở bản chính. Secret, save, candidate authoring, backup và report được giữ nguyên; check/test trên bản chính tiếp tục PASS 1.333/1.333.
 - **Giới hạn giữ nguyên:** GitHub-hosted Linux/Windows chưa chạy; browser/network benchmark, Supabase staging, icon mirror 0/39, multi-process và PvP mid-match recovery vẫn mở. Không nâng các mục tương ứng thành DONE.
+
+### 27/09/2026 — Đưa B01–B09-fix1 lên nhánh chính
+
+- Commit `f429a2b` (`feat: integrate optimization B01-B09 fix1`) đã được push lên `origin/main`; trước commit, `npm run check` PASS và phạm vi stage không chứa `.dev.vars`, `.local-data`, `node_modules`, `content-candidates`, log hoặc ZIP.
+- GitHub Actions run `36300290729` đã được tạo cho workflow **Verify game and source release**. Cả job `validate (ubuntu-latest)` và `validate (windows-latest)` bị GitHub dừng trước step đầu với thông báo account bị khóa do billing; `release-smoke` vì vậy bị skip.
+- Đây là chặn hạ tầng tài khoản, chưa phải lỗi source hay workflow. Giữ #26/#33 `IN PROGRESS`; sau khi billing GitHub được xử lý, rerun workflow và chỉ cập nhật PASS khi matrix Linux/Windows cùng clean-unpack hoàn tất.
 
 ## Cách cập nhật file này
 

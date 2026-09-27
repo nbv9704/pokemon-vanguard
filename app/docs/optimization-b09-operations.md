@@ -1,6 +1,6 @@
 # B09 — HTTP/public caching, verified release, inventory and CI
 
-Status: local code + isolated tests validated. End-to-end browser metrics and hosted CI remain pending.
+Status: local code + clean-package tests validated. Hosted CI was triggered on 27/09/2026, but GitHub blocked both runners before their first step because the account is locked for a billing issue; end-to-end browser metrics and a successful hosted rerun remain pending.
 No production deployment, save migration or asset deletion occurs in this batch.
 
 ## Active developer workflow
