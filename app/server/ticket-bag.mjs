@@ -1,5 +1,6 @@
 // Consumable tickets are account-owned items, independent of permanent battle held items.
 // Recruitment ticket balance retains its legacy wallet backing for old saves, missions and mail.
+import {prepareDurableAccountAction,recordDurableAccountAction} from './durable-account-action.mjs';
 export const TICKET_ITEMS=Object.freeze([
  Object.freeze({id:'recruitment',field:'recruitmentTickets',name:'Recruitment Ticket',image:'/assets/items/recruit_ticket.png',description:'Recruit one Pokémon permanently from the current Recruitment lineup.'}),
  Object.freeze({id:'shop',field:'shopTickets',name:'Shop Ticket',image:'/assets/items/shop_ticket.png',description:'Unlock any one item offered for sale in the Shop without spending VP.'}),
@@ -24,9 +25,10 @@ export function ticketBagView(state,catalog){
 export function applyBagAction(state,action){
  if(action?.type!=='bagV1.rankProtection')return {ok:false,code:'UNKNOWN_BAG_ACTION'};
  if(typeof action.enabled!=='boolean')return {ok:false,code:'INVALID_PROTECTION_STATE'};
- const next=structuredClone(state),bag=ensureTicketBag(next);
+ const prepared=prepareDurableAccountAction(state,action,'bag',{optional:true});if(!prepared.ok)return prepared;if(prepared.duplicate)return {ok:true,state:prepared.base,duplicate:true,receipt:prepared.receipt};
+ const next=prepared.base,bag=ensureTicketBag(next);
  if(action.enabled&&bag.rankTickets<1)return {ok:false,code:'INSUFFICIENT_RANK_TICKETS'};
  bag.rankProtectionArmed=action.enabled;next.revision=(next.revision||0)+1;
  next.notice=action.enabled?'Rank protection armed for your next Ranked loss.':'Rank protection disabled.';
- return {ok:true,state:next};
+ const receipt=prepared.legacy?null:recordDurableAccountAction(next,action,'bag',prepared.fingerprint,{enabled:bag.rankProtectionArmed});return {ok:true,state:next,duplicate:false,receipt};
 }

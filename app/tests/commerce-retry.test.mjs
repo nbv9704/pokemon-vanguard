@@ -31,11 +31,22 @@ test('invalid pending payloads and blocked session storage do not execute arbitr
  const broken=new CommercePendingActions({storage:{getItem(){throw Error('blocked');},setItem(){throw Error('blocked');}},scope:'blocked'});
  assert.equal(broken.persistent,false);assert.equal(broken.begin(action),true);assert.equal(broken.persistent,false);
 });
+test('Mission, Admin Gift and Rank protection intents survive reload and retain their exact IDs',()=>{
+ for(const candidate of [
+  {type:'mission.claim',category:'daily',missionId:'daily-login',actionId:'mission:one'},
+  {type:'mission.claimAll',category:'weekly',actionId:'mission:all'},
+  {type:'adminGift.claim',giftId:'campaign-1',actionId:'gift:one'},
+  {type:'bagV1.rankProtection',enabled:true,actionId:'bag:one'}
+ ]){const mem=storage(),pending=new CommercePendingActions({storage:mem,scope:'player'});assert.equal(pending.begin(candidate),true);assert.deepEqual(new CommercePendingActions({storage:mem,scope:'player'}).pending,candidate);}
+});
 test('Shop and Recruitment use explicit commerce outbox; header does not call socket-connected status saved',async()=>{
  const client=await readFile(new URL('../public/client.js',import.meta.url),'utf8');
  assert.match(client,/new ShopView\(\{sendAction:commerceRetry\.send/);
  assert.match(client,/new V3RecruitmentView\(\{sendAction:action=>action\.type==='recruitV3\.sync'\?send\(action\):commerceRetry\.send\(action\)/);
  assert.match(client,/commercePending\.acknowledge\(frame\.actionId\)/);
+ assert.match(client,/new MissionView\(\{sendAction:commerceRetry\.send/);
+ assert.match(client,/new BagView\(\{sendAction:commerceRetry\.send/);
+ assert.match(client,/admin-gift"\)commerceRetry\.send/);
  assert.match(client,/function commerceBanner\(\)/);
  assert.doesNotMatch(client,/ADVENTURE SAVED/);
 });

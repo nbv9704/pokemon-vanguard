@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B13 — browser render baseline và derived receipt index**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B14 — durable Mission/Admin Gift/Rank protection ACK**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -35,7 +35,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 05 | Supabase optimistic concurrency và transaction | P1 | IN PROGRESS | CAS revision + pair-save RPC; thêm bảng campaign idempotency bằng migration 202609260002; cần apply cả migration 001/002 và smoke-test Supabase thật |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
-| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–06: Admin/Social/Ranked/Training/Team/Shop/Recruitment receipts. B07: bổ sung PvE schema-3 battle receipts + lost-ACK retry đọc save; còn legacy commands, PvP per-turn durable receipts và archival |
+| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–07: Admin/Social/Ranked/Training/Team/Shop/Recruitment/PvE receipts; B14 thêm Mission/Admin Gift/Rank protection durable receipt; còn schema-2 legacy, PvP per-turn và archival |
 | 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
 | 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline join + cap socket/account; B08 quota; B10 chỉ tin XFF từ proxy IP allowlist; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
@@ -46,7 +46,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab project + serialize 1 lần; B13 browser baseline: Team p50/p95 11,5/51,9 ms, các route chính còn lại p95 <=3,8 ms, focus/caret giữ qua push; còn delta/cursor và profiling Team |
 | 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
-| 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–06: Social/management/Shop/Recruitment. B07: PvE schema-3 durable ACK + một outbox retry chủ đích; còn ACK toàn bộ legacy/PvP action, multi-device/browser QA |
+| 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–07: Social/management/Shop/Recruitment/PvE; B14 thêm ACK + session outbox cho Mission/Admin Gift/Rank protection; còn schema-2/PvP, multi-device/browser QA |
 | 20 | Cache/nén HTTP | P2 | IN PROGRESS | B09-fix1: precompressed catalog V2/V3 + ETag/304/HEAD; q-weight/406 đúng, static bounded cache/streaming; cần browser/cold-warm/live WS |
 | 21 | Lazy-load UI/catalog | P2 | TODO | Giữ legacy fallback |
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
@@ -260,6 +260,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** receipt/economy/settlement mục tiêu **49/49 PASS**; `npm run check` PASS; full regression **1.352/1.352 PASS trên 209 file**, 0 fail/skip/todo. Tài liệu: `app/docs/browser-render-receipt-index-b13.md`.
 - **Hosted CI:** run [`36331431485`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36331431485) cho commit `49581fd`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa archive receipt/ledger, chưa cursor/base revision/resync cho battle history, chưa trace Team Builder nhiều fixture/browser hoặc soak multi-process/Supabase. #09/#16 giữ `IN PROGRESS`.
+
+### 27/09/2026 — B14: durable Mission/Admin Gift/Rank protection ACK
+
+- **#08:** thêm receipt fingerprint riêng cho `mission.claim`, `mission.claimAll`, `adminGift.claim` và `bagV1.rankProtection`. Retry luôn đọc save bền; cùng ID/cùng payload trả duplicate, cùng ID/khác payload trả `ACTION_ID_REUSED`; không grant reward hoặc thay setting lần hai sau lost ACK.
+- **#19:** ba luồng đi qua `commitReceiptCommand`, chỉ gửi `action-ack` sau persist. Client dùng chung explicit `sessionStorage` outbox, giữ nguyên payload/ID qua reload/reconnect, không tự replay và chỉ xóa khi ACK đúng ID. Admin Gift/Bag không ID vẫn tương thích client cũ nhưng không có bảo đảm receipt xuyên restart.
+- **Kiểm thử:** synthetic commit-thành-công/mất-ACK + restart + collision, outbox reload và WebSocket thật trước/sau restart; focused **53/53 PASS**; `npm run check` PASS; full regression **1.357/1.357 PASS trên 210 file**, 0 fail/skip/todo. Tài liệu: `app/docs/account-command-retry-b14.md`.
+- **Giới hạn:** schema-2 Training/Team/import và PvP per-turn chưa được bao phủ; mailbox mark-read là metadata idempotent nên không đưa vào commerce outbox. Chưa smoke Supabase/multi-process hoặc multi-device browser, vì vậy #08/#19 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
 

@@ -216,16 +216,16 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if(result.changed)await persist(name,result.state);room.state=result.state;broadcast(room);return;
         }
         if(isAdminGiftAction(message.action)){
-          const result=applyAdminGiftAction(room.state,message.action,v3Catalog,{now:clock.now()});if(!result.ok)return fail(result.code);
-          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+          const result=await commitReceiptCommand({accountId:name,liveState:room.state,load:id=>storage.load(id),persist,action:message.action,apply:(state,action)=>applyAdminGiftAction(state,action,v3Catalog,{now:clock.now()})});if(!result.ok)return fail(result.code);
+          room.state=result.state;broadcast(room);if(message.action.actionId!==undefined)send(ws,{type:'action-ack',actionId:message.action.actionId,actionType:message.action.type,committedRevision:result.state.revision,duplicate:!!result.duplicate});return;
         }
         if(isMissionAction(message.action)){
-          const result=applyMissionAction(room.state,message.action,{serverNow:clock.now()});if(!result.ok)return fail(result.code);
-          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+          const result=await commitReceiptCommand({accountId:name,liveState:room.state,load:id=>storage.load(id),persist,action:message.action,apply:(state,action)=>applyMissionAction(state,action,{serverNow:clock.now()})});if(!result.ok)return fail(result.code);
+          room.state=result.state;broadcast(room);send(ws,{type:'action-ack',actionId:message.action.actionId,actionType:message.action.type,committedRevision:result.state.revision,duplicate:!!result.duplicate});return;
         }
         if(message.action?.type==='bagV1.rankProtection'){
-          const result=applyBagAction(room.state,message.action);if(!result.ok)return fail(result.code);
-          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+          const result=await commitReceiptCommand({accountId:name,liveState:room.state,load:id=>storage.load(id),persist,action:message.action,apply:applyBagAction});if(!result.ok)return fail(result.code);
+          room.state=result.state;broadcast(room);if(message.action.actionId!==undefined)send(ws,{type:'action-ack',actionId:message.action.actionId,actionType:message.action.type,committedRevision:result.state.revision,duplicate:!!result.duplicate});return;
         }
         if(isV3ShopAction(message.action)){
           const result=await commitReceiptCommand({accountId:name,liveState:room.state,load:id=>storage.load(id),persist,action:message.action,apply:(state,action)=>applyV3ShopAction(state,action,v3Catalog)});

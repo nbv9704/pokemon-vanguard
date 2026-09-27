@@ -5,6 +5,7 @@ import {ensureV3ItemInventory} from './v3-item-shop.mjs';
 import {grantPokemonToProgression} from './admin-progression-grants.mjs';
 import {MAIL_RETENTION_PRESETS,isMailExpired,mailExpiry,normalizeAdminMailLifecycle} from './mailbox-v1.mjs';
 import {findAppendOnlyBy} from './append-only-index.mjs';
+import {prepareDurableAccountAction,recordDurableAccountAction} from './durable-account-action.mjs';
 
 const clone=value=>structuredClone(value);
 const clean=(value,max)=>String(value??'').replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,max);
@@ -45,10 +46,10 @@ export function adminGiftView(state,catalog,{now=Date.now()}={}){
 }
 
 export function applyAdminGiftAction(state,action,catalog,{now=Date.now()}={}){
- if(!isAdminGiftAction(action))return {ok:false,code:'UNKNOWN_ADMIN_GIFT_ACTION'};const base=clone(state),giftState=ensureAdminGiftState(base),gift=giftState.inbox.find(entry=>entry.giftId===String(action.giftId||''));if(!gift)return {ok:false,code:'GIFT_NOT_FOUND'};normalizeAdminMailLifecycle(gift);if(isMailExpired({sentAt:gift.sentAt,readAt:gift.readAt,unreadTtlMs:gift.unreadTtlMs,readTtlMs:gift.readTtlMs},now))return {ok:false,code:'GIFT_EXPIRED'};if(gift.claimedAt)return {ok:true,state:base,duplicate:true};
+ if(!isAdminGiftAction(action))return {ok:false,code:'UNKNOWN_ADMIN_GIFT_ACTION'};const prepared=prepareDurableAccountAction(state,action,'admin-gift',{optional:true});if(!prepared.ok)return prepared;if(prepared.duplicate)return {ok:true,state:prepared.base,duplicate:true,receipt:prepared.receipt};const base=prepared.base,giftState=ensureAdminGiftState(base),gift=giftState.inbox.find(entry=>entry.giftId===String(action.giftId||''));if(!gift)return {ok:false,code:'GIFT_NOT_FOUND'};normalizeAdminMailLifecycle(gift);if(isMailExpired({sentAt:gift.sentAt,readAt:gift.readAt,unreadTtlMs:gift.unreadTtlMs,readTtlMs:gift.readTtlMs},now))return {ok:false,code:'GIFT_EXPIRED'};if(gift.claimedAt)return {ok:true,state:base,duplicate:true};
  if(!base.progressionV3)return {ok:false,code:'SCHEMA_V3_NOT_READY'};ensureEconomyState(base);ensureV3ItemInventory(base.progressionV3,catalog);
  const receiptId=`admin-gift:${String(base.owner||'player').slice(0,80)}:${gift.giftId}`,tx=applyEconomyTransaction(base,{receiptId,actionId:action.actionId||null,kind:'admin-gift',delta:gift.reward,details:{giftId:gift.giftId,title:gift.title}});if(!tx.ok)return tx;
  const addedItems=[];for(const itemId of gift.itemIds){if(base.progressionV3.ownedItemIds.includes(itemId))continue;base.progressionV3.ownedItemIds.push(itemId);addedItems.push(itemId);}
  const addedPokemon=[];for(const speciesId of gift.speciesIds){const species=catalog.speciesById[speciesId];if(!species)continue;const result=grantPokemonToProgression(base.progressionV3,species,{acquiredBy:`admin-gift:${gift.giftId}`});if(result.ok)addedPokemon.push(speciesId);}
- if(gift.readAt===null)gift.readAt=now;gift.claimedAt=now;base.progressionV3.revision++;base.revision=(base.revision||0)+1;base.notice=`Gift received · ${gift.title}`;return {ok:true,state:base,reward:clone(gift.reward),addedItems,addedPokemon};
+ if(gift.readAt===null)gift.readAt=now;gift.claimedAt=now;base.progressionV3.revision++;base.revision=(base.revision||0)+1;base.notice=`Gift received · ${gift.title}`;const receipt=prepared.legacy?null:recordDurableAccountAction(base,action,'admin-gift',prepared.fingerprint,{giftId:gift.giftId,reward:gift.reward,addedItems,addedPokemon});return {ok:true,state:base,duplicate:false,reward:clone(gift.reward),addedItems,addedPokemon,receipt};
 }

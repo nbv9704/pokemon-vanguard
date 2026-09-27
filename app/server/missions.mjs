@@ -1,4 +1,5 @@
 import {applyEconomyTransaction,validateEconomyActionId} from './v2-economy-ledger.mjs';
+import {prepareDurableAccountAction,recordDurableAccountAction} from './durable-account-action.mjs';
 
 const clone=value=>structuredClone(value);
 const DAY=24*60*60*1000,WEEK=7*DAY;
@@ -92,11 +93,12 @@ function rewardMission(state,category,definition,actionId){
 export function applyMissionAction(state,action,{serverNow=Date.now()}={}){
  if(!isMissionAction(action))return {ok:false,code:'UNKNOWN_MISSION_ACTION'};
  if(!validateEconomyActionId(action.actionId))return {ok:false,code:'ACTION_ID_REQUIRED'};
- const base=clone(state);ensureMissionState(base,serverNow);
+ const prepared=prepareDurableAccountAction(state,action,'mission');if(!prepared.ok)return prepared;if(prepared.duplicate)return {ok:true,state:prepared.base,duplicate:true,receipt:prepared.receipt};
+ const base=prepared.base;ensureMissionState(base,serverNow);
  if(!['daily','weekly','starter','achievements'].includes(action.category))return {ok:false,code:'MISSION_CATEGORY_INVALID'};
- if(action.type==='mission.claim'){const definition=findMission(action.category,action.missionId);if(!definition)return {ok:false,code:'MISSION_NOT_FOUND'};const result=rewardMission(base,action.category,definition,action.actionId);if(!result.ok)return result;base.notice='Mission reward claimed.';return {ok:true,state:base,claimed:[definition.id],reward:result.reward};}
+ if(action.type==='mission.claim'){const definition=findMission(action.category,action.missionId);if(!definition)return {ok:false,code:'MISSION_NOT_FOUND'};const result=rewardMission(base,action.category,definition,action.actionId);if(!result.ok)return result;base.notice='Mission reward claimed.';const receipt=recordDurableAccountAction(base,action,'mission',prepared.fingerprint,{claimed:[definition.id],reward:result.reward});return {ok:true,state:base,duplicate:false,claimed:[definition.id],reward:result.reward,receipt};}
  const claimed=[],reward={coins:0,crystals:0,recruitmentTickets:0};
  for(const definition of MISSION_DEFINITIONS[action.category]){const bucket=base.missionsV1[action.category];if(bucket.claimed.includes(definition.id)||missionProgress.call(base.missionsV1,action.category,definition)<definition.target)continue;const result=rewardMission(base,action.category,definition,`${action.actionId}:${definition.id}`);if(!result.ok)return result;claimed.push(definition.id);for(const key of Object.keys(reward))reward[key]+=definition.reward[key]||0;}
  if(!claimed.length)return {ok:false,code:'NO_MISSION_REWARDS'};base.notice=`Claimed ${claimed.length} mission reward${claimed.length===1?'':'s'}.`;
- return {ok:true,state:base,claimed,reward};
+ const receipt=recordDurableAccountAction(base,action,'mission',prepared.fingerprint,{claimed,reward});return {ok:true,state:base,duplicate:false,claimed,reward,receipt};
 }

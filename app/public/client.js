@@ -147,9 +147,9 @@ const rankedBattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current=
 const trainingPvpBattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:action=>send({...action,type:trainingPvpActionType(action.type),actionId:economyActionId('training-pvp')}),playbackSpeed:settings.battleSpeed===2?2:1,onPlaybackSpeedChange:speed=>{settings.battleSpeed=speed;browserStore.saveSettings();},onPresentationCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_PRESENTATION_EVENT,{detail:cue})),onAudioCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_AUDIO_EVENT,{detail:cue}))});
 const v3RecruitmentView=new V3RecruitmentView({sendAction:action=>action.type==='recruitV3.sync'?send(action):commerceRetry.send(action),createActionId:kind=>economyActionId(kind.replaceAll('.','-')),onChange:redrawWorkspace});
 const v3OverviewView=new V3OverviewView({onChange:redrawWorkspace});
-const missionView=new MissionView({sendAction:send,onChange:redrawWorkspace,createActionId:kind=>economyActionId(kind)});
+const missionView=new MissionView({sendAction:commerceRetry.send,onChange:redrawWorkspace,createActionId:kind=>economyActionId(kind)});
 const replicaTeamsView=new ReplicaTeamsView({sendAction:send,onChange:redrawWorkspace,onNotify:notify,createActionId:kind=>economyActionId(kind)});
-const bagView=new BagView({sendAction:send,onChange:redrawWorkspace});const shopView=new ShopView({sendAction:commerceRetry.send,onChange:redrawWorkspace,createActionId:kind=>economyActionId(kind)});
+const bagView=new BagView({sendAction:commerceRetry.send,onChange:redrawWorkspace,createActionId:kind=>economyActionId(kind)});const shopView=new ShopView({sendAction:commerceRetry.send,onChange:redrawWorkspace,createActionId:kind=>economyActionId(kind)});
 const profileView=new ProfileView();
 const arenaView=new ArenaView({send,actionId:economyActionId,notify});
 const socialView=new SocialView({send:socialRetry.send,actionId:economyActionId,notify,pendingAction:()=>socialPending.pending,pendingError:()=>socialPending.lastError,retryPending:socialRetry.retry,discardPending:()=>socialPending.discard(),canRetry:socialRetry.canRetry,openFriendly:()=>{arenaView.section='pvp';if(router.go('battle')){closeModal();draw();window.scrollTo(0,0);}}});
@@ -308,7 +308,7 @@ document.addEventListener("click",async e=>{
  if(a==="gym")start($("#gymmode").value,+b);
  if(a==="mail-open"){mailOpenKey=`${b}:${c}`;const unread=b==="admin"?(V.adminGiftsV1?.gifts||[]).find(entry=>entry.giftId===c)?.unread:(V.mailboxV1?.system||[]).find(entry=>String(entry.mailId)===String(c))?.unread;if(unread)send({type:"mailboxV1.read",kind:b,...(b==="admin"?{giftId:c}:{mailId:+c})});else draw();return;}
  if(a==="claim")send({type:"mail.claim",mailId:+b,actionId:economyActionId("mail")});
- if(a==="admin-gift")send({type:"adminGift.claim",giftId:b,actionId:economyActionId("admin-gift")});
+ if(a==="admin-gift")commerceRetry.send({type:"adminGift.claim",giftId:b,actionId:economyActionId("admin-gift")});
  if(a==="train")send({type:"train",id:+b});
  if(a==="team")send({type:"team",ids:V.team.includes(+b)?V.team.filter(i=>i!==+b):[...V.team,+b]});
  if(a==="lead")send({type:"team",ids:[+b,...V.team.filter(i=>i!==+b)]});

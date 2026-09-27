@@ -11,6 +11,9 @@ import {upgradeAdventure} from '../server/v2-release.mjs';
 import {upgradeAdventureToV3} from '../server/v3-release.mjs';
 import {JsonAdventureStorage} from '../server/storage-json.mjs';
 import {createLocalServer} from '../local-server.mjs';
+import {createServerClock} from '../server/clock.mjs';
+import {ensureMissionState} from '../server/missions.mjs';
+import {enqueueAdminGift,normalizeGiftDraft} from '../server/admin-gifts.mjs';
 
 async function connect(port){
  const ws=new WebSocket(`ws://127.0.0.1:${port}/ws/commerce-net`),frames=[],waiters=[];
@@ -46,5 +49,22 @@ test('real WS: Shop/Recruitment ACK is durable across restart, replay is duplica
   assert.equal(after.progressionV3.mons.filter(mon=>mon.speciesId===offer.speciesId&&mon.ownership==='permanent').length,1);
   client.send({...shop,itemId:'sitrus-berry'});
   const error=await client.next(frame=>frame.type==='error'&&frame.actionId===shop.actionId);assert.equal(error.error,'ACTION_ID_REUSED');
+ }finally{client?.ws.close();await app.close();await rm(dir,{recursive:true,force:true});}
+});
+
+test('real WS: Mission, Admin Gift and Rank protection ACKs replay as durable duplicates after restart',async()=>{
+ const dir=await mkdtemp(path.join(tmpdir(),'pv-b14-account-actions-')),storage=new JsonAdventureStorage(dir),now=Date.UTC(2026,8,27,8);
+ const base=upgradeAdventureToV3(upgradeAdventure(setup(['commerce-player']),v2Catalog).state,v3Catalog).state;ensureMissionState(base,now,{login:true});base.ticketBagV1={version:1,shopTickets:0,trainingTickets:0,rankTickets:1,rankProtectionArmed:false};
+ const gift=normalizeGiftDraft({coins:75,title:'B14 Gift'},v3Catalog,{campaignId:'b14-gift',sentBy:'admin',sentAt:now});assert.equal(enqueueAdminGift(base,gift.gift).ok,true);await storage.save('commerce-net',base);
+ const actions=[{type:'mission.claim',category:'daily',missionId:'daily-login',actionId:'b14:ws:mission'},{type:'adminGift.claim',giftId:'b14-gift',actionId:'b14:ws:gift'},{type:'bagV1.rankProtection',enabled:true,actionId:'b14:ws:bag'}];
+ let app=createLocalServer({saveDir:dir,clock:createServerClock(()=>now)}),client;
+ try{
+  let port=await app.listen(0);client=await connect(port);
+  for(const action of actions){client.send(action);const ack=await client.next(frame=>frame.type==='action-ack'&&frame.actionId===action.actionId);assert.equal(ack.duplicate,false);}
+  const committed=await storage.load('commerce-net'),coins=committed.wallet.coins,tickets=committed.wallet.recruitmentTickets;assert.equal(committed.ticketBagV1.rankProtectionArmed,true);assert.equal(committed.adminGiftsV1.inbox.find(entry=>entry.giftId==='b14-gift').claimedAt,now);
+  client.ws.close();await app.close();app=createLocalServer({saveDir:dir,clock:createServerClock(()=>now)});port=await app.listen(0);client=await connect(port);
+  for(const action of actions){client.send(action);const ack=await client.next(frame=>frame.type==='action-ack'&&frame.actionId===action.actionId);assert.equal(ack.duplicate,true);}
+  const replayed=await storage.load('commerce-net');assert.equal(replayed.wallet.coins,coins);assert.equal(replayed.wallet.recruitmentTickets,tickets);assert.equal(replayed.actionReceipts.filter(entry=>actions.some(action=>action.actionId===entry.actionId)).length,3);
+  client.send({...actions[0],missionId:'daily-battle'});const error=await client.next(frame=>frame.type==='error'&&frame.actionId===actions[0].actionId);assert.equal(error.error,'ACTION_ID_REUSED');
  }finally{client?.ws.close();await app.close();await rm(dir,{recursive:true,force:true});}
 });

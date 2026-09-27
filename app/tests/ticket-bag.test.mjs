@@ -100,11 +100,11 @@ test('Admin gifts can award all four ticket items without mixing them into held-
 
 test('Bag route and UI present all ticket assets without reusing the Shop Owned icon',()=>{
  const sent=[],s=state();grant(s,{shopTickets:2,rankTickets:1});const bag={bagV1:ticketBagView(s,v3Catalog)};
- const screen=new BagView({sendAction:action=>sent.push(action),onChange(){}}),html=screen.render(bag);
+ const screen=new BagView({sendAction:action=>sent.push(action),onChange(){},createActionId:()=> 'bag:ui'}),html=screen.render(bag);
  for(const asset of ['recruit_ticket.png','shop_ticket.png','training_ticket.png','rank_ticket.png'])assert.match(html,new RegExp(asset));
  assert.equal(createRouter().go('bag'),true);assert.match(html,/data-bag="select"/);
  screen.handleClick({dataset:{bag:'select',ticket:'rank'}});assert.match(screen.render(bag),/Activate for next Ranked loss/);
- screen.handleClick({dataset:{bag:'arm',enabled:'true'}});assert.deepEqual(sent,[{type:'bagV1.rankProtection',enabled:true}]);
+ screen.handleClick({dataset:{bag:'arm',enabled:'true'}});assert.deepEqual(sent,[{type:'bagV1.rankProtection',enabled:true,actionId:'bag:ui'}]);
  const shopScreen=new ShopView({sendAction:action=>sent.push(action),onChange(){},createActionId:()=> 'buy:1'});
  shopScreen.handleClick({dataset:{shop:'buy-ticket',itemId:'charcoal'}});assert.deepEqual(sent[1],{type:'shopV3.buy',itemId:'charcoal',payment:'ticket',actionId:'buy:1'});
  const shop=readFileSync(new URL('../public/js/shop-view.js',import.meta.url),'utf8');assert.doesNotMatch(shop,/rewardIcon\('bag'/);
