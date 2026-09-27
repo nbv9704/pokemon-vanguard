@@ -46,6 +46,15 @@ test('schema-2 Build, Team and Blueprint intents are accepted only with stable I
   {type:'blueprint.import',blueprint:'{"schemaVersion":1}',actionId:'v2:blueprint'}
  ]){const pending=new CommercePendingActions({storage:storage(),scope:'v2'});assert.equal(pending.begin(candidate),true);assert.deepEqual(pending.pending,candidate);}
 });
+test('schema-2 PvE battle intents retain exact command IDs through the commerce outbox',()=>{
+ for(const candidate of [
+  {type:'battleV2.preview.start',mode:'single',regulationId:'alpha-single',difficulty:'normal',actionId:'v2:battle:start'},
+  {type:'battleV2.preview.lock',buildIds:['a','b','c'],actionId:'v2:battle:lock'},
+  {type:'battleV2.commands',phaseRevision:1,commands:[{kind:'move'}],actionId:'v2:battle:command'},
+  {type:'battleV2.replacements',phaseRevision:2,replacements:[{slot:0,monId:'a'}],actionId:'v2:battle:replace'},
+  {type:'battleV2.surrender',actionId:'v2:battle:surrender'}
+ ]){const pending=new CommercePendingActions({storage:storage(),scope:'v2-battle'});assert.equal(pending.begin(candidate),true);assert.deepEqual(pending.pending,candidate);}
+});
 test('Shop and Recruitment use explicit commerce outbox; header does not call socket-connected status saved',async()=>{
  const client=await readFile(new URL('../public/client.js',import.meta.url),'utf8');
  assert.match(client,/new ShopView\(\{sendAction:commerceRetry\.send/);
@@ -56,6 +65,7 @@ test('Shop and Recruitment use explicit commerce outbox; header does not call so
  assert.match(client,/admin-gift"\)commerceRetry\.send/);
  assert.match(client,/new TrainingEditor\(\{fetchImpl:.*sendAction:commerceRetry\.send/);
  assert.match(client,/new TeamBuilder\(\{onChange:redrawWorkspace,sendAction:commerceRetry\.send/);
+ assert.match(client,/new V2BattleScreen\(\{onChange:.*sendAction:commerceRetry\.send/);
  assert.match(client,/function commerceBanner\(\)/);
  assert.doesNotMatch(client,/ADVENTURE SAVED/);
 });

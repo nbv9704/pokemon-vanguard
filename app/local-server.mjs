@@ -14,6 +14,7 @@ import {applyV3BattlePlayerAction} from './server/v3-battle-player-actions.mjs';
 import {v3BattleView} from './server/v3-battle-view.mjs';
 import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
 import { applyV2BattleAction, v2BattleView } from './server/v2-battle-actions.mjs';
+import {applyV2BattlePlayerAction} from './server/v2-battle-player-actions.mjs';
 import { applyV2EconomyAction, isV2EconomyAction } from './server/v2-economy.mjs';
 import { inspectV2Damage } from './server/v2-damage-inspector.mjs';
 import {synchronizeLegacyState,upgradeAdventure} from './server/v2-release.mjs';
@@ -280,10 +281,9 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         }
         if(room.state.schemaVersion>=2&&message.action?.type==='summon')return fail('LEGACY_SUMMON_DISABLED');
         if (typeof message.action?.type === 'string' && message.action.type.startsWith('battleV2.')) {
-          const wasFinished=room.state.battleV2?.phase==='FINISHED',result=applyV2BattleAction(room.state,message.action,v2Catalog,{serverNow:clock.now()});
+          const wasFinished=room.state.battleV2?.phase==='FINISHED',now=clock.now(),result=await commitReceiptCommand({accountId:name,liveState:room.state,load:id=>storage.load(id),persist,action:message.action,apply:(state,action)=>{const applied=applyV2BattlePlayerAction(state,action,v2Catalog,{serverNow:now});if(applied.ok&&!applied.duplicate&&!wasFinished&&applied.state.battleV2?.phase==='FINISHED'){recordMissionEvent(applied.state,'battles',1,now);if(applied.state.battleV2.result?.winner==='A'||applied.state.battleV2.battle?.result?.winner==='A')recordMissionEvent(applied.state,'wins',1,now);}return applied;}});
           if (!result.ok) return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));
-          if(!wasFinished&&result.state.battleV2?.phase==='FINISHED'){recordMissionEvent(result.state,'battles',1,clock.now());if(result.state.battleV2.result?.winner==='A'||result.state.battleV2.battle?.result?.winner==='A')recordMissionEvent(result.state,'wins',1,clock.now());}
-          await persist(name,result.state);room.state=result.state;broadcast(room);return;
+          room.state=result.state;broadcast(room);if(message.action.actionId!==undefined)send(ws,{type:'action-ack',actionId:message.action.actionId,actionType:message.action.type,committedRevision:result.state.revision,duplicate:!!result.duplicate});return;
         }
         if(room.state.schemaVersion>=2&&message.action?.type==='battle')return fail('LEGACY_BATTLE_DISABLED');
         const valid = validateAction(room.state,player,message.action);

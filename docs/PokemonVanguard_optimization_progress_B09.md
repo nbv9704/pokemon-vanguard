@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B15 — durable schema-2 Training/Team/Blueprint ACK**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B16 — durable schema-2 PvE battle ACK**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -35,7 +35,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 05 | Supabase optimistic concurrency và transaction | P1 | IN PROGRESS | CAS revision + pair-save RPC; thêm bảng campaign idempotency bằng migration 202609260002; cần apply cả migration 001/002 và smoke-test Supabase thật |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
-| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–14 bao phủ schema-3 và account rewards; B15 thêm schema-2 Build/Team/Blueprint receipt; còn schema-2 PvE battle, PvP per-turn và archival |
+| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–15 bao phủ schema-3/account/schema-2 management; B16 thêm toàn chuỗi schema-2 PvE battle; còn PvP per-turn và archival |
 | 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
 | 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline join + cap socket/account; B08 quota; B10 chỉ tin XFF từ proxy IP allowlist; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
@@ -46,7 +46,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab project + serialize 1 lần; B13 browser baseline: Team p50/p95 11,5/51,9 ms, các route chính còn lại p95 <=3,8 ms, focus/caret giữ qua push; còn delta/cursor và profiling Team |
 | 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
-| 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–14 bao phủ schema-3/account rewards; B15 thêm ACK + session outbox cho schema-2 Build/Team/Blueprint; còn schema-2 battle/PvP và multi-device QA |
+| 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–15 bao phủ schema-3/account/schema-2 management; B16 thêm ACK + session outbox cho schema-2 PvE battle; còn PvP và multi-device QA |
 | 20 | Cache/nén HTTP | P2 | IN PROGRESS | B09-fix1: precompressed catalog V2/V3 + ETag/304/HEAD; q-weight/406 đúng, static bounded cache/streaming; cần browser/cold-warm/live WS |
 | 21 | Lazy-load UI/catalog | P2 | TODO | Giữ legacy fallback |
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
@@ -276,6 +276,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** lost-ACK injection cho cả ba nhóm, collision, UI IDs/outbox và WebSocket thật qua restart; focused **35/35 PASS**; `npm run check` PASS; full regression **1.362/1.362 PASS trên 211 file**, 0 fail/skip/todo. Tài liệu: `app/docs/v2-player-command-retry-b15.md`.
 - **Hosted CI:** run [`36333909061`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36333909061) cho commit `e6053ca`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** schema-2 PvE battle và PvP per-turn còn thiếu durable command contract; chưa multi-device browser QA hoặc Supabase/multi-process smoke. #08/#19 giữ `IN PROGRESS`.
+
+### 27/09/2026 — B16: durable schema-2 PvE battle ACK
+
+- **#08:** toàn bộ `battleV2.preview.start/lock`, `commands`, `replacements`, `surrender` dùng receipt fingerprint khi có ID. Retry đọc authoritative save; preview không tạo trận thứ hai, finishing command không settle reward/mission lần hai, khác payload cùng ID bị từ chối.
+- **#19:** schema-2 Battle UI và entry point Gym tạo ID ổn định, dùng explicit session outbox; server persist battle + receipt + reward + mission trước broadcast/ACK. Client cũ không ID vẫn tương thích nhưng không có bảo đảm xuyên restart.
+- **Kiểm thử:** lost-ACK preview và finishing reward, collision, UI/outbox, WebSocket thật qua restart; focused **40/40 PASS**; `npm run check` PASS; full regression **1.367/1.367 PASS trên 212 file**, 0 fail/skip/todo. Tài liệu: `app/docs/v2-battle-command-retry-b16.md`.
+- **Giới hạn:** còn PvP per-turn, archive/compaction receipt, multi-device QA và Supabase/multi-process smoke; #08/#19 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
 
