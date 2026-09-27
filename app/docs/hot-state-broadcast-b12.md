@@ -1,7 +1,9 @@
 # B12 — Hot-state and broadcast baseline
 
 Status: synthetic baseline and same-audience broadcast coalescing implemented on
-27/09/2026. This batch does not compact durable receipts or change browser rendering.
+27/09/2026. Local verification and hosted Linux, Windows, and release CI passed
+([run 36326764392](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36326764392)).
+This batch does not compact durable receipts or change browser rendering.
 
 ## Decision
 
@@ -71,6 +73,9 @@ node --test tests/state-broadcast-b12.test.mjs tests/local.test.mjs tests/public
 npm run check
 npm test
 ```
+
+GitHub-hosted Ubuntu and Windows validation plus the clean-package
+`release-smoke` job passed for commit `bfe641b`.
 
 Still required before #09 or #16 can be marked done:
 
