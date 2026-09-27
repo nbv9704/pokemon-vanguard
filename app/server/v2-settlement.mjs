@@ -1,5 +1,6 @@
 import {applyEconomyTransaction,ensureEconomyState,recordActionReceipt} from './v2-economy-ledger.mjs';
 import {markV2Tutorial} from './v2-release.mjs';
+import {findAppendOnlyBy} from './append-only-index.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 
 function rewardFor(result,session,config){
@@ -13,7 +14,7 @@ function rewardFor(result,session,config){
 export function settleV2Battle(state,catalog){
  const session=state.battleV2,result=session?.battle?.result;if(!result||session.phase!=='FINISHED')return {state,settled:false,reward:null};
  if(!catalog?.economy?.battle)throw new Error('Economy config is required to settle a v2 battle');ensureEconomyState(state);
- const receiptId=result.receiptId||`${session.id}:result`,existing=state.rewardReceipts.find(entry=>entry.receiptId===receiptId);if(existing){session.reward=clone(existing.reward);return {state,settled:false,reward:clone(existing.reward)};}
+ const receiptId=result.receiptId||`${session.id}:result`,existing=findAppendOnlyBy(state.rewardReceipts,'receiptId',receiptId);if(existing){session.reward=clone(existing.reward);return {state,settled:false,reward:clone(existing.reward)};}
  const config=catalog.economy.battle,baseReward=rewardFor(result,session,config),badges=state.badges=state.badges||state.gymProgress?.badges||[];let firstClear=false;
  if(session.regulationId!=='sandbox-v2'&&result.reason!=='surrender'&&result.winner==='A'&&Number.isInteger(session.gym)&&!badges.includes(session.gym)){baseReward.coins+=config.gymFirstClear.coins;baseReward.crystals+=config.gymFirstClear.crystals;firstClear=true;}
  const eligible=baseReward.coins>0||baseReward.crystals>0,reward={coins:baseReward.coins,crystals:baseReward.crystals,firstClear,eligible};

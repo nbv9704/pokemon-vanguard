@@ -60,6 +60,11 @@ unbounded battle-history shape.
 Absolute timings vary by machine. The invariant under test is one projection and
 one serialization per unique audience rather than per socket.
 
+B13 extended this benchmark with the derived append-only receipt index. At 100,000
+entries, a missing linear lookup measured p50/p95 2.022/2.678 ms. The one-time index
+build measured 42.595 ms; repeated lookups were at or below 0.001 ms resolution.
+See `browser-render-receipt-index-b13.md` for the threshold and correctness contract.
+
 ## Verification and boundaries
 
 Focused tests cover shared/different audiences, exact serialized-frame reuse,

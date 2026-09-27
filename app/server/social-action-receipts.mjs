@@ -1,6 +1,7 @@
 // Receipt and fingerprint stay private in the initiating trainer's save.
 // No expiration until a durable archive can guarantee old action IDs stay spent.
 import {createHash} from 'node:crypto';
+import {findAppendOnlyBy} from './append-only-index.mjs';
 
 export const validSocialActionId=value=>typeof value==='string'&&/^[A-Za-z0-9:_-]{1,128}$/.test(value);
 const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
@@ -11,7 +12,7 @@ export function socialFingerprint(accountId,action){
  return createHash('sha256').update(JSON.stringify(canonical(payload))).digest('hex');
 }
 export function inspectSocialReceipt(state,id,fingerprint){
- const receipt=state?.socialActionReceiptsV1?.find(entry=>entry.actionId===id);
+ const receipt=findAppendOnlyBy(state?.socialActionReceiptsV1,'actionId',id);
  return !receipt?{status:'new'}:receipt.fingerprint===fingerprint?{status:'duplicate'}:{status:'conflict'};
 }
 export function appendSocialReceipt(state,{id,fingerprint,type,now}){

@@ -4,6 +4,7 @@ import {applyEconomyTransaction,ensureEconomyState} from './v2-economy-ledger.mj
 import {ensureV3ItemInventory} from './v3-item-shop.mjs';
 import {grantPokemonToProgression} from './admin-progression-grants.mjs';
 import {MAIL_RETENTION_PRESETS,isMailExpired,mailExpiry,normalizeAdminMailLifecycle} from './mailbox-v1.mjs';
+import {findAppendOnlyBy} from './append-only-index.mjs';
 
 const clone=value=>structuredClone(value);
 const clean=(value,max)=>String(value??'').replace(/[\u0000-\u001f\u007f]/g,'').trim().slice(0,max);
@@ -27,7 +28,7 @@ export function normalizeGiftDraft(input,catalog,{campaignId=randomUUID(),sentBy
 
 export function enqueueAdminGift(state,gift,{fingerprint=giftFingerprint(gift)}={}){
  const holder=ensureAdminGiftState(state),receipts=state.adminGiftDeliveryReceiptsV1=Array.isArray(state.adminGiftDeliveryReceiptsV1)?state.adminGiftDeliveryReceiptsV1:[];
- const prior=receipts.find(entry=>entry.campaignId===gift.giftId);
+ const prior=findAppendOnlyBy(receipts,'campaignId',gift.giftId);
  if(prior)return prior.fingerprint===fingerprint?{ok:true,duplicate:true,changed:false}:{ok:false,code:'CAMPAIGN_ID_REUSED'};
  let inbox=holder.inbox;const now=Number(gift.sentAt)||Date.now();inbox=inbox.filter(entry=>{normalizeAdminMailLifecycle(entry);return !isMailExpired({sentAt:entry.sentAt,readAt:entry.readAt,unreadTtlMs:entry.unreadTtlMs,readTtlMs:entry.readTtlMs},now);});
  const already=inbox.find(entry=>entry.giftId===gift.giftId);

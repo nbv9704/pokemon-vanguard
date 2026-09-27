@@ -2,10 +2,11 @@
 // Match history is display-only and may be trimmed; receipts are the durable
 // replay barrier until an equivalent long-lived dedupe archive is available.
 import {createHash} from 'node:crypto';
+import {findAppendOnlyBy} from './append-only-index.mjs';
 
 const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
 export const rankedSettlementKey=({matchId,mode,winner,accountA,accountB})=>createHash('sha256').update(JSON.stringify(canonical({matchId,mode,winner,accountA,accountB}))).digest('hex');
-export function rankedSettlementReceipt(state,matchId){return state?.rankedSettlementReceiptsV1?.find(entry=>entry.matchId===matchId)||null;}
+export function rankedSettlementReceipt(state,matchId){return findAppendOnlyBy(state?.rankedSettlementReceiptsV1,'matchId',matchId);}
 export function recordRankedSettlement(state,{matchId,key,outcome,reason,mode,opponentName,opponentRating,ratingDelta,ratingAfter,rankTicketProtected,settledAt}){
  if(!Array.isArray(state.rankedSettlementReceiptsV1))state.rankedSettlementReceiptsV1=[];
  if(rankedSettlementReceipt(state,matchId))throw Object.assign(Error('Ranked settlement already recorded'),{code:'RANKED_SETTLEMENT_ALREADY_RECORDED'});

@@ -1,4 +1,5 @@
 import {ensureTicketBag} from './ticket-bag.mjs';
+import {findAppendOnlyBy} from './append-only-index.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const actionIdPattern=/^[A-Za-z0-9:_-]{1,128}$/;
 const moneyKeys=['coins','crystals','recruitmentTickets'],ticketKeys=['shopTickets','trainingTickets','rankTickets'];
@@ -25,20 +26,20 @@ export function economyActionFingerprint(action){
 export function validateEconomyActionId(actionId){return typeof actionId==='string'&&actionIdPattern.test(actionId);}
 
 export function inspectActionReceipt(state,actionId,fingerprint){
- ensureEconomyState(state);const existing=state.actionReceipts.find(entry=>entry.actionId===actionId);
+ ensureEconomyState(state);const existing=findAppendOnlyBy(state.actionReceipts,'actionId',actionId);
  if(!existing)return {status:'new'};
  if(existing.fingerprint!==fingerprint)return {status:'conflict',receipt:clone(existing)};
  return {status:'duplicate',receipt:clone(existing)};
 }
 
 export function recordActionReceipt(state,{actionId,kind,fingerprint,receiptId,result}){
- ensureEconomyState(state);const existing=state.actionReceipts.find(entry=>entry.actionId===actionId);if(existing)return clone(existing);
+ ensureEconomyState(state);const existing=findAppendOnlyBy(state.actionReceipts,'actionId',actionId);if(existing)return clone(existing);
  const entry={actionId,kind,fingerprint,receiptId,result:clone(result)};state.actionReceipts.push(entry);return clone(entry);
 }
 
 export function applyEconomyTransaction(state,{receiptId,actionId=null,kind,delta,details=null}){
  const normalized={};for(const key of [...moneyKeys,...ticketKeys]){const value=delta?.[key]??0;if(!safeInteger(value))return {ok:false,code:ticketKeys.includes(key)?'INVALID_TICKET_DELTA':'INVALID_CURRENCY_DELTA'};if(value||moneyKeys.includes(key))normalized[key]=value;}
- ensureEconomyState(state);const existing=state.economyLedger.find(entry=>entry.receiptId===receiptId);if(existing)return {ok:true,duplicate:true,entry:clone(existing)};
+ ensureEconomyState(state);const existing=findAppendOnlyBy(state.economyLedger,'receiptId',receiptId);if(existing)return {ok:true,duplicate:true,entry:clone(existing)};
  const before=clone(state.wallet);if(moneyKeys.some(key=>!safeInteger(before[key])||before[key]<0))return {ok:false,code:'INVALID_CURRENCY_BALANCE'};const after={coins:before.coins+normalized.coins,crystals:before.crystals+normalized.crystals,recruitmentTickets:before.recruitmentTickets+normalized.recruitmentTickets};
  if(moneyKeys.some(key=>!safeInteger(after[key])))return {ok:false,code:'INVALID_CURRENCY_BALANCE'};
  const bag=ensureTicketBag(state),bagBefore={shopTickets:bag.shopTickets,trainingTickets:bag.trainingTickets,rankTickets:bag.rankTickets},bagAfter={...bagBefore};

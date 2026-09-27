@@ -1,6 +1,7 @@
 // Persistent Admin action identity. Receipts live in the same player save as the
 // mutation: a lost HTTP response cannot turn a retry into a second mutation.
 import {createHash} from 'node:crypto';
+import {findAppendOnlyBy} from './append-only-index.mjs';
 
 export const validAdminActionId=value=>typeof value==='string'&&/^[A-Za-z0-9:_-]{1,128}$/.test(value);
 const canonical=value=>Array.isArray(value)?value.map(canonical):value!==null&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
@@ -9,7 +10,7 @@ export function adminActionFingerprint(adminId,userId,action){
  return createHash('sha256').update(JSON.stringify(canonical({version:1,adminId,userId,action:payload}))).digest('hex');
 }
 export function lookupAdminActionReceipt(state,actionId,fingerprint){
- const receipt=(state.adminActionReceiptsV1||[]).find(entry=>entry.actionId===actionId);
+ const receipt=findAppendOnlyBy(state.adminActionReceiptsV1,'actionId',actionId);
  return !receipt?{status:'new'}:receipt.fingerprint===fingerprint?{status:'duplicate',receipt}:{status:'conflict',receipt};
 }
 export function appendAdminActionReceipt(state,{actionId,fingerprint,adminId,type,committedAt}){

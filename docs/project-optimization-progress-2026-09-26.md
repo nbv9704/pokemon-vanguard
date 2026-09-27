@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B12 — hot-state baseline và coalesce broadcast cùng audience**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B13 — browser render baseline và derived receipt index**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -36,14 +36,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–06: Admin/Social/Ranked/Training/Team/Shop/Recruitment receipts. B07: bổ sung PvE schema-3 battle receipts + lost-ACK retry đọc save; còn legacy commands, PvP per-turn durable receipts và archival |
-| 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo synthetic 1k/10k/100k: 100k ~65,26 MB, serialize p50 258,149 ms, JSON durable write 1.446,791 ms; chưa compact vì cần archive/index giữ dedupe bền |
+| 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
 | 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline join + cap socket/account; B08 quota; B10 chỉ tin XFF từ proxy IP allowlist; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
 | 15 | Public projection allowlist/pure | P1 | DONE | B11 root save, Training V2/V3, Battle V2/V3 và preview dùng allowlist fail-closed; negative sentinel + WebSocket thật chứng minh receipt/field tương lai không lọt ra public |
-| 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab chỉ project + serialize một lần mỗi broadcast, spectator short-circuit; benchmark 4→1 projection; còn delta/cursor và browser render baseline |
+| 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab project + serialize 1 lần; B13 browser baseline: Team p50/p95 11,5/51,9 ms, các route chính còn lại p95 <=3,8 ms, focus/caret giữ qua push; còn delta/cursor và profiling Team |
 | 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
 | 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–06: Social/management/Shop/Recruitment. B07: PvE schema-3 durable ACK + một outbox retry chủ đích; còn ACK toàn bộ legacy/PvP action, multi-device/browser QA |
@@ -250,6 +250,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** broadcast/flow-control/local/WebSocket/privacy **14/14 PASS**; `npm run check` PASS; full regression **1.348/1.348 PASS trên 208 file**, 0 fail/skip/todo. Tài liệu và cách chạy benchmark: `app/docs/hot-state-broadcast-b12.md`.
 - **Hosted CI:** run [`36326764392`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36326764392) cho commit `bfe641b`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa có cursor/delta/resync, chưa archive receipt/ledger, chưa browser long-task/render baseline theo từng route và chưa soak multi-process/Supabase. Vì vậy #09 và #16 giữ `IN PROGRESS`.
+
+### 27/09/2026 — B13: browser render baseline và derived receipt index
+
+- **Browser QA cho #16:** chạy Local Beta trên save temp bằng trình duyệt thật và timer `?debug=1`. Mỗi route lấy 10 mẫu xen kẽ Home: Team Builder p50/p95 **11,5/51,9 ms** (349 descendant), Training **2,3/3,8 ms**, Friends **2,3/3,8 ms**, Arena **1,6/3,8 ms**. Double Preview 4,0 ms; command đầu 6,2 ms; 20 lần bật/tắt Battle Log p50/p95 **2,8/3,7 ms**. Một long-task outlier ở Team chưa đủ để viết lại DOM; cần profile tách HTML/layout/image decode.
+- **Continuity:** tab thứ hai cùng account join và gây state broadcast trong lúc input Team name có draft; value, focus và cả hai đầu caret được giữ nguyên. Browser skill dẫn tới quyết định không thực hiện DOM rewrite chưa có bằng chứng.
+- **#09 một phần:** thêm `append-only-index.mjs`, WeakMap chỉ trong process, không serialize; dưới 256 entry vẫn linear. Index áp dụng cho economy/action/Social/Admin/Gift/Ranked settlement/V2 reward receipt, giữ first-match, cập nhật append và rebuild khi array bị thay/truncate. Không xóa hoặc hết hạn replay barrier.
+- **Benchmark 100k receipt:** linear missing lookup p50/p95 **2,022/2,678 ms**; cold index build **42,595 ms** một lần; steady first/last/missing ở hoặc dưới độ phân giải **0,001 ms**. Save size/serialize/write không giảm, nên #09 vẫn `IN PROGRESS`.
+- **Kiểm thử:** receipt/economy/settlement mục tiêu **49/49 PASS**; `npm run check` PASS; full regression **1.352/1.352 PASS trên 209 file**, 0 fail/skip/todo. Tài liệu: `app/docs/browser-render-receipt-index-b13.md`.
+- **Giới hạn:** chưa archive receipt/ledger, chưa cursor/base revision/resync cho battle history, chưa trace Team Builder nhiều fixture/browser hoặc soak multi-process/Supabase. #09/#16 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
 
