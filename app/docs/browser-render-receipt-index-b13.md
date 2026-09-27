@@ -64,8 +64,9 @@ npm test
 
 The focused receipt/economy/settlement suite passed 49/49 after the threshold test
 was added. `npm run check` passed, and the full suite passed 1,352/1,352 on 209
-test files with zero failures, skips, or todos. Hosted-CI results are recorded in
-the optimization progress log after completion.
+test files with zero failures, skips, or todos. Hosted CI run
+[`36331431485`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36331431485)
+for commit `49581fd` passed on Ubuntu, Windows, and `release-smoke`.
 
 ## Remaining work
 

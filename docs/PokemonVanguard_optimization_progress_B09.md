@@ -258,6 +258,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#09 một phần:** thêm `append-only-index.mjs`, WeakMap chỉ trong process, không serialize; dưới 256 entry vẫn linear. Index áp dụng cho economy/action/Social/Admin/Gift/Ranked settlement/V2 reward receipt, giữ first-match, cập nhật append và rebuild khi array bị thay/truncate. Không xóa hoặc hết hạn replay barrier.
 - **Benchmark 100k receipt:** linear missing lookup p50/p95 **2,022/2,678 ms**; cold index build **42,595 ms** một lần; steady first/last/missing ở hoặc dưới độ phân giải **0,001 ms**. Save size/serialize/write không giảm, nên #09 vẫn `IN PROGRESS`.
 - **Kiểm thử:** receipt/economy/settlement mục tiêu **49/49 PASS**; `npm run check` PASS; full regression **1.352/1.352 PASS trên 209 file**, 0 fail/skip/todo. Tài liệu: `app/docs/browser-render-receipt-index-b13.md`.
+- **Hosted CI:** run [`36331431485`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36331431485) cho commit `49581fd`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa archive receipt/ledger, chưa cursor/base revision/resync cho battle history, chưa trace Team Builder nhiều fixture/browser hoặc soak multi-process/Supabase. #09/#16 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
