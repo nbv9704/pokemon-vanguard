@@ -43,8 +43,9 @@ npm test
 Focused coverage passed 35/35, including committed-save/lost-ACK injection for
 all three command families, payload collision, exact client IDs, and a real
 WebSocket restart replay. `npm run check` passed. The full suite passed
-1,362/1,362 on 211 test files with zero failures, skips, or todos. Hosted CI is
-recorded in the progress log after completion.
+1,362/1,362 on 211 test files with zero failures, skips, or todos. Hosted CI run
+[`36333909061`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36333909061)
+for commit `e6053ca` passed on Ubuntu, Windows, and `release-smoke`.
 
 ## Remaining work
 

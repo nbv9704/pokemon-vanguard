@@ -274,6 +274,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#08:** `build.save`, `team.save`, `blueprint.import` dùng receipt fingerprint riêng khi có action ID. Retry đọc authoritative save; cùng payload trả duplicate, payload khác cùng ID trả `ACTION_ID_REUSED`. Build không bị trừ VP/sửa hai lần, Team không tăng revision hai lần và Blueprint không import trùng sau lost ACK.
 - **#19:** schema-2 Training/Team UI tạo ID ổn định và dùng explicit session outbox; server persist trước broadcast/ACK. Blueprint vẫn giữ giới hạn input 64 KiB, outbox chỉ nới envelope đủ chứa action JSON. Client cũ không ID vẫn tương thích nhưng không có bảo đảm xuyên restart.
 - **Kiểm thử:** lost-ACK injection cho cả ba nhóm, collision, UI IDs/outbox và WebSocket thật qua restart; focused **35/35 PASS**; `npm run check` PASS; full regression **1.362/1.362 PASS trên 211 file**, 0 fail/skip/todo. Tài liệu: `app/docs/v2-player-command-retry-b15.md`.
+- **Hosted CI:** run [`36333909061`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36333909061) cho commit `e6053ca`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** schema-2 PvE battle và PvP per-turn còn thiếu durable command contract; chưa multi-device browser QA hoặc Supabase/multi-process smoke. #08/#19 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
