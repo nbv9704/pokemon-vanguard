@@ -20,6 +20,17 @@ function summary(output){
  if(result.tests===0||result.tests!==result.pass+result.fail+result.skipped+result.todo)throw new Error('Invalid test batch summary');
  return result;
 }
+function failureExcerpt(output){
+ const lines=output.split(/\r?\n/),indexes=[];
+ for(let i=0;i<lines.length;i++)if(/^not ok \d+ /.test(lines[i]))indexes.push(i);
+ const excerpt=(indexes.length?indexes.flatMap(index=>lines.slice(index,index+18)):lines.slice(-30)).join('\n').slice(0,6000);
+ return excerpt||'The test process exited without a TAP failure excerpt.';
+}
+function annotateFailure(title,message){
+ if(process.env.GITHUB_ACTIONS!=='true')return;
+ const escaped=String(message).replaceAll('%','%25').replaceAll('\r','%0D').replaceAll('\n','%0A');
+ console.error(`::error title=${title}::${escaped}`);
+}
 for(let i=0;i<batches.length;i++){
  const batch=batches[i];console.log(`\n=== Test batch ${i+1}/${batches.length} · ${batch.length} files ===`);
  const args=['--test',...(forceExit?['--test-force-exit']:[]),...batch];
@@ -30,10 +41,10 @@ for(let i=0;i<batches.length;i++){
  child.on('error',error=>{spawnError=error;});
  const timer=setTimeout(()=>{timedOut=true;child.kill('SIGTERM');setTimeout(()=>child.kill('SIGKILL'),1500).unref();},timeoutMs);
  const code=await new Promise(resolve=>child.on('close',resolve));clearTimeout(timer);
- if(spawnError){console.error(`Batch ${i+1} failed to spawn: ${spawnError.message}`);process.exit(1);}
- if(timedOut){console.error(`Batch ${i+1} timed out after ${timeoutMs} ms.`);process.exit(1);}
- if(code!==0){console.error(`Batch ${i+1} failed with exit code ${code}.`);process.exit(code||1);}
- try{const parsed=summary(out);for(const key of keys)total[key]+=parsed[key];}catch(error){console.error(error.message);process.exit(1);}
+ if(spawnError){annotateFailure(`Test batch ${i+1} spawn failure`,spawnError.message);console.error(`Batch ${i+1} failed to spawn: ${spawnError.message}`);process.exit(1);}
+ if(timedOut){annotateFailure(`Test batch ${i+1} timeout`,`Timed out after ${timeoutMs} ms.\n${failureExcerpt(out)}`);console.error(`Batch ${i+1} timed out after ${timeoutMs} ms.`);process.exit(1);}
+ if(code!==0){annotateFailure(`Test batch ${i+1} failed`,failureExcerpt(out));console.error(`Batch ${i+1} failed with exit code ${code}.`);process.exit(code||1);}
+ try{const parsed=summary(out);for(const key of keys)total[key]+=parsed[key];}catch(error){annotateFailure(`Test batch ${i+1} invalid summary`,`${error.message}\n${failureExcerpt(out)}`);console.error(error.message);process.exit(1);}
 }
 console.log('\n=== Aggregate test summary ===');
 console.log(`files ${files.length}\narchived_ts ${archived.length}`);
