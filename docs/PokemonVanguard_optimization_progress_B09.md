@@ -282,6 +282,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#08:** toàn bộ `battleV2.preview.start/lock`, `commands`, `replacements`, `surrender` dùng receipt fingerprint khi có ID. Retry đọc authoritative save; preview không tạo trận thứ hai, finishing command không settle reward/mission lần hai, khác payload cùng ID bị từ chối.
 - **#19:** schema-2 Battle UI và entry point Gym tạo ID ổn định, dùng explicit session outbox; server persist battle + receipt + reward + mission trước broadcast/ACK. Client cũ không ID vẫn tương thích nhưng không có bảo đảm xuyên restart.
 - **Kiểm thử:** lost-ACK preview và finishing reward, collision, UI/outbox, WebSocket thật qua restart; focused **40/40 PASS**; `npm run check` PASS; full regression **1.367/1.367 PASS trên 212 file**, 0 fail/skip/todo. Tài liệu: `app/docs/v2-battle-command-retry-b16.md`.
+- **Hosted CI:** run [`36334876906`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36334876906) cho commit `dcc86ce`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** còn PvP per-turn, archive/compaction receipt, multi-device QA và Supabase/multi-process smoke; #08/#19 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này

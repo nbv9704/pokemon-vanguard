@@ -45,7 +45,8 @@ Focused coverage passed 40/40. It includes lost-ACK injection for preview and a
 reward-settling finishing command, payload collision, stable UI IDs/outbox, and a
 real WebSocket restart replay. `npm run check` passed. The full suite passed
 1,367/1,367 on 212 test files with zero failures, skips, or todos. Hosted CI is
-recorded in the progress log after completion.
+green for commit `dcc86ce`: Ubuntu, Windows, and `release-smoke` all passed in
+[run 36334876906](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36334876906).
 
 ## Remaining work
 
