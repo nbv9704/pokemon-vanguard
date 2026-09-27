@@ -298,6 +298,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#30:** instrument một lần tại Hybrid storage boundary để đo save/pair-save/restore p50/p95/max/count/error; distribution giữ tối đa 512 mẫu gần nhất. Room queues báo tổng depth và oldest wait; sampler 1 giây đo event-loop lag; snapshot có heap/RSS. Admin Live hiển thị toàn bộ aggregate, không đưa vào player projection.
 - **#10/#30:** shared broadcast đếm successful deliveries/bytes; bounded send phân loại drop do backpressure, socket đã đóng hoặc send error mà vẫn giữ hành vi terminate slow consumer. Graceful shutdown dọn event-loop sampler.
 - **Kiểm thử:** success/failure persistence, percentile bounded, queue wait clock giả, broadcast bytes/drop reason, aggregate privacy, Admin UI và WebSocket/server thật; focused **34/34 PASS**; `npm run check` PASS; full regression **1.371/1.371 PASS trên 214 file**, 0 fail/skip/todo. Tài liệu: `app/docs/runtime-observability-b18.md`.
+- **Hosted CI:** run [`36337097639`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36337097639) cho commit `d1aa325`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** metrics reset theo process, chưa shared export/alert, settlement-pending age, load/soak dài hoặc Supabase latency thật; #10/#30 giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này

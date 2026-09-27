@@ -41,7 +41,9 @@ bounded percentile snapshots, controlled queue wait, broadcast byte accounting,
 drop reasons, aggregate privacy, Admin UI contracts, room capacity/reload, and
 real local WebSocket/server paths. `npm run check` passed. Full regression passed
 1,371/1,371 on 214 supported test files with zero failures, skips, or todos.
-Hosted CI is recorded in the progress log after completion.
+Hosted CI is green for commit `d1aa325`: Ubuntu, Windows, and `release-smoke`
+passed in
+[run 36337097639](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36337097639).
 
 ## Remaining boundaries
 
