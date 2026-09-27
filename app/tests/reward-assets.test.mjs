@@ -65,7 +65,7 @@ test('mission/shop screen images do not change mission or purchase actions',()=>
 });
 
 test('full ZIP packager excludes secret files and player saves while preserving safe examples',()=>{
- const tmp=mkdtempSync(path.join(os.tmpdir(),'pv-package-test-')),root=path.join(tmp,'Fixture'),app=path.join(root,'app'),out=path.join(tmp,'full.zip');
+ const archiveRoot='PokemonVanguard',tmp=mkdtempSync(path.join(os.tmpdir(),'pv-package-test-')),root=path.join(tmp,'Fixture'),app=path.join(root,'app'),out=path.join(tmp,'full.zip');
  try{
   mkdirSync(path.join(app,'.local-data'),{recursive:true});mkdirSync(path.join(app,'public'),{recursive:true});
   for(const relative of ['backups','reports','.admin-backups','.campaigns','.transactions','content-candidates','node_modules','dist'])mkdirSync(path.join(root,relative),{recursive:true});
@@ -81,13 +81,13 @@ test('full ZIP packager excludes secret files and player saves while preserving 
   const script=fileURLToPath(new URL('../scripts/package-full.py',import.meta.url));
   const result=runPython([script,'--project-root',root,'--output',out]);
   assert.equal(result.status,0,result.stderr);
-  const verify=runPython(['-c',`import zipfile,sys,json;z=zipfile.ZipFile(sys.argv[1]);print(json.dumps({'names':z.namelist(),'bad':z.testzip(),'content':z.read('Fixture/app/public/index.html').decode()}))`,out]);
+  const verify=runPython(['-c',`import zipfile,sys,json;z=zipfile.ZipFile(sys.argv[1]);print(json.dumps({'names':z.namelist(),'bad':z.testzip(),'content':z.read('${archiveRoot}/app/public/index.html').decode()}))`,out]);
   assert.equal(verify.status,0,verify.stderr);
   const resultJson=JSON.parse(verify.stdout);
   assert.equal(resultJson.bad,null);
   assert.equal(resultJson.content,'public asset');
-  assert.ok(resultJson.names.includes('Fixture/app/.dev.vars.example'));
+  assert.ok(resultJson.names.includes(`${archiveRoot}/app/.dev.vars.example`));
   for(const filename of resultJson.names)assert.doesNotMatch(filename,/\.dev\.vars$|\.env\.production|\.local-data|\/backups\/|\/reports\/|\/\.admin-backups\/|\/\.campaigns\/|\/\.transactions\/|\/content-candidates\/|\/node_modules\/|\/dist\/|\.DS_Store$/i);
-  assert.ok(resultJson.names.includes('Fixture/content-validation/safe-snapshot.json')); // vetted, non-private inputs ship with clean ZIP
+  assert.ok(resultJson.names.includes(`${archiveRoot}/content-validation/safe-snapshot.json`)); // vetted, non-private inputs ship with clean ZIP
  }finally{rmSync(tmp,{force:true,recursive:true});}
 });
