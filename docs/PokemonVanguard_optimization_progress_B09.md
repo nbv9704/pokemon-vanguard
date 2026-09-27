@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 9 |
-| IN PROGRESS | 19 |
+| DONE | 10 |
+| IN PROGRESS | 18 |
 | TODO | 5 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B16 — durable schema-2 PvE battle ACK**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B17 — bounded room lifecycle và resource observability**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -44,7 +44,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
 | 15 | Public projection allowlist/pure | P1 | DONE | B11 root save, Training V2/V3, Battle V2/V3 và preview dùng allowlist fail-closed; negative sentinel + WebSocket thật chứng minh receipt/field tương lai không lọt ra public |
 | 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab project + serialize 1 lần; B13 browser baseline: Team p50/p95 11,5/51,9 ms, các route chính còn lại p95 <=3,8 ms, focus/caret giữ qua push; còn delta/cursor và profiling Team |
-| 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
+| 17 | Thu hồi room/presence | P1 | DONE | B07 TTL guard socket/join/job/PvP; B17 hard cap + safe detached LRU, dirty guard, presence cleanup, capacity rejection và aggregate metrics; distributed ownership theo #10/#18 |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
 | 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–15 bao phủ schema-3/account/schema-2 management; B16 thêm ACK + session outbox cho schema-2 PvE battle; còn PvP và multi-device QA |
 | 20 | Cache/nén HTTP | P2 | IN PROGRESS | B09-fix1: precompressed catalog V2/V3 + ETag/304/HEAD; q-weight/406 đúng, static bounded cache/streaming; cần browser/cold-warm/live WS |
@@ -57,7 +57,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
 | 29 | Social capacity/profile offline | P1 | IN PROGRESS | B03 WAL/cloud pair RPC; B04 durable Social receipts; B05 WS commit ACK + sessionStorage pending outbox theo tài khoản và retry cùng mã qua reconnect/reload (không tự gửi lại); còn Supabase thật/multi-process smoke và QA trình duyệt |
-| 30 | Quan sát lỗi/benchmark | P1/P2 | IN PROGRESS | B09: baseline catalog raw/gzip/br và serialize CPU JSON có script lặp lại; chưa metrics persist, room, heap, load/soak |
+| 30 | Quan sát lỗi/benchmark | P1/P2 | IN PROGRESS | B09 baseline HTTP/serialize; B17 Admin Live có room/socket/queue/dirty/busy, eviction và capacity rejection aggregate; còn persist latency, event-loop lag, heap, slow-consumer và load/soak |
 | 31 | UX/accessibility/storage fallback | P2 | IN PROGRESS | localStorage lỗi chuyển memory fallback và báo không persistent; còn browser/a11y QA |
 | 32 | Workflow/tài liệu thống nhất | P2 | IN PROGRESS | B09: thay app/AGENTS template cloud lỗi thời bằng Node local contract; README + operations mới; cần clean-clone/đội review |
 | 33 | Release tái lập/clean environment | P2 | IN PROGRESS | B09-fix1 + hosted run #10: stable archive root, normalized metadata, manifest/verifier/dry-run, clean-unpack PASS; còn so checksum nén cross-zlib/macOS nếu muốn cam kết whole-ZIP byte-identical |
@@ -284,6 +284,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** lost-ACK preview và finishing reward, collision, UI/outbox, WebSocket thật qua restart; focused **40/40 PASS**; `npm run check` PASS; full regression **1.367/1.367 PASS trên 212 file**, 0 fail/skip/todo. Tài liệu: `app/docs/v2-battle-command-retry-b16.md`.
 - **Hosted CI:** run [`36334876906`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36334876906) cho commit `dcc86ce`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** còn PvP per-turn, archive/compaction receipt, multi-device QA và Supabase/multi-process smoke; #08/#19 giữ `IN PROGRESS`.
+
+### 28/09/2026 — B17: bounded room lifecycle và resource observability
+
+- **#17 DONE:** thêm `PV_MAX_RESIDENT_ROOMS` mặc định 1.000. TTL vẫn dọn room detached quá hạn; khi nhận account mới ở hard cap, LRU chỉ evict room detached an toàn: không socket/join, queue rỗng, state không dirty và không bị Ranked/Friendly tham chiếu. Nếu không có ứng viên, upgrade mới nhận HTTP 503 + `Retry-After`, không làm Map tăng vô hạn hoặc đẩy room đang hoạt động. Eviction xóa presence process-local; lần vào sau reload save bền.
+- **#30:** `/api/admin/live` thêm aggregate `resources`: resident/max, active/detached/dirty/busy room, connected/pending socket, queued job, TTL/capacity eviction và capacity rejection. Không expose account/room ID; `resourceSnapshot()` dùng cùng projection cho integration test.
+- **Kiểm thử:** mọi guard eviction, TTL, LRU ổn định, privacy aggregate, active-cap rejection, hai vòng capacity eviction và durable reload; focused server/admin **28/28 PASS**; `npm run check` PASS; full regression **1.370/1.370 PASS trên 213 file**, 0 fail/skip/todo. Tài liệu: `app/docs/room-capacity-observability-b17.md`.
+- **Giới hạn:** hard cap/metrics vẫn theo từng process; distributed admission/presence thuộc #10/#18. #30 còn persist latency, event-loop lag, heap, slow-consumer và load/soak nên giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này
 

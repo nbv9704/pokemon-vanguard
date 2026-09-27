@@ -46,7 +46,7 @@ import {markWebSocketAlive,startWebSocketHeartbeat} from './server/websocket-hea
 import {createInboundLimiter,sendBounded,sendSerializedBounded} from './server/ws-flow-control.mjs';
 import {broadcastSharedFrames} from './server/state-broadcast.mjs';
 import {createRequestQuotas} from './server/request-quotas.mjs';
-import {pruneDetachedRooms,DETACHED_ROOM_RETENTION_MS} from './server/room-lifecycle.mjs';
+import {pruneDetachedRooms,roomResourceSnapshot,DETACHED_ROOM_RETENTION_MS} from './server/room-lifecycle.mjs';
 import {createCatalogHttpResponse,createStaticHttpResponse} from './server/http-public-assets.mjs';
 import {createPublicOriginPolicy} from './server/public-origin-policy.mjs';
 import {legacyAdventurePublicView} from './server/player-public-view.mjs';
@@ -63,7 +63,7 @@ export function ensureBetaTestWallet(state){
 }
 async function readJsonBody(req,maxBytes=32*1024){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>maxBytes)throw Object.assign(new Error('Request too large'),{statusCode:413});chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString('utf8'));}
 
-export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock(), betaTestFunds = false, authRequired = false, authEnv = process.env, authFetch = fetch, storageFetch = fetch, websocketHeartbeatMs = 10_000, websocketJoinDeadlineMs = 12_000, maxSocketsPerAccount = 4, maxSocketsPerIp = 24, requestRateLimits = {}, roomRetentionMs = DETACHED_ROOM_RETENTION_MS, shutdownDeadlineMs = 10_000 } = {}) {
+export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock(), betaTestFunds = false, authRequired = false, authEnv = process.env, authFetch = fetch, storageFetch = fetch, websocketHeartbeatMs = 10_000, websocketJoinDeadlineMs = 12_000, maxSocketsPerAccount = 4, maxSocketsPerIp = 24, maxResidentRooms = 1000, requestRateLimits = {}, roomRetentionMs = DETACHED_ROOM_RETENTION_MS, shutdownDeadlineMs = 10_000 } = {}) {
   const rooms = new Map();
   const accounts=new AccountCoordinator();
   let broadcast=()=>{};
@@ -75,19 +75,24 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const servePokemonUiIcon=createPokemonUiIconProxy({fetchImpl:authFetch});
   const quotas=createRequestQuotas({now:()=>clock.now(),limits:requestRateLimits});
   const notifyAccounts=accountIds=>{for(const accountId of new Set(accountIds||[])){const target=rooms.get(accountId);if(target?.state)broadcast(target);}};
-  const setLiveState=(accountId,state)=>{const target=rooms.get(accountId);if(target)target.state=state;};
+  const setLiveState=(accountId,state)=>{const target=rooms.get(accountId);if(target){target.state=state;target.dirty=false;target.lastActiveAt=clock.now();}};
   const social=new SocialService({clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState:accountId=>storage.load(accountId),loadProfile:accountId=>storage.profile(accountId),persist:(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
   const ranked=new RankedService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState:accountId=>storage.load(accountId),persist:async(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),publishState:setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
   const trainingPvp=new TrainingPvpService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,notify:notifyAccounts,isFriend:(a,b)=>social.isFriend(a,b)});
+  const roomLimit=Number.isSafeInteger(maxResidentRooms)?Math.max(1,Math.min(100_000,maxResidentRooms)):1000,roomCounters={ttl:0,capacity:0,capacityRejected:0};
+  const roomBusy=id=>ranked.busy(id)||trainingPvp.busy(id);
+  const onRoomEvict=(id,reason)=>{roomCounters[reason]=(roomCounters[reason]||0)+1;ranked.presence.delete(id);trainingPvp.presence.delete(id);social.presence.delete(id);};
+  const sweepRooms=targetSize=>pruneDetachedRooms(rooms,{now:clock.now(),retentionMs:roomRetentionMs,targetSize,isBusy:roomBusy,onEvict:onRoomEvict});
+  const resourceSnapshot=()=>roomResourceSnapshot(rooms,{maxRooms:roomLimit,counters:roomCounters,isBusy:roomBusy});
   let lifecycleTicking=false,lastRoomSweep=clock.now();
   const lifecycleTimer=setInterval(()=>{if(lifecycleTicking)return;lifecycleTicking=true;Promise.resolve().then(()=>ranked.tick()).then(()=>trainingPvp.tick()).then(()=>{
    const now=clock.now();if(now-lastRoomSweep<60_000)return;lastRoomSweep=now;quotas.prune();
-   pruneDetachedRooms(rooms,{now,retentionMs:roomRetentionMs,isBusy:id=>ranked.busy(id)||trainingPvp.busy(id),onEvict:id=>{ranked.presence.delete(id);trainingPvp.presence.delete(id);social.presence.delete(id);}});
+   sweepRooms(roomLimit);
   }).catch(error=>console.error('PvP lifecycle tick failed:',error.message)).finally(()=>{lifecycleTicking=false;});},1000);
   lifecycleTimer.unref?.();
   const pveLive=()=>[...rooms.entries()].flatMap(([accountId,room])=>{const v3=room.state?.battleV3,v2=room.state?.battleV2;if(v3&&v3.phase!=='FINISHED')return [{kind:'pve',id:v3.id||`pve:${accountId}`,accountId,name:room.state.owner||accountId,mode:v3.mode||'single',status:v3.phase,difficulty:v3.difficulty||'normal'}];if(v2&&v2.phase!=='FINISHED')return [{kind:'pve-v2',id:v2.id||`pve-v2:${accountId}`,accountId,name:room.state.owner||accountId,mode:v2.mode||'single',status:v2.phase,difficulty:v2.difficulty||'normal'}];return [];});
   const liveOperations={
-    overview:async()=>({ranked:ranked.adminOverview(),friendly:trainingPvp.adminOverview(),pve:pveLive()}),
+    overview:async()=>({ranked:ranked.adminOverview(),friendly:trainingPvp.adminOverview(),pve:pveLive(),resources:resourceSnapshot()}),
     statusForPlayer:accountId=>{const rankedLive=ranked.adminOverview(),queued=rankedLive.queue.find(entry=>entry.accountId===accountId),match=rankedLive.matches.find(entry=>entry.players.some(player=>player.accountId===accountId));if(match)return match;if(queued)return queued;const friendly=trainingPvp.adminOverview().rooms.find(entry=>entry.players.some(player=>player.accountId===accountId));if(friendly)return friendly;return pveLive().find(entry=>entry.accountId===accountId)||null;},
     stopForPlayer:async(accountId,reason)=>{const rankedStop=await ranked.adminStopForPlayer(accountId,reason);if(rankedStop.ok)return rankedStop;const friendlyStop=trainingPvp.adminStopForPlayer(accountId,reason);if(friendlyStop.ok)return friendlyStop;return {ok:false,code:'NO_EXTERNAL_BATTLE_ACTIVITY'};}
   };
@@ -138,6 +143,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     const quota=quotas.upgrade(remoteIp);
     if(!quota.ok){socket.end('HTTP/1.1 429 Too Many Requests\r\nRetry-After: '+Math.max(1,Math.ceil(quota.retryAfterMs/1000))+'\r\n\r\n');return;}
     if([...wss.clients].filter(client=>client.remoteIp===remoteIp).length>=maxIpSockets){socket.end('HTTP/1.1 429 Too Many Requests\r\n\r\n');return;}
+    if(!rooms.has(match[1])){sweepRooms(roomLimit-1);if(rooms.size>=roomLimit){roomCounters.capacityRejected++;socket.end('HTTP/1.1 503 Service Unavailable\r\nRetry-After: 5\r\n\r\n');return;}}
     wss.handleUpgrade(req, socket, head, ws => {ws.remoteIp=remoteIp;wss.emit('connection', ws, {name:match[1],session});});
   });
   const send = (ws, message) => sendBounded(ws,message,{openState:WebSocket.OPEN});
@@ -168,10 +174,11 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     const expiryTimer=expiryMs===null?null:setTimeout(()=>closeAuthSocket(ws),Math.min(expiryMs,2**31-1));expiryTimer?.unref?.();
     const joinTimer=setTimeout(()=>{if(!ws.joinedToRoom&&ws.readyState===WebSocket.OPEN)ws.close(4000,'join deadline exceeded');},joinDeadlineMs);joinTimer.unref?.();
     markWebSocketAlive(ws);
-    if (!rooms.has(name)) rooms.set(name, { name, state:null, clients:new Map(), pendingSockets:new Set(), queue:new SerialTaskQueue() });
-    const room = rooms.get(name);room.pendingSockets.add(ws);
+    if (!rooms.has(name)) rooms.set(name, { name, state:null, clients:new Map(), pendingSockets:new Set(), queue:new SerialTaskQueue(), dirty:false, lastActiveAt:clock.now(), lastDetachedAt:null });
+    const room = rooms.get(name);room.pendingSockets.add(ws);room.lastActiveAt=clock.now();
     ws.on('error', () => {});
     ws.on('message', raw => {
+      room.lastActiveAt=clock.now();
       // Budget pings as well as actions, before parsing or queueing expensive work.
       const messageQuota=quotas.message({accountId:name,ip:ws.remoteIp||'unknown',socket:ws});
       if(!messageQuota.ok){const retryAfterMs=messageQuota.retryAfterMs;send(ws,{type:'error',error:'ACTION_RATE_LIMITED',retryAfterMs});return;}
@@ -187,13 +194,14 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
           if (typeof message.playerId !== 'string' || !message.playerId.trim() || message.playerId.length > 128) return fail('playerId required');
           if(session&&message.playerId!==session.playerId)return fail('AUTH_IDENTITY_MISMATCH');
           if (room.clients.has(ws)) return fail('already joined');
+          room.dirty=true;
           if (!room.state) {
             const loaded=await storage.load(name);
             if(!loaded){const v2=upgradeAdventure(setup([message.playerId]),v2Catalog),v3=upgradeAdventureToV3(v2.state,v3Catalog);room.state=v3.state;await persist(name,room.state);}
             else if(!loaded.battle){let base=loaded;if((loaded.schemaVersion||1)<2){const v2=upgradeAdventure(loaded,v2Catalog);base=v2.state;}const upgraded=upgradeAdventureToV3(base,v3Catalog);if(['migrated','catalog-upgraded','progression-upgraded'].includes(upgraded.status)){await storage.backup(name,migrationBackups,'pre-v3-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=upgraded.state;}
             else room.state=loaded;
           }
-          if(betaTestFunds)ensureBetaTestWallet(room.state);ensureRankedState(room.state);ensureSocialState(room.state);if((room.state.schemaVersion||1)>=2)prepareRecruitmentState(room.state,v2Catalog,clock.now());if(room.state.progressionV3)prepareV3RecruitmentState(room.state,v3Catalog,clock.now());ensureMissionState(room.state,clock.now(),{login:true});ensureAdminGiftState(room.state);ensureMailboxState(room.state,{now:clock.now()});room.state=reconcileV3BattlePresentation(room.state,v3Catalog).state;await persist(name,room.state);
+          if(betaTestFunds)ensureBetaTestWallet(room.state);ensureRankedState(room.state);ensureSocialState(room.state);if((room.state.schemaVersion||1)>=2)prepareRecruitmentState(room.state,v2Catalog,clock.now());if(room.state.progressionV3)prepareV3RecruitmentState(room.state,v3Catalog,clock.now());ensureMissionState(room.state,clock.now(),{login:true});ensureAdminGiftState(room.state);ensureMailboxState(room.state,{now:clock.now()});room.state=reconcileV3BattlePresentation(room.state,v3Catalog).state;await persist(name,room.state);room.dirty=false;
           if(room.state.adminV1?.suspended){send(ws,{type:'error',error:'ACCOUNT_SUSPENDED'});ws.close(4003,'account suspended');return;}
           room.pendingSockets.delete(ws);room.clients.set(ws,message.playerId);ws.joinedToRoom=true;clearTimeout(joinTimer);const identitySession=session||{provider:'local',name:message.playerId};ranked.register(name,identitySession);social.register(name,identitySession);trainingPvp.register(name,identitySession); broadcast(room); return;
         }
@@ -295,12 +303,13 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         });
       }).catch(error => { console.error('Local save/action error:', error.message); send(ws,{type:'error',error:'Could not save this action. Check the local server terminal.'}); }).finally(()=>inbound.release(ws));
     });
-    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>console.error('Local socket cleanup error:',error.message)); });
+    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>console.error('Local socket cleanup error:',error.message)); });
   });
   let closePromise=null,closing=false;
   const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise(resolve=>{timer=setTimeout(resolve,ms);timer.unref?.();})]);}finally{clearTimeout(timer);}};
   return {
     server,
+    resourceSnapshot,
     listen: (port = 3100) => new Promise((resolve,reject) => {server.once('error',reject); server.listen(port,'127.0.0.1',()=>{server.off('error',reject);resolve(server.address().port);});}),
     close: async () => closePromise||(closePromise=(async()=>{closing=true;clearInterval(lifecycleTimer);clearInterval(websocketHeartbeatTimer);const budget=Number.isSafeInteger(shutdownDeadlineMs)?Math.max(100,Math.min(60_000,shutdownDeadlineMs)):10_000,endsAt=Date.now()+budget,remaining=()=>Math.max(1,endsAt-Date.now());const serverClosed=!server.listening?Promise.resolve():new Promise(resolve=>server.close(()=>resolve()));for(const ws of wss.clients)ws.close(1001,'server shutting down');await bounded(Promise.all([...rooms.values()].map(r=>r.queue.idle())),remaining());for(const ws of wss.clients)ws.terminate();await bounded(new Promise(resolve=>wss.close(resolve)),remaining());server.closeAllConnections?.();await bounded(serverClosed,remaining());})())
   };
@@ -310,6 +319,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   const app = createLocalServer({betaTestFunds:process.env.BETA_TEST_FUNDS==='true',authRequired:true,
    shutdownDeadlineMs:envLimit('PV_SHUTDOWN_TIMEOUT_MS',10_000,100,60_000),
    maxSocketsPerIp:envLimit('PV_WS_MAX_SOCKETS_PER_IP',24,1,256),
+   maxResidentRooms:envLimit('PV_MAX_RESIDENT_ROOMS',1000,1,100_000),
    requestRateLimits:{accountActions:envLimit('PV_RATE_ACCOUNT_ACTIONS_10S',45),ipActions:envLimit('PV_RATE_IP_ACTIONS_10S',180),socketMessages:envLimit('PV_RATE_SOCKET_MESSAGES_10S',70),ipUpgrades:envLimit('PV_RATE_IP_UPGRADES_MIN',30),httpInspector:envLimit('PV_RATE_INSPECTOR_MIN',40)}});
   const port = await app.listen(Number(process.env.PORT || 3100));
   console.log(`Pokémon Vanguard: http://localhost:${port}\nAccount saves: Supabase when configured; local storage is development-only.\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);
