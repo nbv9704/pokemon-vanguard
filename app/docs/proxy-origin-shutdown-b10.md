@@ -1,6 +1,7 @@
 # B10 — Public origin, trusted proxy, OAuth deadlines and shutdown
 
-Status: implemented and covered by focused integration tests on 27/09/2026.
+Status: implemented; focused/full local tests and hosted Linux/Windows/release CI
+passed on 27/09/2026 ([run 36313895556](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36313895556)).
 
 ## Deployment contract
 

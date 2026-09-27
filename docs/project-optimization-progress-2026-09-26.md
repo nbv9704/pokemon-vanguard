@@ -231,6 +231,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#10 một phần:** `X-Forwarded-For` chỉ được dùng khi transport peer nằm trong allowlist IP `PV_TRUSTED_PROXY_IPS`; client trực tiếp không thể spoof IP quota. Distributed socket cap và soak vẫn mở nên #10 giữ `IN PROGRESS`.
 - **#14 DONE:** token exchange/profile sync có deadline + mã lỗi ổn định; shutdown dừng accept, drain queue, đóng WS và force-close trong một budget, đồng thời idempotent.
 - **Kiểm thử:** bộ mục tiêu `proxy-origin-b10`, `local` và `request-quotas-b08`: 17/17 PASS; `npm run check` PASS; full regression **1.341/1.341 PASS trên 206 file**. Tài liệu vận hành: `app/docs/proxy-origin-shutdown-b10.md`.
+- **Hosted CI:** run [`36313895556`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36313895556) cho commit `df69640`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa thay thế smoke-test qua reverse proxy/OAuth/Supabase thật; không tuyên bố multi-process drain hay khôi phục PvP giữa trận.
 
 ## Cách cập nhật file này
