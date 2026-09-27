@@ -29,7 +29,7 @@ export function projectBattleForAi(battle,catalog,side='B'){
 }
 
 export function projectedSnapshot(battle,catalog){
- const own=battle.sides.A.roster.map(mon=>({...clone(mon),name:catalog.speciesById[mon.speciesId].name,artId:catalog.speciesById[mon.speciesId].artId,activeSlot:battle.sides.A.active.indexOf(mon.battleMonId)}));
+ const own=battle.sides.A.roster.map(mon=>({battleMonId:mon.battleMonId,ownerSide:mon.ownerSide,speciesId:mon.speciesId,name:catalog.speciesById[mon.speciesId].name,artId:catalog.speciesById[mon.speciesId].artId,types:[...(mon.types||[])],buildSnapshot:clone(mon.buildSnapshot),stats:clone(mon.stats),hp:mon.hp,pp:clone(mon.pp),status:clone(mon.status),stages:clone(mon.stages),volatiles:clone(mon.volatiles),itemState:clone(mon.itemState),formId:mon.formId??null,activeSlot:battle.sides.A.active.indexOf(mon.battleMonId)}));
  const opponent=battle.sides.B.roster.map(mon=>({battleMonId:mon.battleMonId,speciesId:mon.speciesId,name:catalog.speciesById[mon.speciesId].name,artId:catalog.speciesById[mon.speciesId].artId,types:mon.types,hpPercent:Math.round(mon.hp/mon.stats.hp*100),status:mon.status?.id||mon.status||null,activeSlot:battle.sides.B.active.indexOf(mon.battleMonId)}));
  return {id:battle.id,phase:battle.phase,phaseRevision:battle.phaseRevision,turn:battle.turn,activeCount:battle.activeCount,field:clone(battle.field),result:clone(battle.result),own,opponent};
 }

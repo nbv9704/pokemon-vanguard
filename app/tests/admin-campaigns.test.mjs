@@ -10,6 +10,7 @@ import {v3Catalog} from '../server/v3-catalog.mjs';
 import {createV3BetaProgression} from '../server/v3-progression.mjs';
 import {applyAdminGiftAction,adminGiftView,enqueueAdminGift,normalizeGiftDraft} from '../server/admin-gifts.mjs';
 import {campaignFingerprint} from '../server/admin-campaigns.mjs';
+import {legacyAdventurePublicView} from '../server/player-public-view.mjs';
 
 const player=id=>({schemaVersion:3,revision:1,owner:id,wallet:{coins:100,crystals:0,recruitmentTickets:0},progressionV3:createV3BetaProgression(v3Catalog)});
 const session={accountId:'admin-test'};
@@ -106,7 +107,7 @@ test('cloud adapter records the immutable campaign manifest through a unique-key
  assert.match(migration,/enable row level security/);assert.match(migration,/grant select, insert.*service_role/i);
 });
 
-test('player public payload explicitly excludes Admin Gift delivery receipts',async()=>{
- const server=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
- assert.match(server,/adminGiftDeliveryReceiptsV1:_privateAdminGiftDeliveryReceiptsV1/);
+test('player public payload explicitly excludes Admin Gift delivery receipts',()=>{
+ const projected=legacyAdventurePublicView({coins:125,adminGiftDeliveryReceiptsV1:[{campaignId:'private'}]});
+ assert.deepEqual(projected,{coins:125});
 });

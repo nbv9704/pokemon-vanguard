@@ -88,5 +88,8 @@ export function applyV3ProgressionAction(progression,action,catalog){
 }
 
 export function v3TrainingView(progression,catalog){
- return {catalogVersion:progression.catalogVersion,revision:progression.revision,activeTeamId:progression.activeTeamId||progression.teams?.[0]?.teamId||null,ownedItemIds:[...(progression.ownedItemIds||[])],mons:clone(progression.mons),builds:clone(progression.builds),teams:clone(progression.teams),species:catalog.species.map(species=>({id:species.id,name:species.name,types:[...species.types]}))};
+ const mons=(progression.mons||[]).map(mon=>({monId:mon.monId,speciesId:mon.speciesId,ownership:mon.ownership,trialExpiresAt:mon.trialExpiresAt??null,trialExpired:!!mon.trialExpired,legacyLevel:mon.legacyLevel??undefined,acquiredBy:mon.acquiredBy??undefined}));
+ const builds=(progression.builds||[]).map(build=>({buildId:build.buildId,monId:build.monId,name:build.name,natureId:build.natureId,statPoints:clone(build.statPoints),moveIds:[...(build.moveIds||[])],abilityId:build.abilityId,itemId:build.itemId,revision:build.revision}));
+ const teams=(progression.teams||[]).map(team=>({teamId:team.teamId,name:team.name,buildIds:[...(team.buildIds||[])],revision:team.revision}));
+ return {catalogVersion:progression.catalogVersion,revision:progression.revision,activeTeamId:progression.activeTeamId||teams[0]?.teamId||null,ownedItemIds:[...(progression.ownedItemIds||[])],mons,builds,teams,species:catalog.species.map(species=>({id:species.id,name:species.name,types:[...species.types]}))};
 }

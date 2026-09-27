@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,rm,readFile} from 'node:fs/promises';
+import {mkdtemp,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {JsonAdventureStorage} from '../server/storage-json.mjs';
@@ -9,6 +9,7 @@ import {SocialService,friendCodeFor} from '../server/social-v1.mjs';
 import {createV3BetaProgression} from '../server/v3-progression.mjs';
 import {v3Catalog} from '../server/v3-catalog.mjs';
 import {inspectSocialReceipt,socialFingerprint,validSocialActionId} from '../server/social-action-receipts.mjs';
+import {legacyAdventurePublicView} from '../server/player-public-view.mjs';
 
 const a='11111111-1111-4111-8111-111111111111',b='22222222-2222-4222-8222-222222222222';
 const fresh=()=>({schemaVersion:3,revision:1,wallet:{coins:0,crystals:0,recruitmentTickets:0},progressionV3:createV3BetaProgression(v3Catalog)});
@@ -34,7 +35,7 @@ test('Social receipts survive JSON pair commit, lost ACK and a fresh service; no
   assert.deepEqual(altered,{ok:false,code:'SOCIAL_ACTION_ID_CONFLICT'});
   assert.equal((await storage.load(a)).socialActionReceiptsV1.length,1);
   assert.equal(JSON.stringify(restarted.viewFor(a,live.get(a))).includes('socialActionReceiptsV1'),false);
-  const code=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');assert.match(code,/socialActionReceiptsV1:_privateSocialActionReceiptsV1/);
+  assert.equal(Object.hasOwn(legacyAdventurePublicView(savedA),'socialActionReceiptsV1'),false);
  }finally{await rm(dir,{recursive:true,force:true});}
 });
 

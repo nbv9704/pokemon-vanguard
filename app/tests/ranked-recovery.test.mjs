@@ -1,12 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {mkdtemp,rm,readFile} from 'node:fs/promises';
+import {mkdtemp,rm} from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import {JsonAdventureStorage} from '../server/storage-json.mjs';
 import {RankedService,ensureRankedState} from '../server/ranked-v1.mjs';
 import {createV3BetaProgression} from '../server/v3-progression.mjs';
 import {v3Catalog} from '../server/v3-catalog.mjs';
+import {legacyAdventurePublicView} from '../server/player-public-view.mjs';
 const a='11111111-1111-4111-8111-111111111111',b='22222222-2222-4222-8222-222222222222',now=Date.UTC(2026,8,27,10);
 const state=()=>{const s={schemaVersion:3,owner:'Tester',wallet:{coins:0,crystals:0,recruitmentTickets:0},progressionV3:createV3BetaProgression(v3Catalog)};ensureRankedState(s);return s;};
 const make=(storage,live,{failAfterCommit=false}={})=>new RankedService({catalog:v3Catalog,clock:{now:()=>now},getState:id=>live.get(id),loadState:id=>storage.load(id),persist:async(id,value)=>storage.save(id,value),persistPair:async(entries,id)=>{await storage.savePair(entries,id);if(failAfterCommit)throw Error('SETTLEMENT_ACK_LOST');},publishState:(id,value)=>live.set(id,value),notify:()=>{},withAccounts:async(_ids,work)=>work()});
@@ -33,7 +34,7 @@ test('Ranked JSON settlement receipts recover lost response without applying RP 
   const recovered=fresh.viewFor(a,freshLive.get(a));assert.equal(recovered.status,'finished');assert.equal(recovered.recovered,true);assert.equal(recovered.match.id,matchId);assert.equal(recovered.result.outcome,'loss');assert.equal(recovered.result.ratingDelta,-16);
   assert.deepEqual(await fresh.action(a,session,{type:'rankedV1.dismiss'}),{ok:true});assert.equal(fresh.viewFor(a,freshLive.get(a)).status,'idle');
   assert.equal((await storage.load(a)).rankedSettlementReceiptsV1[0].dismissedAt,now);
-  const code=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');assert.match(code,/rankedSettlementReceiptsV1:_privateRankedSettlementReceiptsV1/);
+  assert.equal(Object.hasOwn(legacyAdventurePublicView(savedA),'rankedSettlementReceiptsV1'),false);
  }finally{await rm(folder,{recursive:true,force:true});}
 });
 

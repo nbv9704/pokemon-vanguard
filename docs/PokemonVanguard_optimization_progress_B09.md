@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 8 |
-| IN PROGRESS | 18 |
+| DONE | 9 |
+| IN PROGRESS | 17 |
 | TODO | 7 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B10 — public origin, trusted proxy, OAuth deadline và graceful shutdown**. Hạng mục P1 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B11 — public DTO allowlist và privacy regression**. Hạng mục P1 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -42,7 +42,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
-| 15 | Public projection allowlist/pure | P1 | IN PROGRESS | Các projection trọng yếu clone/deep-freeze; B02 chặn Admin mutation receipts; B04 chặn Social và Ranked settlement receipts khỏi WebSocket public; còn DTO allowlist/negative privacy test |
+| 15 | Public projection allowlist/pure | P1 | DONE | B11 root save, Training V2/V3, Battle V2/V3 và preview dùng allowlist fail-closed; negative sentinel + WebSocket thật chứng minh receipt/field tương lai không lọt ra public |
 | 16 | Giảm full-state broadcast/render | P2 | TODO | Đo trước |
 | 17 | Thu hồi room/presence | P1 | IN PROGRESS | B07 reclaim room detach >10 phút với guard socket/join/job/PvP; prune presence; còn hard cap/LRU, đo memory soak và process ownership |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
@@ -233,6 +233,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** bộ mục tiêu `proxy-origin-b10`, `local` và `request-quotas-b08`: 17/17 PASS; `npm run check` PASS; full regression **1.341/1.341 PASS trên 206 file**. Tài liệu vận hành: `app/docs/proxy-origin-shutdown-b10.md`.
 - **Hosted CI:** run [`36313895556`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36313895556) cho commit `df69640`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa thay thế smoke-test qua reverse proxy/OAuth/Supabase thật; không tuyên bố multi-process drain hay khôi phục PvP giữa trận.
+
+### 27/09/2026 — B11: public DTO allowlist và privacy regression
+
+- **#15 DONE:** thêm `server/player-public-view.mjs` làm allowlist fail-closed cho root save công khai. `local-server.mjs` không còn clone toàn bộ state rồi blacklist receipt; field root mới mặc định ở lại server cho đến khi được review và thêm chủ đích.
+- Training V2/V3 map rõ từng field của Mon/build/team/blueprint. Battle V2/V3 map rõ own-unit; preview V3 map session và roster thay vì clone session. Dữ liệu trả về được detach khỏi authoritative state; policy ẩn thông tin đối thủ hiện có vẫn được giữ.
+- Regression mới dùng private sentinel ở root và nested object, kiểm tra preview/live battle, rồi nạp JSON storage qua WebSocket thật và xác nhận sentinel không xuất hiện trong frame serialize. Các test Admin Gift, Admin action, Ranked và Social receipt cũ được đổi từ tìm chuỗi blacklist trong source sang kiểm tra hành vi projection thực tế.
+- **Kiểm thử:** focused projection/battle **73/73 PASS**; receipt privacy bổ sung **29/29 PASS** (22 Admin/projection + 7 Ranked/Social); `npm run check` PASS; full regression **1.346/1.346 PASS trên 207 file**, 0 fail/skip/todo. Tài liệu: `app/docs/public-projection-b11.md`.
+- **Giới hạn:** Admin API được xác thực là management DTO riêng, không thuộc player-public projection. Chưa thay thế browser/network inspection qua proxy/account stack thật hoặc Supabase staging; các hạng mục đó vẫn giữ trạng thái riêng.
 
 ## Cách cập nhật file này
 

@@ -61,9 +61,9 @@ test('pending Admin UI command preserves identical payload and ID across reload 
 });
 
 
-test('permanent Admin receipt and fingerprint are omitted from public WebSocket projection',async()=>{
+test('public WebSocket projection uses the root allowlist instead of receipt blacklists',async()=>{
  const source=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
- assert.match(source,/adminActionReceiptsV1:_privateAdminActionReceiptsV1/);
+ assert.match(source,/legacyAdventurePublicView\(legacyView\)/);assert.doesNotMatch(source,/adminActionReceiptsV1:_privateAdminActionReceiptsV1/);
 });
 
 
