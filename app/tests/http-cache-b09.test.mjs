@@ -7,14 +7,16 @@ import path from 'node:path';
 import {brotliDecompressSync,gunzipSync} from 'node:zlib';
 import {createCatalogHttpResponse,createStaticHttpResponse,negotiatedEncoding} from '../server/http-public-assets.mjs';
 
-async function fixture(run){
+async function fixture(run,{linkedPublicRoot=false}={}){
  const dir=await mkdtemp(path.join(os.tmpdir(),'pv-http-b09-'));
- await mkdir(path.join(dir,'public'));
+ const realPublicDir=path.join(dir,'public');await mkdir(realPublicDir);
+ const publicDir=linkedPublicRoot?path.join(dir,'public-link'):realPublicDir;
+ if(linkedPublicRoot)await symlink(realPublicDir,publicDir,process.platform==='win32'?'junction':'dir');
  const catalog=createCatalogHttpResponse({species:[{name:'Example',moves:['tackle']}]});
- const serveStatic=createStaticHttpResponse(path.join(dir,'public'));
+ const serveStatic=createStaticHttpResponse(publicDir);
  const server=http.createServer(async(req,res)=>{try{if(req.url==='/api/v3/catalog')return catalog(req,res);return await serveStatic(req,res,decodeURIComponent(req.url));}catch(error){res.writeHead(500);res.end(error.message);}});
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
- try{await run({dir,base:`http://127.0.0.1:${server.address().port}`});}
+ try{await run({dir,publicDir:realPublicDir,base:`http://127.0.0.1:${server.address().port}`});}
  finally{await new Promise(resolve=>server.close(resolve));await rm(dir,{recursive:true,force:true});}
 }
 
@@ -70,6 +72,12 @@ test('static server bounds large-file streams',async()=>fixture(async({base,dir}
  const response=await fetch(base+'/large.txt',{headers:{'Accept-Encoding':'identity'}});
  assert.equal(response.status,200);assert.equal((await response.text()).length,700*1024);
 }));
+
+test('static server accepts a public root reached through a directory link',async()=>fixture(async({base,publicDir})=>{
+ await writeFile(path.join(publicDir,'index.html'),'<h1>Linked root</h1>');
+ const response=await fetch(base+'/',{headers:{'Accept-Encoding':'identity'}});
+ assert.equal(response.status,200);assert.equal(await response.text(),'<h1>Linked root</h1>');
+},{linkedPublicRoot:true}));
 
 test('static server rejects a linked directory outside public root',async()=>fixture(async({base,dir})=>{
  const publicDir=path.join(dir,'public'),privateDir=path.join(dir,'private');

@@ -38,7 +38,8 @@ function streamToResponse(reader,transform,res){
  if(transform)pipeline(reader,transform,res,done);else pipeline(reader,res,done);
 }
 export function createStaticHttpResponse(publicDir){
- const root=path.resolve(publicDir),cache=new Map();let cacheBytes=0;
+ const root=path.resolve(publicDir),realRootPromise=realpath(root).catch(()=>root),cache=new Map();let cacheBytes=0;
+ const isWithin=(parent,candidate)=>{const relative=path.relative(parent,candidate);return relative!==''&&relative!=='..'&&!relative.startsWith('..'+path.sep)&&!path.isAbsolute(relative);};
  function remember(key,value){
   if(value.identity.length>MAX_CACHE_BYTES)return;
   cache.set(key,value);cacheBytes+=value.identity.length;
@@ -46,10 +47,10 @@ export function createStaticHttpResponse(publicDir){
  }
  return async function serveStatic(req,res,pathname){
   const filepath=path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));
-  if(!filepath.startsWith(root+path.sep)){res.writeHead(403);res.end();return;}
-  let stats,real;
-  try{stats=await lstat(filepath);real=await realpath(filepath);}catch{res.writeHead(404);res.end();return;}
-  if(!stats.isFile()||!real.startsWith(root+path.sep)){res.writeHead(404);res.end();return;}
+  if(!isWithin(root,filepath)){res.writeHead(403);res.end();return;}
+  let stats,real,realRoot;
+  try{[stats,real,realRoot]=await Promise.all([lstat(filepath),realpath(filepath),realRootPromise]);}catch{res.writeHead(404);res.end();return;}
+  if(!stats.isFile()||!isWithin(realRoot,real)){res.writeHead(404);res.end();return;}
   const type=MIME[path.extname(filepath).toLowerCase()]||'application/octet-stream';
   const compressible=TEXT.test(type),key=filepath+':'+stats.size+':'+stats.mtimeMs;
   // Never immutable-cache URL names merely because an unversioned file contains numbers.
