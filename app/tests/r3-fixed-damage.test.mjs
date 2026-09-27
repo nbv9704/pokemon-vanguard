@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS} from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8')).moves;
-const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-11/normalized/moves.json',import.meta.url),'utf8'));
+const allMoves=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-11/normalized/moves.json',import.meta.url),'utf8'));
 const ids=['night-shade','seismic-toss','super-fang'],moves=Object.fromEntries(allMoves.filter(move=>ids.includes(move.id)).map(move=>[move.id,move]));
 const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0});
 const unit=(actorId,types=['normal'])=>({actorId,types,hp:201,maxHp:201,stats:{hp:201,atk:120,def:100,spa:120,spd:100,spe:100},pp:Object.fromEntries(ids.map(id=>[id,20])),status:null,volatiles:{},stages:stages()});

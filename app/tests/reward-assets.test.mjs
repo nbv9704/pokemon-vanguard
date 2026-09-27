@@ -68,11 +68,15 @@ test('full ZIP packager excludes secret files and player saves while preserving 
  const tmp=mkdtempSync(path.join(os.tmpdir(),'pv-package-test-')),root=path.join(tmp,'Fixture'),app=path.join(root,'app'),out=path.join(tmp,'full.zip');
  try{
   mkdirSync(path.join(app,'.local-data'),{recursive:true});mkdirSync(path.join(app,'public'),{recursive:true});
+  for(const relative of ['backups','reports','.admin-backups','.campaigns','.transactions','content-candidates','node_modules','dist'])mkdirSync(path.join(root,relative),{recursive:true});
+  mkdirSync(path.join(root,'content-validation'),{recursive:true});writeFileSync(path.join(root,'content-validation','safe-snapshot.json'),'{}');
   writeFileSync(path.join(app,'package.json'),'{}');
   writeFileSync(path.join(app,'.dev.vars.example'),'AUTH_ALLOW_LOCAL_BETA=false');
   writeFileSync(path.join(app,'.dev.vars'),'DO_NOT_SHIP_THIS_SESSION_SECRET');
   writeFileSync(path.join(app,'.env.production'),'DO_NOT_SHIP_THIS_ENVIRONMENT');
   writeFileSync(path.join(app,'.local-data','player.json'),'DO_NOT_SHIP_THIS_PLAYER_SAVE');
+  for(const relative of ['backups/player.json','reports/export.json','.admin-backups/player.json','.campaigns/manifest.json','.transactions/pending.json','content-candidates/raw.json','node_modules/dependency.js','dist/build.js'])writeFileSync(path.join(root,relative),'DO_NOT_SHIP_LOCAL_OR_GENERATED_DATA');
+  writeFileSync(path.join(root,'.DS_Store'),'DO_NOT_SHIP_PLATFORM_METADATA');
   writeFileSync(path.join(app,'public','index.html'),'public asset');
   const script=fileURLToPath(new URL('../scripts/package-full.py',import.meta.url));
   const result=runPython([script,'--project-root',root,'--output',out]);
@@ -83,6 +87,7 @@ test('full ZIP packager excludes secret files and player saves while preserving 
   assert.equal(resultJson.bad,null);
   assert.equal(resultJson.content,'public asset');
   assert.ok(resultJson.names.includes('Fixture/app/.dev.vars.example'));
-  for(const filename of resultJson.names)assert.doesNotMatch(filename,/\.dev\.vars$|\.env\.production|\.local-data/);
+  for(const filename of resultJson.names)assert.doesNotMatch(filename,/\.dev\.vars$|\.env\.production|\.local-data|\/backups\/|\/reports\/|\/\.admin-backups\/|\/\.campaigns\/|\/\.transactions\/|\/content-candidates\/|\/node_modules\/|\/dist\/|\.DS_Store$/i);
+  assert.ok(resultJson.names.includes('Fixture/content-validation/safe-snapshot.json')); // vetted, non-private inputs ship with clean ZIP
  }finally{rmSync(tmp,{force:true,recursive:true});}
 });

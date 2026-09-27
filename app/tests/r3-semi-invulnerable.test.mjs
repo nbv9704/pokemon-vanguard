@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS,semiInvulnerabilityInteraction} from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const allMoves=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const ids=['dig','fly','dive','phantom-force','tackle','earthquake','magnitude','surf','whirlpool','hurricane','smack-down','gust','twister'];
 const moves=Object.fromEntries(allMoves.filter(move=>ids.includes(move.id)).map(move=>[move.id,move]));
 moves.gust={id:'gust',name:'Gust',type:'flying',category:'special',power:40,accuracy:100,maxPP:56};moves.twister={id:'twister',name:'Twister',type:'dragon',category:'special',power:40,accuracy:100,maxPP:32};moves.magnitude={id:'magnitude',name:'Magnitude',type:'ground',category:'physical',power:70,accuracy:100,maxPP:48};

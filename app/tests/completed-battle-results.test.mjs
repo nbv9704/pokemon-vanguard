@@ -28,3 +28,11 @@ test('leaving a finished friendly result hides it immediately and schedules its 
  const sent=[],guard=new CompletedBattleResults({sendAction:action=>(sent.push(action),true),createActionId:kind=>`${kind}:friendly`}),state={trainingPvpV1:{status:'finished',room:{code:'ABC123'},battleV3:{id:'training-1',phase:'FINISHED'}}};
  assert.equal(guard.isTrainingPvpActive(state),true);assert.equal(guard.dismissFinished(state),true);assert.equal(guard.isTrainingPvpActive(state),false);assert.deepEqual(sent,[{type:'trainingPvpV1.dismiss',actionId:'training-pvp-dismiss:friendly'}]);
 });
+
+
+test('a recovered Ranked settlement stays visible on initial hydration until the trainer acknowledges it',()=>{
+ const sent=[],guard=new CompletedBattleResults({sendAction:action=>(sent.push(action),true),createActionId:kind=>`${kind}:recovered`});
+ const state={rankedV1:{status:'finished',recovered:true,match:{id:'ranked-after-restart'},battleV3:null},trainingPvpV1:{status:'idle'},battleV3:null};
+ guard.accept(state,{reentry:true});assert.equal(guard.isRankedActive(state),true);assert.deepEqual(sent,[]);
+ assert.equal(guard.dismiss('ranked',state),true);assert.equal(guard.isRankedActive(state),false);assert.deepEqual(sent,[{type:'rankedV1.dismiss',actionId:'ranked-dismiss:recovered'}]);
+});

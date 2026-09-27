@@ -6,7 +6,7 @@ import {v3Catalog} from '../server/v3-catalog.mjs';
 import {loadMegaBetaCatalog} from '../server/v3-mega-catalog.mjs';
 
 const json=url=>readFile(new URL(url,import.meta.url),'utf8').then(JSON.parse);
-const [rawSpecies,canonical]=await Promise.all([json('../content-candidates/pv-ma-2026-09-12-beta2/normalized/species.json'),json('../content-src/ma-canonical-v1.json')]);
+const [rawSpecies,canonical]=await Promise.all([json('../content-validation/pv-ma-2026-09-12-beta2/normalized/species.json'),json('../content-src/ma-canonical-v1.json')]);
 const candidateSpecies=applyMaCanonicalOverlay(rawSpecies,canonical),mega=loadMegaBetaCatalog();
 const mANonMega=candidateSpecies.filter(entry=>entry.regulationSets?.includes('m-a'));
 const mAMega=mega.relations.filter(entry=>entry.regulationSets?.includes('m-a'));

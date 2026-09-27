@@ -8,7 +8,7 @@ const readJson=file=>readFile(file,'utf8').then(JSON.parse);
 const active=await readJson(path.join(root,'content-active','active.json'));
 const catalog=await readJson(path.join(root,'content-active',active.catalogFile));
 const mega=loadMegaBetaCatalog(),regulationSet=catalog.regulations?.[0]?.id;
-const candidateSpecies=await readJson(path.join(root,'content-candidates',catalog.metadata.snapshotId,'normalized','species.json'));
+const candidateSpecies=await readJson(path.join(root,'content-validation',catalog.metadata.snapshotId,'normalized','species.json'));
 const candidateById=new Map(candidateSpecies.map(entry=>[entry.id,entry]));
 const activeSpecies=new Set((catalog.species||[]).map(entry=>entry.id));
 const activeMoves=new Set((catalog.moves||[]).map(entry=>entry.id));

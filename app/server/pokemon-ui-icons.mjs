@@ -17,15 +17,59 @@ export function pokemonUiIconSourceFromPath(pathname){
  const entry=POKEMON_TYPE_SYMBOLS[id],urls=typeUrls[id];if(!entry||!urls)return null;
  return kind==='type-ic'?{kind,id,file:entry.ic,url:urls[1]}:{kind,id,file:entry.icon,url:urls[0]};
 }
-export function createPokemonUiIconProxy({fetchImpl=fetch}={}){
- const cache=new Map();
+// The URL set above is finite. Never accept an arbitrary image URL from the request.
+const PNG_MAGIC=Buffer.from([137,80,78,71,13,10,26,10]);
+const PROXY_MAX_BYTES=256*1024;
+class IconFetchTimeout extends Error{constructor(){super('ICON_PROXY_TIMEOUT');this.code='ICON_PROXY_TIMEOUT';}}
+
+async function readBoundedPng(response,maxBytes){
+ if(!response.ok)throw new Error('ICON_UPSTREAM_HTTP');
+ const contentType=response.headers?.get?.('content-type')||'';
+ if(!/^image\/(?:png|x-png)(?:\s*;|\s*$)/i.test(contentType))throw new Error('ICON_INVALID_MEDIA_TYPE');
+ const announced=Number(response.headers?.get?.('content-length'));
+ if(Number.isFinite(announced)&&announced>maxBytes)throw new Error('ICON_TOO_LARGE');
+ const reader=response.body?.getReader?.();
+ if(!reader)throw new Error('ICON_MISSING_BODY');
+ const chunks=[];let length=0;
+ try{
+  while(true){const {done,value}=await reader.read();if(done)break;length+=value.byteLength;
+   if(length>maxBytes)throw new Error('ICON_TOO_LARGE');chunks.push(value);
+  }
+ }catch(error){await reader.cancel().catch(()=>{});throw error;}
+ const bytes=Buffer.concat(chunks.map(chunk=>Buffer.from(chunk)),length);
+ if(bytes.length<PNG_MAGIC.length||!bytes.subarray(0,PNG_MAGIC.length).equals(PNG_MAGIC))throw new Error('ICON_INVALID_SIGNATURE');
+ return bytes;
+}
+
+export function createPokemonUiIconProxy({fetchImpl=fetch,timeoutMs=5_000,maxBytes=PROXY_MAX_BYTES}={}){
+ const cache=new Map(),inflight=new Map();
+ timeoutMs=Number.isSafeInteger(timeoutMs)?Math.max(1,Math.min(timeoutMs,30_000)):5_000;
+ maxBytes=Number.isSafeInteger(maxBytes)?Math.max(8,Math.min(maxBytes,1024*1024)):PROXY_MAX_BYTES;
+ async function fetchIcon(source){
+  const controller=new AbortController();let timer;
+  // Promise.race also bounds injected/mock transports that do not honor AbortSignal.
+  const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new IconFetchTimeout());},timeoutMs)});
+  try{return await Promise.race([(async()=>{
+   const response=await fetchImpl(source.url,{signal:controller.signal,headers:{'user-agent':'PokemonVanguard-asset-proxy/1.0'}});
+   return readBoundedPng(response,maxBytes);
+  })(),deadline]);}
+  finally{clearTimeout(timer);}
+ }
  return async function serve(req,res,url){
   const source=pokemonUiIconSourceFromPath(url.pathname);if(!source)return false;
   if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);res.end();return true;}
   try{
-   let bytes=cache.get(source.url);if(!bytes){const response=await fetchImpl(source.url,{headers:{'user-agent':'PokemonVanguard-asset-proxy/1.0'}});if(!response.ok)throw new Error(`HTTP ${response.status}`);bytes=Buffer.from(await response.arrayBuffer());cache.set(source.url,bytes);}
-   res.writeHead(200,{'Content-Type':'image/png','Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'});res.end(req.method==='HEAD'?undefined:bytes);
-  }catch{res.writeHead(502,{'Cache-Control':'no-store'});res.end();}
+   let bytes=cache.get(source.url);
+   if(!bytes){
+    if(!inflight.has(source.url)){
+     const pending=fetchIcon(source).then(data=>{cache.set(source.url,data);return data;});
+     inflight.set(source.url,pending);pending.finally(()=>{if(inflight.get(source.url)===pending)inflight.delete(source.url);}).catch(()=>{});
+    }
+    bytes=await inflight.get(source.url);
+   }
+   res.writeHead(200,{'Content-Type':'image/png','Content-Length':bytes.length,'Cache-Control':'public, max-age=86400','X-Content-Type-Options':'nosniff'});
+   res.end(req.method==='HEAD'?undefined:bytes);
+  }catch(error){res.writeHead(error.code==='ICON_PROXY_TIMEOUT'?504:502,{'Cache-Control':'no-store'});res.end();}
   return true;
  };
 }

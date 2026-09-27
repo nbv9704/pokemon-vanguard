@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS} from '../mechanics-v3/index.mjs';
 
-const moveCatalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const moveCatalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const manifestCatalog=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
 const ids=['frustration','hidden-power','natural-gift','pursuit','return','secret-power','snatch','telekinesis'],allMoves=Object.fromEntries(moveCatalog.filter(move=>ids.includes(move.id)).map(move=>[move.id,move]));
 const registry=createHookRegistry(HANDLER_DEFINITIONS),resolveMove=createMoveActionHandler({moves:allMoves,manifests:manifestCatalog.moves,registry}),validateAction=createMoveChoiceValidator({moves:allMoves,manifests:manifestCatalog.moves});

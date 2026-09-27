@@ -6,15 +6,15 @@ function readObject(storage,key){
 }
 
 export function createBrowserStore({storage,cryptoApi,locationLike}){
- let playerId=storage.getItem(PLAYER_KEY);
- if(!playerId){playerId=cryptoApi.randomUUID();storage.setItem(PLAYER_KEY,playerId);}
+ let persistent=true,playerId;try{playerId=storage.getItem(PLAYER_KEY);}catch{persistent=false;playerId=null;}
+ if(!playerId){playerId=cryptoApi.randomUUID();try{storage.setItem(PLAYER_KEY,playerId);}catch{persistent=false;}}
  const settings=readObject(storage,SETTINGS_KEY);
  const requestedRoom=new URLSearchParams(locationLike.search||'').get('room');
  return {
   playerId,
   room:requestedRoom||'aether-'+playerId,
   settings,
-  saveSettings(){storage.setItem(SETTINGS_KEY,JSON.stringify(settings));}
+  get persistent(){return persistent;},
+  saveSettings(){try{storage.setItem(SETTINGS_KEY,JSON.stringify(settings));return true;}catch{persistent=false;return false;}}
  };
 }
-

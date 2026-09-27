@@ -1,6 +1,8 @@
 import {ensureTicketBag} from './ticket-bag.mjs';
 const clone=value=>JSON.parse(JSON.stringify(value));
 const actionIdPattern=/^[A-Za-z0-9:_-]{1,128}$/;
+const moneyKeys=['coins','crystals','recruitmentTickets'],ticketKeys=['shopTickets','trainingTickets','rankTickets'];
+const safeInteger=value=>typeof value==='number'&&Number.isSafeInteger(value);
 
 export function ensureEconomyState(state){
  const coins=Math.max(0,Math.trunc(state.wallet?.coins??state.coins??0)),crystals=Math.max(0,Math.trunc(state.wallet?.crystals??state.gems??0)),recruitmentTickets=Math.max(0,Math.trunc(state.wallet?.recruitmentTickets??state.recruitmentTickets??0));
@@ -35,10 +37,12 @@ export function recordActionReceipt(state,{actionId,kind,fingerprint,receiptId,r
 }
 
 export function applyEconomyTransaction(state,{receiptId,actionId=null,kind,delta,details=null}){
+ const normalized={};for(const key of [...moneyKeys,...ticketKeys]){const value=delta?.[key]??0;if(!safeInteger(value))return {ok:false,code:ticketKeys.includes(key)?'INVALID_TICKET_DELTA':'INVALID_CURRENCY_DELTA'};if(value||moneyKeys.includes(key))normalized[key]=value;}
  ensureEconomyState(state);const existing=state.economyLedger.find(entry=>entry.receiptId===receiptId);if(existing)return {ok:true,duplicate:true,entry:clone(existing)};
- const normalized={coins:Math.trunc(delta?.coins||0),crystals:Math.trunc(delta?.crystals||0),recruitmentTickets:Math.trunc(delta?.recruitmentTickets||0)},before=clone(state.wallet),after={coins:before.coins+normalized.coins,crystals:before.crystals+normalized.crystals,recruitmentTickets:before.recruitmentTickets+normalized.recruitmentTickets};
+ const before=clone(state.wallet);if(moneyKeys.some(key=>!safeInteger(before[key])||before[key]<0))return {ok:false,code:'INVALID_CURRENCY_BALANCE'};const after={coins:before.coins+normalized.coins,crystals:before.crystals+normalized.crystals,recruitmentTickets:before.recruitmentTickets+normalized.recruitmentTickets};
+ if(moneyKeys.some(key=>!safeInteger(after[key])))return {ok:false,code:'INVALID_CURRENCY_BALANCE'};
  const bag=ensureTicketBag(state),bagBefore={shopTickets:bag.shopTickets,trainingTickets:bag.trainingTickets,rankTickets:bag.rankTickets},bagAfter={...bagBefore};
- for(const key of Object.keys(bagBefore)){const value=Number(delta?.[key]||0);if(!Number.isSafeInteger(value))return {ok:false,code:'INVALID_TICKET_DELTA'};if(value){normalized[key]=value;bagAfter[key]+=value;}}
+ for(const key of Object.keys(bagBefore)){const value=normalized[key];if(value)bagAfter[key]+=value;}
  if(after.coins<0||after.crystals<0||after.recruitmentTickets<0)return {ok:false,code:after.coins<0?'INSUFFICIENT_COINS':after.crystals<0?'INSUFFICIENT_CRYSTALS':'INSUFFICIENT_RECRUITMENT_TICKETS'};
  for(const [key,value] of Object.entries(bagAfter))if(value<0||!Number.isSafeInteger(value))return {ok:false,code:value<0?'INSUFFICIENT_'+key.replace('Tickets','_TICKETS').toUpperCase():'INVALID_TICKET_BALANCE'};
  state.wallet=after;state.coins=after.coins;state.gems=after.crystals;state.recruitmentTickets=after.recruitmentTickets;

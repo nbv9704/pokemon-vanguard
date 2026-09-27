@@ -9,7 +9,7 @@ const readJson=file=>readFile(file,'utf8').then(JSON.parse);
 const active=await readJson(path.join(root,'content-active','active.json'));
 const catalog=await readJson(path.join(root,'content-active',active.catalogFile));
 const snapshotId=catalog.metadata.snapshotId;
-const rawSpecies=await readJson(path.join(root,'content-candidates',snapshotId,'normalized','species.json'));
+const rawSpecies=await readJson(path.join(root,'content-validation',snapshotId,'normalized','species.json'));
 const canonical=await readJson(path.join(root,'content-src','ma-canonical-v1.json'));
 const species=snapshotId===canonical.snapshotId?applyMaCanonicalOverlay(rawSpecies,canonical):rawSpecies;
 const mega=loadMegaBetaCatalog();

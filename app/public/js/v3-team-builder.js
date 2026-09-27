@@ -26,7 +26,7 @@ export class V3TeamBuilder{
    if(this.queuedActivationTeamId&&!this.pendingSnapshot){const target=this.queuedActivationTeamId;this.queuedActivationTeamId=null;this.startActivation(target,view);return;}
   }
  }
- startActivation(id,view){const target=view?.teams?.find(team=>team.teamId===id);if(!target)return false;this.pendingActivationTeamId=id;this.teamId=id;this.base=clone(target);this.draft=clone(target);this.selectedSlot=0;this.teamPickerOpen=false;this.itemMode=false;this.send({type:'teamV3.activate',teamId:id});return true;}
+ startActivation(id,view){const target=view?.teams?.find(team=>team.teamId===id);if(!target)return false;this.pendingActivationTeamId=id;this.teamId=id;this.base=clone(target);this.draft=clone(target);this.selectedSlot=0;this.teamPickerOpen=false;this.itemMode=false;this.send({type:'teamV3.activate',teamId:id,actionId:this.createActionId('team-activate')});return true;}
  context(view,catalog,buildId){const build=view.builds.find(entry=>entry.buildId===buildId),mon=view.mons.find(entry=>entry.monId===build?.monId),species=catalog.species.find(entry=>entry.id===mon?.speciesId),ability=catalog.abilities.find(entry=>entry.id===build?.abilityId),item=catalog.items.find(entry=>entry.id===build?.itemId);return {build,mon,species,ability,item};}
  legality(view,catalog){const contexts=this.draft.buildIds.map(id=>this.context(view,catalog,id)),buildIds=this.draft.buildIds,items=contexts.map(entry=>entry.build?.itemId).filter(id=>id&&id!=='none'),species=contexts.map(entry=>entry.species?.id).filter(Boolean),problems=[];if(!this.draft.name?.trim())problems.push('Enter a team name.');if(buildIds.length!==6||new Set(buildIds).size!==6)problems.push('Choose six different builds.');if(new Set(species).size!==species.length)problems.push('Species Clause: each species must be unique.');if(new Set(items).size!==items.length)problems.push('Item Clause: held items must be unique.');if(contexts.some(entry=>entry.mon?.ownership==='trial'&&entry.mon?.trialExpired))problems.push('An expired Trial Pokémon cannot join the team.');return {legal:problems.length===0,problems,contexts};}
  scheduleSave(delay=NAME_AUTOSAVE_DELAY){clearTimeout(this.saveTimer);this.saveTimer=setTimeout(()=>this.flushSave(),delay);}
@@ -35,7 +35,7 @@ export class V3TeamBuilder{
   if(!this.draft||!this.base||sameTeam(this.draft,this.base))return true;
   if(this.pendingSnapshot){this.queuedSave=true;return true;}
   this.queuedSave=false;this.saveError=null;const snapshot=clone(this.draft);this.pendingSnapshot=snapshot;this.pendingTeamId=this.teamId;
-  const sent=this.send({type:'teamV3.save',expectedRevision:this.base.revision,team:clone(snapshot)});
+  const sent=this.send({type:'teamV3.save',expectedRevision:this.base.revision,team:clone(snapshot),actionId:this.createActionId('team-save')});
   if(sent===false){this.pendingSnapshot=null;this.pendingTeamId=null;this.queuedSave=true;this.scheduleSave(AUTOSAVE_RETRY_DELAY);return false;}
   return true;
  }

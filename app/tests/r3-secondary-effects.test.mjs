@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {compilePassiveEffects,createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS} from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const allMoves=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const selected=['waterfall','crunch','liquidation','ice-punch','body-slam','rock-slide','water-pulse','ice-fang','bulldoze','aerial-ace'];
 const moves=Object.fromEntries(allMoves.filter(move=>selected.includes(move.id)).map(move=>[move.id,move]));
 const resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,registry:createHookRegistry(HANDLER_DEFINITIONS)});

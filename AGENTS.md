@@ -21,7 +21,7 @@ the next concern.
 directly. `app/server/legacy/logic-v1.js` is the frozen v1 engine used only for
 old in-progress battles and parity tests. Do not change it while building v2.
 
-The inherited cloud files and `app/AGENTS.md` describe the original template.
-Their game-logic validation contract still applies, but their cloud build,
-Bun, deployment, and Durable Object commands are not the active local workflow.
+The inherited cloud files are historical. `app/AGENTS.md` now points to this
+local Node/npm workflow; old Bun/Cloudflare commands and advice to edit
+generated logic are not the active development instructions.
 `app/package.cloud.json` preserves the old package configuration for reference.

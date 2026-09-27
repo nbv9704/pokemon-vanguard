@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {compilePassiveEffects,createHeldItemState,createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS,heldItemId} from '../mechanics-v3/index.mjs';
 
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
 const promoted=['outrage','petal-dance','raging-fury','thrash','axe-kick','high-jump-kick','supercell-slam','stockpile','spit-up','swallow','belly-drum','stuff-cheeks','spite','eerie-spell','torment','smack-down'];
 const support=['slash','high-horsepower'];const ids=[...promoted,...support],byId=Object.fromEntries(catalog.map(move=>[move.id,move])),moves=Object.fromEntries(ids.map(id=>[id,byId[id]]));

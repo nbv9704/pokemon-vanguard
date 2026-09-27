@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {compilePassiveEffects,validateMechanicManifest} from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const items=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/items.json',import.meta.url),'utf8'));
+const items=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/items.json',import.meta.url),'utf8'));
 const megaBeta=JSON.parse(await readFile(new URL('../content-src/mega-beta-v8.json',import.meta.url),'utf8'));
 const megaItems=items.filter(item=>item.category==='mega-evolution');
 

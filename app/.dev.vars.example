@@ -9,3 +9,11 @@ SUPABASE_SECRET_KEY=sb_secret_replace_me
 ADMIN_ACCOUNT_IDS=11111111-1111-4111-8111-111111111111
 # Development only: allow Local Beta identities to open the admin console.
 ADMIN_ALLOW_LOCAL_BETA=false
+
+# B08 optional single-process resource quotas (adjust for a trusted reverse proxy).
+PV_WS_MAX_SOCKETS_PER_IP=24
+PV_RATE_ACCOUNT_ACTIONS_10S=45
+PV_RATE_IP_ACTIONS_10S=180
+PV_RATE_SOCKET_MESSAGES_10S=70
+PV_RATE_IP_UPGRADES_MIN=30
+PV_RATE_INSPECTOR_MIN=40

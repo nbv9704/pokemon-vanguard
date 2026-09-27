@@ -13,7 +13,8 @@
     "dev": "node --env-file-if-exists=.dev.vars scripts/dev-local.mjs",
     "start": "node --env-file-if-exists=.dev.vars local-server.mjs",
     "check:content": "node scripts/check-content.mjs",
-    "check": "node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate",
+    "validation-snapshots:verify": "node scripts/verify-validation-snapshots.mjs",
+    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate",
     "test": "node scripts/run-tests-batched.mjs",
     "pokemon:validate": "node scripts/validate-pokemon-candidate.mjs",
     "mechanics:coverage": "node scripts/generate-mechanics-coverage.mjs",
@@ -40,7 +41,10 @@
     "reward-assets:validate": "node scripts/validate-reward-assets.mjs",
     "check:fast": "node --check public/client.js && node --check public/js/reward-assets.js && node --check public/js/shop-view.js && node --check public/js/mission-view.js && npm run reward-assets:validate && node --test tests/reward-assets.test.mjs tests/shop.test.mjs tests/missions.test.mjs",
     "package:full": "node scripts/run-package-full.mjs",
-    "check:syntax": "node --experimental-vm-modules --no-warnings scripts/check-source-syntax.mjs"
+    "check:syntax": "node --experimental-vm-modules --no-warnings scripts/check-source-syntax.mjs",
+    "test:inventory": "node scripts/run-tests-batched.mjs --list-json",
+    "content:inventory": "node scripts/content-dependency-inventory.mjs",
+    "release:verify": "node scripts/run-verify-release.mjs"
   },
   "engines": {
     "node": ">=22"

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "pv-ma-2026-09-12-beta2",
+  "regulation": "m-a",
+  "parserVersion": 1,
+  "sourceManifest": "../fetch-manifest.json",
+  "counts": {
+    "species": 213,
+    "moves": 516,
+    "abilities": 180,
+    "items": 166,
+    "banners": 5,
+    "unresolved": 0
+  }
+}

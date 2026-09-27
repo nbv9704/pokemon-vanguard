@@ -18,8 +18,8 @@ export function ticketCount(state,id){
  const item=TICKET_ITEMS.find(entry=>entry.id===id);return item?ensureTicketBag(state)[item.field]:0;
 }
 export function ticketBagView(state,catalog){
- const bag=ensureTicketBag(state),owned=new Set(state.progressionV3?.ownedItemIds||[]);
- return {version:1,tickets:TICKET_ITEMS.map(item=>({id:item.id,name:item.name,image:item.image,description:item.description,count:ticketCount(state,item.id),armed:item.id==='rank'&&bag.rankProtectionArmed})),heldItems:(catalog?.items||[]).filter(item=>owned.has(item.id)).map(item=>({id:item.id,name:item.name,description:item.description,category:item.category})),rankProtectionArmed:bag.rankProtectionArmed};
+ const holder=structuredClone(state),bag=ensureTicketBag(holder),owned=new Set(holder.progressionV3?.ownedItemIds||[]);
+ return {version:1,tickets:TICKET_ITEMS.map(item=>({id:item.id,name:item.name,image:item.image,description:item.description,count:ticketCount(holder,item.id),armed:item.id==='rank'&&bag.rankProtectionArmed})),heldItems:(catalog?.items||[]).filter(item=>owned.has(item.id)).map(item=>({id:item.id,name:item.name,description:item.description,category:item.category})),rankProtectionArmed:bag.rankProtectionArmed};
 }
 export function applyBagAction(state,action){
  if(action?.type!=='bagV1.rankProtection')return {ok:false,code:'UNKNOWN_BAG_ACTION'};

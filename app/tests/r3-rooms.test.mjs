@@ -5,7 +5,7 @@ import {resolveActionQueue,stagedStat} from '../rules-v3/index.mjs';
 import {applyDamageHit,compilePassiveEffects,createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS,passiveDamageModifiers,resolveMechanicsEndTurn,roomActive,speedWithWeather,wonderRoomDefenseBase} from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const allMoves=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const roomIds=['trick-room','wonder-room','magic-room'],supportIds=[...roomIds,'reflect','sunny-day','grassy-terrain'];
 const moves=Object.fromEntries(allMoves.filter(move=>supportIds.includes(move.id)).map(move=>[move.id,move]));
 const stages=()=>({atk:0,def:0,spa:0,spd:0,spe:0,accuracy:0,evasion:0});

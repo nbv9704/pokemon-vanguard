@@ -31,6 +31,22 @@ test('Friends, requests and direct chat persist in authoritative account state',
  const limited=await service.action(IDS.a,session('Alpha','google'),{type:'socialV1.chat.send',accountId:IDS.b,text:'duplicate spam'});assert.equal(limited.ok,false);assert.equal(limited.code,'CHAT_RATE_LIMITED');
 });
 
+test('Social mutations do not leak into live state when pair persistence fails',async()=>{
+ const states=new Map([[IDS.a,makeState()],[IDS.b,makeState()]]);for(const state of states.values())ensureSocialState(state);const beforeA=structuredClone(states.get(IDS.a)),beforeB=structuredClone(states.get(IDS.b));
+ const service=new SocialService({getState:id=>states.get(id),loadState:async id=>states.get(id)||null,persist:async()=>{throw new Error('synthetic persistence failure');},setLiveState:(id,state)=>states.set(id,state)});service.register(IDS.a,session('Alpha','google'));service.register(IDS.b,session('Bravo'));
+ await assert.rejects(service.action(IDS.a,session('Alpha','google'),{type:'socialV1.friend.request',friendCode:friendCodeFor(IDS.b)}),/synthetic persistence failure/);assert.deepEqual(states.get(IDS.a),beforeA);assert.deepEqual(states.get(IDS.b),beforeB);
+});
+
+test('Friend acceptance rechecks the one-hundred friend limit',async()=>{
+ const states=new Map([[IDS.a,makeState()],[IDS.b,makeState()]]);for(const state of states.values())ensureSocialState(state);const a=states.get(IDS.a).socialV1,b=states.get(IDS.b).socialV1;a.incomingRequests=[{accountId:IDS.b,name:'Bravo'}];b.outgoingRequests=[{accountId:IDS.a,name:'Alpha'}];a.friends=Array.from({length:100},(_,index)=>({accountId:`friend-${index}`,name:`Friend ${index}`}));
+ const service=new SocialService({getState:id=>states.get(id),loadState:async id=>states.get(id)||null,persist:async(id,state)=>states.set(id,state),setLiveState:(id,state)=>states.set(id,state)});const result=await service.action(IDS.a,session('Alpha','google'),{type:'socialV1.friend.accept',accountId:IDS.b});assert.deepEqual(result,{ok:false,code:'SOCIAL_LIMIT_REACHED'});assert.equal(states.get(IDS.a).socialV1.friends.length,100);assert.equal(states.get(IDS.a).socialV1.incomingRequests.length,1);
+});
+
+test('Friend requests use the durable profile when the target is offline',async()=>{
+ const states=new Map([[IDS.a,makeState()],[IDS.b,makeState()]]);for(const state of states.values())ensureSocialState(state);const service=new SocialService({getState:id=>states.get(id),loadState:async id=>states.get(id)||null,loadProfile:async id=>id===IDS.b?{displayName:'Offline Bravo',avatarUrl:'https://example.test/bravo.png'}:null,persist:async(id,state)=>states.set(id,state),setLiveState:(id,state)=>states.set(id,state)});service.register(IDS.a,session('Alpha','google'));
+ assert.equal((await service.action(IDS.a,session('Alpha','google'),{type:'socialV1.friend.request',friendCode:friendCodeFor(IDS.b)})).ok,true);assert.equal(states.get(IDS.a).socialV1.outgoingRequests[0].name,'Offline Bravo');assert.equal(states.get(IDS.a).socialV1.outgoingRequests[0].avatar,'https://example.test/bravo.png');
+});
+
 test('Friendly Battle rooms require selected teams and create an authoritative PvP battle',async()=>{
  const states=new Map([[IDS.a,makeState()],[IDS.b,makeState()]]),notices=[];
  const service=new TrainingPvpService({catalog:v3Catalog,clock:{now:()=>2000},getState:id=>states.get(id),notify:ids=>notices.push(ids),isFriend:()=>true});

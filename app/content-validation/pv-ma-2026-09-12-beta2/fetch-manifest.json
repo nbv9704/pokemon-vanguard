@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "snapshotId": "pv-ma-2026-09-12-beta2",
+  "targetGame": "Pokémon Vanguard",
+  "initialRegulation": "m-a",
+  "fetchedAt": "2026-09-12T14:58:01.967Z",
+  "parserVersion": 1,
+  "sources": [
+    {
+      "key": "pokemon",
+      "url": "https://pokebase.app/pokemon-champions/pokemon?filter=regulationSets=[%22m-a%22%252C%22m-b%22%252C%22m-c%22],hasMega=false&statView=base",
+      "status": 200,
+      "bytes": 5172299,
+      "sha256": "d55917b5aae9d9e2daf446d8448f50f41ea0eba1a2571e5cdda38157acbed216",
+      "etag": null,
+      "lastModified": "Sat, 12 Sep 2026 14:57:59 GMT",
+      "filename": "raw/pokemon.html"
+    },
+    {
+      "key": "moves",
+      "url": "https://pokebase.app/pokemon-champions/moves",
+      "status": 200,
+      "bytes": 674221,
+      "sha256": "bce7cc8fbe0c03f32021cda574d118d6ae2324511d22e4292279e02b5e882ad6",
+      "etag": null,
+      "lastModified": "Sat, 12 Sep 2026 02:37:44 GMT",
+      "filename": "raw/moves.html"
+    },
+    {
+      "key": "abilities",
+      "url": "https://pokebase.app/pokemon-champions/abilities",
+      "status": 200,
+      "bytes": 283759,
+      "sha256": "8e745f40bd945ef8aca16b69621a62eb84595dbb18ba1c3517d83eacfed7b621",
+      "etag": null,
+      "lastModified": null,
+      "filename": "raw/abilities.html"
+    },
+    {
+      "key": "items",
+      "url": "https://pokebase.app/pokemon-champions/items",
+      "status": 200,
+      "bytes": 377054,
+      "sha256": "1c63a176ff1c339c2a724884c6942b8149314a5604890ac891172d81ed84eac8",
+      "etag": null,
+      "lastModified": null,
+      "filename": "raw/items.html"
+    },
+    {
+      "key": "rosterRanch",
+      "url": "https://pokebase.app/pokemon-champions/roster-ranch-sim",
+      "status": 200,
+      "bytes": 793333,
+      "sha256": "71e88e3ce7f30425e9c3098f05b53e91c66d54b6966da7dae015aa814b3ae856",
+      "etag": null,
+      "lastModified": null,
+      "filename": "raw/rosterRanch.html"
+    },
+    {
+      "key": "sprites",
+      "url": "https://play.pokemonshowdown.com/sprites/ani/",
+      "status": 200,
+      "bytes": 445755,
+      "sha256": "62cc8c08a159d65de56e427a28429bc858dc38e4bdad0cbbaf9d2924b09b6cec",
+      "etag": null,
+      "lastModified": null,
+      "filename": "raw/sprites.html"
+    }
+  ]
+}

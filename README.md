@@ -2,6 +2,12 @@
 
 The project runs directly with Node.js on the local machine. **R3-101 builds on the locked R3-100 Pokémon Champions Regulation M-A runtime: 272/272 selectable entries (213 non-Mega + 59 Mega), 490 active moves, and now 30 signature move timelines covering all 18 move types.** The old 36-Mon catalog still exists only as a compatibility fixture for legacy tests. See [the presentation roadmap](docs/ui-battle-presentation-roadmap.md) and [the R3-100 release report](docs/r3-100-ma-release-report.md).
 
+## Optimization B09 — các công việc độc lập
+
+Đã bổ sung cache revalidate/gzip/Brotli cho catalog công khai, giới hạn cache text tĩnh, CI Linux/Windows, kiểm thử tự phát hiện file lồng nhau, snapshot inventory và manifest SHA-256 trong ZIP phát hành. Xem [B09 operations](app/docs/optimization-b09-operations.md) và [Optimization Progress](docs/project-optimization-progress-2026-09-26.md).
+
+**Lệnh chính từ `app/`:** `npm ci`, `npm run check`, `npm test`, `npm run content:inventory`, `npm run package:full -- --output /outside/PokemonVanguard.zip`; sau đó chạy `npm run release:verify -- /outside/PokemonVanguard.zip`. `npm run test:inventory` liệt kê đầy đủ bài Node được chạy và 3 file cloud `.test.ts` đã lưu làm tài liệu, chưa nằm trong `npm test`. PvP đang đánh sau server restart (#18) tạm hoãn theo ưu tiên batch; tuyệt đối không coi đã hoàn thành.
+
 ## Chạy game
 
 Yêu cầu Node.js 22 trở lên. Mở terminal tại thư mục `app`:
@@ -26,6 +32,12 @@ Trình duyệt lưu mã người chơi để nhận lại đúng bản lưu. Hã
 Có thể sao lưu cả thư mục `.local-data`. Bản lưu trên website cũ không tự chuyển về local.
 
 Khi một save local schema v1 được mở, máy chủ tự tạo bản sao tại `app/.local-data/.migration-backups` rồi nâng lên schema v2. Trận v1 đang diễn ra được giữ nguyên; sau khi kết thúc hoặc đầu hàng, giao diện vẫn hiện kết quả cũ. Bấm **Continue to Vanguard battles** để backup kết quả rồi migrate. Không tạo thêm trận v1 sau khi đã nâng schema.
+
+## Đợt tối ưu B01 (27/09/2026)
+
+Xem [`docs/project-optimization-progress-2026-09-26.md`](docs/project-optimization-progress-2026-09-26.md) và báo cáo audit cùng thư mục. Admin Gift hiện hỗ trợ client campaign ID, retry sau lỗi một phần và manifest audience bất biến. Khi sử dụng Supabase, phải chạy migration `202609260001_atomic_pair_saves.sql` **rồi** `202609260002_admin_campaign_identity.sql` trên môi trường test và xác nhận thành công trước khi cập nhật server production. Không áp dụng migration tự động khi khởi động game.
+
+Gói full source bảo mật không chứa `content-candidates`/raw fetch, saves hoặc secret. Bộ validation và tests đọc dữ liệu **đã review** trong `app/content-validation` (20 JSON với manifest SHA-256), nên có thể chạy `npm run check` sau khi giải nén và cài dependency (`npm ci`). Các lệnh fetch/build candidate dùng cho biên tập nội dung cần source authoring riêng.
 
 ## Kiểm tra
 

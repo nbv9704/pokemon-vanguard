@@ -6,7 +6,7 @@ import {effectiveWeightKg,flingItemMetadata} from '../mechanics-v3/foundation-da
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const readJson=file=>readFile(file,'utf8').then(JSON.parse);
 const foundation=await readJson(path.join(root,'content-src','battle-foundation-v1.json'));
-const items=await readJson(path.join(root,'content-candidates','pv-ma-2026-09-12-beta2','normalized','items.json'));
+const items=await readJson(path.join(root,'content-validation','pv-ma-2026-09-12-beta2','normalized','items.json'));
 const active=await readJson(path.join(root,'content-active','active.json'));
 const activeCatalog=await readJson(path.join(root,'content-active',active.catalogFile));
 const mega=await readJson(path.join(root,'content-src','mega-beta-v8.json'));

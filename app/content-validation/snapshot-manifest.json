@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "source": "Reviewed normalized source snapshots carried by the uploaded project; no raw downloads or player data.",
+  "files": {
+    "pv-ma-2026-09-11/fetch-manifest.json": "1ca1e1ed5954543f5f6d9bb1d3cd503e1073af93bf0c1b74a23720dd68e72eee",
+    "pv-ma-2026-09-11/normalized/abilities.json": "9d78dee1a522c0c73be2e5a042762d9e9ebed0c46c587eb6616b061f47fabed5",
+    "pv-ma-2026-09-11/normalized/items.json": "9aaca1c0d03dd776372e384833fed8a33943d8a1bd96eef31d19fda901e3d469",
+    "pv-ma-2026-09-11/normalized/mechanics-coverage.json": "e476daeedf353ffc587d6671a47a72d6dd24a162fa795613363099471f5b660b",
+    "pv-ma-2026-09-11/normalized/move-capability-inventory.json": "e2e1c8ecf7877e00fe370ae4d22e30300e3ed8c00b1aeb2f21b7cd5a9cb4a38b",
+    "pv-ma-2026-09-11/normalized/moves.json": "8204c00180e4516edaf09b82c9cdf4857381849efb9852d49549414081744477",
+    "pv-ma-2026-09-11/normalized/provenance.json": "4ec4a77fb1802dd678deee64443d57a8004ec5aaa289ca152a8c790b1f7c2a0b",
+    "pv-ma-2026-09-11/normalized/roster-banners.json": "c513424fcceb9153ba6ebd6ae9a4cd991e16830e9a5fcb6785ba5bb13628558a",
+    "pv-ma-2026-09-11/normalized/species.json": "35f414cefd5d92b618f20cf8c8ed5835a997da528f741c44865a1f5d011be1c4",
+    "pv-ma-2026-09-11/normalized/unresolved.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "pv-ma-2026-09-12-beta2/fetch-manifest.json": "e6f74a9b3dd0c9993a1d5b0d183b388cf72fb161c0985c5c4cd648684c2890f5",
+    "pv-ma-2026-09-12-beta2/normalized/abilities.json": "9d78dee1a522c0c73be2e5a042762d9e9ebed0c46c587eb6616b061f47fabed5",
+    "pv-ma-2026-09-12-beta2/normalized/items.json": "9aaca1c0d03dd776372e384833fed8a33943d8a1bd96eef31d19fda901e3d469",
+    "pv-ma-2026-09-12-beta2/normalized/mechanics-coverage.json": "0d28ddfd6586228079fed307f047d73f13440ba7f321c8f6f5c6bfbe315a72d4",
+    "pv-ma-2026-09-12-beta2/normalized/move-capability-inventory.json": "a003e72f903f5bd0eeb0cee413a90a991076f7eecc15623d6f31c2243d4aac81",
+    "pv-ma-2026-09-12-beta2/normalized/moves.json": "8204c00180e4516edaf09b82c9cdf4857381849efb9852d49549414081744477",
+    "pv-ma-2026-09-12-beta2/normalized/provenance.json": "f3c354b716f2c808ea9f09eb126a0893baa8a5215933cc56fda4de457c23a60b",
+    "pv-ma-2026-09-12-beta2/normalized/roster-banners.json": "c513424fcceb9153ba6ebd6ae9a4cd991e16830e9a5fcb6785ba5bb13628558a",
+    "pv-ma-2026-09-12-beta2/normalized/species.json": "35f414cefd5d92b618f20cf8c8ed5835a997da528f741c44865a1f5d011be1c4",
+    "pv-ma-2026-09-12-beta2/normalized/unresolved.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  }
+}

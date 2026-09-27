@@ -8,7 +8,7 @@ import {TEST_EVIDENCE} from '../mechanics-v3/test-evidence.mjs';
 import {applyMaCanonicalOverlay} from '../content-import/ma-canonical.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),sliceFile=process.argv[2]||'beta-slice-v35.json',slice=await readJson(path.join(root,'content-src',sliceFile));
-const normalized=path.join(root,'content-candidates',slice.snapshotId,'normalized');
+const normalized=path.join(root,'content-validation',slice.snapshotId,'normalized');
 let [species,moves,abilities,items,manifests]=await Promise.all(['species.json','moves.json','abilities.json','items.json'].map(file=>readJson(path.join(normalized,file))).concat(readJson(path.join(root,'content-src','mechanics-v3-manifests.json'))));
 const canonical=await readJson(path.join(root,'content-src','ma-canonical-v1.json'));if(slice.snapshotId===canonical.snapshotId)species=applyMaCanonicalOverlay(species,canonical);
 const catalog={species,moves,abilities,items},coverage=buildMechanicsCoverage(catalog,manifests,HANDLER_DEFINITIONS.map(handler=>handler.id),TEST_EVIDENCE),result=validateBetaSlice(slice,catalog,coverage);

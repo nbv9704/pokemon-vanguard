@@ -5,7 +5,7 @@ import {applyMechanicsSwitch,compilePassiveEffects,createHeldItemState,createHoo
 import {battleFoundation,canFlingItem,deterministicBattleGender,effectiveWeightKg} from '../mechanics-v3/foundation-data.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const ids=['attract','fling','low-kick','grass-knot','heavy-slam','heat-crash'];
 const moves=Object.fromEntries(catalog.filter(move=>ids.includes(move.id)).map(move=>[move.id,move]));
 const resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,abilityManifests:manifests,registry:createHookRegistry(HANDLER_DEFINITIONS)});

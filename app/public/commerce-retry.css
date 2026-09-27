@@ -1,0 +1,6 @@
+.commerce-pending-notice{margin-bottom:16px;padding:14px 18px;border:2px solid #89aa63;background:#192b3b;color:var(--ink);display:grid;gap:8px}
+.commerce-pending-notice b{font-size:13px;letter-spacing:.2px}
+.commerce-pending-notice p{font-size:11px;line-height:1.55;margin:0;color:var(--ink)}
+.commerce-pending-notice>div{display:flex;gap:9px;flex-wrap:wrap}
+.commerce-pending-notice button{padding:8px 12px;font-size:11px}
+.commerce-pending-notice button:first-child{background:#a9d98d;border-color:#a9d98d;color:#102218;font-weight:700}

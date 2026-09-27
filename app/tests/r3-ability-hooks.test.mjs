@@ -7,7 +7,7 @@ import {
 } from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const allMoves=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const allMoves=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const moveMap=Object.fromEntries(allMoves.filter(move=>['bullet-seed','brave-bird','drain-punch','hyper-voice','yawn'].includes(move.id)).map(move=>[move.id,move]));
 moveMap['test-fire']={id:'test-fire',name:'Test Fire',type:'fire',category:'special',power:80,accuracy:100,maxPP:16};
 moveMap['test-bullet']={id:'test-bullet',name:'Test Bullet',type:'normal',category:'special',power:50,accuracy:50,maxPP:16};

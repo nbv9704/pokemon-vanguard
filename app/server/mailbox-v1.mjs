@@ -54,9 +54,9 @@ export function systemMailLifecycle(state,mailId,{now=Date.now()}={}){
 }
 
 export function systemMailboxView(state,catalog,{now=Date.now()}={}){
- ensureMailboxState(state,{now});const mails=[];
+ const holder=clone(state);ensureMailboxState(holder,{now});const mails=[];
  for(const definition of SYSTEM_MAIL_DEFINITIONS){
-  const lifecycle=systemMailLifecycle(state,definition.mailId,{now});if(!lifecycle||lifecycle.expired)continue;
+  const lifecycle=systemMailLifecycle(holder,definition.mailId,{now});if(!lifecycle||lifecycle.expired)continue;
   const reward=catalog.economy.mail.find(entry=>entry.mailId===definition.mailId)?.reward||{};
   mails.push({id:`system:${definition.mailId}`,kind:'system',mailId:definition.mailId,type:definition.type,sender:definition.sender,title:definition.title,message:definition.message,sentAt:lifecycle.sentAt,readAt:lifecycle.readAt,unread:lifecycle.readAt===null,claimedAt:lifecycle.record.claimedAt,claimable:lifecycle.record.claimedAt===null,unreadExpiresAt:lifecycle.unreadExpiresAt,expiresAt:lifecycle.expiresAt,readTtlMs:definition.readTtlMs,reward:clone(reward)});
  }

@@ -1,0 +1,16 @@
+# B09 public catalog payload baseline (development fixture)
+
+Command: `node scripts/benchmark-http-public.mjs`.
+Run environment: Node v22.16.0, Linux container, 3 warmup + 10 sampled iterations.
+Payload inputs: reviewed public V2 and active public V3 server catalogs (no user content).
+
+| Payload | JSON (bytes) | gzip (bytes) | Brotli (bytes) | JSON serialization p50 / p95 (ms) |
+| --- | ---: | ---: | ---: | ---: |
+| V2 | 48,979 | 6,703 | 5,464 | 0.199 / 2.211 |
+| V3 | 909,342 | 108,789 | 78,438 | 3.250 / 7.490 |
+
+The original HTTP route serialized on **every request**, the B09 helper serializes each
+public catalog **once at startup** and precompresses gzip/Brotli variants. End-to-end
+network timing, browser decompression/render, peak memory impact and production p95 have
+**not** been measured. Do not interpret these sizes as a guaranteed load-time improvement.
+Re-run on the target machine before/after under identical conditions and record JSON output.

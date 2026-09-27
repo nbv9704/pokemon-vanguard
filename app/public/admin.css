@@ -5,3 +5,5 @@
 .field-help{display:block;color:var(--muted);font-size:10px;margin-top:4px}.field select[multiple]{min-height:150px}
 
 .manager-filter-empty{padding:18px;text-align:center;color:var(--muted);font-size:12px}.manager-filter-empty[hidden]{display:none!important}
+
+.admin-pending-action{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;border-color:#c99435;background:#fff7e7}.admin-pending-action span{flex:1;min-width:220px;font-size:12px;color:#674a1c}

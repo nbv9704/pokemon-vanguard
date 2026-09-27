@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {applySubstitute,compilePassiveEffects,createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS} from '../mechanics-v3/index.mjs';
 import {resolveActionQueue} from '../rules-v3/turn-engine.mjs';
 
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
 const byId=Object.fromEntries(catalog.map(move=>[move.id,move]));
 const priority={

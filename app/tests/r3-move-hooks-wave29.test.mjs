@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {compilePassiveEffects,consumeHeldBerry,createHeldItemState,createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS,heldItemId} from '../mechanics-v3/index.mjs';
 
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
 const promoted=['belch','bug-bite','pluck','recycle','teatime','laser-focus','lock-on','throat-chop','helping-hand','meteor-beam','electro-shot','sky-attack','raging-bull','flare-blitz','final-gambit','endeavor'];
 const support=['dynamic-punch','boomburst','kowtow-cleave'];

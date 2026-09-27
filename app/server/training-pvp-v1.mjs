@@ -18,6 +18,7 @@ export class TrainingPvpService{
  sideFor(room,accountId){if(room.participants.A?.accountId===accountId)return 'A';if(room.participants.B?.accountId===accountId)return 'B';return null;}
  accounts(room){return Object.values(room.participants).filter(Boolean).map(p=>p.accountId);}
  roomFor(accountId){const code=this.playerRoom.get(accountId);return code?this.rooms.get(code):null;}
+ accountIdsForAction(accountId,action){const joinCode=action?.type==='trainingPvpV1.room.join'?String(action.code||'').trim().toUpperCase():null,room=joinCode?this.rooms.get(joinCode):this.roomFor(accountId),ids=[accountId,...(room?this.accounts(room):[])];if(action?.type==='trainingPvpV1.room.invite')ids.push(String(action.accountId||''));return [...new Set(ids.filter(Boolean))];}
  busy(accountId){return this.playerRoom.has(accountId);}
  revokeInvites(code){const affected=[];for(const [accountId,list] of this.invites){const next=list.filter(invite=>invite.code!==code);if(next.length===list.length)continue;affected.push(accountId);if(next.length)this.invites.set(accountId,next);else this.invites.delete(accountId);}return affected;}
  destroyRoom(room,{notify=true}={}){const accounts=this.accounts(room),inviteTargets=this.revokeInvites(room.code),targets=[...new Set([...accounts,...inviteTargets])];for(const id of accounts)this.playerRoom.delete(id);this.rooms.delete(room.code);if(notify&&targets.length)this.notify(targets);}

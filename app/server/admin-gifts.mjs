@@ -1,4 +1,5 @@
 import {randomUUID} from 'node:crypto';
+import {giftFingerprint} from './admin-campaigns.mjs';
 import {applyEconomyTransaction,ensureEconomyState} from './v2-economy-ledger.mjs';
 import {ensureV3ItemInventory} from './v3-item-shop.mjs';
 import {grantPokemonToProgression} from './admin-progression-grants.mjs';
@@ -24,13 +25,21 @@ export function normalizeGiftDraft(input,catalog,{campaignId=randomUUID(),sentBy
  const hasReward=Object.values(gift.reward).some(Boolean)||itemIds.length||speciesIds.length;if(!hasReward)return {ok:false,code:'GIFT_EMPTY'};return {ok:true,gift};
 }
 
-export function enqueueAdminGift(state,gift){
- let inbox=ensureAdminGiftState(state).inbox;const now=Number(gift.sentAt)||Date.now();inbox=inbox.filter(entry=>{normalizeAdminMailLifecycle(entry);return !isMailExpired({sentAt:entry.sentAt,readAt:entry.readAt,unreadTtlMs:entry.unreadTtlMs,readTtlMs:entry.readTtlMs},now);});if(inbox.some(entry=>entry.giftId===gift.giftId))return {ok:true,duplicate:true};
- const entry={...clone(gift),claimedAt:null};normalizeAdminMailLifecycle(entry);inbox.unshift(entry);const pending=inbox.filter(item=>!item.claimedAt),claimed=inbox.filter(item=>item.claimedAt);state.adminGiftsV1.inbox=[...pending.slice(0,50),...claimed.slice(0,50)].slice(0,100);state.revision=(state.revision||0)+1;return {ok:true};
+export function enqueueAdminGift(state,gift,{fingerprint=giftFingerprint(gift)}={}){
+ const holder=ensureAdminGiftState(state),receipts=state.adminGiftDeliveryReceiptsV1=Array.isArray(state.adminGiftDeliveryReceiptsV1)?state.adminGiftDeliveryReceiptsV1:[];
+ const prior=receipts.find(entry=>entry.campaignId===gift.giftId);
+ if(prior)return prior.fingerprint===fingerprint?{ok:true,duplicate:true,changed:false}:{ok:false,code:'CAMPAIGN_ID_REUSED'};
+ let inbox=holder.inbox;const now=Number(gift.sentAt)||Date.now();inbox=inbox.filter(entry=>{normalizeAdminMailLifecycle(entry);return !isMailExpired({sentAt:entry.sentAt,readAt:entry.readAt,unreadTtlMs:entry.unreadTtlMs,readTtlMs:entry.readTtlMs},now);});
+ const already=inbox.find(entry=>entry.giftId===gift.giftId);
+ if(already&&giftFingerprint(already)!==giftFingerprint(gift))return {ok:false,code:'CAMPAIGN_ID_REUSED'};
+ if(!already&&inbox.filter(item=>!item.claimedAt).length>=50)return {ok:false,code:'GIFT_INBOX_FULL'};
+ if(!already){const entry={...clone(gift),claimedAt:null};normalizeAdminMailLifecycle(entry);inbox.unshift(entry);const pending=inbox.filter(item=>!item.claimedAt),claimed=inbox.filter(item=>item.claimedAt);holder.inbox=[...pending,...claimed.slice(0,50)];}
+ receipts.push({campaignId:gift.giftId,fingerprint});state.revision=(state.revision||0)+1;
+ return {ok:true,duplicate:!!already,changed:true};
 }
 
 export function adminGiftView(state,catalog,{now=Date.now()}={}){
- const inbox=ensureAdminGiftState(state).inbox.flatMap(raw=>{const gift=clone(raw);normalizeAdminMailLifecycle(gift);const expiry=mailExpiry({sentAt:gift.sentAt,readAt:gift.readAt,unreadTtlMs:gift.unreadTtlMs,readTtlMs:gift.readTtlMs});if(now>=expiry.expiresAt)return [];const {sentBy:_privateSentBy,...publicGift}=gift;return [{...publicGift,...expiry,unread:gift.readAt===null,items:gift.itemIds.map(id=>({id,name:catalog.itemsById[id]?.name||id})),pokemon:gift.speciesIds.map(id=>({id,name:catalog.speciesById[id]?.name||id})),claimable:!gift.claimedAt}];});
+ const holder=clone(state),inbox=ensureAdminGiftState(holder).inbox.flatMap(raw=>{const gift=clone(raw);normalizeAdminMailLifecycle(gift);const expiry=mailExpiry({sentAt:gift.sentAt,readAt:gift.readAt,unreadTtlMs:gift.unreadTtlMs,readTtlMs:gift.readTtlMs});if(now>=expiry.expiresAt)return [];const {sentBy:_privateSentBy,...publicGift}=gift;return [{...publicGift,...expiry,unread:gift.readAt===null,items:gift.itemIds.map(id=>({id,name:catalog.itemsById[id]?.name||id})),pokemon:gift.speciesIds.map(id=>({id,name:catalog.speciesById[id]?.name||id})),claimable:!gift.claimedAt}];});
  return {version:1,pendingCount:inbox.filter(entry=>entry.claimable).length,unreadCount:inbox.filter(entry=>entry.unread).length,gifts:inbox};
 }
 

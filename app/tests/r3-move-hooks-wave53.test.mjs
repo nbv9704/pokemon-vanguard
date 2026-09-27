@@ -5,7 +5,7 @@ import {applyMechanicsReplacementSwitch,createHookRegistry,createMoveActionHandl
 import {applyReplacements,completeEntry,resolveActionQueue,resumeActionQueue} from '../rules-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const moves=Object.fromEntries(catalog.map(move=>[move.id,move]));
 const ids=['copycat','instruct','sleep-talk'];
 const resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,abilityManifests:manifests,registry:createHookRegistry(HANDLER_DEFINITIONS)});

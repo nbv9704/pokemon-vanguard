@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {activeAbilityId,applyMechanicsSwitch,compilePassiveEffects,createHeldItemState,createHookRegistry,createMoveActionHandler,createMoveChoiceValidator,HANDLER_DEFINITIONS} from '../mechanics-v3/index.mjs';
 import {resolveActionQueue,validateTurnActions} from '../rules-v3/turn-engine.mjs';
 
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
 const ids=['after-you','quash','gastro-acid','imprison','protect'],byId=Object.fromEntries(catalog.map(move=>[move.id,move])),moves=Object.fromEntries(ids.map(id=>[id,byId[id]]));
 const registry=createHookRegistry(HANDLER_DEFINITIONS),resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,abilityManifests:manifests,registry}),validateAction=createMoveChoiceValidator({moves,manifests:manifests.moves});

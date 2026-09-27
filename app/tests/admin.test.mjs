@@ -53,6 +53,11 @@ test('JSON development storage can enumerate saves for the admin console',async(
  const dir=await mkdtemp(path.join(os.tmpdir(),'pv-admin-storage-')),storage=new JsonAdventureStorage(dir);try{await storage.save('alpha',makeState());const second=makeState();second.owner='Beta Trainer';await storage.save('beta',second);const all=await storage.listAccounts({limit:10});assert.equal(all.total,2);assert.deepEqual(all.accounts.map(entry=>entry.userId),['alpha','beta']);const filtered=await storage.listAccounts({search:'bet',limit:10});assert.equal(filtered.total,1);assert.equal(filtered.accounts[0].displayName,'Beta Trainer');}finally{await rm(dir,{recursive:true,force:true});}
 });
 
+test('admin overview labels aggregates as a sample beyond the first hundred accounts',async()=>{
+ const accounts=Array.from({length:150},(_,index)=>({userId:`aether-player-${index}`,displayName:`Player ${index}`,state:makeState()})),service=new AdminService({storage:{listAccounts:async({limit,offset})=>({total:accounts.length,accounts:accounts.slice(offset,offset+limit)})},catalog:v3Catalog,listOnlineAccountIds:()=>['aether-player-1','aether-player-149']});
+ const overview=await service.overview();assert.equal(overview.players,150);assert.equal(overview.sampledAccounts,100);assert.equal(overview.aggregateScope,'sample');assert.equal(overview.online,2);assert.equal(overview.totalVp,100*makeState().wallet.coins);
+});
+
 import {Readable} from 'node:stream';
 import {AdminService} from '../server/admin-service.mjs';
 
@@ -76,6 +81,12 @@ test('admin gift campaigns become claimable mailbox rewards with economy, item a
  assert.equal(enqueueAdminGift(state,draft.gift).ok,true);assert.equal(adminGiftView(state,v3Catalog,{now:4500}).pendingCount,1);
  const claimed=applyAdminGiftAction(state,{type:'adminGift.claim',giftId:'campaign-1',actionId:'gift-claim-1'},v3Catalog,{now:5000});assert.equal(claimed.ok,true);state=claimed.state;
  assert.equal(state.wallet.coins,1500);assert.equal(state.wallet.crystals,75);assert.equal(state.wallet.recruitmentTickets,4);assert.ok(state.progressionV3.ownedItemIds.includes(item.id));assert.ok(state.progressionV3.mons.some(mon=>mon.speciesId===species.id&&mon.ownership==='permanent'));assert.equal(adminGiftView(state,v3Catalog,{now:5500}).pendingCount,0);
+});
+
+test('admin gift inbox rejects overflow without dropping an older pending entitlement',()=>{
+ const state=makeState();for(let index=0;index<50;index++){const draft=normalizeGiftDraft({coins:1},v3Catalog,{campaignId:`pending-${index}`,sentBy:'admin',sentAt:1000+index});assert.equal(enqueueAdminGift(state,draft.gift).ok,true);}
+ const before=structuredClone(state.adminGiftsV1.inbox),overflow=normalizeGiftDraft({coins:1},v3Catalog,{campaignId:'pending-overflow',sentBy:'admin',sentAt:2000});assert.deepEqual(enqueueAdminGift(state,overflow.gift),{ok:false,code:'GIFT_INBOX_FULL'});assert.deepEqual(state.adminGiftsV1.inbox,before);assert.equal(adminGiftView(state,v3Catalog,{now:2001}).pendingCount,50);
+ const duplicate=normalizeGiftDraft({coins:1},v3Catalog,{campaignId:'pending-0',sentBy:'admin',sentAt:2002});assert.deepEqual(enqueueAdminGift(state,duplicate.gift),{ok:true,duplicate:true,changed:false});assert.equal(state.adminGiftsV1.inbox.length,50);
 });
 
 test('admin can complete and grant individual missions or whole categories',()=>{

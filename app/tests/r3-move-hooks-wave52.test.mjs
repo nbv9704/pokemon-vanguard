@@ -4,7 +4,7 @@ import {readFile} from 'node:fs/promises';
 import {abilityStageChange,applyMechanicsSwitch,compilePassiveEffects,createHookRegistry,createMoveActionHandler,HANDLER_DEFINITIONS,preparePersistentEffectsEndTurn} from '../mechanics-v3/index.mjs';
 
 const manifests=JSON.parse(await readFile(new URL('../content-src/mechanics-v3-manifests.json',import.meta.url),'utf8'));
-const catalog=JSON.parse(await readFile(new URL('../content-candidates/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
+const catalog=JSON.parse(await readFile(new URL('../content-validation/pv-ma-2026-09-12-beta2/normalized/moves.json',import.meta.url),'utf8'));
 const ids=['simple-beam','baton-pass','curse','parting-shot'];
 const moves=Object.fromEntries(catalog.filter(move=>ids.includes(move.id)).map(move=>[move.id,move]));
 const resolveMove=createMoveActionHandler({moves,manifests:manifests.moves,abilityManifests:manifests,registry:createHookRegistry(HANDLER_DEFINITIONS)});

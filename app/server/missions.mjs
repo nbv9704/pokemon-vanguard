@@ -77,7 +77,7 @@ function missionProgress(category,definition){
 }
 function projectCategory(missions,category){const bucket=missions[category];return MISSION_DEFINITIONS[category].map(definition=>{const progress=Math.min(definition.target,missionProgress.call(missions,category,definition)),complete=progress>=definition.target,claimed=bucket.claimed.includes(definition.id);return {...definition,progress,complete,claimed,claimable:complete&&!claimed};});}
 export function missionView(state,now=Date.now()){
- const missions=ensureMissionState(state,now),daily=projectCategory(missions,'daily'),weekly=projectCategory(missions,'weekly'),starter=projectCategory(missions,'starter'),achievements=projectCategory(missions,'achievements'),claimableCount=[...daily,...weekly,...starter,...achievements].filter(entry=>entry.claimable).length;
+ const holder=structuredClone(state),missions=ensureMissionState(holder,now),daily=projectCategory(missions,'daily'),weekly=projectCategory(missions,'weekly'),starter=projectCategory(missions,'starter'),achievements=projectCategory(missions,'achievements'),claimableCount=[...daily,...weekly,...starter,...achievements].filter(entry=>entry.claimable).length;
  return {version:2,serverNow:now,dailyEndsAt:missions.daily.endsAt,weeklyEndsAt:missions.weekly.endsAt,daily,weekly,starter,achievements,claimableCount};
 }
 
