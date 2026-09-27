@@ -290,6 +290,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **#17 DONE:** thêm `PV_MAX_RESIDENT_ROOMS` mặc định 1.000. TTL vẫn dọn room detached quá hạn; khi nhận account mới ở hard cap, LRU chỉ evict room detached an toàn: không socket/join, queue rỗng, state không dirty và không bị Ranked/Friendly tham chiếu. Nếu không có ứng viên, upgrade mới nhận HTTP 503 + `Retry-After`, không làm Map tăng vô hạn hoặc đẩy room đang hoạt động. Eviction xóa presence process-local; lần vào sau reload save bền.
 - **#30:** `/api/admin/live` thêm aggregate `resources`: resident/max, active/detached/dirty/busy room, connected/pending socket, queued job, TTL/capacity eviction và capacity rejection. Không expose account/room ID; `resourceSnapshot()` dùng cùng projection cho integration test.
 - **Kiểm thử:** mọi guard eviction, TTL, LRU ổn định, privacy aggregate, active-cap rejection, hai vòng capacity eviction và durable reload; focused server/admin **28/28 PASS**; `npm run check` PASS; full regression **1.370/1.370 PASS trên 213 file**, 0 fail/skip/todo. Tài liệu: `app/docs/room-capacity-observability-b17.md`.
+- **Hosted CI:** run [`36336206506`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36336206506) cho commit `e4cb74a`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** hard cap/metrics vẫn theo từng process; distributed admission/presence thuộc #10/#18. #30 còn persist latency, event-loop lag, heap, slow-consumer và load/soak nên giữ `IN PROGRESS`.
 
 ## Cách cập nhật file này

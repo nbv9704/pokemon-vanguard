@@ -44,7 +44,9 @@ and durable reload after two successive evictions. The focused server/admin
 group passed 28/28 and `npm run check` passed. Full regression and hosted CI are
 recorded in the project progress log after completion. Full local regression
 passed 1,370/1,370 across 213 supported test files with zero failures, skips, or
-todos.
+todos. Hosted CI is green for commit `e4cb74a`: Ubuntu, Windows, and
+`release-smoke` passed in
+[run 36336206506](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36336206506).
 
 ## Remaining boundaries
 
