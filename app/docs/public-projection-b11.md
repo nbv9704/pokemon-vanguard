@@ -1,6 +1,7 @@
 # B11 — Public projection allowlists
 
-Status: implemented; focused and full local verification passed on 27/09/2026.
+Status: implemented; focused/full local verification and hosted Linux, Windows,
+and release CI passed on 27/09/2026 ([run 36316200849](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36316200849)).
 
 ## Security contract
 
@@ -58,6 +59,8 @@ npm test
 
 The focused projection/battle suite passed 73/73. The complete suite passed
 1,346/1,346 on 207 files with zero failures, skips, or TODOs.
+GitHub-hosted Ubuntu and Windows validation plus the clean-package
+`release-smoke` job also passed for commit `b8be44b`.
 
 ## Remaining boundary
 

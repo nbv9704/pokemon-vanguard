@@ -240,6 +240,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Training V2/V3 map rõ từng field của Mon/build/team/blueprint. Battle V2/V3 map rõ own-unit; preview V3 map session và roster thay vì clone session. Dữ liệu trả về được detach khỏi authoritative state; policy ẩn thông tin đối thủ hiện có vẫn được giữ.
 - Regression mới dùng private sentinel ở root và nested object, kiểm tra preview/live battle, rồi nạp JSON storage qua WebSocket thật và xác nhận sentinel không xuất hiện trong frame serialize. Các test Admin Gift, Admin action, Ranked và Social receipt cũ được đổi từ tìm chuỗi blacklist trong source sang kiểm tra hành vi projection thực tế.
 - **Kiểm thử:** focused projection/battle **73/73 PASS**; receipt privacy bổ sung **29/29 PASS** (22 Admin/projection + 7 Ranked/Social); `npm run check` PASS; full regression **1.346/1.346 PASS trên 207 file**, 0 fail/skip/todo. Tài liệu: `app/docs/public-projection-b11.md`.
+- **Hosted CI:** run [`36316200849`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36316200849) cho commit `b8be44b`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** Admin API được xác thực là management DTO riêng, không thuộc player-public projection. Chưa thay thế browser/network inspection qua proxy/account stack thật hoặc Supabase staging; các hạng mục đó vẫn giữ trạng thái riêng.
 
 ## Cách cập nhật file này
