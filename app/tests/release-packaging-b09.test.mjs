@@ -26,6 +26,8 @@ test('release is byte-stable across input mtimes, verified per-file, private dir
   utimesSync(path.join(root,'app','public','file.js'),new Date('2023-03-03'),new Date('2023-03-03'));
   const second=run(packageScript,['--project-root',root,'--output',b]);assert.equal(second.status,0,second.stderr);
   assert.deepEqual(readFileSync(a),readFileSync(b));
+  const inspect=run('-c',['import json,sys,zipfile; z=zipfile.ZipFile(sys.argv[1]); n=[x for x in z.namelist() if x.endswith("/RELEASE-MANIFEST.json")]; print(json.loads(z.read(n[0]))["root"])',a]);
+  assert.equal(inspect.status,0,inspect.stderr);assert.equal(inspect.stdout.trim(),'PokemonVanguard');
   const check=run(verifyScript,[a]);assert.equal(check.status,0,check.stderr);assert.match(check.stdout,/manifest\/CRC\/security PASS/);
   const dry=run(packageScript,['--project-root',root,'--dry-run']);assert.equal(dry.status,0,dry.stderr);
   assert.match(dry.stdout,/EXCLUDED.*\.local-data/);assert.match(dry.stdout,/EXCLUDED symlink app\/public\/leak/);

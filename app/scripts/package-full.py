@@ -21,6 +21,7 @@ PRIVATE_SUFFIXES = ('.pem', '.p12', '.pfx', '.key')
 # may differ across zlib implementations; the per-file SHA-256 manifest is portable.
 ZIP_DATE = (2026, 1, 1, 0, 0, 0)
 MANIFEST = 'RELEASE-MANIFEST.json'
+ARCHIVE_ROOT = 'PokemonVanguard'
 
 
 def private(name):
@@ -94,11 +95,11 @@ def main():
     with ZipFile(output, 'w', compression=ZIP_DEFLATED, compresslevel=6, allowZip64=True) as archive:
         for full, rel in files:
             data = full.read_bytes()
-            name = (Path(project.name) / rel).as_posix()
+            name = (Path(ARCHIVE_ROOT) / rel).as_posix()
             archive.writestr(zipinfo(name), data, compress_type=ZIP_DEFLATED, compresslevel=6)
             records.append({'path': rel.as_posix(), 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
-        body = json.dumps({'schemaVersion': 1, 'kind': 'source', 'root': project.name, 'files': records}, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf8')+b'\n'
-        archive.writestr(zipinfo(f'{project.name}/{MANIFEST}'), body, compress_type=ZIP_DEFLATED, compresslevel=6)
+        body = json.dumps({'schemaVersion': 1, 'kind': 'source', 'root': ARCHIVE_ROOT, 'files': records}, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf8')+b'\n'
+        archive.writestr(zipinfo(f'{ARCHIVE_ROOT}/{MANIFEST}'), body, compress_type=ZIP_DEFLATED, compresslevel=6)
     with ZipFile(output) as archive:
         bad = archive.testzip()
         if bad: raise ValueError(f'Archive CRC failure: {bad}')
