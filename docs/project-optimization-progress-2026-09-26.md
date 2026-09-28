@@ -17,12 +17,12 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | Trạng thái | Số lượng |
 | --- | ---: |
 | DONE | 10 |
-| IN PROGRESS | 19 |
-| TODO | 4 |
+| IN PROGRESS | 20 |
+| TODO | 3 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B19 — lint baseline và dọn code smell an toàn**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B20 — import boundary và dependency cycle gate**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -51,8 +51,8 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 21 | Lazy-load UI/catalog | P2 | TODO | Giữ legacy fallback |
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
-| 24 | Tách module theo trách nhiệm | P2 | TODO | Làm sau correctness |
-| 25 | Lint/type contracts | P2 | IN PROGRESS | B19: ESLint 10 gate cho toàn bộ source phát hành, 47 lỗi thật được dọn và 5 passive Ability handler bị thiếu registry được nối lại; còn import boundary, async contract và JSDoc/checkJs/schema types |
+| 24 | Tách module theo trách nhiệm | P2 | IN PROGRESS | B20: tách hazard state và HP-threshold item hook, loại hai dependency cycle; còn composition root client/server/ranked và complexity/formatter rollout |
+| 25 | Lint/type contracts | P2 | IN PROGRESS | B19 lint strict; B20 import-boundary/cycle gate cho 376 module production; còn promise-aware contract và JSDoc/checkJs/schema-derived types |
 | 26 | CI/test đúng artifact phát hành | P1/P2 | DONE | Run #10: Ubuntu + Windows npm-ci/check/inventory/1.333 test PASS; Ubuntu đóng gói, verify, clean-unpack và handle-leak PASS |
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
@@ -309,6 +309,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** `npm run lint` PASS 0 warning; mechanics mục tiêu **56/56 PASS**, registry regression **26/26 PASS**; `npm run check` PASS; full regression **1.372/1.372 PASS trên 214 file**, 0 fail/skip/todo. Tài liệu: `app/docs/quality-baseline-b19.md`.
 - **Hosted CI:** run [`36371980432`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36371980432) cho commit `476bb09`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa có import-boundary/cycle rule, promise-aware lint và JSDoc/checkJs/schema-derived type cho Command/Result/Save/DTO/Storage; vì vậy #25 chưa `DONE`.
+
+### 28/09/2026 — B20: import boundary và dependency cycle gate
+
+- **#24 chuyển IN PROGRESS:** thêm dependency graph cho 376 module production/1.095 cạnh local, chặn vòng import và áp hướng rules → mechanics → server/UI. Tách `hazard-state.mjs` và `item-hooks/threshold.mjs` theo trách nhiệm, giữ facade/export cũ; loại hai vòng thật quanh switch/item và damage/hazard mà không dùng allowlist vòng.
+- **#25:** đưa `npm run check:imports` vào `npm run check`; gate chặn rules nhập mechanics/server/UI, mechanics nhập server/UI hoặc gọi `fetch`, browser UI nhập server, và server nhập UI renderer. Ngoại lệ duy nhất là dữ liệu symbol thuần đã review; `server/legacy` frozen không nằm trong graph.
+- **Kiểm thử:** fixture gate hợp lệ/reverse dependency/cycle **3/3 PASS**; focused hazard/form/switch **32/32 PASS**; `npm run check` PASS; full regression **1.375/1.375 PASS trên 215 file**, 0 fail/skip/todo. Tài liệu: `app/docs/import-boundaries-b20.md`.
+- **Hosted CI:** run [`36374647210`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36374647210) cho commit `6ca34d5`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
+- **Giới hạn:** #24 còn các composition root lớn ở client/server/ranked và complexity/formatter rollout; #25 còn promise-aware contract và JSDoc/checkJs/schema-derived types. Hai mục giữ IN PROGRESS.
 
 ## Cách cập nhật file này
 
