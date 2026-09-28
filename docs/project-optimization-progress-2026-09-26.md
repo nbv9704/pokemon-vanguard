@@ -307,6 +307,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Phạm vi lint bao phủ source phát hành; generated `src`, fragment `logic-src`, frozen legacy, cloud build lịch sử và test gate riêng được loại trừ có chú thích. Không miễn server/mechanics/UI/scripts sống; `require-atomic-updates` được tắt vì queue tuần tự gây false positive, nhưng unused import/local và correctness rules vẫn strict.
 - Dọn 47 lỗi thật sau khi chuẩn hóa boundary: import/biến/assignment chết, escape regex thừa và error wrapper thiếu `cause`. Lint đồng thời phát hiện 5 passive Ability declaration đã import nhưng chưa đăng ký; đã nối lại field aura, contact Protect pierce, Parental Bond, Shadow Tag và entry terrain vào `HANDLER_DEFINITIONS`.
 - **Kiểm thử:** `npm run lint` PASS 0 warning; mechanics mục tiêu **56/56 PASS**, registry regression **26/26 PASS**; `npm run check` PASS; full regression **1.372/1.372 PASS trên 214 file**, 0 fail/skip/todo. Tài liệu: `app/docs/quality-baseline-b19.md`.
+- **Hosted CI:** run [`36371980432`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36371980432) cho commit `476bb09`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** chưa có import-boundary/cycle rule, promise-aware lint và JSDoc/checkJs/schema-derived type cho Command/Result/Save/DTO/Storage; vì vậy #25 chưa `DONE`.
 
 ## Cách cập nhật file này
