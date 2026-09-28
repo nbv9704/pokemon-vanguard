@@ -8,15 +8,23 @@ class RecentDistribution{
 }
 
 export class RuntimeMetrics{
- constructor({memoryUsage=()=>process.memoryUsage()}={}){this.memoryUsage=memoryUsage;this.persist=new RecentDistribution();this.eventLoop=new RecentDistribution();this.persistErrors=0;this.broadcasts=0;this.broadcastDeliveries=0;this.broadcastBytes=0;this.socketDrops={backpressure:0,closed:0,error:0};}
- async measurePersist(work){const started=performance.now();try{return await work();}catch(error){this.persistErrors++;throw error;}finally{this.persist.observe(performance.now()-started);}}
+ constructor({memoryUsage=()=>process.memoryUsage()}={}){this.memoryUsage=memoryUsage;this.persist=new RecentDistribution();this.eventLoop=new RecentDistribution();this.persistErrors=0;this.persistFailureTimes=[];this.broadcasts=0;this.broadcastDeliveries=0;this.broadcastBytes=0;this.socketDrops={backpressure:0,closed:0,error:0};}
+ async measurePersist(work){const started=performance.now();try{return await work();}catch(error){this.persistErrors++;this.persistFailureTimes.push(Date.now());if(this.persistFailureTimes.length>512)this.persistFailureTimes.shift();throw error;}finally{this.persist.observe(performance.now()-started);}}
  observeEventLoopLag(ms){this.eventLoop.observe(ms);}
  observeBroadcast({deliveredSockets=0,deliveredBytes=0}={}){this.broadcasts++;this.broadcastDeliveries+=deliveredSockets;this.broadcastBytes+=deliveredBytes;}
  observeSocketDrop(reason){if(Object.hasOwn(this.socketDrops,reason))this.socketDrops[reason]++;}
- snapshot(){const memory=this.memoryUsage();return {persist:{...this.persist.snapshot(),errors:this.persistErrors},eventLoop:this.eventLoop.snapshot(),memory:{heapUsedBytes:finite(memory.heapUsed),heapTotalBytes:finite(memory.heapTotal),rssBytes:finite(memory.rss)},broadcast:{frames:this.broadcasts,deliveries:this.broadcastDeliveries,bytes:this.broadcastBytes},socketDrops:{...this.socketDrops}};}
+ snapshot(){const memory=this.memoryUsage(),since=Date.now()-300_000;this.persistFailureTimes=this.persistFailureTimes.filter(at=>at>=since);return {persist:{...this.persist.snapshot(),errors:this.persistErrors,recentErrors:this.persistFailureTimes.length},eventLoop:this.eventLoop.snapshot(),memory:{heapUsedBytes:finite(memory.heapUsed),heapTotalBytes:finite(memory.heapTotal),rssBytes:finite(memory.rss)},broadcast:{frames:this.broadcasts,deliveries:this.broadcastDeliveries,bytes:this.broadcastBytes},socketDrops:{...this.socketDrops}};}
 }
 
-export function instrumentPersistence(storage,metrics,methods=['save','savePair','restore']){
- for(const method of methods){if(typeof storage[method]!=='function')continue;const original=storage[method].bind(storage);storage[method]=(...args)=>metrics.measurePersist(()=>original(...args));}
+export function instrumentPersistence(storage,metrics,methods=['save','savePair','restore'],onFailure=()=>{},onSuccess=()=>{}){
+ for(const method of methods){
+  if(typeof storage[method]!=='function')continue;
+  const original=storage[method].bind(storage);
+  storage[method]=(...args)=>metrics.measurePersist(async()=>{
+   const started=performance.now();
+   try{const result=await original(...args);onSuccess({operation:method,elapsedMs:performance.now()-started,revision:method==='save'?args[1]?.revision:undefined});return result;}
+   catch(error){onFailure({operation:method,errorCode:error?.code,elapsedMs:performance.now()-started});throw error;}
+  });
+ }
  return storage;
 }

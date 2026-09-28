@@ -20,6 +20,12 @@ test('browser store falls back to memory identity when browser storage is blocke
  const blocked={getItem(){throw new Error('blocked');},setItem(){throw new Error('blocked');}},store=createBrowserStore({storage:blocked,cryptoApi:{randomUUID:()=> 'ephemeral-player'},locationLike:{search:''}});assert.equal(store.playerId,'ephemeral-player');assert.equal(store.room,'aether-ephemeral-player');assert.equal(store.persistent,false);store.settings.reduce=true;assert.equal(store.saveSettings(),false);assert.equal(store.persistent,false);
 });
 
+test('browser store reports settings read failures even if player ID is readable',()=>{
+ const storage={getItem:key=>{if(key==='aether-player')return 'existing';throw Error('storage denied');},setItem(){throw Error('storage denied');}};
+ const store=createBrowserStore({storage,cryptoApi:{randomUUID:()=> 'unused'},locationLike:{search:''}});
+ assert.equal(store.playerId,'existing');assert.equal(store.persistent,false);assert.deepEqual(store.settings,{});
+});
+
 test('router accepts only declared screens',()=>{
  const router=createRouter('unknown');assert.equal(router.current,'home');assert.equal(NAV_ITEMS.length,11);assert.equal(router.has('recruitment'),true);assert.equal(router.has('shop'),true);assert.equal(router.has('missions'),true);assert.equal(router.has('friends'),true);assert.deepEqual(NAV_ITEMS.slice(4,7).map(([route])=>route),['recruitment','shop','missions']);assert.equal(router.has('settings'),true);assert.equal(NAV_ITEMS.some(([route])=>route==='settings'||route==='guide'),false);assert.equal(router.has('summon'),false);
  assert.equal(router.go('battle'),true);assert.equal(router.current,'battle');

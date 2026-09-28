@@ -50,6 +50,8 @@ import {createCatalogHttpResponse,createStaticHttpResponse} from './server/http-
 import {createPublicOriginPolicy} from './server/public-origin-policy.mjs';
 import {legacyAdventurePublicView} from './server/player-public-view.mjs';
 import {RuntimeMetrics,instrumentPersistence} from './server/runtime-metrics.mjs';
+import {OperationsJournal,ReadinessGate,settlementHealth,operationalAlerts} from './server/operational-observability.mjs';
+import {assertStoragePort} from './server/storage-port.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 export const BETA_TEST_WALLET=Object.freeze({coins:999999,crystals:999999,recruitmentTickets:999});
@@ -63,13 +65,22 @@ export function ensureBetaTestWallet(state){
 }
 async function readJsonBody(req,maxBytes=32*1024){let size=0,chunks=[];for await(const chunk of req){size+=chunk.length;if(size>maxBytes)throw Object.assign(new Error('Request too large'),{statusCode:413});chunks.push(chunk);}return JSON.parse(Buffer.concat(chunks).toString('utf8'));}
 
-export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock(), betaTestFunds = false, authRequired = false, authEnv = process.env, authFetch = fetch, storageFetch = fetch, websocketHeartbeatMs = 10_000, websocketJoinDeadlineMs = 12_000, maxSocketsPerAccount = 4, maxSocketsPerIp = 24, maxResidentRooms = 1000, requestRateLimits = {}, roomRetentionMs = DETACHED_ROOM_RETENTION_MS, shutdownDeadlineMs = 10_000 } = {}) {
+export function createLocalServer({ saveDir = path.join(root, '.local-data'), clock = createServerClock(), betaTestFunds = false, authRequired = false, authEnv = process.env, authFetch = fetch, storageFetch = fetch, websocketHeartbeatMs = 10_000, websocketJoinDeadlineMs = 12_000, maxSocketsPerAccount = 4, maxSocketsPerIp = 24, maxResidentRooms = 1000, requestRateLimits = {}, roomRetentionMs = DETACHED_ROOM_RETENTION_MS, shutdownDeadlineMs = 10_000, readinessProbe = null, opsWrite = ()=>{} } = {}) {
   const rooms = new Map();
   const accounts=new AccountCoordinator();
   const runtimeMetrics=new RuntimeMetrics();
+  const ops=new OperationsJournal({now:()=>clock.now(),write:opsWrite});
   let broadcast=()=>{};
-  const storage = instrumentPersistence(new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})}),runtimeMetrics);
+  const storage = instrumentPersistence(assertStoragePort(new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})})),runtimeMetrics,['save','savePair','restore'],failure=>{ops.record({domain:'storage',outcome:'error',...failure});},success=>{ops.record({domain:'storage',outcome:'ok',...success});});
   const requestPolicy=createPublicOriginPolicy({env:authEnv});
+  const defaultProbe=async(signal)=>{
+   if(authRequired&&!storage.remote.configured)return false;
+   // Exercise the configured data provider, not only the process or localhost.
+   // Never fetch player saves and never write a probe record.
+   if(storage.remote.configured){const response=await storage.remote.request('profiles?select=user_id&limit=1',{signal});await response.json();return true;}
+   await storage.local.load('__pv_readiness__');return true;
+  };
+  const readiness=new ReadinessGate({probe:readinessProbe||defaultProbe,now:()=>clock.now(),onFailure:info=>ops.record({domain:'readiness',operation:'probe',outcome:'error',errorCode:'STORAGE_NOT_READY',...info})});
   const auth=createLocalAuth({env:authEnv,fetchImpl:authFetch,requireSessionSecret:authRequired,now:()=>clock.now(),originAllowed:(req,url)=>requestPolicy.browserMutationAllowed(req,url),onLogout:session=>{
    for(const room of rooms.values())for(const ws of new Set([...room.clients.keys(),...(room.pendingSockets||[])]))if(ws.authSessionId===session.sid)closeAuthSocket(ws,'AUTH_REVOKED');
   }});
@@ -77,24 +88,29 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const quotas=createRequestQuotas({now:()=>clock.now(),limits:requestRateLimits});
   const notifyAccounts=accountIds=>{for(const accountId of new Set(accountIds||[])){const target=rooms.get(accountId);if(target?.state)broadcast(target);}};
   const setLiveState=(accountId,state)=>{const target=rooms.get(accountId);if(target){target.state=state;target.dirty=false;target.lastActiveAt=clock.now();}};
-  const social=new SocialService({clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState:accountId=>storage.load(accountId),loadProfile:accountId=>storage.profile(accountId),persist:(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
-  const ranked=new RankedService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState:accountId=>storage.load(accountId),persist:async(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),publishState:setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
+  const social=new SocialService({clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState:accountId=>storage.load(accountId),loadProfile:accountId=>storage.profile(accountId),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
+  const ranked=new RankedService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState:accountId=>storage.load(accountId),persist:async(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),publishState:setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work),onSettlementFailure:failure=>ops.record({domain:'ranked',operation:'settlement',outcome:'error',...failure})});
   const trainingPvp=new TrainingPvpService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,notify:notifyAccounts,isFriend:(a,b)=>social.isFriend(a,b)});
   const roomLimit=Number.isSafeInteger(maxResidentRooms)?Math.max(1,Math.min(100_000,maxResidentRooms)):1000,roomCounters={ttl:0,capacity:0,capacityRejected:0};
   const roomBusy=id=>ranked.busy(id)||trainingPvp.busy(id);
   const onRoomEvict=(id,reason)=>{roomCounters[reason]=(roomCounters[reason]||0)+1;ranked.presence.delete(id);trainingPvp.presence.delete(id);social.presence.delete(id);};
   const sweepRooms=targetSize=>pruneDetachedRooms(rooms,{now:clock.now(),retentionMs:roomRetentionMs,targetSize,isBusy:roomBusy,onEvict:onRoomEvict});
-  const resourceSnapshot=()=>({...roomResourceSnapshot(rooms,{maxRooms:roomLimit,counters:roomCounters,isBusy:roomBusy}),runtime:runtimeMetrics.snapshot()});
+  const resourceSnapshot=()=>{
+   const roomStats=roomResourceSnapshot(rooms,{maxRooms:roomLimit,counters:roomCounters,isBusy:roomBusy});
+   const runtime=runtimeMetrics.snapshot(),settlement=settlementHealth(ranked.matches.values(),clock.now());
+   return {...roomStats,runtime,settlement,alerts:operationalAlerts({runtime,rooms:roomStats,settlement}),operations:ops.snapshot()};
+  };
   let lifecycleTicking=false,lastRoomSweep=clock.now();
   const lifecycleTimer=setInterval(()=>{if(lifecycleTicking)return;lifecycleTicking=true;Promise.resolve().then(()=>ranked.tick()).then(()=>trainingPvp.tick()).then(()=>{
    const now=clock.now();if(now-lastRoomSweep<60_000)return;lastRoomSweep=now;quotas.prune();
    sweepRooms(roomLimit);
-  }).catch(error=>console.error('PvP lifecycle tick failed:',error.message)).finally(()=>{lifecycleTicking=false;});},1000);
+  }).catch(error=>{ops.record({domain:'lifecycle',operation:'tick',outcome:'error',errorCode:error?.code});console.error('PvP lifecycle tick failed [redacted]');}).finally(()=>{lifecycleTicking=false;});},1000);
   lifecycleTimer.unref?.();
   let eventLoopExpected=performance.now()+1000;const eventLoopTimer=setInterval(()=>{const measured=performance.now();runtimeMetrics.observeEventLoopLag(Math.max(0,measured-eventLoopExpected));eventLoopExpected=measured+1000;},1000);eventLoopTimer.unref?.();
   const pveLive=()=>[...rooms.entries()].flatMap(([accountId,room])=>{const v3=room.state?.battleV3,v2=room.state?.battleV2;if(v3&&v3.phase!=='FINISHED')return [{kind:'pve',id:v3.id||`pve:${accountId}`,accountId,name:room.state.owner||accountId,mode:v3.mode||'single',status:v3.phase,difficulty:v3.difficulty||'normal'}];if(v2&&v2.phase!=='FINISHED')return [{kind:'pve-v2',id:v2.id||`pve-v2:${accountId}`,accountId,name:room.state.owner||accountId,mode:v2.mode||'single',status:v2.phase,difficulty:v2.difficulty||'normal'}];return [];});
   const liveOperations={
     overview:async()=>({ranked:ranked.adminOverview(),friendly:trainingPvp.adminOverview(),pve:pveLive(),resources:resourceSnapshot()}),
+    diagnostics:()=>({...resourceSnapshot(),operations:ops.snapshot({includeRecent:true})}),
     statusForPlayer:accountId=>{const rankedLive=ranked.adminOverview(),queued=rankedLive.queue.find(entry=>entry.accountId===accountId),match=rankedLive.matches.find(entry=>entry.players.some(player=>player.accountId===accountId));if(match)return match;if(queued)return queued;const friendly=trainingPvp.adminOverview().rooms.find(entry=>entry.players.some(player=>player.accountId===accountId));if(friendly)return friendly;return pveLive().find(entry=>entry.accountId===accountId)||null;},
     stopForPlayer:async(accountId,reason)=>{const rankedStop=await ranked.adminStopForPlayer(accountId,reason);if(rankedStop.ok)return rankedStop;const friendlyStop=trainingPvp.adminStopForPlayer(accountId,reason);if(friendlyStop.ok)return friendlyStop;return {ok:false,code:'NO_EXTERNAL_BATTLE_ACTIVITY'};}
   };
@@ -106,6 +122,14 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const serveStatic=createStaticHttpResponse(publicDir);
   const handleHttp=async(req,res)=>{
     try {
+      if(['/health/live','/health/ready'].includes(new URL(req.url,'http://localhost').pathname)){
+       if(!['GET','HEAD'].includes(req.method)){res.writeHead(405,{'Cache-Control':'no-store'});return res.end();}
+       const live=new URL(req.url,'http://localhost').pathname==='/health/live';
+       const good=!closing&&(live||await readiness.ready());
+       res.writeHead(good?200:503,{'Content-Type':'application/json','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+       return res.end(req.method==='HEAD'?undefined:JSON.stringify({status:good?'ok':'unavailable'}));
+      }
+
       const url=requestPolicy.requestUrl(req);if(await auth.handle(req,res,url))return;const adminSession=auth.readSession(req);if(await admin.handle(req,res,url,adminSession))return;
       if(await servePokemonUiIcon(req,res,url))return;
       const pathname = decodeURIComponent(url.pathname);
@@ -305,15 +329,17 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
         await persist(name,next);room.state = next;
         broadcast(room);
         });
-      }).catch(error => { console.error('Local save/action error:', error.message); send(ws,{type:'error',error:'Could not save this action. Check the local server terminal.'}); }).finally(()=>inbound.release(ws));
+      }).catch(error => {const operationId=ops.record({domain:'ws-action',operation:'action',outcome:'error',errorCode:error?.code});console.error('Player action failed',operationId);send(ws,{type:'error',error:'Could not save this action. Check the local server terminal.'});}).finally(()=>inbound.release(ws));
     });
-    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>console.error('Local socket cleanup error:',error.message)); });
+    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>{ops.record({domain:'lifecycle',operation:'tick',outcome:'error',errorCode:error?.code});console.error('Socket cleanup failed [redacted]');}); });
   });
   let closePromise=null,closing=false;
   const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise(resolve=>{timer=setTimeout(resolve,ms);timer.unref?.();})]);}finally{clearTimeout(timer);}};
   return {
     server,
     resourceSnapshot,
+    readiness,
+    operations:ops,
     listen: (port = 3100) => new Promise((resolve,reject) => {server.once('error',reject); server.listen(port,'127.0.0.1',()=>{server.off('error',reject);resolve(server.address().port);});}),
     close: async () => closePromise||(closePromise=(async()=>{closing=true;clearInterval(lifecycleTimer);clearInterval(eventLoopTimer);clearInterval(websocketHeartbeatTimer);const budget=Number.isSafeInteger(shutdownDeadlineMs)?Math.max(100,Math.min(60_000,shutdownDeadlineMs)):10_000,endsAt=Date.now()+budget,remaining=()=>Math.max(1,endsAt-Date.now());const serverClosed=!server.listening?Promise.resolve():new Promise(resolve=>server.close(()=>resolve()));for(const ws of wss.clients)ws.close(1001,'server shutting down');await bounded(Promise.all([...rooms.values()].map(r=>r.queue.idle())),remaining());for(const ws of wss.clients)ws.terminate();await bounded(new Promise(resolve=>wss.close(resolve)),remaining());server.closeAllConnections?.();await bounded(serverClosed,remaining());})())
   };
@@ -324,6 +350,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
    shutdownDeadlineMs:envLimit('PV_SHUTDOWN_TIMEOUT_MS',10_000,100,60_000),
    maxSocketsPerIp:envLimit('PV_WS_MAX_SOCKETS_PER_IP',24,1,256),
    maxResidentRooms:envLimit('PV_MAX_RESIDENT_ROOMS',1000,1,100_000),
+   opsWrite:process.env.PV_OPS_JSON_LOG==='true'?entry=>process.stdout.write(JSON.stringify(entry)+'\n'):()=>{},
    requestRateLimits:{accountActions:envLimit('PV_RATE_ACCOUNT_ACTIONS_10S',45),ipActions:envLimit('PV_RATE_IP_ACTIONS_10S',180),socketMessages:envLimit('PV_RATE_SOCKET_MESSAGES_10S',70),ipUpgrades:envLimit('PV_RATE_IP_UPGRADES_MIN',30),httpInspector:envLimit('PV_RATE_INSPECTOR_MIN',40)}});
   const port = await app.listen(Number(process.env.PORT || 3100));
   console.log(`Pokémon Vanguard: http://localhost:${port}\nAccount saves: Supabase when configured; local storage is development-only.\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);

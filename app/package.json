@@ -15,7 +15,7 @@
     "check:content": "node scripts/check-content.mjs",
     "validation-snapshots:verify": "node scripts/verify-validation-snapshots.mjs",
     "lint": "eslint . --max-warnings 0",
-    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run check:imports && npm run lint && npm run check:types && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate",
+    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run check:imports && npm run lint && npm run check:types && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate && npm run assets:responsive:validate && npm run workflow:validate && npm run catalog:retention:validate && npm run assets:ui-icons:policy && npm run contracts:negative:validate",
     "test": "node scripts/run-tests-batched.mjs",
     "pokemon:validate": "node scripts/validate-pokemon-candidate.mjs",
     "mechanics:coverage": "node scripts/generate-mechanics-coverage.mjs",
@@ -44,13 +44,21 @@
     "package:full": "node scripts/run-package-full.mjs",
     "check:syntax": "node --experimental-vm-modules --no-warnings scripts/check-source-syntax.mjs",
     "check:imports": "node --experimental-vm-modules --no-warnings scripts/check-import-boundaries.mjs",
-    "check:types": "tsc -p tsconfig.contracts.json",
+    "check:types": "tsc -p tsconfig.contracts.json && tsc -p tsconfig.browser-contracts.json",
     "test:inventory": "node scripts/run-tests-batched.mjs --list-json",
     "content:inventory": "node scripts/content-dependency-inventory.mjs",
     "benchmark:hot-state": "node scripts/benchmark-hot-state-b12.mjs",
     "benchmark:http-runtime": "node scripts/benchmark-http-runtime-b22.mjs",
     "benchmark:lazy-ui": "node scripts/benchmark-lazy-ui-b23.mjs",
-    "release:verify": "node scripts/run-verify-release.mjs"
+    "benchmark:operations": "node scripts/benchmark-operations-b30.mjs",
+    "release:verify": "node scripts/run-verify-release.mjs",
+    "assets:responsive:validate": "node scripts/validate-image-assets-b25.mjs",
+    "assets:responsive:generate": "python3 scripts/optimize-image-assets.py",
+    "workflow:validate": "node scripts/verify-workflow-b26.mjs",
+    "benchmark:image-browser": "node scripts/image-browser-qa-b26.mjs",
+    "catalog:retention:validate": "node scripts/validate-catalog-retention-b27.mjs",
+    "assets:ui-icons:policy": "node scripts/fetch-pokemon-ui-icons.mjs --policy",
+    "contracts:negative:validate": "node scripts/verify-contract-negative-gates-b28.mjs"
   },
   "engines": {
     "node": ">=22.13.0"

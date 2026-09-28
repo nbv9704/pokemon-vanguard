@@ -1,3 +1,4 @@
+import {imageAttributes} from './image-variants.js';
 import {presentationAsset,hasBespokeAsset} from './presentation-assets.js';
 import {rankedTierEmblem,rankedTierLine,rankedTierNext} from './ranked-tier-view.js';
 
@@ -5,7 +6,7 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&
 const title=value=>String(value||'').replace(/(^|-)(\w)/g,(_,dash,char)=>`${dash?' ':''}${char.toUpperCase()}`);
 const providerLabel=provider=>({google:'Google',discord:'Discord',local:'Local Beta',browser:'Browser'})[provider]||title(provider||'Account');
 const avatar=(auth,size='large')=>auth?.avatar?`<img src="${esc(auth.avatar)}" alt="">`:`<span>${esc((auth?.name||'V').slice(0,1).toUpperCase())}</span>`;
-const pokemonPortrait=member=>{const id=member?.spriteKey||member?.speciesId||'missing';return `<span class="profile-team-portrait ${hasBespokeAsset(id,'artwork')?'':'pokemon-art-missing'}"><img src="${presentationAsset(id,'artwork')}" alt=""></span>`;};
+const pokemonPortrait=member=>{const id=member?.spriteKey||member?.speciesId||'missing';return `<span class="profile-team-portrait ${hasBespokeAsset(id,'artwork')?'':'pokemon-art-missing'}"><img ${imageAttributes(presentationAsset(id,'artwork'),{size:52})} alt=""></span>`;};
 const progress=(value,max)=>Math.max(0,Math.min(100,Math.round((Number(value)||0)/Math.max(1,Number(max)||1)*100)));
 
 export class ProfileView{

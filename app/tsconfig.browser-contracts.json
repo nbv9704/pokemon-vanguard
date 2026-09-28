@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "target": "es2024", "module":"preserve", "moduleResolution":"bundler", "allowJs":true, "checkJs":true, "strict":true,
+    "noUncheckedIndexedAccess":true, "exactOptionalPropertyTypes":true, "noEmit":true,
+    "lib":["es2024","dom","dom.iterable"], "types":[], "skipLibCheck":true
+  },
+  "include":["public/js/types/browser-contracts.d.ts","public/js/net.js","public/js/typed-shop-action.js"]
+}

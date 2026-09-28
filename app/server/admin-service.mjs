@@ -27,19 +27,52 @@ export class AdminService{
  async record(userId){const state=this.getLiveState(userId)||await this.storage.load(userId),profile=await this.storage.profile?.(userId);if(!state&&!profile)return null;return {userId,displayName:profile?.displayName||state?.owner||userId,avatarUrl:profile?.avatarUrl||null,createdAt:profile?.createdAt||null,updatedAt:profile?.updatedAt||null,schemaVersion:state?.schemaVersion||null,revision:state?.revision||0,state};}
  async detail(record,userId){const projected=adminPlayerDetail(record,this.catalog,{online:this.isOnline(userId),now:this.clock.now()}),external=this.liveOperations.statusForPlayer?.(userId)||null,v3=record.state?.battleV3,v2=record.state?.battleV2,local=!external&&v3&&v3.phase!=='FINISHED'?{kind:'pve',id:v3.id||`pve:${userId}`,mode:v3.mode||'single',status:v3.phase,difficulty:v3.difficulty||'normal'}:!external&&v2&&v2.phase!=='FINISHED'?{kind:'pve-v2',id:v2.id||`pve-v2:${userId}`,mode:v2.mode||'single',status:v2.phase,difficulty:v2.difficulty||'normal'}:null;return {...projected,live:external||local};}
  async overview(){
-  const listed=await this.storage.listAccounts({limit:100,offset:0}),summaries=listed.accounts.map(record=>adminPlayerSummary(record,{online:this.isOnline(record.userId)})),live=await this.liveOperations.overview();
-  return {players:listed.total,sampledAccounts:summaries.length,aggregateScope:summaries.length<listed.total?'sample':'all',online:new Set(this.listOnlineAccountIds()).size,suspended:summaries.filter(x=>x.suspended).length,totalVp:summaries.reduce((n,x)=>n+x.wallet.coins,0),totalCrystals:summaries.reduce((n,x)=>n+x.wallet.crystals,0),activeRanked:(live.ranked?.matches?.length||0)+(live.ranked?.queue?.length||0),activeFriendly:live.friendly?.rooms?.length||0,rankDistribution:Object.fromEntries([...new Set(summaries.map(x=>x.ranked.tier))].map(tier=>[tier,summaries.filter(x=>x.ranked.tier===tier).length]))};
+  // On Supabase this is ONE role-restricted database aggregate, not a sample
+  // of the first hundred profiles (and not bulk state transferred to Node).
+  let aggregate=await this.storage.overviewAggregate?.();
+  if(!aggregate){
+   let offset=0,count=0,suspended=0,totalVp=0,totalCrystals=0;const rankDistribution={};
+   // Local/mock adapters: iterate in pages instead of retaining full saves.
+   // The local source sorts stable IDs; mock adapters may expose only offset.
+   while(true){
+    const page=await this.storage.listAccounts({limit:100,offset});
+    if(!page.accounts.length)break;
+    for(const record of page.accounts){const summary=adminPlayerSummary(record);count++;suspended+=Number(summary.suspended);totalVp+=summary.wallet.coins;totalCrystals+=summary.wallet.crystals;rankDistribution[summary.ranked.tier]=(rankDistribution[summary.ranked.tier]||0)+1;}
+    offset+=page.accounts.length;
+    if(offset>=page.total)break;
+    if(offset>100000)throw new Error('ADMIN_OVERVIEW_SCAN_LIMIT');
+   }
+   aggregate={players:count,suspended,totalVp,totalCrystals,rankDistribution};
+  }
+  const live=await this.liveOperations.overview();
+  return {...aggregate,sampledAccounts:aggregate.players,aggregateScope:'all',online:new Set(this.listOnlineAccountIds()).size,activeRanked:(live.ranked?.matches?.length||0)+(live.ranked?.queue?.length||0),activeFriendly:live.friendly?.rooms?.length||0};
  }
- async listAllAccounts(){
-  const out=[];let offset=0,total=Infinity;while(offset<total){const page=await this.storage.listAccounts({limit:100,offset});out.push(...page.accounts);total=Number.isFinite(page.total)?page.total:out.length;if(!page.accounts.length)break;offset+=page.accounts.length;if(out.length>50_000)throw new Error('ADMIN_AUDIENCE_TOO_LARGE');}return out;
+ async listAllAccounts({tierId=null}={}){
+  const ids=[],seen=new Set();let after=null,offset=0;
+  if(typeof this.storage.listAudienceIds==='function'){
+   while(true){
+    const page=await this.storage.listAudienceIds({after,limit:250,tierId});
+    if(!page.length)break;
+    for(const id of page){if(typeof id!=='string'||(after!==null&&id<=after)||seen.has(id))throw new Error('ADMIN_AUDIENCE_CURSOR_INVALID');ids.push(id);seen.add(id);after=id;}
+    if(ids.length>50000)throw new Error('ADMIN_AUDIENCE_TOO_LARGE');
+    if(page.length<250)break;
+   }
+   return ids;
+  }
+  // Compatibility for isolated tests with a synthetic storage mock only.
+  while(true){const page=await this.storage.listAccounts({limit:100,offset});if(!page.accounts.length)break;
+   for(const record of page.accounts){if(tierId&&rankedTierView(record.state?.rankedV1?.rating||1000).tierId!==tierId)continue;ids.push(record.userId);}
+   offset+=page.accounts.length;if(ids.length>50000)throw new Error('ADMIN_AUDIENCE_TOO_LARGE');if(offset>=page.total)break;
+  }
+  return ids;
  }
  async resolveGiftAudience(target){
   const scope=target?.scope||'player';
   if(scope==='player'){const id=safeUserId(target.userId);return validUserId(id)?[id]:[];}
   if(scope==='selected')return [...new Set((target.userIds||[]).map(safeUserId).filter(validUserId))].slice(0,200);
   if(scope==='online')return [...new Set(this.listOnlineAccountIds())];
-  const records=await this.listAllAccounts();if(scope==='all')return records.map(record=>record.userId);
-  if(scope==='rank'){const tierId=String(target.tierId||'');return records.filter(record=>rankedTierView(record.state?.rankedV1?.rating||1000).tierId===tierId).map(record=>record.userId);}
+  if(scope==='all')return this.listAllAccounts();
+  if(scope==='rank'){const tierId=String(target.tierId||'');return RANKED_TIERS.some(tier=>tier.id===tierId)?this.listAllAccounts({tierId}):[];}
   return [];
  }
  async withCampaignLock(id,work){
@@ -68,7 +101,13 @@ export class AdminService{
     manifest=await this.campaignManifest({campaignId,fingerprint,audience:[...new Set(accountIds)].sort(),gift:normalized.gift});
     if(manifest.fingerprint!==fingerprint)return {status:409,body:{error:'CAMPAIGN_ID_REUSED'}};
    }
-   const results=await pooled(manifest.audience,12,async userId=>this.withAccountLock(userId,async()=>{
+   // Bounded delivery: an admin explicitly continues the SAME immutable campaign.
+   // Lost HTTP replies can safely retry the same cursor because recipient receipts
+   // are durable and never duplicate the gift.
+   const cursor=payload.cursor??0;
+   if(!Number.isSafeInteger(cursor)||cursor<0||cursor>manifest.audience.length)return {status:400,body:{error:'INVALID_CAMPAIGN_CURSOR'}};
+   const batch=manifest.audience.slice(cursor,cursor+100);
+   const results=await pooled(batch,12,async userId=>this.withAccountLock(userId,async()=>{
     try{
      const record=await this.record(userId);if(!record?.state)return {userId,ok:false,error:'PLAYER_SAVE_NOT_FOUND'};
      const state=structuredClone(record.state),queued=enqueueAdminGift(state,manifest.gift,{fingerprint});
@@ -79,7 +118,8 @@ export class AdminService{
     }catch(error){return {userId,ok:false,error:error.code||'GIFT_DELIVERY_FAILED'};}
    }));
    const delivered=results.filter(entry=>entry.ok).length,failed=results.filter(entry=>!entry.ok);
-   return {status:200,body:{ok:true,campaignId,targeted:manifest.audience.length,delivered,duplicates:results.filter(entry=>entry.duplicate).length,failed:failed.length,errors:failed.slice(0,20)}};
+   const next=cursor+batch.length,hasMore=next<manifest.audience.length;
+   return {status:200,body:{ok:true,campaignId,targeted:manifest.audience.length,delivered,duplicates:results.filter(entry=>entry.duplicate).length,failed:failed.length,processed:batch.length,nextCursor:failed.length?cursor:hasMore?next:null,remaining:failed.length?manifest.audience.length-cursor:manifest.audience.length-next,errors:failed.slice(0,20)}};
   });
  }
 
@@ -122,6 +162,7 @@ export class AdminService{
   if(url.pathname==='/api/admin/overview'&&req.method==='GET'){json(res,200,await this.overview());return true;}
   if(url.pathname==='/api/admin/catalog'&&req.method==='GET'){json(res,200,{items:this.catalog.items.filter(item=>item.enabledForBattle).map(item=>({id:item.id,name:item.name,category:item.category})),pokemon:this.catalog.species.filter(species=>species.enabledForBattle).map(species=>({id:species.id,name:species.name})),missions:MISSION_DEFINITIONS,rankTiers:RANKED_TIERS,mailRetentionPresets:Object.values(MAIL_RETENTION_PRESETS).map(preset=>({id:preset.id,name:preset.label,unreadDays:mailboxDurationDays(preset.unreadTtlMs),readDays:mailboxDurationDays(preset.readTtlMs)}))});return true;}
   if(url.pathname==='/api/admin/live'&&req.method==='GET'){json(res,200,await this.liveOperations.overview());return true;}
+  if(url.pathname==='/api/admin/observability'&&req.method==='GET'){json(res,200,this.liveOperations.diagnostics?.()||{});return true;}
   if(url.pathname==='/api/admin/gifts'&&req.method==='POST'){const outcome=await this.sendGiftCampaign(session,await body(req));json(res,outcome.status,outcome.body);return true;}
   if(url.pathname==='/api/admin/players'&&req.method==='GET'){const search=url.searchParams.get('search')||'',limit=Math.min(100,Math.max(1,Number(url.searchParams.get('limit'))||25)),offset=Math.max(0,Number(url.searchParams.get('offset'))||0),listed=await this.storage.listAccounts({search,limit,offset});json(res,200,{total:listed.total,players:listed.accounts.map(record=>adminPlayerSummary(record,{online:this.isOnline(record.userId)}))});return true;}
   const match=/^\/api\/admin\/players\/([^/]+)$/.exec(url.pathname),actionMatch=/^\/api\/admin\/players\/([^/]+)\/action$/.exec(url.pathname);

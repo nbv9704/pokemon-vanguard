@@ -1,3 +1,5 @@
+> **Historical B09 snapshot.** For the supported present-day workflow, read the root `README.md` and `docs/developer-workflow-b26.md`; later optimizations and unresolved limitations are tracked in the progress file.
+
 # B09 — HTTP/public caching, verified release, inventory and CI
 
 Status: local code, clean-package tests and hosted Linux/Windows CI validated on 27/09/2026. End-to-end browser metrics remain pending.

@@ -64,8 +64,10 @@ test('R3-103 resolution lock owns the root surface and preserves desktop composi
   assert.match(css,/resolution-locked #app>\.loading\{[\s\S]*?width:var\(--game-logical-width\)!important[\s\S]*?height:var\(--game-logical-height\)!important[\s\S]*?margin:0!important[\s\S]*?translate\(-50%,-50%\) scale\(var\(--game-fit-scale\)\)/,'loading must use the same centered 1280x720 fitted surface as the app shell');
 });
 
-test('modal handling moves focus into dialogs, restores it on close and closes the backdrop',()=>{
-  for(const token of ['function focusModal()','modalReturnFocus=document.activeElement','returnFocus?.isConnected','contains(\'modalback\')'])assert.ok(client.includes(token),`missing ${token}`);
+test('modal handling uses the shared focus manager and keeps backdrop close behavior',()=>{
+  const manager=fs.readFileSync(new URL('../public/js/modal-focus-manager.js',import.meta.url),'utf8');
+  for(const token of ['new ModalFocusManager()', 'function focusModal(){modalFocus.open();}', 'modalFocus.close()', 'modalFocus.handleTab(e)', "contains('modalback')"])assert.ok(client.includes(token),`missing ${token}`);
+  for(const token of ['this.returnFocus = this.document.activeElement', 'previous?.isConnected', 'background.inert = true'])assert.ok(manager.includes(token),`focus manager missing ${token}`);
 });
 
 test('R3-103 no longer forces high-resolution artwork or battle GIFs through global nearest-neighbour scaling',()=>{

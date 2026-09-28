@@ -38,3 +38,21 @@ The `.aether-window` CSS class remains a presentation compatibility class for no
 `npm run structure:validate` is part of `npm run check`. Production JavaScript modules are capped at 360 lines, excluding generated `app/src/`, tests and the frozen legacy snapshot. The limit is a guardrail, not a reason to split cohesive code mechanically: split by responsibility and stable dependency direction.
 
 `pixel-era-ui.css` is intentionally not split in this cleanup. It is the final theme/resolution-lock override layer and its cascade order is part of the rendering contract. Route-specific CSS should continue to live in its existing page files; changes to the global Pixel Era sheet should be scoped and regression-tested.
+
+## Contributor entry point (B26)
+
+Use [`../README.md`](../README.md) and [`developer-workflow-b26.md`](developer-workflow-b26.md)
+for current install/start/release instructions. Earlier audits describe historical
+states, not live command defaults. The generated V2 adapters and frozen V1
+compatibility files above remain separate from the active V3 combat rules.
+
+## Reviewed catalog retention / runtime delivery (B27)
+
+`app/content-active/retention-manifest.json` is the review-required immutable catalog ledger.
+The runtime resolves only `content-active/active.json`, validated against that ledger;
+the standard source archive retains the 34 historical snapshots, while optional
+`package:full -- --profile runtime` excludes only those reviewed historical JSONs.
+Both profiles are verified by `scripts/verify-release.py`; the default `npm run check`
+auto-detects a clean extracted runtime archive using its `RELEASE-MANIFEST.json`.
+Consult [`catalog-retention-b27.md`](catalog-retention-b27.md) before promoting a
+new catalog or claiming replay support for a previous version.

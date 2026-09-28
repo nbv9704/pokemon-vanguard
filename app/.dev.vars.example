@@ -26,3 +26,6 @@ PV_RATE_IP_ACTIONS_10S=180
 PV_RATE_SOCKET_MESSAGES_10S=70
 PV_RATE_IP_UPGRADES_MIN=30
 PV_RATE_INSPECTOR_MIN=40
+
+# Optional: only allowlisted operation events, never raw request/save/error data; use a rotating sink.
+# PV_OPS_JSON_LOG=false

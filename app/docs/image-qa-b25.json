@@ -1,0 +1,23 @@
+{
+  "scope": "Pillow full-pixel QA of stored lossless variants; not a browser timing measurement",
+  "checkedImages": 303,
+  "checkedVariants": 606,
+  "alphaSources": 303,
+  "paletteArtworkSources": 23,
+  "mismatchedPixels": 0,
+  "sampleImage": "docs/image-qa-b25.png",
+  "decodeBench": {
+    "source": {
+      "p50Ms": 5.297,
+      "p95Ms": 18.204
+    },
+    "1x": {
+      "p50Ms": 0.36,
+      "p95Ms": 1.027
+    },
+    "2x": {
+      "p50Ms": 0.705,
+      "p95Ms": 2.203
+    }
+  }
+}

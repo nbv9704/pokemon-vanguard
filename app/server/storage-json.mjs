@@ -73,6 +73,23 @@ export class JsonAdventureStorage{
   for(const userId of selected){const state=await this.load(userId);accounts.push({userId,displayName:state?.owner||userId,avatarUrl:null,createdAt:null,updatedAt:null,schemaVersion:state?.schemaVersion||null,revision:state?.revision||0,state});}
   return {total,accounts};
  }
+ async listAudienceIds({after=null,limit=250,tierId=null}={}){
+  const {rankedTierView}=await import('./ranked-tiers.mjs');
+  if(after!==null&&(typeof after!=='string'||!ROOM.test(after)))throw new Error('INVALID_AUDIENCE_CURSOR');
+  // Source IDs are stable across updatedAt changes. Keep a bounded page of IDs,
+  // not 50k full saves; read a state only when a rank predicate is requested.
+  const names=await this.locked(async()=>{
+   try{return (await readdir(this.saveDir)).filter(name=>ROOM.test(name.slice(0,-5))&&name.endsWith('.json')).map(name=>name.slice(0,-5)).sort();}
+   catch(error){if(error.code==='ENOENT')return [];throw error;}
+  });
+  const ids=[];
+  for(const id of names){
+   if(after!==null&&id<=after)continue;
+   if(tierId){const state=await this.load(id);if(!state||rankedTierView(state.rankedV1?.rating??1000).tierId!==tierId)continue;}
+   ids.push(id);if(ids.length>=Math.min(250,Math.max(1,limit)))break;
+  }
+  return ids;
+ }
  async backup(room,backupDir,label){return this.locked(async()=>{
   const source=this.pathFor(room);validateState(JSON.parse(await readFile(source,'utf8')));
   const safeLabel=String(label).replace(/[^A-Za-z0-9_-]/g,'-');

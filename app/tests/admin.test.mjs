@@ -53,9 +53,9 @@ test('JSON development storage can enumerate saves for the admin console',async(
  const dir=await mkdtemp(path.join(os.tmpdir(),'pv-admin-storage-')),storage=new JsonAdventureStorage(dir);try{await storage.save('alpha',makeState());const second=makeState();second.owner='Beta Trainer';await storage.save('beta',second);const all=await storage.listAccounts({limit:10});assert.equal(all.total,2);assert.deepEqual(all.accounts.map(entry=>entry.userId),['alpha','beta']);const filtered=await storage.listAccounts({search:'bet',limit:10});assert.equal(filtered.total,1);assert.equal(filtered.accounts[0].displayName,'Beta Trainer');}finally{await rm(dir,{recursive:true,force:true});}
 });
 
-test('admin overview labels aggregates as a sample beyond the first hundred accounts',async()=>{
+test('admin overview includes all 150 accounts without misleading sample figures',async()=>{
  const accounts=Array.from({length:150},(_,index)=>({userId:`aether-player-${index}`,displayName:`Player ${index}`,state:makeState()})),service=new AdminService({storage:{listAccounts:async({limit,offset})=>({total:accounts.length,accounts:accounts.slice(offset,offset+limit)})},catalog:v3Catalog,listOnlineAccountIds:()=>['aether-player-1','aether-player-149']});
- const overview=await service.overview();assert.equal(overview.players,150);assert.equal(overview.sampledAccounts,100);assert.equal(overview.aggregateScope,'sample');assert.equal(overview.online,2);assert.equal(overview.totalVp,100*makeState().wallet.coins);
+ const overview=await service.overview();assert.equal(overview.players,150);assert.equal(overview.sampledAccounts,150);assert.equal(overview.aggregateScope,'all');assert.equal(overview.online,2);assert.equal(overview.totalVp,150*makeState().wallet.coins);
 });
 
 import {Readable} from 'node:stream';

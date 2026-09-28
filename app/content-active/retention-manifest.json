@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "policy": "catalog-retention-b27",
+  "note": "Historical catalog JSON remains pinned in source release; runtime loads the active pointer only; change via reviewed promotion, never delete unverified history.",
+  "catalogs": [
+    {
+      "version": "pv-ma-2026-09-11-beta-slice-v1",
+      "sha256": "24584c29e72f8e0b0463d8fb3d1faa123672b488a028370c193a134b6edc67e1",
+      "bytes": 55386,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v10",
+      "sha256": "69e19f2e08fdb369df5aabc63d8d2647d2dfe85c4ee9cd4a31fa563f400a2ab1",
+      "bytes": 137178,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v11",
+      "sha256": "ad1ce7e92e0f7b979c0060219e78dfc4021f91c46d1b22d03983335f52762a2f",
+      "bytes": 150919,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v12",
+      "sha256": "3e4505832718e6a3bc9dd2adcb98549fe61e9bbe0da7b94bc0293f4ff4dfc582",
+      "bytes": 158728,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v13",
+      "sha256": "c5e1df9df83f49d0fa19e2449e35188f597bfdf58c8cb9c6deb11e87140736f4",
+      "bytes": 172525,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v14",
+      "sha256": "0e8264caabce2bd5e3a59d34d6d3f29faeec513e40d9b54dd39d8fbd90c363f3",
+      "bytes": 191774,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v15",
+      "sha256": "88ae87c892ad6ef9eedbe843e6ec15c00c39eb880eab3c9bd656adb5926e446d",
+      "bytes": 195979,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v16",
+      "sha256": "636ffdabfbcf7c5efc706fa39c2368534ec4370156355ac0b5c096af2c6b2c33",
+      "bytes": 205631,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v17",
+      "sha256": "0cf1043a0b6139d9a571ab5027fe0229c95762c59ee96232b4ed6ebf145046ee",
+      "bytes": 210101,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v18",
+      "sha256": "9eb1d48fc7994b212a9eb1254adddb69dd7b36ade2e808c2e5e13a05bdda9aff",
+      "bytes": 211653,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v19",
+      "sha256": "589c2c0587eacddb9871500d414f96b4e4ae18098018c9a5d83ae65135d17682",
+      "bytes": 212961,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v2",
+      "sha256": "82aad99750a8c8187b4521ac3dfabb1ab314af325ab78afa963740c797100d2c",
+      "bytes": 103594,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v20",
+      "sha256": "857114b6f85a15306a4bf0ba49a64d8b9420fbc560058f7dfe736f5e20dbfe50",
+      "bytes": 259063,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v21",
+      "sha256": "f7f512930e1ea24fe9601f0730e120fc60d9335b43d775230249f5129fed1f94",
+      "bytes": 283677,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v22",
+      "sha256": "6972456cc80085202d24acf9c4db156e8e253f0f1a37a04ad8a601c2e4b07d38",
+      "bytes": 289616,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v23",
+      "sha256": "40982e7b4dfde46e3421c5c4b04c40dbed30cdf5e3bcf94c8664d4c637e72fe1",
+      "bytes": 310895,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v24",
+      "sha256": "932b5028a9ca8b330f335d92c9555d7254f33216134bd3510e71a5ffc0ace581",
+      "bytes": 323802,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v25",
+      "sha256": "f0062d8813c29455616fa0980e5e7dc0e43b2c6c930096f3b39e5ce202f2e72a",
+      "bytes": 769471,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v26",
+      "sha256": "acc8f9990c609301bd86457260f5db08ab21de69730bc5c058a4f54de28e6539",
+      "bytes": 875723,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v27",
+      "sha256": "54dc0a2b32c965ef0112a7c7f453029c7aa77af9a1f2553a370da73a5712d09a",
+      "bytes": 1016878,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v28",
+      "sha256": "9925021c5cb6fe06544e16c5e898a0282fe9a7cc61472f7e4f8a7ae4b80c41b6",
+      "bytes": 1118043,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v29",
+      "sha256": "5b194ffd80db9a7d6535a3c600dda667f50da04a8a9d173b5afc8d9609560ad8",
+      "bytes": 1247471,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v3",
+      "sha256": "f2cd306c643f3f9273521e9ba76884cc7e99c7aa79a1dc0c8aed1f3b2150ffda",
+      "bytes": 111975,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v30",
+      "sha256": "cc567bedfd56c0718310046747aa089fca518f660fa577ffd7515e7f03a062b5",
+      "bytes": 1344249,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v31",
+      "sha256": "8136b7328e59d1a7a76747caca31760f46bc269adabbfc39d7e47f2d947cc042",
+      "bytes": 1424860,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v32",
+      "sha256": "2433a030ccbcdb9511017a4b775d2c103b66407013a84562962e274bfcbbe71d",
+      "bytes": 1526426,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v33",
+      "sha256": "2e278f0cea9af15219ff40c222289c149acb4ff1f36397e0c2642cb6d2292e2b",
+      "bytes": 1646626,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v34",
+      "sha256": "397d77bf7c6103ee143d877d6b1709bf4304724c1f47133db102433c262ae0e3",
+      "bytes": 1747456,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v35",
+      "sha256": "46dbd26d9b3a3d53806404c7c7cb7e3fe9034f5b63ae404df20865ca22bd24ab",
+      "bytes": 1875076,
+      "classification": "active-runtime"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v4",
+      "sha256": "11376b8906f6c4d814e8c3e9a73391b2a9d7ed82e19afdcec15e38d76fa2fce2",
+      "bytes": 118320,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v5",
+      "sha256": "83bb2aaeb8417ec483e900d9b451ff313b8ee2f0eb6342b38d3fcf2941539c14",
+      "bytes": 123058,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v6",
+      "sha256": "1830c73aec00a8237de9f343f5aed89f4a5bb591f9af6f93f311887a099ddca0",
+      "bytes": 126271,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v7",
+      "sha256": "0111139979a36cb89ee75dcc94c6fe6c2d346ed7e01f6f56047442a8dac5e7b8",
+      "bytes": 130534,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v8",
+      "sha256": "d0a6227c755c98d89d73cef53065c166dc86b45df017f3b22dbd811d3ff6985c",
+      "bytes": 132167,
+      "classification": "source-history"
+    },
+    {
+      "version": "pv-ma-2026-09-12-beta2-beta-slice-v9",
+      "sha256": "65650aee21fe680c57e179b04b0d08dc589f5c4a5c7661eca5b068f558d2e4bc",
+      "bytes": 133780,
+      "classification": "source-history"
+    }
+  ]
+}

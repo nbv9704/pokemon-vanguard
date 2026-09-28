@@ -1,3 +1,4 @@
+/** @template T @param {T} value @returns {T} */
 const clone=value=>structuredClone(value);
 
 // This is deliberately an allowlist. New save-root fields stay server-private
@@ -8,8 +9,13 @@ export const LEGACY_PUBLIC_FIELDS=Object.freeze([
  'migrationReceipt','tutorialV2','catalog','items','types','colors','typeChart'
 ]);
 
+/**
+ * @param {Record<string,unknown>|null|undefined} source
+ * @returns {Record<string,unknown>}
+ */
 export function legacyAdventurePublicView(source){
+ /** @type {Record<string,unknown>} */
  const result={};
- for(const key of LEGACY_PUBLIC_FIELDS)if(Object.hasOwn(source||{},key))result[key]=clone(source[key]);
+ for(const key of LEGACY_PUBLIC_FIELDS)if(source&&Object.hasOwn(source,key))result[key]=clone(source[key]);
  return result;
 }

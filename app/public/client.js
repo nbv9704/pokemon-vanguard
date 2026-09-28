@@ -1,7 +1,7 @@
 import {CompletedBattleResults} from "./js/completed-battle-results.js";
 import {creature} from "./art.js";
 import {BattleAnimator} from "./battle-animation.js";
-import {createBrowserStore} from "./js/store.js";
+import {createBrowserStore} from "./js/store.js";import {ModalFocusManager} from "./js/modal-focus-manager.js";
 import {createRouter,NAV_ITEMS} from "./js/router.js";
 import {AdventureConnection,websocketUrl} from "./js/net.js";
 import {SocialPendingActions} from "./js/social-pending-actions.js";
@@ -35,7 +35,8 @@ const sessionStore=(()=>{try{return sessionStorage;}catch{return null;}})(),acco
 const socialPending=new SocialPendingActions({storage:sessionStore,scope:accountScope});
 const commercePending=new CommercePendingActions({storage:sessionStore,scope:accountScope});
 const id=auth?.playerId||browserStore.playerId,room=auth?.roomId||browserStore.room,router=createRouter();
-let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,joinedReady=false,toastTimer,modalReturnFocus=null,userMenuOpen=false,trainingHubMode=null,mailOpenKey=null,confirmAction=null;
+let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,joinedReady=false,toastTimer,userMenuOpen=false,trainingHubMode=null,mailOpenKey=null,confirmAction=null;
+const modalFocus = new ModalFocusManager();
 let latestView=null,playback=null,playbackVersion=0;
 const settings=browserStore.settings;
 const battleLogDrag=new BattleLogDragController();
@@ -275,8 +276,8 @@ function draw(){
  }
  if(new URLSearchParams(location.search).has("debug"))$("#app").insertAdjacentHTML("beforeend",'<div class="debug">Render '+(performance.now()-t).toFixed(1)+' ms · '+document.querySelectorAll("svg").length+' visible creatures</div>');
 }
-function focusModal(){if(!$("#modal").children.length)return;if(!modalReturnFocus)modalReturnFocus=document.activeElement;queueMicrotask(()=>$("#modal").querySelector('button:not(:disabled),select,input')?.focus({preventScroll:true}));}
-function closeModal(){const returnFocus=modalReturnFocus;modalReturnFocus=null;modalId=null;confirmAction=null;$("#modal").innerHTML="";if(returnFocus?.isConnected)queueMicrotask(()=>returnFocus.focus({preventScroll:true}));}
+function focusModal(){modalFocus.open();}
+function closeModal(){modalId=null;confirmAction=null;$("#modal").innerHTML="";modalFocus.close();}
 function openConfirm({title,message,confirmLabel="Confirm",cancelLabel="Cancel",danger=true,onConfirm}){
  confirmAction=onConfirm;modalId="confirm";$("#modal").innerHTML=`<div class="modalback"><section class="modal battle-confirm-modal" role="alertdialog" aria-modal="true" aria-labelledby="battle-confirm-title" aria-describedby="battle-confirm-copy"><small>CONFIRM ACTION</small><h2 id="battle-confirm-title">${esc(title)}</h2><p id="battle-confirm-copy">${esc(message)}</p><div class="battle-confirm-actions"><button class="ghost" data-action="close">${esc(cancelLabel)}</button><button class="${danger?'danger':'primary'}" data-action="confirm-action">${esc(confirmLabel)}</button></div></section></div>`;focusModal();
 }
@@ -351,7 +352,7 @@ document.addEventListener("change",e=>{
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
 document.addEventListener("input",e=>{const t=e.target;if(t.hasAttribute('data-audio-volume')){audioManager.setVolume(t.value);return;}if(socialView.handleInput(t)||arenaView.handleInput(t)||shopView.handleInput(t)||replicaTeamsView.handleInput(t)||v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t)||updateV3ArchiveInput(t)||boxView?.handleInput(t)||teamBuilder?.handleInput(t))return;trainingEditor?.handleInput(t);});
-document.addEventListener("keydown",e=>{const modalOpen=$("#modal").children.length>0;if(e.code==="Escape"&&userMenuOpen){e.preventDefault();setUserMenu(false);document.querySelector('[data-action="account-menu"]')?.focus({preventScroll:true});return;}if(!modalOpen&&router.current==="battle"&&V?.trainingV3&&gameUi.handleKeyboard(e))return;const managementPage=["teams","collection","recruitment"].includes(router.current)||router.current==='training'&&trainingHubMode==='pokemon';if(!modalOpen&&V?.trainingV3&&managementPage&&managementUi.handleKeyboard(e))return;if(e.code==="Escape"&&modalOpen){e.preventDefault();closeModal();}if(e.code==="Tab"&&modalOpen){const els=[...$("#modal").querySelectorAll("button:not(:disabled),select,input")];const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+document.addEventListener("keydown",e=>{const modalOpen=$("#modal").children.length>0;if(e.code==="Escape"&&modalOpen){e.preventDefault();closeModal();return;}if(e.code==="Escape"&&userMenuOpen){e.preventDefault();setUserMenu(false);document.querySelector('[data-action="account-menu"]')?.focus({preventScroll:true});return;}if(!modalOpen&&router.current==="battle"&&V?.trainingV3&&gameUi.handleKeyboard(e))return;const managementPage=["teams","collection","recruitment"].includes(router.current)||router.current==='training'&&trainingHubMode==='pokemon';if(!modalOpen&&V?.trainingV3&&managementPage&&managementUi.handleKeyboard(e))return;if(modalOpen)modalFocus.handleTab(e);});
 connection.start();
 // Leaving/resizing the scene commits its already-saved outcome and cancels effects.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;completedBattleResults.dismissFinished(V);if(playback)finishPlayback();v3BattleScreen?.cancelPlayback();rankedBattleScreen?.cancelPlayback();trainingPvpBattleScreen?.cancelPlayback();draw();});

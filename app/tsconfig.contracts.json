@@ -15,6 +15,12 @@
   "include": [
     "types/runtime-contracts.d.ts",
     "server/receipt-command-handler.mjs",
-    "server/serial-task-queue.mjs"
+    "server/serial-task-queue.mjs",
+    "server/account-coordinator.mjs",
+    "server/state-broadcast.mjs",
+    "server/player-public-view.mjs",
+    "server/ws-flow-control.mjs",
+    "server/request-quotas.mjs",
+    "types/contract-assertions.ts"
   ]
 }

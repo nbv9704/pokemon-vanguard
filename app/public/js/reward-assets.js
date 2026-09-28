@@ -1,3 +1,4 @@
+import {imageAttributes} from './image-variants.js';
 // One source of truth for assets that are actually present in public/.
 // Display mapping only: registering an image must never grant a ticket or a loot box.
 export const UI_ICONS=Object.freeze({
@@ -24,5 +25,5 @@ export function rankBoxAsset(rank){return RANK_BOX_ASSETS[String(rank||'').toLow
 export function rewardIcon(kind,className=''){
  const src=rewardAsset(kind);if(!src)return '';
  const safeClass=String(className).trim().split(/\s+/).filter(token=>/^[a-zA-Z][\w-]*$/.test(token)).join(' ');
- return `<img class="reward-asset-icon${safeClass?' '+safeClass:''}" src="${src}" alt="" aria-hidden="true">`;
+ return `<img class="reward-asset-icon${safeClass?' '+safeClass:''}" ${imageAttributes(src,{lazy:false})} alt="" aria-hidden="true">`;
 }

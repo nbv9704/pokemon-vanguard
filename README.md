@@ -1,134 +1,67 @@
 # Pokémon Vanguard — local development
 
-The project runs directly with Node.js on the local machine. **R3-101 builds on the locked R3-100 Pokémon Champions Regulation M-A runtime: 272/272 selectable entries (213 non-Mega + 59 Mega), 490 active moves, and now 30 signature move timelines covering all 18 move types.** The old 36-Mon catalog still exists only as a compatibility fixture for legacy tests. See [the presentation roadmap](docs/ui-battle-presentation-roadmap.md) and [the R3-100 release report](docs/r3-100-ma-release-report.md).
+Pokémon Vanguard is a local-first Node.js game with an authoritative HTTP/WebSocket server, a browser client and reviewed V3 Pokémon Champions content. **The supported workflow is Node.js 22+ and npm, not the archived Cloudflare/Bun template.** This README is the entry point for a new checkout; operational details and security limitations live in [the developer workflow](docs/developer-workflow-b26.md).
 
-## Optimization B09 — các công việc độc lập
+## Quickstart (local development only)
 
-Đã bổ sung cache revalidate/gzip/Brotli cho catalog công khai, giới hạn cache text tĩnh, CI Linux/Windows, kiểm thử tự phát hiện file lồng nhau, snapshot inventory và manifest SHA-256 trong ZIP phát hành. Xem [B09 operations](app/docs/optimization-b09-operations.md) và [Optimization Progress](docs/project-optimization-progress-2026-09-26.md).
+Install **Node.js >=22** and **Python >=3.11**, then, in a terminal:
 
-**Lệnh chính từ `app/`:** `npm ci`, `npm run check`, `npm test`, `npm run content:inventory`, `npm run package:full -- --output /outside/PokemonVanguard.zip`; sau đó chạy `npm run release:verify -- /outside/PokemonVanguard.zip`. `npm run test:inventory` liệt kê đầy đủ bài Node được chạy và 3 file cloud `.test.ts` đã lưu làm tài liệu, chưa nằm trong `npm test`. PvP đang đánh sau server restart (#18) tạm hoãn theo ưu tiên batch; tuyệt đối không coi đã hoàn thành.
-
-## Chạy game
-
-Yêu cầu Node.js 22 trở lên. Mở terminal tại thư mục `app`:
-
-```powershell
-npm install
-npm run dev
-```
-
-Mở http://localhost:3100. Hoặc nhấp đúp `start-local.cmd` ở thư mục dự án.
-
-- Sửa HTML/CSS/JS trong `app/public`, rồi tải lại trình duyệt để xem thay đổi.
-- Sửa luật trong `app/logic-src`, rồi chạy `npm run compile:logic`. Khi dùng `npm run dev`, trình biên dịch theo dõi fragment/catalog và chỉ khởi động lại máy chủ sau khi tạo được `app/src/logic.js` và `app/src/v2-engine.mjs` hợp lệ.
-- Dừng bằng Ctrl+C trong terminal đang chạy máy chủ.
-- Chạy `npm run start` nếu không cần tự khởi động lại.
-- Máy chủ chỉ lắng nghe trên máy này, không mở truy cập từ mạng LAN.
-
-## Lưu game
-
-Trạng thái trò chơi lưu tại `app/.local-data/*.json`, không đưa vào Git.
-Trình duyệt lưu mã người chơi để nhận lại đúng bản lưu. Hãy dùng cùng trình duyệt và cùng địa chỉ `localhost:3100` để tiếp tục chơi.
-Có thể sao lưu cả thư mục `.local-data`. Bản lưu trên website cũ không tự chuyển về local.
-
-Khi một save local schema v1 được mở, máy chủ tự tạo bản sao tại `app/.local-data/.migration-backups` rồi nâng lên schema v2. Trận v1 đang diễn ra được giữ nguyên; sau khi kết thúc hoặc đầu hàng, giao diện vẫn hiện kết quả cũ. Bấm **Continue to Vanguard battles** để backup kết quả rồi migrate. Không tạo thêm trận v1 sau khi đã nâng schema.
-
-## Đợt tối ưu B01 (27/09/2026)
-
-Xem [`docs/project-optimization-progress-2026-09-26.md`](docs/project-optimization-progress-2026-09-26.md) và báo cáo audit cùng thư mục. Admin Gift hiện hỗ trợ client campaign ID, retry sau lỗi một phần và manifest audience bất biến. Khi sử dụng Supabase, phải chạy migration `202609260001_atomic_pair_saves.sql` **rồi** `202609260002_admin_campaign_identity.sql` trên môi trường test và xác nhận thành công trước khi cập nhật server production. Không áp dụng migration tự động khi khởi động game.
-
-Gói full source bảo mật không chứa `content-candidates`/raw fetch, saves hoặc secret. Bộ validation và tests đọc dữ liệu **đã review** trong `app/content-validation` (20 JSON với manifest SHA-256), nên có thể chạy `npm run check` sau khi giải nén và cài dependency (`npm ci`). Các lệnh fetch/build candidate dùng cho biên tập nội dung cần source authoring riêng.
-
-## Kiểm tra
-
-```powershell
+```sh
+cd app
+npm ci
 npm run check
 npm test
-npm run simulate -- --seed 100 --matches 10000
-npm run simulate:economy -- --seed 424242 --cycles 100000
-npm run release:validate
-npm run release:matrix
 ```
 
-`npm run check` now verifies generated logic, compatibility content, source syntax, **490/490 Move FX timelines (30 signature + 460 parameterized + 0 legacy), 272/272 presentation-asset resolution, 277 foundation forms, 59/59 M-A Mega relations, exact 272-entry M-A scope and the R3-100 offline/runtime release gate**. `npm run release:matrix` additionally spawns all 213 non-Mega entries in both Single and Double scenarios, exercises all 59 M-A Mega presentation paths and checks every active move presentation commit.
-
-Tạo và kiểm tra một candidate Pokémon Champions mới trong `app`:
-
-```powershell
-npm run pokemon:fetch -- pv-ma-YYYY-MM-DD
-npm run pokemon:candidate -- pv-ma-YYYY-MM-DD m-a
-npm run pokemon:validate -- pv-ma-YYYY-MM-DD
-```
-
-`pokemon:fetch` tạo snapshot bất biến kèm byte length, HTTP metadata và SHA-256. Lệnh sẽ từ chối ghi đè snapshot cùng ID. `pokemon:candidate` chỉ đọc snapshot local, chuẩn hóa form/learnset/Ability/item/banner và tạo báo cáo unresolved. `pokemon:validate` kiểm lại hash nguồn, quan hệ catalog, 18 hệ, base stats và ghi `normalized/candidate-report.md`. Candidate nằm trong `app/content-candidates`, không thay `app/content` và không được Git theo dõi trước khi review/promotion.
-
-Kiểm tra migration trên **một bản sao** của save, không ghi thay đổi:
-
-```powershell
-npm run migrate:save -- --dry-run --input D:\duong-dan\ban-sao-save.json
-```
-
-Storage adapter có backup/restore và migration v1→v2 được kiểm thử tự động. Các fragment có tên theo trách nhiệm trong `app/logic-src` chứa battle engine v2: build, damage, phase/queue, conditions, Ability/item modifiers, move effects, vòng đời, turn resolution, events và invariants. `src/v2-engine.mjs` là adapter server được sinh từ chính các fragment này. Battle Arena dùng v2 cho Team Preview, battle và reward có receipt chống cộng trùng.
-
-The battle simulation uses four local workers and writes CSV/JSON reports. `simulate:economy` now tests 100,000 equal-pool Recruitment cycles, eight unique offers and uniform permanent affordability. Neither simulation reads or writes `app/.local-data`.
-
-Bộ kiểm tra local xác nhận phục vụ trang, catalog chuyển tiếp 36 loài, nhận thư một lần, Recruitment/Trial, đấu đơn/đôi, chặn người xem sửa game và giữ tiến trình sau khi khởi động lại máy chủ.
-
-## Cấu trúc
-
-- `app/local-server.mjs`: máy chủ HTTP/WebSocket local và lưu file.
-- `app/logic-src/`: nguồn luật có thứ tự; `app/src/logic.js` là file được sinh tự động và không sửa trực tiếp.
-- `app/content-import/`: snapshot, Next/RSC parser, normalizer và validator cho candidate Pokémon Champions.
-- `app/server/legacy/logic-v1.js`: bản luật v1 đóng băng để kiểm tra tương thích và kết thúc trận cũ khi migration được bật.
-- `app/public/js/store.js`, `router.js`, `net.js`: trạng thái trình duyệt, điều hướng và kết nối WebSocket được tách khỏi phần render trong `client.js`.
-- `app/public/js/training-editor.js`: editor build v2; catalog lấy từ `/api/v2/catalog`, save được server kiểm và lưu atomic.
-- `app/public/js/box-view.js`: Archive 36 loài với ownership permanent/trial/locked và bộ lọc catalog v2.
-- `app/public/js/team-builder.js`, `team-analysis.js`: đội sáu slot, kiểm regulation, phân tích matchup và blueprint JSON.
-- `app/public/js/recruitment-view.js`: eight equal-pool offers, seven-day Trial and permanent coin/ticket actions.
-- `app/server/v2-recruitment*.mjs`, `clock.mjs`: UTC offer cycle, Trial expiry/permanent upgrade and server-owned monotonic clock.
-- `app/server/v2-economy*.mjs`, `v2-mail.mjs`: economy config, ledger, action receipts, Mail and Recruitment simulation.
-- `app/server/v2-team-actions.mjs`: luật team và import blueprint authoritative; blueprint không thể cấp Mon hoặc tiền.
-- `app/server/v2-regulations.mjs`, `v2-ai.mjs`: regulation Team Preview và AI Easy/Normal/Hard với nguồn dữ liệu đã lọc.
-- `app/server/v2-battle-actions.mjs`, `v2-battle-factory.mjs`, `v2-battle-view.mjs`: action authoritative, dựng trận và projection riêng cho client.
-- `app/server/v2-settlement.mjs`, `v2-release.mjs`: reward receipt, đồng bộ ví, tutorial và migration release.
-- `app/server/v2-damage-inspector.mjs`: calculator read-only chỉ dành cho Training sandbox.
-- `app/server/v2-simulation.mjs`, `app/scripts/simulate-v2*.mjs`: runner cân bằng Single/Double chạy song song và xuất báo cáo.
-- `app/public/js/v2-battle-*.js`: Team Preview, arena, command/replacement renderer và controller battle v2.
-- `app/public/js/damage-inspector.js`, `v2-tutorial.js`: Damage Inspector cho saved/draft build và checklist vòng chơi Vanguard.
-- `app/public/client.js`: giao diện và điều khiển.
-- `app/public/art.js`: 36 hình minh họa SVG gốc.
-- `app/public/style.css`: giao diện responsive.
-- `app/tests/local.test.mjs`: kiểm tra tích hợp local.
-- `app/package.cloud.json`, `src/room.ts`, `src/worker.ts`: bản cấu hình/cloud cũ được giữ để tham khảo; không dùng khi chạy local.
-
-## Nội dung phiên bản đầu
-
-The transition build still contains 36 original fixture species, 48 moves, 24 Abilities and 13 held items so completed engine work remains testable. Production content will use the reviewed M-A Pokémon roster, the canonical type chart and locally cached Showdown sprites. Recruitment already uses eight offers, a seven-day Trial, a uniform permanent coin price and recruitment tickets; rarity summoning is disabled for schema-v2 saves.
-
-Pokémon front/back/artwork coverage is 272/272 from the local PokéAPI-derived asset pack, and held-item/rank assets remain local. Pokémon Vanguard also standardizes battle metadata on the **Pokémon Legends: Arceus (LA)** type-symbol family: 18 circular `* icon LA` sprites, 18 horizontal `*IC LA` strips and the matching 50×50 Physical/Special/Status category sprites. Run `cd app && npm run assets:ui-icons` to vendor all 39 third-party UI sprites into `public/assets/ui/`. If they have not been vendored yet, the app uses a same-origin server proxy as a development/deployment fallback; no Bulbagarden URL is exposed in public browser code. Review the sprite fair-use/redistribution terms before a public release.
-
-## Hoạt ảnh chiến đấu
-
-- Mỗi chiêu phát theo đúng thứ tự hành động từ máy chủ: lấy đà, tung đòn, va chạm, số sát thương và thanh máu.
-- Hiệu ứng theo 12 hệ, chiêu diện rộng đánh đồng thời nhiều mục tiêu; có hồi máu, lá chắn, tăng sức mạnh, thời tiết, đổi Mon và bị hạ.
-- Chọn tốc độ 1×/2× ngay trên sân đấu. Nút Skip bỏ qua phần diễn nhưng giữ nguyên kết quả đã lưu.
-- Settings → Reduced motion tắt chuyển động/hạt sáng; tùy chọn giảm chuyển động của hệ điều hành cũng được tôn trọng.
-- `app/public/battle-animation.js` và `.css`: bộ phát hoạt ảnh Canvas/Web Animations; `src/logic.js` xuất sự kiện và ảnh chụp trạng thái từng hành động.
-- `npm test` kiểm tra đồng bộ sát thương/HP, mục tiêu đấu đôi, 12 hệ, miễn nhiễm, đỡ đòn, hồi máu, thời tiết, đổi Mon, bị hạ và tương thích bản lưu cũ.
-
-## Admin Console
-
-Pokémon Vanguard includes a server-authorized admin surface at `/admin.html`. It is not enabled by a client-side flag: the signed-in account must be present in the server environment variable `ADMIN_ACCOUNT_IDS`.
-
-Example `.dev.vars` configuration:
+To play locally, create `app/.dev.vars` on your own machine (never add it to source control) with **only these development settings**:
 
 ```text
-ADMIN_ACCOUNT_IDS=11111111-1111-4111-8111-111111111111,22222222-2222-4222-8222-222222222222
-ADMIN_ALLOW_LOCAL_BETA=false
+AUTH_SESSION_SECRET=<unique-random-string-at-least-32-characters>
+AUTH_ALLOW_LOCAL_BETA=true
 ```
 
-Use Supabase account UUIDs for production. `ADMIN_ALLOW_LOCAL_BETA=true` is intended only for local development. The admin console can inspect player saves; manage wallet, held-item and Pokémon ownership; inspect teams/builds; edit/reset Ranked state; complete/reset Missions and Achievements; create backups; disconnect or suspend accounts; stop active Ranked/Friendly/PvE activity as an administrative no-contest; and send claimable Mailbox gift campaigns to one trainer, a selected list, online trainers, a rank cohort, or the entire server. Gift campaigns can contain VP, Crystals, Recruitment Tickets, multiple held items and multiple Pokémon. Each campaign also selects a mail-retention type and can override separate unread and after-read lifetimes; opening mail shortens retention and expired rewards cannot be claimed. Admin-only notes/audit metadata and the sending admin UUID are never included in the normal player view.
+Replace the placeholder with a freshly generated random secret; the literal placeholder is rejected. Do not copy the sample Supabase keys or `PUBLIC_ORIGIN=https://play.example.com` from `.dev.vars.example` into a local configuration. Run `npm run dev` from `app/` and visit `http://localhost:3100`. The local beta login is strictly for trusted development; do not expose it to the Internet or use it with real accounts. To stop, press Ctrl+C. `npm start` runs without the dev file watchers.
 
-### PvP match lifecycle
+`app/.dev.vars.example` documents **optional** account, reverse-proxy and quota environment settings. Real Supabase/OAuth deployment additionally needs a correctly configured account backend, an HTTPS canonical `PUBLIC_ORIGIN`, verified migrations and a separate integration/security acceptance process; having local tests pass does not certify that deployment. See [operations](docs/developer-workflow-b26.md#account-mode-and-data-safety).
 
-Ranked and Friendly PvP use server-authoritative decision clocks: 45 seconds for COMMAND/REPLACE, 90 seconds for Team Preview, and a 90-second reconnect grace. Missed decisions receive a deterministic legal fallback action; a single expired disconnect forfeits to the connected trainer, while simultaneous disconnect expiry is no-contest. Friendly waiting rooms expire after 15 minutes and finished in-memory results are cleaned after 10 minutes. These live coordinator states remain single-process beta state and are not yet restart-persistent.
+## Where to change code
+
+| Responsibility | Source of truth | Notes |
+| --- | --- | --- |
+| V3 battle rules | `app/rules-v3/` and `app/mechanics-v3/` | Deterministic mechanics; test before changing rule outcomes. |
+| Authoritative runtime | `app/server/`, `app/local-server.mjs` | Actions, storage, Ranked and WebSocket lifecycle. |
+| Browser interface | `app/public/` | Views, route CSS, responsive assets; no authoritative battle calculation. |
+| Active content | `app/content-active/active.json` and reviewed catalogs | Pin snapshot hashes and preserve supported historical versions. |
+| V2 compatibility logic | `app/logic-src/` | Run `npm run compile:logic`; **never edit generated** `app/src/logic.js` or `app/src/v2-engine.mjs`. |
+| Old V1 engine | `app/server/legacy/logic-v1.js` | Frozen migration/active-old-battle compatibility. |
+| Legacy cloud template | `app/package.cloud.json`, `app/bun.lock`, cloud TS files | Historical reference, **not** a supported local build/deploy path. |
+
+Read [`docs/code-structure.md`](docs/code-structure.md) for module boundaries and [`app/AGENTS.md`](app/AGENTS.md) for contributor constraints. **Do not rename** `aether-*` local storage keys or `.aether-window` CSS compatibility classes just to change branding; doing so can disconnect existing saves or alter battle UI.
+
+## Tests and release
+
+From `app/`:
+
+```sh
+npm run check                    # source, content, asset, lint and type gates
+npm run test:inventory           # runnable Node tests vs archived cloud tests
+npm test                         # complete Node test suite
+npm run assets:responsive:validate
+npm run content:inventory          # pins historical hashes and active-only runtime scope
+npm run package:full -- --output /absolute/path/outside-project/PokemonVanguard.zip
+npm run release:verify -- /absolute/path/outside-project/PokemonVanguard.zip
+npm run package:full -- --profile runtime --output /absolute/path/outside-project/PokemonVanguard_runtime.zip
+npm run release:verify -- /absolute/path/outside-project/PokemonVanguard_runtime.zip
+```
+
+Use an **absolute output path outside the project** for the ZIP (for example `D:\Releases\PokemonVanguard.zip` on Windows). The full source ZIP preserves all 35 reviewed catalog snapshots. The optional smaller runtime-source ZIP includes only the active catalog; retained historical snapshots and immutable hashes remain in the full source ZIP. Both have a SHA-256 manifest and exclude `.local-data`, secrets and raw candidate/backup data; it does not include `node_modules`. After unpacking, run `npm ci`, `npm run check`, then `npm test` in its `app/`. Never test migrations against your only copy of a save. Python image regeneration is optional and separately requires Pillow; prebuilt image variants are already included. Details and historical restoration instructions: [`docs/catalog-retention-b27.md`](docs/catalog-retention-b27.md). Note: the 39 third-party UI symbols are NOT locally mirrored in the distributed source; their existing network fallback still needs connectivity and rights review before public distribution.
+
+## Current scope and tracked limitations
+
+The [optimization progress](docs/project-optimization-progress-2026-09-26.md) is authoritative for completed and unfinished work, including limitations of the latest batch. The [audit and roadmap](docs/project-optimization-audit-2026-09-26.md) describes **planned** work, not promises that every item is shipped. In particular, mid-match PvP survival across server restarts and production Supabase/multi-process verification are not complete. The UI image variants have a checksum/pixel-integrity gate but still require real-browser DPR1/2 and layout-shift acceptance for optimization #22; artwork redistribution rights also need independent review before a public release.
+
+For the older detailed V2-era explanations, see [the archived pre-B26 README](docs/archive/README-pre-B26.md); those instructions are preserved as historical context **only** and may refer to obsolete defaults or counts. For current source ownership and commands, use this README and the developer workflow above.
+
+Operations diagnostics (B30): `/health/live` is independent from `/health/ready`; the latter makes a throttled read-only provider check. Admin-only sanitized `/api/admin/observability` and repeatable synthetic benchmarks are described in [`app/docs/operational-observability-b30.md`](app/docs/operational-observability-b30.md). Enable `PV_OPS_JSON_LOG=true` only with controlled, rotating external log retention.
+
+Admin cloud deployment (B29): apply reviewed migration `app/supabase/migrations/202609280003_admin_reporting.sql` **before** running the updated server against a Supabase project. See [`app/docs/admin-reporting-b29.md`](app/docs/admin-reporting-b29.md) for permissions, staging validation and safe rollback.

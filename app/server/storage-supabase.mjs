@@ -48,13 +48,21 @@ export class SupabaseAdventureStorage{
  async load(userId){const response=await this.request(`game_saves?user_id=eq.${encodeURIComponent(userId)}&select=state,revision&limit=1`),rows=await response.json(),row=rows[0];this.revisions.set(userId,row?Number(row.revision):null);return row?.state??null;}
  async profile(userId){const response=await this.request(`profiles?user_id=eq.${encodeURIComponent(userId)}&select=user_id,display_name,avatar_url,created_at,updated_at&limit=1`),rows=await response.json(),row=rows[0];return row?{userId:row.user_id,displayName:row.display_name,avatarUrl:row.avatar_url,createdAt:row.created_at,updatedAt:row.updated_at}:null;}
  async listAccounts({search='',limit=50,offset=0}={}){
-  const take=Math.min(100,Math.max(1,Math.trunc(limit)||50)),skip=Math.max(0,Math.trunc(offset)||0),params=new URLSearchParams({select:'user_id,display_name,avatar_url,created_at,updated_at',order:'updated_at.desc',limit:String(take),offset:String(skip)}),query=String(search||'').trim().replace(/[,*()]/g,'').slice(0,80);
-  if(query){if(UUID.test(query))params.set('user_id',`eq.${query}`);else params.set('display_name',`ilike.*${query}*`);}
-  const response=await this.request(`profiles?${params}`,{headers:{Prefer:'count=exact'}}),profiles=await response.json(),range=response.headers.get('content-range')||'',total=Number(range.split('/')[1]);
-  if(!profiles.length)return {total:Number.isFinite(total)?total:0,accounts:[]};
-  const ids=profiles.map(row=>row.user_id),saveParams=new URLSearchParams({select:'user_id,schema_version,revision,updated_at,state'});saveParams.set('user_id',`in.(${ids.join(',')})`);
-  const saveResponse=await this.request(`game_saves?${saveParams}`),saves=await saveResponse.json(),byId=new Map(saves.map(row=>[row.user_id,row]));
-  return {total:Number.isFinite(total)?total:profiles.length,accounts:profiles.map(row=>{const save=byId.get(row.user_id);return {userId:row.user_id,displayName:row.display_name,avatarUrl:row.avatar_url,createdAt:row.created_at,updatedAt:save?.updated_at||row.updated_at,schemaVersion:save?.schema_version||null,revision:save?.revision||0,state:save?.state||null};})};
+  const query=String(search||'').trim().slice(0,80),take=Math.min(100,Math.max(1,Math.trunc(limit)||50)),skip=Math.min(100000,Math.max(0,Math.trunc(offset)||0));
+  const response=await this.request('rpc/admin_account_page',{method:'POST',body:JSON.stringify({p_search:query,p_limit:take,p_offset:skip})});
+  const rows=await response.json();if(!Array.isArray(rows))throw new Error('STORAGE_ADMIN_PAGE_INVALID');
+  return {total:rows.length?Number(rows[0].total):0,accounts:rows.map(row=>({userId:row.user_id,displayName:row.display_name,avatarUrl:row.avatar_url,createdAt:row.created_at,updatedAt:row.updated_at,schemaVersion:row.schema_version,revision:row.revision,metrics:row.metrics}))};
+ }
+ async overviewAggregate(){
+  const response=await this.request('rpc/admin_account_aggregate',{method:'POST',body:'{}'}),data=await response.json(),row=Array.isArray(data)?data[0]:data;
+  if(!row||!Number.isSafeInteger(Number(row.players))||![row.total_vp,row.total_crystals].every(v=>Number.isSafeInteger(Number(v))))throw new Error('STORAGE_ADMIN_AGGREGATE_INVALID');
+  return {players:Number(row.players),suspended:Number(row.suspended),totalVp:Number(row.total_vp),totalCrystals:Number(row.total_crystals),rankDistribution:row.rank_distribution||{}};
+ }
+ async listAudienceIds({after=null,limit=250,tierId=null}={}){
+  if(after!==null&&!UUID.test(after))throw new Error('INVALID_AUDIENCE_CURSOR');
+  const response=await this.request('rpc/admin_gift_audience_page',{method:'POST',body:JSON.stringify({p_after:after,p_limit:Math.min(250,Math.max(1,limit)),p_tier_id:tierId})});
+  const rows=await response.json();if(!Array.isArray(rows)||rows.some(row=>!UUID.test(row.user_id)))throw new Error('STORAGE_AUDIENCE_PAGE_INVALID');
+  return rows.map(row=>row.user_id);
  }
  async save(userId,state){
   if(!this.revisions.has(userId))throw Object.assign(new Error('Cloud save must be loaded before it can be written'),{code:'STORAGE_REVISION_REQUIRED'});
@@ -90,4 +98,6 @@ export class HybridAdventureStorage{
  restore(room,backupFile){return this.target(room).restore(room,backupFile);}
  profile(room){return this.target(room).profile?.(room)??null;}
  listAccounts(options){const target=this.remote.configured?this.remote:this.local;return target.listAccounts(options);}
+ overviewAggregate(){return this.remote.configured?this.remote.overviewAggregate():null;}
+ listAudienceIds(options){return (this.remote.configured?this.remote:this.local).listAudienceIds(options);}
 }

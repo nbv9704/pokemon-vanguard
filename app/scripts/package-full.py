@@ -57,10 +57,62 @@ def walk(directory, project, excluded):
             excluded.append((rel.as_posix(), 'generated-manifest'))
 
 
-def collect(project, excluded=None):
+def catalog_policy(project, profile):
+    """Fail closed on pinned catalog drift; runtime may omit ONLY reviewed history."""
+    base = project / 'app' / 'content-active'
+    retention_path = base / 'retention-manifest.json'
+    if not retention_path.exists():
+        if profile == 'runtime':
+            raise ValueError('Runtime package requires a reviewed catalog retention manifest')
+        return set()
+    policy = json.loads(retention_path.read_text(encoding='utf8'))
+    pointer = json.loads((base / 'active.json').read_text(encoding='utf8'))
+    entries = policy.get('catalogs', [])
+    if policy.get('schemaVersion') != 1 or policy.get('policy') != 'catalog-retention-b27' or not entries:
+        raise ValueError('Invalid catalog retention policy')
+    active_version = pointer.get('catalogVersion', '')
+    if pointer.get('catalogFile') != f'catalogs/{active_version}/catalog.json':
+        raise ValueError('Invalid active catalog path')
+    skipped, names = set(), set()
+    for entry in entries:
+        version = entry.get('version', '')
+        if (not isinstance(version, str) or not version.startswith('pv-') or
+                not all(ch.islower() or ch.isdigit() or ch == '-' for ch in version) or
+                version in names):
+            raise ValueError('Invalid or duplicate catalog ID')
+        names.add(version)
+        expected = 'active-runtime' if version == active_version else 'source-history'
+        if entry.get('classification') != expected:
+            raise ValueError(f'Stale classification for {version}')
+        candidate = base / 'catalogs' / version / 'catalog.json'
+        if link_or_junction(candidate) or link_or_junction(candidate.parent):
+            raise ValueError(f'Unsafe catalog link {version}')
+        body = candidate.read_bytes()
+        if entry.get('sha256') != hashlib.sha256(body).hexdigest() or entry.get('bytes') != len(body):
+            raise ValueError(f'Pinned catalog changed: {version}')
+        if expected == 'active-runtime':
+            if entry['sha256'] != pointer.get('sha256'):
+                raise ValueError('Active pointer hash differs from retention manifest')
+        else:
+            skipped.add((Path('app') / 'content-active' / 'catalogs' / version / 'catalog.json').as_posix())
+    actual = {p.parent.name for p in (base / 'catalogs').glob('*/catalog.json')}
+    if actual != names:
+        raise ValueError('Catalog directory set differs from reviewed retention manifest')
+    if active_version not in names:
+        raise ValueError('No active catalog in retention manifest')
+    return skipped
+
+
+def collect(project, excluded=None, profile='source', historical_paths=None):
     if not (project / 'app' / 'package.json').is_file():
         raise ValueError(f'Not a full Pokémon Vanguard project: {project}')
-    return list(walk(project, project, excluded if excluded is not None else []))
+    paths = list(walk(project, project, excluded if excluded is not None else []))
+    if profile == 'runtime':
+        history = historical_paths if historical_paths is not None else catalog_policy(project, profile)
+        if excluded is not None:
+            excluded.extend((name, 'runtime-history-source-only') for name in sorted(history))
+        paths = [(full, rel) for full, rel in paths if rel.as_posix() not in history]
+    return paths
 
 
 def zipinfo(name):
@@ -76,13 +128,15 @@ def main():
     parser.add_argument('--project-root', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--output', type=Path)
     parser.add_argument('--dry-run', action='store_true', help='Print included files and excluded paths/reasons without creating ZIP')
+    parser.add_argument('--profile', choices=['source', 'runtime'], default='source', help='runtime removes only reviewed historical catalogs; source retains all')
     args = parser.parse_args()
     project = args.project_root.resolve()
     output = (args.output or (project.parent / 'PokemonVanguard_full_safe.zip')).resolve()
     if output.is_relative_to(project):
         raise ValueError('Write archive outside project root to avoid archiving the output itself.')
     excluded = []
-    files = collect(project, excluded)
+    historical = catalog_policy(project, args.profile)
+    files = collect(project, excluded, args.profile, historical)
     if not (project / 'app' / '.dev.vars.example').is_file():
         raise ValueError('Missing safe environment template app/.dev.vars.example')
     if args.dry_run:
@@ -98,7 +152,7 @@ def main():
             name = (Path(ARCHIVE_ROOT) / rel).as_posix()
             archive.writestr(zipinfo(name), data, compress_type=ZIP_DEFLATED, compresslevel=6)
             records.append({'path': rel.as_posix(), 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
-        body = json.dumps({'schemaVersion': 1, 'kind': 'source', 'root': ARCHIVE_ROOT, 'files': records}, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf8')+b'\n'
+        body = json.dumps({'schemaVersion': 1, 'kind': args.profile, 'root': ARCHIVE_ROOT, 'files': records}, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf8')+b'\n'
         archive.writestr(zipinfo(f'{ARCHIVE_ROOT}/{MANIFEST}'), body, compress_type=ZIP_DEFLATED, compresslevel=6)
     with ZipFile(output) as archive:
         bad = archive.testzip()
@@ -106,7 +160,7 @@ def main():
         names = archive.namelist()
         if any(private(Path(name).name) or any(part.lower() in SKIP_DIRS for part in Path(name).parts) for name in names):
             raise ValueError('Unsafe private path in resulting archive')
-    print(f'Full project ZIP ready: {output.name} ({len(files)+1} files, {output.stat().st_size:,} bytes)')
+    print(f'{args.profile.title()} project ZIP ready: {output.name} ({len(files)+1} files, {output.stat().st_size:,} bytes)')
     print('Included content SHA-256 manifest; excluded secrets, player saves, logs and caches.')
 
 

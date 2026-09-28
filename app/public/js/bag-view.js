@@ -1,7 +1,8 @@
+import {imageAttributes} from './image-variants.js';
 import {itemSpriteStyle} from './item-sprites.js';
 
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
-const image=(src,alt)=>`<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">`;
+const image=(src,alt)=>`<img ${imageAttributes(src)} alt="${esc(alt)}">`;
 export class BagView{
  constructor({sendAction,onChange,createActionId=()=>`bag:${Date.now()}`}){this.send=sendAction;this.onChange=onChange;this.createActionId=createActionId;this.tab='tickets';this.selected='recruitment';}
  render(state){

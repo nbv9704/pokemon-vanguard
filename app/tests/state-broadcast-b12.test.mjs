@@ -22,3 +22,8 @@ test('serialized bounded send reuses the exact frame and keeps slow-consumer pro
  assert.equal(sendSerializedBounded(socket,encoded,options),false);
  assert.equal(socket.terminated,true);assert.deepEqual(drops,['backpressure']);
 });
+
+test('broadcast rejects undefined projection before sending a partial frame',()=>{
+ const sent=[];assert.throws(()=>broadcastSharedFrames([[{},'owner']],{project:()=>undefined,send:(_s,frame)=>sent.push(frame)}),/JSON-serializable/);
+ assert.deepEqual(sent,[]);
+});
