@@ -31,6 +31,9 @@ transport archive rather than the repository source tree.
   fingerprinted responsive variants at DPR2, and the inspected browser log had no
   warning or error entries.
 - `git diff --check`: PASS.
+- Hosted CI run [36432772154](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36432772154):
+  Ubuntu validation, Windows validation and `release-smoke` all PASS for commit
+  `33f03f2`.
 
 Review of the new account locking, atomic Social pair persistence, offline public
 profile cache, Admin aggregate/keyset RPC contracts, readiness gate, bounded

@@ -422,6 +422,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Rà soát các boundary mới: FIFO multi-account coordinator, Social `savePair` fail-closed/profile offline, Admin aggregate/keyset campaign, storage port, operation journal/readiness và asset retention. Không phát hiện lỗi mới có thể sửa an toàn mà không làm thay đổi phạm vi đã chốt.
 - **Nghiệm thu official checkout:** `npm run check` PASS; 12 file test trọng điểm B24–B31 **50/50 PASS**; full `npm test` **1.436/1.436 PASS trên 229 file**, 0 fail/skip/todo; `git diff --check` PASS. `/health/live` và `/health/ready` đều HTTP 200, `no-store`.
 - **Desktop browser smoke với save temp:** Home, Shop, Bag, Arena và Profile render, socket `ONLINE`; Bag/reward chọn asset responsive fingerprinted ở DPR2; không có warning/error đã ghi nhận. Giao dịch Shop thử chỉ tác động save tạm sẽ bị xóa khi dừng harness.
+- **Hosted CI:** run [`36432772154`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36432772154) cho commit `33f03f2`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - Bằng chứng chi tiết: `app/docs/b31-official-integration-review.md`. #22 vẫn `IN PROGRESS` vì chưa có browser/AT matrix và quyền artwork; #23 vẫn `TODO`. **Tổng không đổi: 19 DONE, 13 IN PROGRESS, 1 TODO, 1 DEFERRED, 0 BLOCKED.**
 
 ## Cách cập nhật file này
