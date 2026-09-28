@@ -45,6 +45,10 @@ The corrected test passes alone (8/8) and in the cross-domain focused run
 - Real-browser smoke with a disposable save: Home, Shop, Training, immersive
   Arena, account menu and Settings render and navigate with the socket ONLINE.
   The browser tab, server and temporary save were removed afterward.
+- GitHub Actions run
+  [`36474757624`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36474757624)
+  for commit `876bf7c` passed Ubuntu validation, Windows validation and
+  `release-smoke`.
 - `git diff --check`: PASS. No player save, secret, database migration, catalog
   or combat algorithm was changed by the integration review.
 

@@ -466,6 +466,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Review phát hiện fixture B34 so native Windows path với manifest dùng `/`, làm nhánh partial icon mirror có thể không được chạy. Chuẩn hóa separator trong test; không thay asset hoặc nới rights gate. Test riêng **8/8 PASS**, focused HTTP/WS/Ranked/PvP/UI/image rights **72/72 PASS**.
 - `npm run check` PASS: 400 module/1.159 cạnh local/0 cycle, 476 production module tối đa 345/360 dòng, 35 CSS layer và 45 assertion module. Full `PV_TEST_BATCH_SIZE=6 npm test` **1.468/1.468 PASS trên 234 file**, 0 fail/skip/todo.
 - Browser smoke thật với save tạm: Home, Shop, Training, immersive Arena, account menu và Settings render/điều hướng, socket `ONLINE`; tab/server/save tạm đã xóa. Đây không thay thế full DPR/a11y/rights matrix, nên #22/#31 giữ `IN PROGRESS`.
+- **Hosted CI:** run [`36474757624`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36474757624) cho commit `876bf7c`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - Chi tiết: `app/docs/b35-official-integration-review.md`. **Tổng giữ nguyên: 21 DONE / 12 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED.**
 
 ## Cách cập nhật file này
