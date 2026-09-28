@@ -9,8 +9,9 @@ export {
  typeEffectivenessWithHeldItems,speedWithHeldItems,statWithHeldItems,accuracyWithHeldItems,
  healingWithHeldItems,criticalChanceWithHeldItems,validateChoiceItemMove,applyChoiceItemMoveLock
 } from './item-hooks/modifiers.mjs';
+export {resolveHpThresholdItems} from './item-hooks/threshold.mjs';
 export {
- applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,resolveHpThresholdItems,
+ applyResistanceBerryToMoveDamage,applySurvivalItemToMoveDamage,
  resolvePostDamageItems,resolveContactDamageItems,resolveAfterMoveItems,resolveTerrainSeedItems,
  resolvePpRestoreItems,resolveEntryItems,prepareOneShotMoveDamageItem,prepareConsecutiveMoveItem,
  resolveFlinchItems,resolveReactiveSwitchItems,prepareTurnOrderItems

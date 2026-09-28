@@ -1,6 +1,6 @@
 import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {nextRandom} from '../rules-v3/rng.mjs';
-import {applyHazard} from './hazards.mjs';
+import {applyHazard} from './hazard-state.mjs';
 import {resolveNegativeStageResetItems} from './item-hooks.mjs';
 import {applyWeather} from './weather.mjs';
 import {abilityStageChange} from './ability-stage-change.mjs';

@@ -1,5 +1,5 @@
 import {roomActive} from './rooms.mjs';
-import {heldItemEffectActive} from './item-hooks.mjs';
+import {heldItemEffectActive} from './item-hooks/state.mjs';
 import {effectiveWeatherId} from './ability-field.mjs';
 import {transientAbilityProfile} from './transient-ability-profiles.mjs';
 

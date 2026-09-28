@@ -2,7 +2,7 @@ import {activeUnits,clone,unitById} from '../rules-v3/battle-state.mjs';
 import {calculateLevel50Stats} from '../rules-v3/stats.mjs';
 import {applyHpGroup} from '../rules-v3/lifecycle.mjs';
 import {effectiveWeatherId} from './ability-field.mjs';
-import {resolveHpThresholdItems} from './item-hooks.mjs';
+import {resolveHpThresholdItems} from './item-hooks/threshold.mjs';
 
 const abilityEffects=(unit,kind)=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind==='ability'&&effect.kind===kind);
 const maxHp=unit=>unit?.maxHp??unit?.stats?.hp;
