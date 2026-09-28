@@ -76,6 +76,13 @@ The complete before/after SHA-256 and pixel-difference measurements are stored
 in `docs/css-cascade-visual-b32.json`. Screenshots themselves were temporary QA
 artifacts and contained only synthetic Local Beta data.
 
+## Hosted verification
+
+GitHub Actions run
+[`36438404463`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36438404463)
+for source commit `4476b4f` passed `validate (ubuntu-latest)`,
+`validate (windows-latest)` and `release-smoke`.
+
 ## Scope limits
 
 This batch establishes and enforces cascade ownership; it does not bundle or

@@ -431,6 +431,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Inventory/gate:** `npm run css:cascade:validate` nằm trong `npm run check`, chặn stylesheet thiếu/thừa manifest, layer envelope sai, `@import` ẩn, entry order sai và `!important` tăng quá baseline 1.062. Baseline ghi 3.155 selector block, 67 selector trùng xuyên file và 6 root/theme token rule; không xóa cơ học specificity debt cũ.
 - **Browser parity:** chụp trước/sau bằng save Local Beta tạm cho Bag, Shop, Training, Arena, Battle Practice và modal surrender tại **360/768/1366/1920 px**; bật Reduced motion, High contrast và Larger text qua Settings thật ở 1366 px. **27/27 capture PASS** khi đối chiếu layout, clipping, nội dung, focus và breakpoint. Training/Arena byte-identical cả bốn width; các PNG battle có frame sprite/focus paint không deterministic nên không khai là byte-identical. Báo cáo hash/pixel: `app/docs/css-cascade-visual-b32.json`.
 - **Nghiệm thu:** focused cascade/UI/PvP **58/58 PASS**; `npm run check` PASS; full `npm test` **1.439/1.439 PASS trên 230 file**, 0 fail/skip/todo. Tài liệu: `app/docs/css-cascade-b32.md`.
+- **Hosted CI:** run [`36438404463`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36438404463) cho commit `4476b4f`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Kết luận:** #23 `DONE`; bundle/minify và giảm dần 1.062 `!important` là tối ưu sau parity, không phải phần còn thiếu của hợp đồng layer. **Tổng: 20 DONE, 13 IN PROGRESS, 0 TODO, 1 DEFERRED, 0 BLOCKED.**
 
 ## Cách cập nhật file này
