@@ -63,9 +63,9 @@ test('Shop and Recruitment use explicit commerce outbox; header does not call so
  assert.match(client,/new MissionView\(\{sendAction:commerceRetry\.send/);
  assert.match(client,/new BagView\(\{sendAction:commerceRetry\.send/);
  assert.match(client,/admin-gift"\)commerceRetry\.send/);
- assert.match(client,/new TrainingEditor\(\{fetchImpl:.*sendAction:commerceRetry\.send/);
- assert.match(client,/new TeamBuilder\(\{onChange:redrawWorkspace,sendAction:commerceRetry\.send/);
- assert.match(client,/new V2BattleScreen\(\{onChange:.*sendAction:commerceRetry\.send/);
+ assert.match(client,/new (?:modules\.)?TrainingEditor\(\{fetchImpl:.*sendAction:commerceRetry\.send/);
+ assert.match(client,/new (?:modules\.)?TeamBuilder\(\{onChange:redrawWorkspace,sendAction:commerceRetry\.send/);
+ assert.match(client,/new (?:modules\.)?V2BattleScreen\(\{onChange:.*sendAction:commerceRetry\.send/);
  assert.match(client,/function commerceBanner\(\)/);
  assert.doesNotMatch(client,/ADVENTURE SAVED/);
 });

@@ -8,16 +8,9 @@ import {SocialPendingActions} from "./js/social-pending-actions.js";
 import {createSocialRetryController} from "./js/social-retry-controller.js";
 import {CommercePendingActions,commerceActionLabel,createCommerceRetryController} from "./js/commerce-pending-actions.js";
 import {captureRenderContinuity,restoreRenderContinuity} from "./js/render-continuity.js";
-import {TrainingEditor} from "./js/training-editor.js";
-import {BoxView} from "./js/box-view.js";
-import {TeamBuilder} from "./js/team-builder.js";
-import {V2BattleScreen} from "./js/v2-battle-screen.js";
-import {DamageInspector} from "./js/damage-inspector.js";
-import {renderV2Tutorial} from "./js/v2-tutorial.js";
-import {RecruitmentView} from "./js/recruitment-view.js";
+import {RouteModuleRegistry,createCatalogLoader,createStyleLoader} from "./js/feature-loader.js";
 import {V3TrainingEditor} from "./js/v3-training-editor.js";
 import {V3TeamBuilder} from "./js/v3-team-builder.js";
-import {V3BattleScreen} from "./js/v3-battle-screen.js";
 import {V3RecruitmentView} from "./js/v3-recruitment-view.js";
 import {V3OverviewView} from "./js/v3-overview-view.js";
 import {GameUiController} from "./js/ui/core/game-ui-controller.js";
@@ -72,6 +65,7 @@ const connection=new AdventureConnection({url:websocketUrl(location,room),player
 const completedBattleResults=new CompletedBattleResults({sendAction:action=>connection.sendAction(action),createActionId:kind=>`${kind}:${crypto.randomUUID()}`});
 function receiveView(next){
  joinedReady=true;const previous=latestView;latestView=next;pending=false;completedBattleResults.accept(next,{reentry:!previous});
+ prepareRoute(router.current,next);
  if(playback){
   // Presence broadcasts for the same saved turn must not restart its animation.
   if(previous?.battle?.id===next.battle?.id&&previous?.battle?.round===next.battle?.round)return;
@@ -79,13 +73,13 @@ function receiveView(next){
  }
  if(!previous&&next.rankedV1?.status==='finished'&&next.rankedV1?.recovered&&router.current!=='battle')router.go('battle');if(previous?.rankedV1?.status==='queued'&&next.rankedV1?.status==='preview'&&router.current!=='battle')router.go('battle');
  if(previous?.trainingPvpV1?.status==='waiting'&&next.trainingPvpV1?.status==='preview'&&router.current!=='battle')router.go('battle');
- if(previous&&router.current==='battle'&&previous.rankedV1?.battleV3?.id===next.rankedV1?.battleV3?.id&&rankedBattleScreen.hasFreshPlayback(next.rankedV1?.battleV3)){
+ if(previous&&rankedBattleScreen&&router.current==='battle'&&previous.rankedV1?.battleV3?.id===next.rankedV1?.battleV3?.id&&rankedBattleScreen.hasFreshPlayback(next.rankedV1?.battleV3)){
   V=next;announceNotice(!!previous);closeModal();void rankedBattleScreen.playTurn(next.rankedV1.battleV3,{reduced:!!settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches,speed:settings.battleSpeed===2?2:1,catalog:v3TrainingEditor.catalog});return;
  }
- if(previous&&router.current==='battle'&&previous.trainingPvpV1?.battleV3?.id===next.trainingPvpV1?.battleV3?.id&&trainingPvpBattleScreen.hasFreshPlayback(next.trainingPvpV1?.battleV3)){
+ if(previous&&trainingPvpBattleScreen&&router.current==='battle'&&previous.trainingPvpV1?.battleV3?.id===next.trainingPvpV1?.battleV3?.id&&trainingPvpBattleScreen.hasFreshPlayback(next.trainingPvpV1?.battleV3)){
   V=next;announceNotice(!!previous);closeModal();void trainingPvpBattleScreen.playTurn(next.trainingPvpV1.battleV3,{reduced:!!settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches,speed:settings.battleSpeed===2?2:1,catalog:v3TrainingEditor.catalog});return;
  }
- if(previous&&router.current==='battle'&&previous.battleV3?.id===next.battleV3?.id&&v3BattleScreen.hasFreshPlayback(next.battleV3)){
+ if(previous&&v3BattleScreen&&router.current==='battle'&&previous.battleV3?.id===next.battleV3?.id&&v3BattleScreen.hasFreshPlayback(next.battleV3)){
   V=next;announceNotice(!!previous);closeModal();void v3BattleScreen.playTurn(next.battleV3,{reduced:!!settings.reduce||matchMedia('(prefers-reduced-motion: reduce)').matches,speed:settings.battleSpeed===2?2:1,catalog:v3TrainingEditor.catalog});return;
  }
  if(previous&&router.current==="battle"&&previous.battle&&!previous.battle.result&&next.battle?.id===previous.battle.id&&next.battle.round===previous.battle.round+1&&next.battle.eventsRound===previous.battle.round&&next.battle.events?.length){
@@ -94,7 +88,7 @@ function receiveView(next){
  if(previous?.battle?.round!==next.battle?.round)commands={};
  // Any authoritative V3 state accepted without animation becomes the playback baseline.
  // This prevents a later presence/timing push from replaying the last resolved turn after reload, reconnect, or while the user was on another screen.
- rankedBattleScreen.acknowledgePlayback(next.rankedV1?.battleV3);trainingPvpBattleScreen.acknowledgePlayback(next.trainingPvpV1?.battleV3);v3BattleScreen.acknowledgePlayback(next.battleV3);
+ rankedBattleScreen?.acknowledgePlayback(next.rankedV1?.battleV3);trainingPvpBattleScreen?.acknowledgePlayback(next.trainingPvpV1?.battleV3);v3BattleScreen?.acknowledgePlayback(next.battleV3);
  V=next;announceNotice(!!previous);draw();if(modalId!==null)detail(modalId);
 }
 function announceNotice(show=true){if(show&&V.notice!==lastNotice)notify(V.notice);lastNotice=V.notice;}
@@ -134,17 +128,17 @@ const trainingPvpState=state=>({...state,battleV3:state?.trainingPvpV1?.battleV3
 const rankedActive=state=>completedBattleResults.isRankedActive(state);
 const trainingPvpActive=state=>completedBattleResults.isTrainingPvpActive(state);
 const redrawWorkspace=()=>{if(V&&['home','training','collection','teams','recruitment','shop','bag','missions','gym','guide'].includes(router.current))draw();};
-const trainingEditor=new TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:commerceRetry.send,createActionId:kind=>economyActionId(kind)});
-const boxView=new BoxView({onChange:redrawWorkspace});
-const teamBuilder=new TeamBuilder({onChange:redrawWorkspace,sendAction:commerceRetry.send,createActionId:kind=>economyActionId(kind)});
-const v2BattleScreen=new V2BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:commerceRetry.send,createActionId:kind=>economyActionId(`v2-${kind}`)});
-const damageInspector=new DamageInspector({fetchImpl:(...args)=>fetch(...args),getDraft:()=>trainingEditor.draft});
-const recruitmentView=new RecruitmentView({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
-const v3TrainingEditor=new V3TrainingEditor({fetchImpl:url=>fetch(url),onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
+const catalogs=createCatalogLoader((...args)=>fetch(...args));
+const styles=createStyleLoader(document);
+const routeModules=new RouteModuleRegistry({
+ 'legacy-core':async()=>{const [modules]=await Promise.all([Promise.all([import('./js/training-editor.js'),import('./js/box-view.js'),import('./js/team-builder.js'),import('./js/v2-battle-screen.js'),import('./js/v2-tutorial.js'),import('./js/recruitment-view.js')]),styles.loadMany(['/training-editor.css','/box-view.css','/team-builder.css','/recruitment.css','/v2-battle.css','/v2-tutorial.css'])]);const [training,box,team,battle,tutorial,recruitment]=modules;return {...training,...box,...team,...battle,...tutorial,...recruitment};},
+ 'damage-inspector':async()=>{const [module]=await Promise.all([import('./js/damage-inspector.js'),styles.load('/damage-inspector.css')]);return module;},
+ 'v3-battle':async()=>{const [module]=await Promise.all([import('./js/v3-battle-screen.js'),styles.loadMany(['/v3-battle-arena.css','/v3-move-fx.css','/v3-playback.css','/v3-field-effects.css','/pokemon-battle-shell.css','/battle-presentation-polish.css'])]);return module;}
+});
+let trainingEditor=null,boxView=null,teamBuilder=null,v2BattleScreen=null,damageInspector=null,recruitmentView=null,renderV2Tutorial=null;
+let v3BattleScreen=null,rankedBattleScreen=null,trainingPvpBattleScreen=null,v3CatalogPromise=null,legacyCorePromise=null,damageInspectorPromise=null,v3BattlePromise=null;
+const v3TrainingEditor=new V3TrainingEditor({fetchImpl:url=>fetch(url),loadCatalog:()=>catalogs.load('v3','/api/v3/catalog',{retry:catalogs.status('v3').state==='error'}),onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
 const v3TeamBuilder=new V3TeamBuilder({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});
-const v3BattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:action=>commerceRetry.send({...action,actionId:economyActionId('pve')}),playbackSpeed:settings.battleSpeed===2?2:1,onPlaybackSpeedChange:speed=>{settings.battleSpeed=speed;browserStore.saveSettings();},onPresentationCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_PRESENTATION_EVENT,{detail:cue})),onAudioCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_AUDIO_EVENT,{detail:cue}))});
-const rankedBattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:action=>send({...action,type:rankedActionType(action.type),actionId:economyActionId('ranked')}),playbackSpeed:settings.battleSpeed===2?2:1,onPlaybackSpeedChange:speed=>{settings.battleSpeed=speed;browserStore.saveSettings();},onPresentationCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_PRESENTATION_EVENT,{detail:cue})),onAudioCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_AUDIO_EVENT,{detail:cue}))});
-const trainingPvpBattleScreen=new V3BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:action=>send({...action,type:trainingPvpActionType(action.type),actionId:economyActionId('training-pvp')}),playbackSpeed:settings.battleSpeed===2?2:1,onPlaybackSpeedChange:speed=>{settings.battleSpeed=speed;browserStore.saveSettings();},onPresentationCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_PRESENTATION_EVENT,{detail:cue})),onAudioCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_AUDIO_EVENT,{detail:cue}))});
 const v3RecruitmentView=new V3RecruitmentView({sendAction:action=>action.type==='recruitV3.sync'?send(action):commerceRetry.send(action),createActionId:kind=>economyActionId(kind.replaceAll('.','-')),onChange:redrawWorkspace});
 const v3OverviewView=new V3OverviewView({onChange:redrawWorkspace});
 const missionView=new MissionView({sendAction:commerceRetry.send,onChange:redrawWorkspace,createActionId:kind=>economyActionId(kind)});
@@ -153,13 +147,28 @@ const bagView=new BagView({sendAction:commerceRetry.send,onChange:redrawWorkspac
 const profileView=new ProfileView();
 const arenaView=new ArenaView({send,actionId:economyActionId,notify});
 const socialView=new SocialView({send:socialRetry.send,actionId:economyActionId,notify,pendingAction:()=>socialPending.pending,pendingError:()=>socialPending.lastError,retryPending:socialRetry.retry,discardPending:()=>socialPending.discard(),canRetry:socialRetry.canRetry,openFriendly:()=>{arenaView.section='pvp';if(router.go('battle')){closeModal();draw();window.scrollTo(0,0);}}});
+function redrawAfter(promise){promise.then(()=>{if(V)draw();},()=>{if(V)draw();});return promise;}
+function ensureV3Catalog({retry=false}={}){if(retry)v3CatalogPromise=null;if(!v3CatalogPromise)v3CatalogPromise=redrawAfter(v3TrainingEditor.load());return v3CatalogPromise;}
+function ensureV3Battle({retry=false}={}){
+ if(retry)v3BattlePromise=null;if(v3BattlePromise)return v3BattlePromise;v3BattlePromise=redrawAfter(routeModules.load('v3-battle',{retry}).then(({V3BattleScreen})=>{const common={onChange:()=>{if(V&&router.current==='battle')draw();},playbackSpeed:settings.battleSpeed===2?2:1,onPlaybackSpeedChange:speed=>{settings.battleSpeed=speed;browserStore.saveSettings();},onPresentationCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_PRESENTATION_EVENT,{detail:cue})),onAudioCue:cue=>document.dispatchEvent(new CustomEvent(BATTLE_AUDIO_EVENT,{detail:cue}))};v3BattleScreen||=new V3BattleScreen({...common,sendAction:action=>commerceRetry.send({...action,actionId:economyActionId('pve')})});rankedBattleScreen||=new V3BattleScreen({...common,sendAction:action=>send({...action,type:rankedActionType(action.type),actionId:economyActionId('ranked')})});trainingPvpBattleScreen||=new V3BattleScreen({...common,sendAction:action=>send({...action,type:trainingPvpActionType(action.type),actionId:economyActionId('training-pvp')})});}));return v3BattlePromise;
+}
+function ensureLegacyCore({retry=false}={}){
+ if(retry)legacyCorePromise=null;if(legacyCorePromise)return legacyCorePromise;legacyCorePromise=redrawAfter(routeModules.load('legacy-core',{retry}).then(async modules=>{trainingEditor||=new modules.TrainingEditor({fetchImpl:url=>fetch(url),loadCatalog:()=>catalogs.load('v2','/api/v2/catalog',{retry:catalogs.status('v2').state==='error'}),onChange:redrawWorkspace,sendAction:commerceRetry.send,createActionId:kind=>economyActionId(kind)});boxView||=new modules.BoxView({onChange:redrawWorkspace});teamBuilder||=new modules.TeamBuilder({onChange:redrawWorkspace,sendAction:commerceRetry.send,createActionId:kind=>economyActionId(kind)});v2BattleScreen||=new modules.V2BattleScreen({onChange:()=>{if(V&&router.current==='battle')draw();},sendAction:commerceRetry.send,createActionId:kind=>economyActionId(`v2-${kind}`)});recruitmentView||=new modules.RecruitmentView({onChange:redrawWorkspace,sendAction:send,createActionId:kind=>economyActionId(kind)});renderV2Tutorial||=modules.renderV2Tutorial;await trainingEditor.load();}));return legacyCorePromise;
+}
+function ensureDamageInspector({retry=false}={}){if(retry)damageInspectorPromise=null;if(damageInspectorPromise)return damageInspectorPromise;damageInspectorPromise=redrawAfter(ensureLegacyCore({retry}).then(()=>routeModules.load('damage-inspector',{retry})).then(({DamageInspector})=>{damageInspector||=new DamageInspector({fetchImpl:(...args)=>fetch(...args),getDraft:()=>trainingEditor.draft});}));return damageInspectorPromise;}
+const featurePages=new Set(['home','collection','teams','recruitment','training','gym','battle']);
+function prepareRoute(page,state=V,{retry=false}={}){
+ if(!state||!featurePages.has(page))return;if(state.trainingV3){const catalog=ensureV3Catalog({retry});if(page==='battle')void ensureV3Battle({retry});else void catalog.then(()=>queueMicrotask(()=>{void ensureV3Battle();})).catch(()=>{});return;}void ensureLegacyCore({retry});if(page==='training')void ensureDamageInspector({retry});
+}
+function routeFeatureState(page){
+ if(!featurePages.has(page))return {ready:true};if(V.trainingV3){if(!v3TrainingEditor.catalog){const status=catalogs.status('v3');return {ready:false,error:status.error,label:'Regulation M-A catalog'};}if(page==='battle'&&!v3BattleScreen){const status=routeModules.status('v3-battle');return {ready:false,error:status.error,label:'battle screen'};}return {ready:true};}if(!trainingEditor?.catalog){const moduleStatus=routeModules.status('legacy-core'),catalogStatus=catalogs.status('v2');return {ready:false,error:moduleStatus.error||catalogStatus.error,label:'legacy compatibility modules'};}if(page==='training'&&!damageInspector){const status=routeModules.status('damage-inspector');return {ready:false,error:status.error,label:'damage inspector'};}return {ready:true};
+}
+function featurePlaceholder(state){const failed=!!state.error;return `<section class="panel feature-loading" role="${failed?'alert':'status'}"><small>${failed?'ROUTE LOAD FAILED':'PREPARING ROUTE'}</small><h2>${failed?'This screen could not be loaded yet':'Loading '+esc(state.label)+'…'}</h2><p>${failed?esc(state.error?.message||'A network or module error interrupted this screen. The rest of the app remains available.'):'The live connection remains active while this optional feature becomes ready.'}</p>${failed?'<button class="primary" data-action="feature-retry">Retry this screen</button>':''}</section>`;}
 const activeBattleScreen=()=>rankedActive(V)?rankedBattleScreen:trainingPvpActive(V)?trainingPvpBattleScreen:v3BattleScreen;
 const activeBattleState=()=>rankedActive(V)?rankedState(V):trainingPvpActive(V)?trainingPvpState(V):V;
-const gameUi=new GameUiController({root:()=>document.querySelector('[data-game-ui-scope="battle"]'),onCancel:()=>V?activeBattleScreen().handleCancel(activeBattleState()):false,onAction:action=>V?activeBattleScreen().handleUiAction(action,activeBattleState()):false});
+const gameUi=new GameUiController({root:()=>document.querySelector('[data-game-ui-scope="battle"]'),onCancel:()=>V&&activeBattleScreen()?activeBattleScreen().handleCancel(activeBattleState()):false,onAction:action=>V&&activeBattleScreen()?activeBattleScreen().handleUiAction(action,activeBattleState()):false});
 const managementUi=new GameUiController({root:()=>document.querySelector('[data-game-ui-scope="management"]'),initialMode:'TRAINING_PROFILE',onCancel:()=>{if(!V)return false;if(router.current==='training')return v3TrainingEditor.handleCancel();if(router.current==='teams')return v3TeamBuilder.handleCancel();if(router.current==='collection')return v3OverviewView.handleArchiveCancel();if(router.current==='recruitment')return v3RecruitmentView.handleCancel();return false;},onAction:action=>{if(!V)return false;if(router.current==='training')return v3TrainingEditor.handleUiAction(action);if(router.current==='teams')return v3TeamBuilder.handleUiAction(action);if(router.current==='collection')return v3OverviewView.handleArchiveUiAction(action,V,v3TrainingEditor.catalog);if(router.current==='recruitment')return v3RecruitmentView.handleUiAction(action,V);return false;}});
-trainingEditor.load().catch(error=>notify(error.message));
-v3TrainingEditor.load().catch(error=>notify(error.message));
-function start(mode,gym){commands={};router.go("battle");if(V.trainingV3&&gym===undefined){commerceRetry.send({type:'battleV3.preview.start',mode,difficulty:v3BattleScreen.difficulty,actionId:economyActionId('pve')});return;}const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';commerceRetry.send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard',actionId:economyActionId('v2-preview')});}
+function start(mode,gym){commands={};router.go("battle");prepareRoute('battle');if(V.trainingV3&&gym===undefined){commerceRetry.send({type:'battleV3.preview.start',mode,difficulty:v3BattleScreen?.difficulty||'normal',actionId:economyActionId('pve')});return;}const team=V.trainingV2.teams.find(entry=>entry.teamId===V.trainingV2.activeTeamId),regulationId=team?.buildIds.length===6?`alpha-${mode}`:'sandbox-v2';commerceRetry.send({type:"battleV2.preview.start",mode,regulationId,...(gym===undefined?{}:{gym}),difficulty:gym===undefined?v2BattleScreen.difficulty:'hard',actionId:economyActionId('v2-preview')});}
 function types(d){return '<div class="types">'+d.types.map(t=>'<span class="type" style="--c:'+V.colors[V.types.indexOf(t)]+'">'+t+'</span>').join("")+'</div>';}
 function head(title,sub,kicker="YOUR ADVENTURE"){return '<div class="heading"><div><div class="eyebrow">'+kicker+'</div><h1>'+title+'</h1><p>'+sub+'</p></div><span class="pill">✦ &nbsp; VANGUARD LEAGUE · PUBLIC BETA</span></div>';}
 function home(){
@@ -250,11 +259,11 @@ function battle(){
 function draw(){
  if(!V)return;
  const page=router.current;document.body.dataset.appScreen=page;
- const continuity=captureRenderContinuity(page,renderedPage),t=performance.now();if(page!=='recruitment'){recruitmentView.stopTicker();v3RecruitmentView.stopTicker();}const content={home,collection:()=>archive(false),teams:teamsPage,recruitment,shop,bag:()=>bagView.render(V),missions,training:trainingPage,gym,mail,friends:friendsPage,profile:profilePage,settings:settingsPage,battle}[page](),footerSummary=V.trainingV3?`${V.trainingV3.mons.length} / ${v3TrainingEditor.catalog?.species.length||V.trainingV3.mons.length} BETA POKÉMON · SCHEMA 3`:V.collection.length+' / '+V.catalog.length+' DISCOVERED &nbsp; · &nbsp; '+V.badges.length+' / 6 BADGES',immersiveBattle=page==='battle'&&!!V.trainingV3;
+ prepareRoute(page);const continuity=captureRenderContinuity(page,renderedPage),t=performance.now();if(page!=='recruitment'){recruitmentView?.stopTicker();v3RecruitmentView.stopTicker();}const readiness=routeFeatureState(page),content=readiness.ready?{home,collection:()=>archive(false),teams:teamsPage,recruitment,shop,bag:()=>bagView.render(V),missions,training:trainingPage,gym,mail,friends:friendsPage,profile:profilePage,settings:settingsPage,battle}[page]():featurePlaceholder(readiness),footerSummary=V.trainingV3?`${V.trainingV3.mons.length} / ${v3TrainingEditor.catalog?.species.length||V.trainingV3.mons.length} BETA POKÉMON · SCHEMA 3`:V.collection.length+' / '+V.catalog.length+' DISCOVERED &nbsp; · &nbsp; '+V.badges.length+' / 6 BADGES',immersiveBattle=page==='battle'&&!!V.trainingV3;
  if(immersiveBattle)$("#app").innerHTML='<div class="battle-shell-layout"><main class="battle-content">'+commerceBanner()+content+'</main></div>';
   else $("#app").innerHTML='<div class="shell"><aside class="sidebar"><div class="brand"><div class="brandmark project-logo"><img src="/logo.png" alt="" aria-hidden="true"></div><div class="brandname">POKÉMON<small>VANGUARD</small></div></div><div class="navlabel">PLAY & DISCOVER</div><div class="navs">'+navs.map(([k,icon,label])=>'<button class="nav '+(page===k?"active":"")+'" data-action="nav:'+k+'"><span class="icon" data-nav-icon="'+esc(k)+'" aria-hidden="true"><img src="'+esc(icon)+'" alt=""></span>'+label+(k==="friends"&&((V.socialV1?.incomingRequests?.length||0)+(V.trainingPvpV1?.incomingInvites?.length||0))?'<span class="badge social-badge">'+((V.socialV1?.incomingRequests?.length||0)+(V.trainingPvpV1?.incomingInvites?.length||0))+'</span>':k==="mail"&&unreadMailCount()?'<span class="badge">'+unreadMailCount()+'</span>':k==="missions"&&V.missions?.claimableCount?'<span class="badge">'+V.missions.claimableCount+'</span>':"")+'</button>').join("")+'</div><div class="sidefoot"><span class="online">● '+connectionLabel()+'</span><p>'+esc(auth?.name||'Local player')+'<br>'+esc(auth?.provider||'browser')+' account</p></div></aside><div><header class="topbar"><div class="topbar-left"><div class="breadcrumb">Vanguard League &nbsp; / &nbsp; <b>'+(navs.find(n=>n[0]===page)?.[2]||({bag:'Bag',profile:'Profile',friends:'Friends & Chat',settings:'Settings'}[page]||'Vanguard'))+'</b></div></div><div class="resources"><div class="currency" title="VP" aria-label="VP balance: '+V.coins.toLocaleString()+'"><span class="currency-icon">'+rewardIcon("vp")+'</span>'+V.coins.toLocaleString()+'</div><div class="currency crystal" title="PokéGem" aria-label="PokéGem balance: '+V.gems.toLocaleString()+'"><span class="currency-icon">'+rewardIcon("pokegem")+'</span>'+V.gems.toLocaleString()+'</div>'+accountControl()+'</div></header><main class="content" data-ui-scroll-container data-ui-scroll-key="page-content">'+commerceBanner()+content+'<footer class="bottomnote"><span>✦ &nbsp; POKÉMON VANGUARD</span><span>'+footerSummary+'</span></footer></main></div></div>';
  renderedPage=page;const focusRestored=restoreRenderContinuity(continuity);
- if(immersiveBattle){const battleMode=rankedActive(V)&&V.rankedV1?.status==='finished'&&!V.rankedV1?.battleV3?'BATTLE_RESULT':rankedActive(V)?rankedBattleScreen.uiMode(rankedState(V)):trainingPvpActive(V)?trainingPvpBattleScreen.uiMode(trainingPvpState(V)):completedBattleResults.isPveVisible(V)&&v3BattleScreen.dismissedId!==V.battleV3.id?v3BattleScreen.uiMode(V):'BATTLE_LANDING';gameUi.setMode(battleMode);if(!focusRestored)gameUi.ensureFocus();}
+ if(immersiveBattle&&readiness.ready){const battleMode=rankedActive(V)&&V.rankedV1?.status==='finished'&&!V.rankedV1?.battleV3?'BATTLE_RESULT':rankedActive(V)?rankedBattleScreen.uiMode(rankedState(V)):trainingPvpActive(V)?trainingPvpBattleScreen.uiMode(trainingPvpState(V)):completedBattleResults.isPveVisible(V)&&v3BattleScreen.dismissedId!==V.battleV3.id?v3BattleScreen.uiMode(V):'BATTLE_LANDING';gameUi.setMode(battleMode);if(!focusRestored)gameUi.ensureFocus();}
  if(V.trainingV3&&page==='training'&&trainingHubMode==='pokemon'){managementUi.setMode(v3TrainingEditor.uiMode());if(!focusRestored)managementUi.ensureFocus();}
  if(V.trainingV3&&page==='teams'){managementUi.setMode(v3TeamBuilder.uiMode());if(!focusRestored)managementUi.ensureFocus();}
  if(V.trainingV3&&page==='collection'){managementUi.setMode(v3OverviewView.archiveUiMode());if(!focusRestored)managementUi.ensureFocus();}
@@ -289,6 +298,7 @@ document.addEventListener("click",async e=>{
  if(userMenuOpen&&!e.target.closest('.user-menu'))setUserMenu(false);
  const el=e.target.closest("[data-action],[data-shop],[data-mission],[data-replica],[data-training],[data-box],[data-team],[data-recruit],[data-v3-recruit],[data-v3-archive],[data-v2battle],[data-v3-battle],[data-damage],[data-v3-training],[data-v3-team],[data-ranked],[data-arena],[data-social],[data-bag]");if(!el||el.disabled)return;if(['ui-surrender','surrender'].includes(el.dataset.v3Battle)){requestBattleSurrender();return;}if(el.dataset.social){const changed=await socialView.handleClick(el,V);if(changed)draw();return;}if(el.dataset.arena){const changed=await arenaView.handleClick(el,V);if(changed)draw();return;}if(el.dataset.ranked){const action=el.dataset.ranked;if(action==='queue')send({type:'rankedV1.queue.join',mode:el.dataset.mode,actionId:economyActionId('ranked-queue')});if(action==='leave')send({type:'rankedV1.queue.leave',actionId:economyActionId('ranked-queue')});if(action==='forfeit'){openConfirm({title:'Forfeit Ranked Match?',message:'Forfeiting before battle still counts as a Ranked loss and applies the normal rating change.',confirmLabel:'Forfeit Match',onConfirm:()=>send({type:'rankedV1.surrender',actionId:economyActionId('ranked-forfeit')})});}return;}if(el.dataset.bag){bagView.handleClick(el);return;}if(el.dataset.shop){shopView.handleClick(el);return;}if(el.dataset.mission){missionView.handleClick(el);return;}if(el.dataset.replica){await replicaTeamsView.handleClick(el,V,v3TrainingEditor.catalog);return;}if(el.dataset.v3Battle){if(rankedActive(V)){if(el.dataset.v3Battle==='new'){completedBattleResults.dismiss('ranked',V);rankedBattleScreen.cancelPlayback();rankedBattleScreen.commandUi.reset();arenaView.section='ranked';draw();return;}rankedBattleScreen.handleClick(el,rankedState(V),v3TrainingEditor.catalog);return;}if(trainingPvpActive(V)){if(el.dataset.v3Battle==='new'){completedBattleResults.dismiss('training-pvp',V);trainingPvpBattleScreen.cancelPlayback();trainingPvpBattleScreen.commandUi.reset();arenaView.section='pvp';draw();return;}trainingPvpBattleScreen.handleClick(el,trainingPvpState(V),v3TrainingEditor.catalog);return;}if(el.dataset.v3Battle==='new'){v3BattleScreen.handleClick(el,V,v3TrainingEditor.catalog);arenaView.section='pve';return;}v3BattleScreen.handleClick(el,V,v3TrainingEditor.catalog);return;}if(el.dataset.v3Training){v3TrainingEditor.handleClick(el,V);return;}if(el.dataset.v3Team){v3TeamBuilder.handleClick(el,V,v3TrainingEditor.catalog);return;}if(el.dataset.v3Recruit){if(!updateV3RecruitmentSelection(el))v3RecruitmentView.handleClick(el,V);return;}if(el.dataset.v3Archive){if(!updateV3ArchiveSelection(el))v3OverviewView.handleArchiveClick(el,V,v3TrainingEditor.catalog);return;}if(el.dataset.damage){void damageInspector.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.training){trainingEditor.handleClick(el,V);return;}if(el.dataset.box){boxView.handleClick(el,V,{openTraining:monId=>{trainingEditor.select(V.trainingV2,monId);router.go('training');draw();}});return;}if(el.dataset.team){teamBuilder.handleClick(el,V,trainingEditor.catalog);return;}if(el.dataset.recruit){recruitmentView.handleClick(el,V);return;}if(el.dataset.v2battle){v2BattleScreen.handleClick(el,V,trainingEditor.catalog);return;}const [a,b,c]=el.dataset.action.split(":");
  if(a==="commerce-retry"){commerceRetry.retry();return;}
+ if(a==="feature-retry"){prepareRoute(router.current,V,{retry:true});draw();return;}
  if(a==="commerce-discard"){if(confirm("Discard the retry option? The server may already have committed this action; check your account or battle state after syncing.")){commercePending.discard();draw();}return;}
  if(a==="confirm-action"){const action=confirmAction;confirmAction=null;closeModal();action?.();return;}
  if(a==="skip-animation"){finishPlayback();return;}
@@ -297,10 +307,10 @@ document.addEventListener("click",async e=>{
  if(a==="admin-console"&&auth?.admin){location.assign("/admin.html");return;}
  if(a==="logout"){if((socialPending.pending||commercePending.pending)&&!confirm("An action is unconfirmed. Logging out will discard its local retry option, but the server may already have committed it. Continue?"))return;socialPending.discard();commercePending.discard();setUserMenu(false);connection.stop();await fetch('/api/auth/logout',{method:'POST',credentials:'same-origin'});location.assign('/');return;}
  if(playback){if(a!=="nav")return;finishPlayback();}
- if(a==="nav"){if(router.current==='battle'&&b!=='battle')completedBattleResults.dismissFinished(V);if(router.current==='teams'&&b!=='teams')v3TeamBuilder.flushSave();if(router.go(b)){if(b==='training')trainingHubMode=null;if(b==='battle')arenaView.reset();v3BattleScreen.cancelPlayback();rankedBattleScreen.cancelPlayback();trainingPvpBattleScreen.cancelPlayback();closeModal();draw();window.scrollTo(0,0);}}
+ if(a==="nav"){if(router.current==='battle'&&b!=='battle')completedBattleResults.dismissFinished(V);if(router.current==='teams'&&b!=='teams')v3TeamBuilder.flushSave();if(router.go(b)){if(b==='training')trainingHubMode=null;if(b==='battle')arenaView.reset();v3BattleScreen?.cancelPlayback();rankedBattleScreen?.cancelPlayback();trainingPvpBattleScreen?.cancelPlayback();closeModal();prepareRoute(b);draw();window.scrollTo(0,0);}}
  if(a==="training-mode"){trainingHubMode=b;draw();window.scrollTo(0,0);}
  if(a==="training-home"){trainingHubMode=null;draw();window.scrollTo(0,0);}
- if(a==="training"&&V.trainingV3){trainingHubMode='pokemon';router.go('training');v3BattleScreen.cancelPlayback();rankedBattleScreen.cancelPlayback();closeModal();v3TrainingEditor.openSelection();v3TrainingEditor.select(V.trainingV3,b);window.scrollTo(0,0);}
+ if(a==="training"&&V.trainingV3){trainingHubMode='pokemon';router.go('training');v3BattleScreen?.cancelPlayback();rankedBattleScreen?.cancelPlayback();closeModal();v3TrainingEditor.openSelection();v3TrainingEditor.select(V.trainingV3,b);window.scrollTo(0,0);}
  if(a==="start")start(b);
  if(a==="detail")detail(+b);
  if(a==="close")closeModal();
@@ -324,13 +334,13 @@ document.addEventListener('pointercancel',event=>{battleLogDrag.end(event);});
 document.addEventListener('dblclick',event=>{if(event.target?.closest?.('.pokemon-battle-log .aether-window-title')){battleLogDrag.reset(document);event.preventDefault();}});
 document.addEventListener("change",e=>{
  const t=e.target;
- if(rankedActive(V)){if(rankedBattleScreen.handleInput(t))return;}else if(trainingPvpActive(V)){if(trainingPvpBattleScreen.handleInput(t))return;}else if(v3BattleScreen.handleInput(t))return;
+ if(rankedActive(V)){if(rankedBattleScreen?.handleInput(t))return;}else if(trainingPvpActive(V)){if(trainingPvpBattleScreen?.handleInput(t))return;}else if(v3BattleScreen?.handleInput(t))return;
  if(socialView.handleInput(t)||arenaView.handleInput(t))return;
- if(damageInspector.handleInput(t,V,trainingEditor.catalog))return;
- if(v2BattleScreen.handleInput(t))return;
+ if(damageInspector?.handleInput(t,V,trainingEditor?.catalog))return;
+ if(v2BattleScreen?.handleInput(t))return;
  if(v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t)||updateV3ArchiveInput(t))return;
- if(boxView.handleInput(t)||teamBuilder.handleInput(t))return;
- if(trainingEditor.handleInput(t))return;
+ if(boxView?.handleInput(t)||teamBuilder?.handleInput(t))return;
+ if(trainingEditor?.handleInput(t))return;
  if(t.hasAttribute('data-battle-speed')){settings.battleSpeed=Number(t.value)===2?2:1;browserStore.saveSettings();return;}
  if(t.hasAttribute('data-audio-enabled')){audioManager.setEnabled(t.checked);return;}
  if(t.hasAttribute('data-audio-volume')){audioManager.setVolume(t.value);return;}
@@ -340,9 +350,9 @@ document.addEventListener("change",e=>{
  if(t.dataset.target!==undefined)commands[+t.dataset.target].target=+t.value;
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
-document.addEventListener("input",e=>{const t=e.target;if(t.hasAttribute('data-audio-volume')){audioManager.setVolume(t.value);return;}if(socialView.handleInput(t)||arenaView.handleInput(t)||shopView.handleInput(t)||replicaTeamsView.handleInput(t)||v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t)||updateV3ArchiveInput(t)||boxView.handleInput(t)||teamBuilder.handleInput(t))return;trainingEditor.handleInput(t);});
+document.addEventListener("input",e=>{const t=e.target;if(t.hasAttribute('data-audio-volume')){audioManager.setVolume(t.value);return;}if(socialView.handleInput(t)||arenaView.handleInput(t)||shopView.handleInput(t)||replicaTeamsView.handleInput(t)||v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t)||updateV3ArchiveInput(t)||boxView?.handleInput(t)||teamBuilder?.handleInput(t))return;trainingEditor?.handleInput(t);});
 document.addEventListener("keydown",e=>{const modalOpen=$("#modal").children.length>0;if(e.code==="Escape"&&userMenuOpen){e.preventDefault();setUserMenu(false);document.querySelector('[data-action="account-menu"]')?.focus({preventScroll:true});return;}if(!modalOpen&&router.current==="battle"&&V?.trainingV3&&gameUi.handleKeyboard(e))return;const managementPage=["teams","collection","recruitment"].includes(router.current)||router.current==='training'&&trainingHubMode==='pokemon';if(!modalOpen&&V?.trainingV3&&managementPage&&managementUi.handleKeyboard(e))return;if(e.code==="Escape"&&modalOpen){e.preventDefault();closeModal();}if(e.code==="Tab"&&modalOpen){const els=[...$("#modal").querySelectorAll("button:not(:disabled),select,input")];const first=els[0],last=els.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
 connection.start();
 // Leaving/resizing the scene commits its already-saved outcome and cancels effects.
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;completedBattleResults.dismissFinished(V);if(playback)finishPlayback();v3BattleScreen.cancelPlayback();rankedBattleScreen.cancelPlayback();trainingPvpBattleScreen.cancelPlayback();draw();});
-window.addEventListener('resize',()=>{if(playback)finishPlayback();if(v3BattleScreen.playback||rankedBattleScreen.playback||trainingPvpBattleScreen.playback){v3BattleScreen.cancelPlayback();rankedBattleScreen.cancelPlayback();trainingPvpBattleScreen.cancelPlayback();draw();}battleLogDrag.apply(document);});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;completedBattleResults.dismissFinished(V);if(playback)finishPlayback();v3BattleScreen?.cancelPlayback();rankedBattleScreen?.cancelPlayback();trainingPvpBattleScreen?.cancelPlayback();draw();});
+window.addEventListener('resize',()=>{if(playback)finishPlayback();if(v3BattleScreen?.playback||rankedBattleScreen?.playback||trainingPvpBattleScreen?.playback){v3BattleScreen?.cancelPlayback();rankedBattleScreen?.cancelPlayback();trainingPvpBattleScreen?.cancelPlayback();draw();}battleLogDrag.apply(document);});

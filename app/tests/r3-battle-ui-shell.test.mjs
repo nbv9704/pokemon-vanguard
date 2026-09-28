@@ -35,6 +35,6 @@ test('R3-93 replacement phase renders party cards and prevents duplicate reserve
 });
 
 test('R3-93 client uses an immersive layout for schema-3 battle pages and routes Cancel/Detail through GameUiController',()=>{
- const source=readFileSync(new URL('../public/client.js',import.meta.url),'utf8');assert.match(source,/battle-shell-layout/);assert.match(source,/onCancel:\(\)=>V\?activeBattleScreen\(\)\.handleCancel/);assert.match(source,/handleUiAction/);
+ const source=readFileSync(new URL('../public/client.js',import.meta.url),'utf8');assert.match(source,/battle-shell-layout/);assert.match(source,/onCancel:\(\)=>V&&activeBattleScreen\(\)\?activeBattleScreen\(\)\.handleCancel/);assert.match(source,/handleUiAction/);
  const handler=new BattleCommandUiHandler();assert.equal(handler.mode,'COMMAND');assert.equal(handler.logOpen,false);handler.toggleLog();assert.equal(handler.logOpen,true);
 });

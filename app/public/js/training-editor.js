@@ -10,8 +10,8 @@ function statsFor(species,build){
 }
 
 export class TrainingEditor{
- constructor({fetchImpl,onChange,sendAction,createActionId=()=>`v2-training:${Date.now()}`}){this.fetch=fetchImpl;this.onChange=onChange;this.send=sendAction;this.createActionId=createActionId;this.catalog=null;this.monId=null;this.buildId=null;this.draft=null;this.base=null;}
- async load(){const response=await this.fetch('/api/v2/catalog');if(!response.ok)throw new Error('Unable to load the Training catalog');this.catalog=await response.json();this.onChange();}
+ constructor({fetchImpl,onChange,sendAction,createActionId=()=>`v2-training:${Date.now()}`,loadCatalog=null}){this.fetch=fetchImpl;this.loadCatalog=loadCatalog;this.onChange=onChange;this.send=sendAction;this.createActionId=createActionId;this.catalog=null;this.monId=null;this.buildId=null;this.draft=null;this.base=null;}
+ async load(){if(this.catalog)return this.catalog;if(this.loadCatalog)this.catalog=await this.loadCatalog();else{const response=await this.fetch('/api/v2/catalog');if(!response.ok)throw new Error('Unable to load the Training catalog');this.catalog=await response.json();}this.onChange();return this.catalog;}
  select(view,monId,buildId){const builds=view.builds.filter(build=>build.monId===monId),saved=builds.find(build=>build.buildId===buildId)||builds[0];this.monId=monId;this.buildId=saved?.buildId||null;this.base=saved?clone(saved):null;this.draft=saved?clone(saved):null;this.onChange();}
  reconcile(view){
   if(!this.monId)this.monId=view.mons[0]?.monId||null;

@@ -19,9 +19,9 @@ test('client only suppresses the authoritative redraw when there is actually a f
  assert.match(client,/rankedBattleScreen\.hasFreshPlayback\(next\.rankedV1\?\.battleV3\)/);
  assert.match(client,/trainingPvpBattleScreen\.hasFreshPlayback\(next\.trainingPvpV1\?\.battleV3\)/);
  assert.match(client,/v3BattleScreen\.hasFreshPlayback\(next\.battleV3\)/);
- assert.match(client,/rankedBattleScreen\.acknowledgePlayback\(next\.rankedV1\?\.battleV3\)/);
- assert.match(client,/trainingPvpBattleScreen\.acknowledgePlayback\(next\.trainingPvpV1\?\.battleV3\)/);
- assert.match(client,/v3BattleScreen\.acknowledgePlayback\(next\.battleV3\)/);
+ assert.match(client,/rankedBattleScreen\?\.acknowledgePlayback\(next\.rankedV1\?\.battleV3\)/);
+ assert.match(client,/trainingPvpBattleScreen\?\.acknowledgePlayback\(next\.trainingPvpV1\?\.battleV3\)/);
+ assert.match(client,/v3BattleScreen\?\.acknowledgePlayback\(next\.battleV3\)/);
  assert.match(client,/V=next;announceNotice\(!!previous\);draw\(\)/);
  assert.match(client,/completedBattleResults\.accept\(next,\{reentry:!previous\}\)/);
  assert.match(client,/completedBattleResults\.dismissFinished\(V\)/);
