@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 11 |
+| DONE | 12 |
 | IN PROGRESS | 19 |
-| TODO | 3 |
+| TODO | 2 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B22 — nghiệm thu cache/runtime HTTP**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B23 — lazy-load UI/catalog theo protocol và route**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -48,7 +48,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
 | 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–15 bao phủ schema-3/account/schema-2 management; B16 thêm ACK + session outbox cho schema-2 PvE battle; còn PvP và multi-device QA |
 | 20 | Cache/nén HTTP | P2 | DONE | B22: cold/warm + invalidation + HEAD/gzip/Brotli/private no-store đều có regression; benchmark wire bytes/timing và browser/WebSocket smoke đạt; hosted CI PASS |
-| 21 | Lazy-load UI/catalog | P2 | TODO | Giữ legacy fallback |
+| 21 | Lazy-load UI/catalog | P2 | DONE | B23: registry `import()` + catalog promise theo version, CSS ready barrier, retry cô lập; V3 không tải V2/legacy, save V1 active battle vẫn hoạt động; benchmark/browser/full CI PASS |
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
 | 24 | Tách module theo trách nhiệm | P2 | IN PROGRESS | B20: tách hazard state và HP-threshold item hook, loại hai dependency cycle; còn composition root client/server/ranked và complexity/formatter rollout |
@@ -334,6 +334,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** focused HTTP/runtime **8/8 PASS**; `npm run check` PASS; full regression **1.377/1.377 PASS trên 216 file**, 0 fail/skip/todo.
 - **Hosted CI:** run [`36396255917`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36396255917) cho commit `220eed3`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Kết luận:** toàn bộ tiêu chí mục #20 đã được thực hiện và kiểm chứng; không còn việc mở trong phạm vi cache/nén HTTP. Timing production/CDN chỉ là theo dõi vận hành, không mở lại hạng mục chức năng này.
+
+### 28/09/2026 — B23: lazy-load UI/catalog theo protocol và route
+
+- **#21 DONE:** thêm `RouteModuleRegistry`, catalog loader memoize promise riêng cho V2/V3 và stylesheet ready barrier có retry. Client chọn protocol từ state; fresh V3 chỉ tải catalog V3, legacy core/catalog V2 chỉ tải cho save cũ, damage inspector tải khi vào Training, còn V3 Battle được preload sau khi shell/catalog sẵn sàng. Lỗi module tùy chọn chỉ hiện panel lỗi/retry theo route và không làm chết shell/WebSocket.
+- **Tương thích:** giữ nguyên Training/Box/Team/Recruitment/V2 Battle/Tutorial cho legacy. Browser với save V1 có active Single Battle đã render turn 1 và move controls; vào Training mới tải damage-inspector JS/CSS. Fresh V3 Home và chuyển nhanh Training → Pokédex → Arena không tải V2 catalog/legacy JS/CSS, luôn `ONLINE`, console không warning/error.
+- **Benchmark lặp lại được:** `npm run benchmark:lazy-ui` xác nhận fresh V3 tránh tối thiểu **15 request**, **190.358 B raw / 30.122 B Brotli** (14 direct legacy JS/CSS + V2 catalog). Đây là lower bound bảo thủ, không cộng transitive imports. Tài liệu: `app/docs/lazy-ui-catalog-b23.md`.
+- **Kiểm thử:** feature loader **5/5 PASS**; `npm run check` PASS (423 file syntax, 377 module/1.096 local edge/0 cycle, lint/type/structure và mọi validation gate); full regression **1.382/1.382 PASS trên 217 file**, 0 fail/skip/todo.
+- **Hosted CI:** run [`36399152908`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36399152908) cho commit `0e68c4d`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
+- **Kết luận:** toàn bộ tiêu chí mục #21 đã được thực hiện và kiểm chứng; không còn việc mở trong phạm vi lazy-load UI/catalog. Chỉ cân nhắc bundler sau này nếu số liệu production chứng minh native modules chưa đủ; việc đó không mở lại #21.
 
 ## Cách cập nhật file này
 
