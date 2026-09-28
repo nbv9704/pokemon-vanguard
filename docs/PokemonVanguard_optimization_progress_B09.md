@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B20 — import boundary và dependency cycle gate**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B21 — promise safety và type-contract foundation**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -52,7 +52,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
 | 24 | Tách module theo trách nhiệm | P2 | IN PROGRESS | B20: tách hazard state và HP-threshold item hook, loại hai dependency cycle; còn composition root client/server/ranked và complexity/formatter rollout |
-| 25 | Lint/type contracts | P2 | IN PROGRESS | B19 lint strict; B20 import-boundary/cycle gate cho 376 module production; còn promise-aware contract và JSDoc/checkJs/schema-derived types |
+| 25 | Lint/type contracts | P2 | IN PROGRESS | B19 lint strict; B20 import/cycle; B21 promise-aware lint trên 82 server module/root + strict checkJs cho command/queue và Save/DTO/Storage contract nền; còn mở rộng type coverage |
 | 26 | CI/test đúng artifact phát hành | P1/P2 | DONE | Run #10: Ubuntu + Windows npm-ci/check/inventory/1.333 test PASS; Ubuntu đóng gói, verify, clean-unpack và handle-leak PASS |
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
@@ -317,6 +317,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** fixture gate hợp lệ/reverse dependency/cycle **3/3 PASS**; focused hazard/form/switch **32/32 PASS**; `npm run check` PASS; full regression **1.375/1.375 PASS trên 215 file**, 0 fail/skip/todo. Tài liệu: `app/docs/import-boundaries-b20.md`.
 - **Hosted CI:** run [`36374647210`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36374647210) cho commit `6ca34d5`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** #24 còn các composition root lớn ở client/server/ranked và complexity/formatter rollout; #25 còn promise-aware contract và JSDoc/checkJs/schema-derived types. Hai mục giữ IN PROGRESS.
+
+### 28/09/2026 — B21: promise safety và type-contract foundation
+
+- **#25:** thêm type-aware ESLint cho `local-server.mjs` và 81 server module đang hoạt động: `no-floating-promises`, `no-misused-promises`, `await-thenable`. Gate đầu tiên phát hiện ba điểm async không được caller chờ rõ ràng ở HTTP callback, process signal và account coordinator; đã thêm wrapper/rejection path hoặc `void` có chủ đích.
+- Thêm `types/runtime-contracts.d.ts` cho JSON/Save/Command/Result/Storage/Public DTO; `tsconfig.contracts.json` strict kiểm lát cắt đầu tiên gồm durable receipt command và serial queue. `npm run check:types` đã nằm trong `npm run check`; dev dependencies chỉ chạy local/CI, không dùng dịch vụ trả phí và `npm audit` báo 0 vulnerability.
+- **Kiểm thử:** coordinator/queue/receipt/shutdown focused **16/16 PASS**; `npm run lint`, `npm run check:types` và `npm run check` PASS; full regression **1.375/1.375 PASS trên 215 file**, 0 fail/skip/todo. Tài liệu: `app/docs/async-type-contracts-b21.md`.
+- **Hosted CI:** run [`36375503188`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36375503188) cho commit `e006d3e`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
+- **Giới hạn:** strict type coverage mới bao phủ contract lõi đầu tiên, chưa toàn bộ storage implementations, Save/DTO và browser action envelope; runtime schema validation vẫn bắt buộc. #25 giữ IN PROGRESS.
 
 ## Cách cập nhật file này
 
