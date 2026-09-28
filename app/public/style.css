@@ -26,4 +26,9 @@
 
 /* B05: pending Social actions require explicit receipt-aware retry. */
 .social-pending-notice{margin-bottom:14px;padding:14px 18px;border:2px solid #7b9658;background:#18283b;color:var(--ink)}.social-pending-notice b{display:block;font-size:13px}.social-pending-notice p{font-size:11px;line-height:1.5;margin:5px 0 10px}.social-pending-notice>div{display:flex;flex-wrap:wrap;gap:9px}.social-pending-notice button{padding:8px 12px;font-size:11px}
+
+/* B37: keyboard, persistent-status and forced-colour accessibility contracts. */
+.skip-link{position:fixed;top:8px;left:8px;z-index:1000;transform:translateY(-160%);padding:10px 14px;background:#fff;color:#111;border:3px solid currentColor;border-radius:4px;font-weight:800}.skip-link:focus{transform:none}.storage-warning{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px;padding:12px 14px;border:2px solid #e2ad43;background:#332814;color:#fff}.storage-warning span{flex:1;min-width:220px}.storage-warning button{padding:7px 10px}.storage-setting-warning{border-left:4px solid #e2ad43;background:#332814}#main-content:focus{outline:none}
+@media(prefers-reduced-motion:reduce){.skip-link,#toast,*::before,*::after{scroll-behavior:auto;animation-duration:.01ms;animation-iteration-count:1;transition-duration:.01ms}}
+@media(forced-colors:active){.nav[aria-current="page"],.storage-warning,.storage-setting-warning{border:2px solid Highlight}.nav[aria-current="page"]{color:HighlightText;background:Highlight}.badge{border:1px solid currentColor}.skip-link{forced-color-adjust:none}}
 }

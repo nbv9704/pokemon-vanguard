@@ -17,7 +17,7 @@ async function api(path,options={}){const response=await fetch(path,{credentials
 const avatar=(url,name)=>url?`<img class="avatar" src="${esc(url)}" alt="">`:`<span class="avatar">${esc((name||'?').slice(0,1).toUpperCase())}</span>`;
 const button=(label,attrs='',cls='')=>`<button class="btn ${cls}" ${attrs}>${label}</button>`;
 const {metrics,header,playersView,giftsView,liveRows,pendingActionBanner}=createAdminViews({state,esc,number,avatar,button,getPendingAction:()=>pendingAdminAction});
-function render(){const content=state.view==='gifts'?giftsView():state.view==='live'?liveRows():playersView();app.innerHTML=`<div class="admin-shell">${header()}<main class="admin-main">${pendingActionBanner()}${metrics()}${content}</main></div>`;syncGiftScope();}
+function render(){const content=state.view==='gifts'?giftsView():state.view==='live'?liveRows():playersView();app.innerHTML=`<div class="admin-shell">${header()}<main id="admin-main" class="admin-main" tabindex="-1">${pendingActionBanner()}${metrics()}${content}</main></div>`;syncGiftScope();}
 async function refreshOverview(){state.overview=await api('/api/admin/overview');}
 async function loadPlayers({selectFirst=false,append=false}={}){const data=await api(`/api/admin/players?limit=50&offset=${append?state.players.length:0}&search=${encodeURIComponent(state.search)}`);state.players=append?[...state.players,...data.players.filter(player=>!state.players.some(prior=>prior.userId===player.userId))]:data.players;state.total=data.total;if(selectFirst&&!state.selected&&state.players[0])await selectPlayer(state.players[0].userId);render();}
 async function selectPlayer(id){state.selected=await api(`/api/admin/players/${encodeURIComponent(id)}`);render();}
@@ -39,7 +39,7 @@ async function handleClick(target){
  if(target.dataset.adminMore!==undefined)return loadPlayers({append:true});
  if(target.dataset.adminView){state.view=target.dataset.adminView;if(state.view==='live')await loadLive();else render();return;}
  if(target.dataset.playerId)return selectPlayer(target.dataset.playerId);
- if(target.dataset.tab){state.tab=target.dataset.tab;render();return;}
+ if(target.dataset.tab){state.tab=target.dataset.tab;render();queueMicrotask(()=>document.querySelector(`[data-tab="${state.tab}"]`)?.focus());return;}
  if(target.dataset.itemOp)return action(`item.${target.dataset.itemOp}`,{itemId:target.dataset.itemId});
  if(target.dataset.pokemonOp){if(target.dataset.pokemonOp==='revoke'&&!confirm('Revoke this Pokémon from the account?'))return;return action(`pokemon.${target.dataset.pokemonOp}`,{speciesId:target.dataset.speciesId});}
  if(target.dataset.teamId)return action('team.activate',{teamId:target.dataset.teamId});
@@ -80,6 +80,7 @@ async function submitGift(form){
  pendingGift(null);notify(`Campaign ${result.campaignId}: ${result.targeted} delivered (${result.duplicates||0} duplicates skipped).`);await refreshOverview();render();
 }
 document.addEventListener('submit',async event=>{event.preventDefault();try{const form=event.target;if(form.matches('[data-economy-form]'))await action('economy.set',{coins:Number(form.coins.value),crystals:Number(form.crystals.value)});else if(form.matches('[data-tickets-form]'))await action('tickets.set',{recruitmentTickets:Number(form.recruitmentTickets.value),shopTickets:Number(form.shopTickets.value),trainingTickets:Number(form.trainingTickets.value),rankTickets:Number(form.rankTickets.value),rankProtectionArmed:form.rankProtectionArmed.value==='true'});else if(form.matches('[data-rating-form]'))await action('ranked.setRating',{rating:Number(form.rating.value)});else if(form.matches('[data-note-form]'))await action('account.note',{note:form.note.value});else if(form.matches('[data-gift-form]'))await submitGift(form);}catch(error){notify(error.message);}});
+document.addEventListener('keydown',event=>{const tab=event.target.closest?.('[role="tab"]');if(!tab||!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;const tabs=[...tab.closest('[role="tablist"]').querySelectorAll('[role="tab"]')],index=tabs.indexOf(tab),next=event.key==='Home'?0:event.key==='End'?tabs.length-1:event.key==='ArrowRight'?(index+1)%tabs.length:(index-1+tabs.length)%tabs.length;event.preventDefault();tabs[next]?.focus();tabs[next]?.click();});
 document.addEventListener('input',event=>{const target=event.target;if(target.matches('[data-admin-search]')){state.search=target.value;clearTimeout(searchTimer);searchTimer=setTimeout(()=>loadPlayers(),250);return;}const key=target.dataset.filterList;if(key){const rows=[...document.querySelectorAll(`[data-filter-target="${key}"] [data-search-text]`)];let visible=0;for(const row of rows){const match=adminSearchMatch(row.dataset.searchText,target.value);row.hidden=!match;row.style.display=match?'':'none';if(match)visible++;}const empty=document.querySelector(`[data-filter-empty="${key}"]`);if(empty)empty.hidden=visible!==0;}});
 document.addEventListener('change',event=>{if(event.target.matches('[data-gift-scope]'))syncGiftScope();if(event.target.matches('[data-gift-mail-type]'))syncGiftRetention();});
 

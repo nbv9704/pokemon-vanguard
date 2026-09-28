@@ -20,6 +20,7 @@ import {createGameViewportScaler} from "./js/ui/core/game-viewport-scaler.js";
 import {MissionView} from "./js/mission-view.js";
 import {renderAccountControl,countUnreadMail,renderMailbox,renderSettingsPage} from "./js/client-chrome-views.js";
 import {renderRoutePage,renderClientShell} from "./js/client-shell-layout.js";
+import {AccessibilityController,routeLabel} from "./js/accessibility-controller.js";
 import {renderConfirmDialog,renderLegacyDetailDialog,renderLegacyTypeChart} from "./js/client-modal-templates.js";
 import {routeFeatureClick} from "./js/client-feature-action-router.js";
 import {ReplicaTeamsView} from "./js/replica-teams.js";
@@ -37,7 +38,8 @@ const auth=window.__PV_AUTH__||null;
 const sessionStore=(()=>{try{return sessionStorage;}catch{return null;}})(),accountScope=auth?.accountId||auth?.playerId||browserStore.playerId;
 const socialPending=new SocialPendingActions({storage:sessionStore,scope:accountScope});
 const commercePending=new CommercePendingActions({storage:sessionStore,scope:accountScope});
-const id=auth?.playerId||browserStore.playerId,room=auth?.roomId||browserStore.room,router=createRouter();
+const accessibility=new AccessibilityController({documentRef:document});
+const id=auth?.playerId||browserStore.playerId,room=auth?.roomId||browserStore.room,router=createRouter('home',{onChange:page=>accessibility.routeChanged(page)});
 let V=null,commands={},pending=false,modalId=null,lastNotice="",connected=false,joinedReady=false,toastTimer,userMenuOpen=false,trainingHubMode=null,mailOpenKey=null,confirmAction=null;
 const modalFocus = new ModalFocusManager();
 let latestView=null,playback=null,playbackVersion=0;
@@ -227,7 +229,7 @@ function recruitment(){if(V.trainingV3)return head("Roster Ranch","Choose from t
 const gyms=["Ember Coast","Wild Current","Frozen Quarry","Skyfall Spire","Eclipse Garden","Astral Citadel"];
 function gym(){if(V.trainingV3)return head("The road to champion","Gym progression will open after the core battle and Roster Ranch beta gates.","GYM · SCHEMA 3 ROADMAP")+v3OverviewView.renderGym(V,v3TrainingEditor.catalog,{art:pokemonArtwork});return head("The road to champion","Six leaders. Six badges. One place at the top.")+'<div class="filters"><label>Battle format &nbsp; <select id="gymmode"><option value="single">Single battle</option><option value="double">Double battle</option></select></label></div><div class="gymgrid">'+gyms.map((n,i)=>'<div class="panel gym '+(i>V.badges.length?"locked":"")+'">'+art(i*6+1)+'<div class="eyebrow">GYM 0'+(i+1)+' · LEVEL '+(5+i*3)+'</div><h2>'+n+'</h2><p>'+V.catalog[i*6].types[0]+' / '+V.catalog[i*6+3].types[0]+' specialists</p><span class="reward">'+(V.badges.includes(i)?"✦ Badge earned":"First victory: +380 crystals · +680 coins")+'</span><br>'+btn(i>V.badges.length?"Locked":V.badges.includes(i)?"Challenge again →":"Challenge leader →","gym:"+i,i===V.badges.length?"primary":"",i>V.badges.length)+'</div>').join("")+'</div>';}
 function mail(){return renderMailbox({V,mailOpenKey,pending,head,esc,btn});}
-function settingsPage(){return renderSettingsPage({settings,auth,connected,esc,head,btn});}
+function settingsPage(){return renderSettingsPage({settings,auth,connected,persistent:browserStore.persistent,esc,head,btn});}
 function live(side){return V.battle[side].map((m,i)=>({m,i})).filter(x=>x.m.hp>0&&x.m.slot>=0).sort((a,b)=>a.m.slot-b.m.slot);}
 function animationBar(){return '<div class="battle-announcer" role="status" aria-live="polite"><div><strong>'+(playback?esc(playback.currentCaption?.title||'Battle in motion…'):'Choose your moves')+'</strong><span>'+(playback?esc(playback.currentCaption?.subtitle||'Playing actions in speed order'):'Elemental attacks · Hold items · Team synergy')+'</span></div><div class="playback-controls"><label>Speed <select data-battle-speed aria-label="Battle animation speed" '+(playback?'disabled':'')+'><option value="1" '+(settings.battleSpeed!==2?'selected':'')+'>1×</option><option value="2" '+(settings.battleSpeed===2?'selected':'')+'>2×</option></select></label>'+(playback?btn('Skip ⏭','skip-animation','small ghost'):'')+'</div></div>';}
 function ensureCommands(){for(const {i} of live("allies"))if(!commands[i])commands[i]={kind:"move",actor:i,move:0,target:live("enemies")[0]?.i};}
@@ -247,16 +249,16 @@ function battle(){
 }
 function draw(){
  if(!V)return;
- const page=router.current;document.body.dataset.appScreen=page;
+ const page=router.current,pageLabel=routeLabel(page);document.body.dataset.appScreen=page;
  prepareRoute(page);const continuity=captureRenderContinuity(page,renderedPage),t=performance.now();if(page!=='recruitment'){recruitmentView?.stopTicker();v3RecruitmentView.stopTicker();}const readiness=routeFeatureState(page),content=renderRoutePage(page,{home,collection:()=>archive(false),teams:teamsPage,recruitment,shop,bag:()=>bagView.render(V),missions,training:trainingPage,gym,mail,friends:friendsPage,profile:profilePage,settings:settingsPage,battle},readiness.ready,()=>featurePlaceholder(readiness)),footerSummary=V.trainingV3?`${V.trainingV3.mons.length} / ${v3TrainingEditor.catalog?.species.length||V.trainingV3.mons.length} BETA POKÉMON · SCHEMA 3`:V.collection.length+' / '+V.catalog.length+' DISCOVERED &nbsp; · &nbsp; '+V.badges.length+' / 6 BADGES',immersiveBattle=page==='battle'&&!!V.trainingV3;
- $("#app").innerHTML=renderClientShell({page,V,navs,esc,auth,content,footerSummary,immersiveBattle,commerceBanner,connectionLabel,unreadMailCount,accountControl});
+ $("#app").innerHTML=renderClientShell({page,pageLabel,V,navs,esc,auth,content,footerSummary,immersiveBattle,commerceBanner,connectionLabel,unreadMailCount,accountControl,storagePersistent:browserStore.persistent});
  renderedPage=page;const focusRestored=restoreRenderContinuity(continuity);
  if(immersiveBattle&&readiness.ready){const battleMode=rankedActive(V)&&V.rankedV1?.status==='finished'&&!V.rankedV1?.battleV3?'BATTLE_RESULT':rankedActive(V)?rankedBattleScreen.uiMode(rankedState(V)):trainingPvpActive(V)?trainingPvpBattleScreen.uiMode(trainingPvpState(V)):completedBattleResults.isPveVisible(V)&&v3BattleScreen.dismissedId!==V.battleV3.id?v3BattleScreen.uiMode(V):'BATTLE_LANDING';gameUi.setMode(battleMode);if(!focusRestored)gameUi.ensureFocus();}
  if(V.trainingV3&&page==='training'&&trainingHubMode==='pokemon'){managementUi.setMode(v3TrainingEditor.uiMode());if(!focusRestored)managementUi.ensureFocus();}
  if(V.trainingV3&&page==='teams'){managementUi.setMode(v3TeamBuilder.uiMode());if(!focusRestored)managementUi.ensureFocus();}
  if(V.trainingV3&&page==='collection'){managementUi.setMode(v3OverviewView.archiveUiMode());if(!focusRestored)managementUi.ensureFocus();}
  if(V.trainingV3&&page==='recruitment'){managementUi.setMode(v3RecruitmentView.uiMode());if(!focusRestored)managementUi.ensureFocus();}
- battleLogDrag.apply(document);
+ battleLogDrag.apply(document);accessibility.afterRender(page);
  if(playback){
   document.querySelectorAll('.commands button,.commands select,.turnfooter button').forEach(el=>{el.disabled=true;});
   const resolve=document.querySelector('[data-action="resolve"]');if(resolve)resolve.textContent='Playing turn…';
@@ -337,7 +339,7 @@ document.addEventListener("change",e=>{
  if(t.dataset.switch!==undefined){let i=+t.dataset.switch;commands[i]=+t.value<0?{kind:"move",actor:i,move:0,target:live("enemies")[0].i}:{kind:"switch",actor:i,to:+t.value};draw();}
 });
 document.addEventListener("input",e=>{const t=e.target;if(t.hasAttribute('data-audio-volume')){audioManager.setVolume(t.value);return;}if(socialView.handleInput(t)||arenaView.handleInput(t)||shopView.handleInput(t)||replicaTeamsView.handleInput(t)||v3TrainingEditor.handleInput(t)||v3TeamBuilder.handleInput(t)||updateV3ArchiveInput(t)||boxView?.handleInput(t)||teamBuilder?.handleInput(t))return;trainingEditor?.handleInput(t);});
-document.addEventListener("keydown",e=>{const modalOpen=$("#modal").children.length>0;if(e.code==="Escape"&&modalOpen){e.preventDefault();closeModal();return;}if(e.code==="Escape"&&userMenuOpen){e.preventDefault();setUserMenu(false);document.querySelector('[data-action="account-menu"]')?.focus({preventScroll:true});return;}if(!modalOpen&&router.current==="battle"&&V?.trainingV3&&gameUi.handleKeyboard(e))return;const managementPage=["teams","collection","recruitment"].includes(router.current)||router.current==='training'&&trainingHubMode==='pokemon';if(!modalOpen&&V?.trainingV3&&managementPage&&managementUi.handleKeyboard(e))return;if(modalOpen)modalFocus.handleTab(e);});
+document.addEventListener("keydown",e=>{const modalOpen=$("#modal").children.length>0;if(e.code==="Escape"&&modalOpen){e.preventDefault();closeModal();return;}if(userMenuOpen&&accessibility.handleMenuKey(e,{onClose:()=>setUserMenu(false)}))return;if(!modalOpen&&router.current==="battle"&&V?.trainingV3&&gameUi.handleKeyboard(e))return;const managementPage=["teams","collection","recruitment"].includes(router.current)||router.current==='training'&&trainingHubMode==='pokemon';if(!modalOpen&&V?.trainingV3&&managementPage&&managementUi.handleKeyboard(e))return;if(modalOpen)modalFocus.handleTab(e);});
 connection.start();
 // Leaving/resizing the scene commits its already-saved outcome and cancels effects.
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;completedBattleResults.dismissFinished(V);if(playback)finishPlayback();v3BattleScreen?.cancelPlayback();rankedBattleScreen?.cancelPlayback();trainingPvpBattleScreen?.cancelPlayback();draw();});

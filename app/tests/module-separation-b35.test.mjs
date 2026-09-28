@@ -101,7 +101,7 @@ test('shell renderer preserves resource balances, unread badge and immersive bat
  const args={page:'mail',V:{coins:12,gems:3,collection:[],catalog:[],badges:[],socialV1:{incomingRequests:['a']},missions:{claimableCount:1}},navs:[['home','/home.png','Home'],['friends','/friends.png','Friends'],['mail','/mail.png','Mail']],esc,auth:{name:'<alice>',provider:'browser'},content:'<section>Hi</section>',footerSummary:'one badge',immersiveBattle:false,commerceBanner:()=>'',connectionLabel:()=>'ONLINE',unreadMailCount:()=>3,accountControl:()=>'<account>'};
  const shell=renderClientShell(args);
  assert.match(shell,/&lt;alice&gt;/);assert.match(shell,/data-action="nav:mail"/);
- assert.match(shell,/class="badge">3<\/span>/);assert.match(shell,/12/);assert.match(shell,/one badge/);
+ assert.match(shell,/class="badge " aria-label="3 unread messages">3<\/span>/);assert.match(shell,/12/);assert.match(shell,/one badge/);
  const battle=renderClientShell({...args,immersiveBattle:true,page:'battle'});
  assert.match(battle,/battle-shell-layout/);assert.doesNotMatch(battle,/class="sidebar"/);
 });

@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 21 |
-| IN PROGRESS | 12 |
+| DONE | 22 |
+| IN PROGRESS | 11 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B36 — hoàn tất asset type/move-category do dự án tự tạo**. Runtime chỉ trỏ 39 đường dẫn local ổn định; proxy/download/nguồn ngoài đã bị xóa. Đã thêm đủ **39/39 PNG**: type icon 86×86, type strip giữ nguyên thiết kế 120×28, move-category 50×50; strict validator PASS. `npm run check` PASS; focused asset regression 12/12; full regression B36 gần nhất 1.465/1.465 PASS trên 233 file. #22 vẫn `IN PROGRESS` vì 847 record ảnh cũ và browser/a11y matrix vẫn cần hoàn tất; #31 vẫn chờ browser/a11y rộng.
+Đợt hiện tại: **B37 — hoàn tất UX/accessibility/storage fallback**. Game và Admin có landmark/skip-link, focus theo route không cướp focus khi realtime redraw, menu/tab keyboard, current/live semantics, forced-colors/reduced-motion và cảnh báo storage tồn tại lâu. Gate `accessibility:validate` đã nằm trong `npm run check`; focused 32/32, full regression **1.471/1.471 PASS trên 234 file** và browser keyboard QA thật PASS. #31 chuyển `DONE`; #22 vẫn tách riêng phần quyền 847 asset cũ/DPR visual matrix.
 
 ## Bảng tiến độ
 
@@ -58,7 +58,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 28 | Admin overview aggregate đúng | P1 | DONE | B29: RPC read-only service-role-only aggregate toàn bộ profiles (không sample 100), summary-only SQL page, UI load-more ổn định theo ID, local JSON scan toàn tập, gift audience UUID keyset 250/page + frozen manifest + delivery <=100/request. Fixture 151/225 accounts, 215 recipient lost-ACK/partial replay và negative privacy/role-policy tests PASS. Rollout SQL migration 003/staging RLS live còn thuộc #05; chưa khẳng định production DBA verification. |
 | 29 | Social capacity/profile offline | P1 | DONE | B31: khóa cả hai tài khoản và đọc durable trước mutation, xác thực request hai chiều, chống 99→101 khi accept đồng thời; bắt buộc atomic savePair trước publish, loại fallback ghi độc lập; profile offline ưu tiên durable profile và cache whitelist 30s/256 entries, invalidate theo socket, từ chối sai userId. Kiểm thử fixtures JSON concurrency, giới hạn 98/99/100, lost ACK qua signed WS/mock RPC, HTML escaping PASS. Cloud staging/distributed coordinator theo #04/#05; browser/a11y rộng theo #31. |
 | 30 | Quan sát lỗi/benchmark | P1/P2 | DONE | B30: bounded allowlist operation journal (128), secret/error-message redaction, provider read-only /health/live + /health/ready TTL/singleflight/deadline, admin-only /api/admin/observability JSON export, runtime + pending Ranked settlement age/retries và 6 diagnostic alerts, versioned synthetic benchmark baseline/compare (small, large, history, single/double, multi-tab, pair coordinator), 10k journal/320 queue synthetic soak. Focused regression, npm run check và full 1.427/1.427 PASS. Đây là export per-process/pollable, không tuyên bố multi-worker aggregator, hosted CI hay production SLO. |
-| 31 | UX/accessibility/storage fallback | P2 | IN PROGRESS | localStorage lỗi chuyển memory fallback và báo không persistent; B24 modal focus trap/inert/return-focus + settings getter fallback; B33 chặn luôn `window.localStorage` property getter bị cấm ở bootstrap, có test; B34 bổ sung text badge có accessible name khi 39 icon tùy chọn đều tải lỗi; còn browser/a11y toàn app |
+| 31 | UX/accessibility/storage fallback | P2 | DONE | B24/B33/B34/B37: storage getter/read/write lỗi chuyển memory và cảnh báo rõ; modal trap/inert/return-focus; skip-link + main landmark cho game/battle/Admin; route title/focus một lần, không cướp focus khi WS redraw; account menu và Admin tabs điều hướng bàn phím; current/live/badge semantics; reduced-motion/forced-colors. Gate 9 source, focused 32/32, full 1.471/1.471 và browser QA PASS. `app/docs/accessibility-completion-b37.md`. |
 | 32 | Workflow/tài liệu thống nhất | P2 | DONE | B26: DONE — chuẩn hóa root README/AGENTS, app AGENTS, code structure và developer workflow Node/npm duy nhất; archive README cũ; gate đối chiếu đường dẫn/scripts/lock; clean-source ZIP `npm run check` và 11 focused tests PASS với dependency lock-matched đã cài sẵn; local auth smoke PASS. `npm ci` mới trong container bị chặn bởi npm registry DNS EAI_AGAIN, không tuyên bố fresh install ở B26; B23 hosted đã xác minh cùng lockfile. Con người có thể review tài liệu tiếp. |
 | 33 | Release tái lập/clean environment | P2 | DONE | Reproducible per-file content/source archive (không cam kết whole-ZIP byte-identical cross-zlib); B09-fix1 + hosted Linux/Windows B24 npm-ci/check và clean-unpack smoke, B25 thêm test hai lần đóng gói byte-stable với cùng tool, xác nhận safe manifest/CRC và save không thay đổi. Runtime ZIP/debug report không thuộc loại artifact đã hỗ trợ. |
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
@@ -478,6 +478,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Asset handoff hoàn tất:** chủ dự án đã thêm đủ **39/39** PNG; contract được điều chỉnh để giữ nguyên 18 type strip ở kích thước gốc **120×28** thay vì resize lên 152×36. Strict validator và focused regression 12/12 PASS; `npm run check` PASS. Hosted run [`36480499621`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36480499621) cho asset commit `4642a51`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn còn lại:** #22 chưa DONE vì còn 847 image-rights record cũ và browser DPR/visual/keyboard/screen-reader matrix.
 - **Tổng giữ nguyên:** **21 DONE / 12 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**. B36 hoàn tất một mục triển khai độc lập; trạng thái roadmap #22 chỉ đổi sau khi asset thật và nghiệm thu người dùng hoàn tất.
+
+### 29/09/2026 — B37: hoàn tất UX/accessibility và storage fallback
+
+- **#31 DONE:** thêm `AccessibilityController`, route label/title, focus `main` chỉ sau chuyển route; realtime redraw cùng route không cướp focus. Game/battle/Admin có skip-link, landmark, active navigation semantics; connection/toast/badge có live/context name phù hợp.
+- **Keyboard và hiển thị:** account menu hỗ trợ Up/Down/Home/End/Escape/Tab; Admin tab hỗ trợ Left/Right/Home/End. CSS có keyboard focus, reduced-motion và forced-colors mà không tăng ngân sách 1.062 `!important`.
+- **Storage fallback:** shell và Settings luôn cho biết persistent/temporary; nếu browser storage bị chặn thì identity/preferences chạy memory và cảnh báo sẽ reset sau reload, không đánh đồng với save server.
+- **Nghiệm thu:** gate mới `accessibility:validate` kiểm 9 source và nằm trong `npm run check`; focused **32/32 PASS**; `npm run check` PASS; full regression **1.471/1.471 PASS trên 234 file**. Browser thật xác nhận skip-link, End/Escape/return-focus, Shop/Settings route focus, title, `aria-current`, storage status; QA còn bắt và loại một listener focus race trước khi chốt.
+- **Ranh giới:** đây là contract source/runtime có regression, không tuyên bố chứng nhận từ auditor bên thứ ba. #22 vẫn sở hữu quyền 847 asset cũ và asset DPR/visual matrix.
+- **Tổng sau B37:** **22 DONE / 11 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 
