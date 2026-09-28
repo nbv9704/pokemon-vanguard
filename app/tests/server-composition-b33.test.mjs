@@ -17,7 +17,6 @@ function fixture(overrides={}){
   requestPolicy:{requestUrl:req=>new URL(req.url,'http://localhost'),clientIp:()=> 'synthetic'},
   auth:{handle:async()=>{calls.push('auth');return false;},readSession:()=>null},
   admin:{handle:async()=>{calls.push('admin');return false;}},
-  servePokemonUiIcon:async()=>{calls.push('icon');return false;},
   quotas:{inspector:()=>({ok:true})},v2Catalog,
   serveV2Catalog:(_req,response)=>{calls.push('v2');response.writeHead(200);response.end('v2');},
   serveV3Catalog:(_req,response)=>{calls.push('v3');response.writeHead(200);response.end('v3');},
@@ -38,13 +37,13 @@ test('HTTP composition keeps public health ahead of auth, supports HEAD, 503 rea
  await closing.handle({url:'/health/live',method:'GET'},unavailable);assert.equal(unavailable.status,503);
 });
 
-test('HTTP composition preserves auth/admin/icon precedence, catalogs and method firewall',async()=>{
+test('HTTP composition preserves auth/admin precedence, catalogs and method firewall',async()=>{
  const f=fixture();const catalog=res(),staticFile=res(),wrongMethod=res();
  await f.handle({url:'/api/v3/catalog',method:'GET'},catalog);
  await f.handle({url:'/index.html',method:'GET'},staticFile);
  await f.handle({url:'/api/v3/catalog',method:'POST'},wrongMethod);
  assert.equal(catalog.body,'v3');assert.equal(staticFile.body,'/index.html');assert.equal(wrongMethod.status,405);
- assert.deepEqual(f.calls,['auth','admin','icon','v3','auth','admin','icon','static','auth','admin','icon']);
+ assert.deepEqual(f.calls,['auth','admin','v3','auth','admin','static','auth','admin']);
  const authWins=fixture({auth:{handle:async(_req,response)=>{response.writeHead(401);response.end();return true;},readSession:()=>null}}),blocked=res();
  await authWins.handle({url:'/api/v3/catalog',method:'GET'},blocked);assert.equal(blocked.status,401);assert.deepEqual(authWins.calls,[]);
 });

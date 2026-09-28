@@ -76,7 +76,8 @@ needs migration/replay data audits, hosting, checksums and restore tests first.
 PvP mid-match restart recovery (#18) and production Supabase/multi-process smoke remain
 open. B09 deliberately works on independent P2/CI tracks to avoid blocking progress.
 
-**Asset inventory caveat:** `npm run assets:ui-icons:validate` currently fails with 0/39
-source-mirror icons: B08/B09 ZIPs omit those remote-fetched convenience assets.
-This validation is not silently marked PASS and has not been added to the release gate;
-fetch/review/license/size checks are a separate later task.
+**Current asset note (B36 supersedes the historical B09 approach):** the runtime no longer
+fetches or proxies third-party type/category sprites. It points to 39 project-owned local
+paths documented in `public/assets/ui/README.md`; missing art becomes a text badge.
+`npm run assets:ui-symbols:policy` validates files supplied so far and the strict
+`npm run assets:ui-symbols:validate` command requires the complete set.

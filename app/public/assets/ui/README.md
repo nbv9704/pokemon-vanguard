@@ -1,13 +1,15 @@
-# Pokémon UI symbol assets
+# Project-owned UI symbol assets
 
-Pokémon Vanguard uses the Pokémon Legends: Arceus (LA) type-icon family and the matching LA move-category icons as presentation-only UI metadata.
+Pokémon Vanguard loads only artwork supplied inside this project. There is no external icon URL, automatic download, or image proxy.
 
 Expected local layout:
 
-- `pokemon-types/icon/` — 18 `* icon LA.png` circular icons (86×86)
-- `pokemon-types/ic/` — 18 `*IC LA.png` horizontal type labels (152×36)
-- `move-categories/` — `PhysicalIC LA.png`, `SpecialIC LA.png`, `StatusIC LA.png` (50×50)
+- `pokemon-types/icon/` — `bug.png` through `water.png`, one for each of the 18 type IDs (86×86)
+- `pokemon-types/ic/` — the same 18 lowercase filenames, rendered as horizontal labels (152×36)
+- `move-categories/` — `physical.png`, `special.png`, `status.png` (50×50)
 
-The tree intentionally contains **no** third-party icon binaries. `npm run assets:ui-icons` is now disabled until all 39 individual rights records have documented permission or a compatible license and pinned SHA-256 checksums. See `app/docs/image-rights-and-browser-qa-b34.md` and `app/docs/ui-icon-rights-b34.json` (repository-root paths).
+All files must be PNGs with the exact dimensions above. Keep the lowercase filenames unchanged; the runtime contract is listed in `public/js/ui/pokemon-symbol-assets-data.js`.
 
-The current UI tries local files and then its existing allowlisted upstream proxy; if both fail, it renders accessible text badges instead of broken images. The proxy is an unresolved external dependency, not evidence of redistribution permission. Third-party fair-use labels cannot be copied into a license grant for this game.
+During creation, `npm run assets:ui-symbols:policy` permits missing or partially supplied files while validating every file already present. `npm run assets:ui-symbols:validate` is the strict completion gate and requires all 39. Missing files render accessible text badges, so development remains usable without making a network request.
+
+Only add art that the project owns or is independently cleared to redistribute. Do not copy the retired third-party reference sprites.

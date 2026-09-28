@@ -4,36 +4,36 @@ import {readFile} from 'node:fs/promises';
 import {MOVE_CATEGORY_SYMBOLS,POKEMON_TYPE_SYMBOLS,SYMBOL_DIMENSIONS} from '../public/js/ui/pokemon-symbol-assets-data.js';
 import {moveCategoryAsset,moveCategoryIds,moveCategoryImg,pokemonTypeIds,typeStripList,typeSymbolAsset,typeSymbolImg} from '../public/js/ui/pokemon-symbol-assets.js';
 
-test('LA symbol catalog covers all 18 types and all three move categories',()=>{
+test('project symbol catalog covers all 18 types and all three move categories',()=>{
  assert.equal(pokemonTypeIds.length,18);
  assert.equal(moveCategoryIds.length,3);
  assert.deepEqual(moveCategoryIds,['physical','special','status']);
  assert.deepEqual(SYMBOL_DIMENSIONS,{typeIcon:[86,86],typeIc:[152,36],moveCategory:[50,50]});
  for(const id of pokemonTypeIds){
   const entry=POKEMON_TYPE_SYMBOLS[id];
-  assert.match(entry.icon,/_icon_LA\.png$/);
-  assert.match(entry.ic,/IC_LA\.png$/);
+  assert.equal(entry.icon,`${id}.png`);
+  assert.equal(entry.ic,`${id}.png`);
   assert.match(typeSymbolAsset(id).local,/^\/assets\/ui\/pokemon-types\/icon\//);
   assert.match(typeSymbolAsset(id,'ic').local,/^\/assets\/ui\/pokemon-types\/ic\//);
-  assert.equal(typeSymbolAsset(id).fallback,`/api/ui-symbols/type-icon/${id}`);
+  assert.equal('fallback' in typeSymbolAsset(id),false);
  }
  for(const id of moveCategoryIds){
-  assert.match(MOVE_CATEGORY_SYMBOLS[id].file,/IC_LA\.png$/);
+  assert.equal(MOVE_CATEGORY_SYMBOLS[id].file,`${id}.png`);
   assert.match(moveCategoryAsset(id).local,/^\/assets\/ui\/move-categories\//);
  }
 });
 
-test('symbol helpers render local-first images with source fallback metadata',()=>{
+test('symbol helpers render local-only images with accessible text-fallback metadata',()=>{
  const icon=typeSymbolImg('fire'),strip=typeStripList(['water','flying']),category=moveCategoryImg('special');
- assert.match(icon,/src="\/assets\/ui\/pokemon-types\/icon\/Fire_icon_LA\.png"/);
- assert.match(icon,/data-pv-fallback-src="\/api\/ui-symbols\/type-icon\/fire"/);
+ assert.match(icon,/src="\/assets\/ui\/pokemon-types\/icon\/fire\.png"/);
+ assert.doesNotMatch(icon,/data-pv-fallback-src|https?:\/\/|\/api\/ui-symbols/);
  assert.equal((strip.match(/pv-type-symbol-ic/g)||[]).length,2);
- assert.match(category,/SpecialIC_LA\.png/);
+ assert.match(category,/special\.png/);
  assert.match(category,/pv-move-category-symbol/);
  assert.match(category,/pv-move-category-special/);
 });
 
-test('production UI surfaces consume the shared LA symbol helpers',async()=>{
+test('production UI surfaces consume the shared project symbol helpers',async()=>{
  const sources=await Promise.all([
   '../public/js/v3-training-editor.js','../public/js/v3-team-builder.js','../public/js/v3-recruitment-view.js','../public/js/v3-overview-view.js','../public/js/ui/handlers/battle-command-ui-handler.js'
  ].map(path=>readFile(new URL(path,import.meta.url),'utf8')));

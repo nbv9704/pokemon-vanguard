@@ -31,12 +31,12 @@ const SNAPSHOT=`(()=>({
 export function analyzeRouteImageSnapshot(raw,{label}={}){
  if(!LABELS.has(label))throw Error('Unknown route label');
  if(!raw||!Array.isArray(raw.imageRows)||!Number.isFinite(raw.dpr)||raw.dpr<=0)throw Error('Invalid browser snapshot');
- const missing=[],insufficient=[],wrongVariant=[];let responsive=0,remoteFallback=0;
+ const missing=[],insufficient=[],wrongVariant=[];let responsive=0,externalImages=0;
  const fallbackTextRows=raw.fallbackTextRows||[];
  const unlabelledFallback=fallbackTextRows.flatMap((row,index)=>row.named||row.decorative?[]:[index]);
  for(const [index,img] of raw.imageRows.entries()){
   if(img.complete&&(!img.width||!img.height))missing.push(index);
-  if(img.selected?.startsWith('/api/ui-symbols/'))remoteFallback++;
+  if(img.selected==='external')externalImages++;
   const variant=IMAGE_VARIANTS[img.src];
   if(!variant||!img.hasSrcset)continue;
   responsive++;
@@ -46,7 +46,7 @@ export function analyzeRouteImageSnapshot(raw,{label}={}){
  }
  const timing=raw.imageTiming||[];
  return {label,viewport:raw.viewport,viewportHeight:raw.viewportHeight,dpr:raw.dpr,readyState:raw.readyState,
-  visibleImages:raw.imageRows.length,responsive,remoteFallback,offlineSymbolBadges:fallbackTextRows.length,unlabelledFallback,
+  visibleImages:raw.imageRows.length,responsive,externalImages,offlineSymbolBadges:fallbackTextRows.length,unlabelledFallback,
   missing,insufficient,wrongVariant,passed:missing.length===0&&insufficient.length===0&&wrongVariant.length===0&&unlabelledFallback.length===0,
   clsSinceArm:raw.clsArmed?raw.clsSinceArm:null,
   initialDocumentFcpMs:raw.paintFcp,

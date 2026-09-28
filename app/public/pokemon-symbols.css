@@ -1,5 +1,5 @@
 @layer pv.overrides{
-/* Pokémon Legends: Arceus presentation sprites used as UI metadata, not gameplay state. */
+/* Project-owned type and move-category art used as UI metadata, not gameplay state. */
 .pv-type-symbol,.pv-move-category-symbol{display:inline-block;object-fit:contain;object-position:center;vertical-align:middle;image-rendering:pixelated!important;flex:none}
 .pv-type-symbol-icon{width:18px;height:18px}
 .pv-type-symbol-ic{width:76px;height:18px}
@@ -17,11 +17,6 @@
 .summary-move-symbols{display:flex;align-items:center;justify-content:flex-end;gap:5px;min-height:18px}
 .summary-move-symbols .pv-type-symbol-ic{width:63px;height:15px}
 .summary-move-symbols .pv-move-category-symbol{width:15px;height:15px}
-/* Move-category LA glyphs are monochrome source sprites. Tint them by semantic class so the same assets stay legible on light Vanguard panels. */
-.pv-move-category-physical{filter:brightness(0) saturate(100%) invert(46%) sepia(71%) saturate(1810%) hue-rotate(336deg) brightness(94%) contrast(88%)}
-.pv-move-category-special{filter:brightness(0) saturate(100%) invert(48%) sepia(31%) saturate(1668%) hue-rotate(198deg) brightness(87%) contrast(88%)}
-.pv-move-category-status{filter:brightness(0) saturate(100%) invert(54%) sepia(18%) saturate(1047%) hue-rotate(118deg) brightness(88%) contrast(86%)}
-
 /* Battle move cards: move name first, icon-only semantics second, compact stat rail at right. */
 .pokemon-move-tile .move-card-main{display:grid;align-content:center;gap:6px;min-width:0}
 .pokemon-move-tile .move-card-main>b{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

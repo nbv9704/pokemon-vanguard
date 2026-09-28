@@ -11,10 +11,10 @@ test('real-route image audit redacts all URL/alt/player data and checks mapped D
  const [src,entry]=Object.entries(IMAGE_VARIANTS)[0];
  const row={viewport:360,viewportHeight:740,dpr:2,readyState:'complete',clsArmed:true,clsSinceArm:0,paintFcp:100,
   imageRows:[{src,selected:entry.two,width:112,height:112,cssWidth:48,cssHeight:48,complete:true,hasSrcset:true},
-   {src:'external',selected:'/api/ui-symbols/type-icon/fire',width:86,height:86,cssWidth:18,cssHeight:18,complete:true,hasSrcset:false}],
+   {src:'external',selected:'external',width:86,height:86,cssWidth:18,cssHeight:18,complete:true,hasSrcset:false}],
   imageTiming:[{bytes:150,decodedBytes:200}]};
  const report=analyzeRouteImageSnapshot(row,{label:'bag'});
- assert.equal(report.passed,true);assert.equal(report.responsive,1);assert.equal(report.remoteFallback,1);
+ assert.equal(report.passed,true);assert.equal(report.responsive,1);assert.equal(report.externalImages,1);
  assert.equal(report.network.transferBytes,150);
  assert.doesNotMatch(JSON.stringify({...report,notes:[]}),/https?:\/\/|cookie|player-account-123/);
  row.imageRows[0].selected=entry.one;

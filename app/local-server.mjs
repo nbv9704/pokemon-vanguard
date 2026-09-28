@@ -13,7 +13,6 @@ import {RankedService} from './server/ranked-v1.mjs';
 import {SocialService} from './server/social-v1.mjs';
 import {TrainingPvpService} from './server/training-pvp-v1.mjs';
 import {AdminService} from './server/admin-service.mjs';
-import {createPokemonUiIconProxy} from './server/pokemon-ui-icons.mjs';
 import {AccountCoordinator} from './server/account-coordinator.mjs';
 import {createRequestQuotas} from './server/request-quotas.mjs';
 import {pruneDetachedRooms,roomResourceSnapshot,DETACHED_ROOM_RETENTION_MS} from './server/room-lifecycle.mjs';
@@ -56,7 +55,6 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const auth=createLocalAuth({env:authEnv,fetchImpl:authFetch,requireSessionSecret:authRequired,now:()=>clock.now(),originAllowed:(req,url)=>requestPolicy.browserMutationAllowed(req,url),onLogout:session=>{
    for(const room of rooms.values())for(const ws of new Set([...room.clients.keys(),...(room.pendingSockets||[])]))if(ws.authSessionId===session.sid)closeAuthSocket(ws,'AUTH_REVOKED');
   }});
-  const servePokemonUiIcon=createPokemonUiIconProxy({fetchImpl:authFetch});
   const quotas=createRequestQuotas({now:()=>clock.now(),limits:requestRateLimits});
   const notifyAccounts=accountIds=>{for(const accountId of new Set(accountIds||[])){const target=rooms.get(accountId);if(target?.state)broadcast(target);}};
   const setLiveState=(accountId,state)=>{const target=rooms.get(accountId);if(target){target.state=state;target.dirty=false;target.lastActiveAt=clock.now();}};
@@ -93,7 +91,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const serveV3Catalog=createCatalogHttpResponse(publicV3Catalog);
   const serveStatic=createStaticHttpResponse(publicDir);
   const handleHttp=createHttpRequestHandler({isClosing:()=>closing,readiness,requestPolicy,auth,admin,
-   servePokemonUiIcon,quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic});
+   quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic});
   const server=http.createServer((req,res)=>{void handleHttp(req,res);});
   wsController=createWebsocketController({server,isClosing:()=>closing,requestPolicy,auth,authRequired,quotas,rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,ensureBetaTestWallet,ops,websocketHeartbeatMs,websocketJoinDeadlineMs,maxSocketsPerIp,maxSocketsPerAccount,setBroadcast:next=>{broadcast=next;}});
   const {wss,websocketHeartbeatTimer}=wsController;

@@ -1,5 +1,7 @@
 # B34 — image #22: offline diagnostics, source review, real-route QA kit
 
+> **Historical B34 record.** B36 removed the third-party symbol registry, downloader and runtime proxy. The active 39-file project-owned contract is documented in [`project-ui-symbols-b36.md`](project-ui-symbols-b36.md) and [`../public/assets/ui/README.md`](../public/assets/ui/README.md). The external URLs below are preserved only as audit history and are not active runtime instructions.
+
 Status: **#22 IN PROGRESS**. The code/integrity work below is completed locally; neither browser acceptance nor public redistribution rights are claimed. This batch builds on B32 and includes B33 (the B33 corrected patch must be applied after the B32 baseline before this patch).
 
 ## Shipped safeguards

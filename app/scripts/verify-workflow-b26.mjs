@@ -49,7 +49,7 @@ export async function verifyWorkflow(root=ROOT){
  contains(operations,/Historical B09 snapshot/,'dated B09 operations notice');
  contains(readme,/archived pre-B26 README/,'historical README explicitly archived');
  contains(guide,/mid-match restart|mid-match restart support/,'open PvP recovery declared');
- contains(guide,/39 upstream mirrors/,'image icon caveat declared');
+ contains(guide,/39-file set/,'project UI symbol contract declared');
  if(!example.includes('AUTH_ALLOW_LOCAL_BETA=false'))throw new Error('Dev template must disable public local beta by default');
  if(readme.includes('npm install\n'))throw new Error('Quickstart must use lockfile npm ci');
  return {paths:REQUIRED_FILES.length,scripts:REQUIRED_SCRIPTS.length,lockfile:true};
