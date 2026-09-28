@@ -35,5 +35,5 @@ test('R3-99 settings and runtime wire semantic audio, fallback assets and access
 
 test('project logo is served and used by the app shell, loading screens, favicon and battle header',()=>{
  const logo=new URL('../public/logo.png',import.meta.url),client=fs.readFileSync(new URL('../public/client.js',import.meta.url),'utf8'),html=fs.readFileSync(new URL('../public/index.html',import.meta.url),'utf8'),classic=fs.readFileSync(new URL('../public/classic.html',import.meta.url),'utf8'),battle=fs.readFileSync(new URL('../public/js/v3-battle-screen.js',import.meta.url),'utf8');
- assert.ok(fs.statSync(logo).size>0);assert.match(html,/rel="icon" type="image\/png" href="\/logo\.png"/);assert.match(html,/class="brandmark project-logo"/);assert.match(classic,/class="brandmark project-logo"/);assert.match(client,/class="brandmark project-logo"/);assert.match(battle,/class="pokemon-game-logo" src="\/logo\.png"/);
+ assert.ok(fs.statSync(logo).size>0);assert.match(html,/rel="icon" type="image\/png" href="\/logo\.png"/);assert.match(html,/class="brandmark project-logo"/);assert.match(classic,/class="brandmark project-logo"/);assert.match(client,/renderClientShell/);assert.match(fs.readFileSync(new URL('../public/js/client-shell-layout.js',import.meta.url),'utf8'),/class="brandmark project-logo"/);assert.match(battle,/class="pokemon-game-logo" src="\/logo\.png"/);
 });

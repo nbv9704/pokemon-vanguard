@@ -49,8 +49,8 @@ test('battle log drag controller clamps and preserves a normalized position acro
 });
 
 test('battle polish owns surrender confirmation, draggable log, and distinct weather/terrain layers',async()=>{
- const [client,css,screen]=await Promise.all([readFile(new URL('../public/client.js',import.meta.url),'utf8'),readFile(new URL('../public/battle-presentation-polish.css',import.meta.url),'utf8'),readFile(new URL('../public/js/v3-battle-screen.js',import.meta.url),'utf8')]);
- assert.match(client,/requestBattleSurrender\(\)/);assert.match(client,/battle-confirm-modal/);assert.match(client,/data-action="confirm-action"/);
+ const [client,modal,css,screen]=await Promise.all([readFile(new URL('../public/client.js',import.meta.url),'utf8'),readFile(new URL('../public/js/client-modal-templates.js',import.meta.url),'utf8'),readFile(new URL('../public/battle-presentation-polish.css',import.meta.url),'utf8'),readFile(new URL('../public/js/v3-battle-screen.js',import.meta.url),'utf8')]);
+ assert.match(client,/requestBattleSurrender\(\)/);assert.match(client,/renderConfirmDialog/);assert.match(modal,/battle-confirm-modal/);assert.match(modal,/data-action="confirm-action"/);
  assert.match(client,/new BattleLogDragController/);assert.match(screen,/data-battle-log-draggable="true"/);
  for(const token of ['weather-rain','weather-sun','weather-sandstorm','weather-snow','terrain-electric','terrain-grassy','terrain-misty','terrain-psychic'])assert.match(css,new RegExp(token));
  assert.match(css,/hp-committing/);assert.match(css,/@keyframes v3-fx-travel/);

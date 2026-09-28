@@ -56,3 +56,15 @@ Both profiles are verified by `scripts/verify-release.py`; the default `npm run 
 auto-detects a clean extracted runtime archive using its `RELEASE-MANIFEST.json`.
 Consult [`catalog-retention-b27.md`](catalog-retention-b27.md) before promoting a
 new catalog or claiming replay support for a previous version.
+
+## B35 ownership map and complexity gate
+
+B35 finishes the high-risk module split in [module-boundaries-b35.md](../app/docs/module-boundaries-b35.md). These are the stable owners when adding features:
+
+- `app/local-server.mjs` composes HTTP, WS, account and lifecycle dependencies. HTTP routing belongs in `server/http-request-handler.mjs`; WebSocket transport/join/broadcast belongs in `server/websocket-controller.mjs`; gameplay command dispatch belongs in `server/player-action-dispatch.mjs`; public serialization belongs in `server/public-state-projector.mjs`.
+- `server/ranked-v1.mjs` is the compatibility service facade. Matching, projected views, match transitions/timers, profile/rating and durable pair settlement are separate Ranked modules. Do not move durable settlement back into an action handler.
+- `mechanics-v3/manifest-contract.mjs` keeps its original exports. Value enums, handler validation and move-specific validation have distinct ownership.
+- `public/client.js` still owns the active DOM shell, event listeners, route/controller lifecycle and battle playback integration. Pure account/mail/settings markup lives in `public/js/client-chrome-views.js`, feature click routing in `public/js/client-feature-action-router.js`, and shell/legacy modal templates in `public/js/client-shell-layout.js` and `public/js/client-modal-templates.js`. Never put authoritative battle mutations in the UI.
+- `public/admin.js` owns requests, mutation retries and DOM listeners. `public/js/admin-views.js` produces markup from state and receives no fetch/storage dependency.
+
+Run `npm run module:validate` (included in `npm run check`) for entry-size and split-ownership regression, alongside existing import/cycle, 360-line, lint and TypeScript contract gates. B35 budgets apply to the five former hubs; these are **byte limits in addition to** the existing source-line gate and should not be bypassed by compressing control flow onto one line. Adding a new domain should usually add its own module and focused tests.

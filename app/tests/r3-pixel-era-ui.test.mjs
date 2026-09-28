@@ -5,6 +5,7 @@ import fs from 'node:fs';
 const html=fs.readFileSync(new URL('../public/index.html',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../public/pixel-era-ui.css',import.meta.url),'utf8');
 const client=fs.readFileSync(new URL('../public/client.js',import.meta.url),'utf8');
+const chromeViews=fs.readFileSync(new URL('../public/js/client-chrome-views.js',import.meta.url),'utf8');
 
 test('R3-102 pixel stylesheet is the final presentation override',()=>{
  assert.match(html,/<body class="pixel-era">/);
@@ -50,5 +51,6 @@ test('loading splash is centered and sized as a primary focal point',()=>{
 test('top navigation uses a larger legible icon/text scale and account logout uses the supplied icon',()=>{
  assert.match(css,/body\.pixel-era \.nav\{[\s\S]*min-height:48px;[\s\S]*font-size:9px!important/);
  assert.match(css,/body\.pixel-era \.nav \.icon\{[^}]*width:22px;height:22px;flex:0 0 22px/);
- assert.match(client,/data-action="logout"[\s\S]*?\/assets\/icons\/logout\.png/);
+ assert.match(client,/renderAccountControl/,'shell must delegate account menu markup');
+ assert.match(chromeViews,/data-action="logout"[\s\S]*?\/assets\/icons\/logout\.png/,'chrome module owns logout icon');
 });

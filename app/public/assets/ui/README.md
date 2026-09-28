@@ -8,6 +8,6 @@ Expected local layout:
 - `pokemon-types/ic/` — 18 `*IC LA.png` horizontal type labels (152×36)
 - `move-categories/` — `PhysicalIC LA.png`, `SpecialIC LA.png`, `StatusIC LA.png` (50×50)
 
-Run `npm run assets:ui-icons` to vendor the source images from Bulbagarden Archives. Until then, the browser UI falls back to the matching source URLs when a local file is missing.
+The tree intentionally contains **no** third-party icon binaries. `npm run assets:ui-icons` is now disabled until all 39 individual rights records have documented permission or a compatible license and pinned SHA-256 checksums. See `app/docs/image-rights-and-browser-qa-b34.md` and `app/docs/ui-icon-rights-b34.json` (repository-root paths).
 
-These are Pokémon game sprites mirrored by Bulbagarden Archives and are treated as third-party/fair-use presentation assets. Review redistribution rights before a public release.
+The current UI tries local files and then its existing allowlisted upstream proxy; if both fail, it renders accessible text badges instead of broken images. The proxy is an unresolved external dependency, not evidence of redistribution permission. Third-party fair-use labels cannot be copied into a license grant for this game.

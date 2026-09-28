@@ -62,8 +62,13 @@ test('pending Admin UI command preserves identical payload and ID across reload 
 
 
 test('public WebSocket projection uses the root allowlist instead of receipt blacklists',async()=>{
- const source=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
- assert.match(source,/legacyAdventurePublicView\(legacyView\)/);assert.doesNotMatch(source,/adminActionReceiptsV1:_privateAdminActionReceiptsV1/);
+ const server=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
+ const source=await readFile(new URL('../server/public-state-projector.mjs',import.meta.url),'utf8');
+ const websocket=await readFile(new URL('../server/websocket-controller.mjs',import.meta.url),'utf8');
+ assert.match(server,/createWebsocketController\(/);
+ assert.match(websocket,/createPlayerStateProjector\(/);
+ assert.match(source,/legacyAdventurePublicView\(legacyView\)/);
+ assert.doesNotMatch(source,/adminActionReceiptsV1:_privateAdminActionReceiptsV1/);
 });
 
 

@@ -1,0 +1,19 @@
+// Manifest vocabularies shared by independent validators. STORED_STATS stays internal to the public compatibility facade.
+export const CONTENT_KINDS=['moves','abilities','items'];
+export const BATTLE_FORMATS=['single','double'];
+export const BATTLE_STAGES=['atk','def','spa','spd','spe','accuracy','evasion'];
+export const STORED_STATS=['atk','def','spa','spd','spe'];
+export const MAJOR_STATUS_IDS=['burn','paralysis','poison','sleep','freeze','bad-poison'];
+export const VOLATILE_STATUS_IDS=['confusion','flinch','taunt','encore','disable','leech-seed','focus-energy','laser-focus','sound-blocked','helping-hand','torment','heal-block','dragon-cheer','infatuation','curse'];
+export const VARIABLE_POWER_FORMULAS=['low-user-hp','user-hp-proportional','faster-user','slower-user','positive-stages','fainted-allies','user-status-non-sleep','target-status','target-poison','target-hp-proportional','random-double','target-grounded-electric-terrain','user-no-held-item','target-held-item-boost','user-stockpile','target-damaged-this-turn','target-damaged-user-this-turn','target-acted-this-turn','user-stats-lowered-this-turn','ally-fainted-previous-turn','previous-move-failed','target-weight-tier','user-target-weight-ratio'];
+export const WEATHER_IDS=['sun','rain','snow','sandstorm'];
+export const TERRAIN_IDS=['electric','grassy','misty','psychic'];
+export const SIDE_CONDITION_IDS=['tailwind','reflect','light-screen','aurora-veil','safeguard'];
+export const HAZARD_IDS=['stealth-rock','spikes','toxic-spikes','sticky-web'];
+export const ROOM_IDS=['trick-room','wonder-room','magic-room'];
+export const DELAYED_EFFECT_IDS=['yawn','perish-song'];
+export const TWO_TURN_MOVE_KINDS=['solar-charge','semi-invulnerable','charge'];
+export const SEMI_INVULNERABLE_MODES=['underground','underwater','airborne','vanished'];
+export const MOVE_TAG_IDS=['sound','punch','bullet','bite','slicing','pulse','powder'];
+export const SECONDARY_EFFECT_KINDS=['major-status','random-major-status','cure-major-status','volatile-status','stat-stages'];
+export const HOOKS=['onEntry','beforeAction','onTurnOrder','onTryMove','beforeTarget','modifyAccuracy','modifyPower','modifyAttack','modifyDefense','modifySpeed','modifyWeight','modifyDamage','onDamage','afterDamage','afterStatus','afterStatChange','onMove','onSwitchOut','endTurn','onFaint'];

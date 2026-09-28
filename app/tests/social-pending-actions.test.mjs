@@ -51,6 +51,7 @@ test('Network protocol passes action ACK separately from state and retains error
 });
 
 test('WebSocket social branch emits correlated ACK only after the service action returns successfully',async()=>{
- const code=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
+ const root=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8'),controller=await readFile(new URL('../server/websocket-controller.mjs',import.meta.url),'utf8'),code=await readFile(new URL('../server/player-action-dispatch.mjs',import.meta.url),'utf8');
+ assert.match(root,/createWebsocketController/);assert.match(controller,/createPlayerActionDispatcher/);
  assert.match(code,/const result=await social\.action/);assert.match(code,/type:'action-ack',actionId/);assert.match(code,/validSocialActionId\(actionId\)/);
 });

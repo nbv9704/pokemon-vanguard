@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {createBrowserStore} from '../public/js/store.js';
+import {createBrowserStore,availableBrowserStorage} from '../public/js/store.js';
 import {createRouter,NAV_ITEMS} from '../public/js/router.js';
 import {AdventureConnection,websocketUrl} from '../public/js/net.js';
 import {RecruitmentView} from '../public/js/recruitment-view.js';
@@ -18,6 +18,17 @@ test('browser store recovers invalid settings and keeps a stable player room',()
 
 test('browser store falls back to memory identity when browser storage is blocked',()=>{
  const blocked={getItem(){throw new Error('blocked');},setItem(){throw new Error('blocked');}},store=createBrowserStore({storage:blocked,cryptoApi:{randomUUID:()=> 'ephemeral-player'},locationLike:{search:''}});assert.equal(store.playerId,'ephemeral-player');assert.equal(store.room,'aether-ephemeral-player');assert.equal(store.persistent,false);store.settings.reduce=true;assert.equal(store.saveSettings(),false);assert.equal(store.persistent,false);
+});
+
+test('browser bootstrap can obtain a safe storage reference when the property getter throws',()=>{
+ const denied={};Object.defineProperty(denied,'localStorage',{get(){throw new DOMException('Access denied','SecurityError');}});
+ assert.equal(availableBrowserStorage(denied),null);
+ const store=createBrowserStore({storage:availableBrowserStorage(denied),cryptoApi:{randomUUID:()=> 'temporary-owner'},locationLike:{search:''}});
+ assert.equal(store.playerId,'temporary-owner');assert.equal(store.persistent,false);
+ store.settings.contrast=true;
+ assert.equal(store.saveSettings(),false);assert.equal(store.settings.contrast,true);
+ const fallback={localStorage:{getItem:()=>null,setItem:()=>{}}};
+ assert.equal(availableBrowserStorage(fallback),fallback.localStorage);
 });
 
 test('browser store reports settings read failures even if player ID is readable',()=>{

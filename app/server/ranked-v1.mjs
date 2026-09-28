@@ -1,35 +1,22 @@
-import {randomBytes,randomUUID} from 'node:crypto';
-import {rankedSettlementKey,rankedSettlementReceipt,recordRankedSettlement,recentRankedSettlement} from './ranked-settlement-receipts.mjs';
+import {randomUUID} from "node:crypto";
 import {validRankedActionId,rankedActionFingerprint} from './ranked-action-identity.mjs';
+import {rankedSettlementReceipt,recentRankedSettlement} from './ranked-settlement-receipts.mjs';
+import {ensureRankedState} from './ranked-profile.mjs';
+import {tryRankedMatch} from './ranked-matchmaking.mjs';
+import {rankedViewFor,rankedAdminOverview} from './ranked-view-projection.mjs';
+import {startRankedBattleIfReady,finishRankedForfeit,finishRankedNoContest,applyRankedDecisionTimeout} from './ranked-match-transitions.mjs';
+import {commitRankedSettlement} from './ranked-settlement-service.mjs';
+export {rankedTier,ensureRankedState,rankedProfileView,rankedRatingDelta} from './ranked-profile.mjs';
 import {replacementRequirements,validateReplacements} from '../rules-v3/index.mjs';
-import {createV3PvpBattle,publicV3Preview} from './v3-battle-factory.mjs';
-import {pvpBattleView,resolvePvpCommands,resolvePvpReplacements} from './pvp-battle-runtime.mjs';
+import {publicV3Preview} from './v3-battle-factory.mjs';
+import {resolvePvpCommands,resolvePvpReplacements} from './pvp-battle-runtime.mjs';
 import {normalizeCommands} from './v3-battle-actions.mjs';
 import {validateV3Team} from './v3-progression.mjs';
-import {recordMissionEvent} from './missions.mjs';
-import {protectRankedLoss} from './rank-ticket-settlement.mjs';
-import {rankedTier as tierName,rankedTierView} from './ranked-tiers.mjs';
-import {PVP_TIMERS,chooseTimeoutCommands,chooseTimeoutReplacements,firstPreviewPicks,markParticipantConnected,markParticipantDisconnected,markPvpActivity,participantDisconnectExpired,pvpTimingView,syncPvpDecisionClock} from './pvp-lifecycle.mjs';
+import {PVP_TIMERS,markParticipantConnected,markParticipantDisconnected,markPvpActivity,participantDisconnectExpired,syncPvpDecisionClock} from './pvp-lifecycle.mjs';
 
-const clone=value=>structuredClone(value),other=side=>side==='A'?'B':'A',SEASON_ID='2026-S1',RATING_VERSION='elo-v1-k32';
+const clone=value=>structuredClone(value),other=side=>side==='A'?'B':'A';
 const replaceState=(target,source)=>{for(const key of Object.keys(target))delete target[key];Object.assign(target,source);};
-const seed32=()=>randomBytes(4).readUInt32LE(0),finiteInt=(value,fallback=0)=>Number.isFinite(Number(value))?Math.trunc(Number(value)):fallback;
-export const rankedTier=rating=>tierName(rating);
-export function ensureRankedState(state){
- if(!state||typeof state!=='object')return false;let changed=false;if(!state.rankedV1||typeof state.rankedV1!=='object'){state.rankedV1={};changed=true;}
- const ranked=state.rankedV1,defaults={schemaVersion:1,seasonId:SEASON_ID,ratingVersion:RATING_VERSION,rating:1000,peakRating:1000,matches:0,wins:0,losses:0,draws:0,lastDelta:0,lastMatchAt:null,history:[]};
- for(const [key,value] of Object.entries(defaults))if(ranked[key]===undefined){ranked[key]=clone(value);changed=true;}
- if(ranked.seasonId!==SEASON_ID){ranked.seasonId=SEASON_ID;ranked.rating=1000;ranked.peakRating=Math.max(finiteInt(ranked.peakRating,1000),1000);ranked.matches=0;ranked.wins=0;ranked.losses=0;ranked.draws=0;ranked.lastDelta=0;ranked.history=[];changed=true;}
- ranked.rating=Math.max(0,finiteInt(ranked.rating,1000));ranked.peakRating=Math.max(ranked.rating,finiteInt(ranked.peakRating,ranked.rating));ranked.matches=Math.max(0,finiteInt(ranked.matches));ranked.wins=Math.max(0,finiteInt(ranked.wins));ranked.losses=Math.max(0,finiteInt(ranked.losses));ranked.draws=Math.max(0,finiteInt(ranked.draws));if(!Array.isArray(ranked.history)){ranked.history=[];changed=true;}return changed;
-}
-export function rankedProfileView(state){const holder={rankedV1:clone(state?.rankedV1)};ensureRankedState(holder);const ranked=holder.rankedV1;return {seasonId:ranked.seasonId,ratingVersion:ranked.ratingVersion,rating:ranked.rating,peakRating:ranked.peakRating,...rankedTierView(ranked.rating),matches:ranked.matches,wins:ranked.wins,losses:ranked.losses,draws:ranked.draws,lastDelta:ranked.lastDelta,lastMatchAt:ranked.lastMatchAt,history:clone(ranked.history.slice(0,10))};}
-function expected(a,b){return 1/(1+10**((b-a)/400));}
-export function rankedRatingDelta(ratingA,ratingB,scoreA,k=32){const delta=Math.round(k*(scoreA-expected(ratingA,ratingB)));return {A:delta,B:delta===0?0:-delta};}
-function settleProfile(state,{matchId,opponentName,opponentRating,score,delta,now,mode,protected:shielded=false}){ensureRankedState(state);const ranked=state.rankedV1;if(ranked.history.some(entry=>entry.matchId===matchId))return false;ranked.rating=Math.max(0,ranked.rating+delta);ranked.peakRating=Math.max(ranked.peakRating,ranked.rating);ranked.matches++;if(score===1)ranked.wins++;else if(score===0)ranked.losses++;else ranked.draws++;ranked.lastDelta=delta;ranked.lastMatchAt=now;ranked.history.unshift({matchId,mode,opponentName:String(opponentName||'Trainer').slice(0,80),opponentRating,result:score===1?'win':score===0?'loss':'draw',delta,...(shielded?{rankTicketProtected:true}:{}),ratingAfter:ranked.rating,playedAt:now});ranked.history=ranked.history.slice(0,20);recordMissionEvent(state,'battles',1,now);if(score===1)recordMissionEvent(state,'wins',1,now);return true;}
 function previewRoster(state,catalog,teamId){const progression=state.progressionV3,team=progression?.teams?.find(entry=>entry.teamId===(teamId||progression.activeTeamId||progression.teams[0]?.teamId));if(!team)return {ok:false,code:'TEAM_NOT_FOUND'};const problems=validateV3Team(team,progression,catalog);if(problems.length)return {ok:false,code:'TEAM_ILLEGAL',details:problems};return {ok:true,team,roster:publicV3Preview(team,progression,catalog)};}
-function participantView(participant){return {name:participant.name,rating:participant.rating,...rankedTierView(participant.rating),connected:participant.connected!==false,reconnectDeadlineAt:participant.connected===false?participant.disconnectDeadlineAt||null:null};}
-function waitingWindow(ticket,now){return Math.min(700,250+Math.floor(Math.max(0,now-ticket.joinedAt)/15000)*50);}
-function queueCompatible(a,b,now){return a.mode===b.mode&&a.regulationId===b.regulationId&&a.catalogVersion===b.catalogVersion&&a.rulesVersion===b.rulesVersion&&Math.abs(a.rating-b.rating)<=Math.max(waitingWindow(a,now),waitingWindow(b,now));}
 
 export class RankedService{
  constructor({catalog,clock={now:()=>Date.now()},getState,loadState=null,persist=async()=>{},persistPair=null,publishState=null,notify=()=>{},withAccounts=async(_ids,work)=>work(),onSettlementFailure=()=>{}}){this.onSettlementFailure=onSettlementFailure;this.catalog=catalog;this.clock=clock;this.getState=getState;this.loadState=loadState;this.persist=persist;this.persistPair=persistPair;this.publishState=publishState;this.notify=notify;this.withAccounts=withAccounts;this.queue=[];this.matches=new Map();this.playerMatch=new Map();this.presence=new Map();}
@@ -38,14 +25,7 @@ export class RankedService{
  unregister(accountId){const now=this.clock.now(),current=this.presence.get(accountId);if(current)this.presence.set(accountId,{...current,connected:false});const index=this.queue.findIndex(entry=>entry.accountId===accountId);if(index>=0)this.queue.splice(index,1);const match=this.matches.get(this.playerMatch.get(accountId));if(match&&!match.settled){const side=this.sideFor(match,accountId);markParticipantDisconnected(match.participants[side],now);this.notify([match.participants[other(side)].accountId]);}}
  sideFor(match,accountId){return match.participants.A.accountId===accountId?'A':match.participants.B.accountId===accountId?'B':null;}
  busy(accountId){return this.queue.some(entry=>entry.accountId===accountId)||this.playerMatch.has(accountId);}
- viewFor(accountId,state){
-  const profile=rankedProfileView(state),session=this.presence.get(accountId)?.session,eligible=['google','discord'].includes(session?.provider),match=this.matches.get(this.playerMatch.get(accountId)),now=this.clock.now();
-  if(match){const side=this.sideFor(match,accountId),foe=match.participants[other(side)],won=match.settled?(match.battle?.result?.winner||match.forfeitWinner||null):null,battleV3=pvpBattleView(match,side,{kind:'ranked',difficulty:'ranked',participantView,rating:true});if(battleV3)battleV3.timing=pvpTimingView(match,side,now);return {schemaVersion:1,status:match.settled?'finished':match.battle?'battle':'preview',eligible,profile,match:{id:match.id,mode:match.mode,createdAt:match.createdAt,opponent:participantView(foe)},battleV3,...(match.settled?{result:{outcome:won===side?'win':won?'loss':'draw',reason:match.battle?.result?.reason||match.forfeitReason||'completed',ratingDelta:match.ratingDelta?.[side]??0,ratingAfter:match.ratingAfter?.[side]??profile.rating,rankTicketProtected:!!match.rankTicketProtected?.[side]}}:{})};}
-  const ticket=this.queue.find(entry=>entry.accountId===accountId);if(ticket)return {schemaVersion:1,status:'queued',eligible,profile,queue:{ticketId:ticket.ticketId,mode:ticket.mode,joinedAt:ticket.joinedAt,position:this.queue.filter(entry=>entry.mode===ticket.mode).indexOf(ticket)+1,ratingWindow:waitingWindow(ticket,now)}};
-  const recent=this.loadState?recentRankedSettlement(state,now,PVP_TIMERS.resultRetentionMs):null;
-  if(recent)return {schemaVersion:1,status:'finished',eligible,profile,match:{id:recent.matchId,mode:recent.mode,createdAt:recent.settledAt,opponent:{name:recent.opponentName,rating:recent.opponentRating}},battleV3:null,result:clone(recent.result),recovered:true};
-  return {schemaVersion:1,status:'idle',eligible,profile};
- }
+ viewFor(accountId,state){return rankedViewFor.call(this,accountId,state);}
  action(accountId,session,action){const match=this.matches.get(this.playerMatch.get(accountId)),ids=match?[match.participants.A.accountId,match.participants.B.accountId]:[accountId];return this.withAccounts(ids,()=>this.actionUnlocked(accountId,session,action));}
  async actionUnlocked(accountId,session,action){
   const state=this.getState(accountId);if(!state)return {ok:false,code:'ACCOUNT_STATE_UNAVAILABLE'};ensureRankedState(state);const now=this.clock.now(),type=action?.type;
@@ -85,13 +65,13 @@ export class RankedService{
   const next=clone(base),entry=rankedSettlementReceipt(next,receipt.matchId);entry.dismissedAt=now;
   await this.persist(accountId,next);this.publish(accountId,next,state);this.notify([accountId]);return {ok:true};
  }
- startBattleIfReady(match){if(match.battle||!match.participants.A.lockedBuildIds||!match.participants.B.lockedBuildIds)return false;const aState=this.getState(match.participants.A.accountId),bState=this.getState(match.participants.B.accountId);match.battle=createV3PvpBattle({id:match.id,mode:match.mode,seed:match.seed,buildIdsA:match.participants.A.lockedBuildIds,progressionA:aState.progressionV3,buildIdsB:match.participants.B.lockedBuildIds,progressionB:bState.progressionV3,catalog:this.catalog});match.lastEvents=clone(match.battle.events);return true;}
- adminOverview(){const queue=this.queue.map(entry=>({kind:'ranked-queue',id:entry.ticketId,accountId:entry.accountId,name:entry.name,mode:entry.mode,rating:entry.rating,joinedAt:entry.joinedAt})),matches=[...this.matches.values()].filter(match=>!match.settled).map(match=>({kind:'ranked-match',id:match.id,mode:match.mode,status:match.battle?match.battle.phase:'PREVIEW',createdAt:match.createdAt,decisionDeadlineAt:match.decisionClock?.deadlineAt||null,players:[match.participants.A,match.participants.B].map(p=>({accountId:p.accountId,name:p.name,rating:p.rating,connected:p.connected!==false,reconnectDeadlineAt:p.disconnectDeadlineAt||null}))}));return {queue,matches};}
+ startBattleIfReady(match){return startRankedBattleIfReady.call(this,match);}
+ adminOverview(){return rankedAdminOverview.call(this);}
  adminStopForPlayer(accountId,reason='admin-stop'){const match=this.matches.get(this.playerMatch.get(accountId)),ids=match?[match.participants.A.accountId,match.participants.B.accountId]:[accountId];return this.withAccounts(ids,()=>this.adminStopUnlocked(accountId,reason));}
  async adminStopUnlocked(accountId,reason){const queueIndex=this.queue.findIndex(entry=>entry.accountId===accountId);if(queueIndex>=0){const [ticket]=this.queue.splice(queueIndex,1);this.notify([accountId]);return {ok:true,kind:'ranked-queue',id:ticket.ticketId,accounts:[accountId]};}const match=this.matches.get(this.playerMatch.get(accountId));if(!match||match.settled)return {ok:false,code:'NO_RANKED_ACTIVITY'};await this.finishNoContest(match,reason);const accounts=[match.participants.A.accountId,match.participants.B.accountId];this.notify(accounts);return {ok:true,kind:'ranked-match',id:match.id,accounts};}
- tryMatch(ticket){const now=this.clock.now(),candidates=this.queue.filter(entry=>entry.accountId!==ticket.accountId&&queueCompatible(ticket,entry,now)).sort((a,b)=>Math.abs(a.rating-ticket.rating)-Math.abs(b.rating-ticket.rating)||a.joinedAt-b.joinedAt),opponent=candidates[0];if(!opponent)return null;this.queue=this.queue.filter(entry=>entry!==ticket&&entry!==opponent);const ordered=ticket.joinedAt<=opponent.joinedAt?[ticket,opponent]:[opponent,ticket],participant=entry=>({...entry,connected:this.presence.get(entry.accountId)?.connected!==false,lockedBuildIds:null,disconnectedAt:null,disconnectDeadlineAt:null,disconnectExpired:false}),match={id:`ranked-${randomUUID()}`,mode:ticket.mode,seed:seed32(),createdAt:now,updatedAt:now,lastActivityAt:now,participants:{A:participant(ordered[0]),B:participant(ordered[1])},battle:null,pending:{commands:{},replacements:{}},lastEvents:[],lastTurnRaw:null,actionReceipts:[],settled:false,ratingDelta:null,ratingAfter:null,dismissed:new Set(),decisionClock:null};syncPvpDecisionClock(match,now);this.matches.set(match.id,match);this.playerMatch.set(ordered[0].accountId,match.id);this.playerMatch.set(ordered[1].accountId,match.id);return match;}
- async finishForfeit(match,loserSide,reason){const winner=other(loserSide);if(match.battle){const battle=clone(match.battle);battle.phase='FINISHED';battle.phaseRevision++;battle.result={winner,reason,turn:battle.turn,receiptId:`${battle.id}:ranked-${reason}:${loserSide}`};match.battle=battle;match.lastEvents=[{kind:'battleEnded',winner,reason}];}else{match.forfeitWinner=winner;match.forfeitReason=reason;}await this.settle(match);}
- async finishNoContest(match,reason){if(match.settled)return;if(match.battle){const battle=clone(match.battle);battle.phase='FINISHED';battle.phaseRevision=(battle.phaseRevision||0)+1;battle.result={winner:null,reason,turn:battle.turn||0,receiptId:`${battle.id}:${reason}`};match.battle=battle;match.lastEvents=[{kind:'battleEnded',winner:null,reason}];}else{match.forfeitWinner=null;match.forfeitReason=reason;}match.ratingDelta={A:0,B:0};match.ratingAfter={A:this.getState(match.participants.A.accountId)?.rankedV1?.rating??match.participants.A.rating,B:this.getState(match.participants.B.accountId)?.rankedV1?.rating??match.participants.B.rating};match.settled=true;match.settledAt=this.clock.now();match.decisionClock=null;}
+ tryMatch(ticket){return tryRankedMatch.call(this,ticket);}
+ async finishForfeit(match,loserSide,reason){return finishRankedForfeit.call(this,match,loserSide,reason);}
+ async finishNoContest(match,reason){return finishRankedNoContest.call(this,match,reason);}
  async settle(match){if(match.settled)return;if(match.settlementPromise)return match.settlementPromise;
   match.settlementPendingAt??=this.clock.now();match.settlementRetries??=0;
   const pending=this.commitSettlement(match);match.settlementPromise=pending;
@@ -99,32 +79,9 @@ export class RankedService{
   catch(error){match.settlementRetries++;this.onSettlementFailure({errorCode:error?.code,retryCount:match.settlementRetries});throw error;}
   finally{match.settlementPromise=null;}
  }
- async commitSettlement(match){const winner=match.battle?.result?.winner||match.forfeitWinner||null,a=match.participants.A,b=match.participants.B,aState=this.getState(a.accountId),bState=this.getState(b.accountId);if(!aState||!bState)throw new Error('Ranked settlement state unavailable');
- const key=rankedSettlementKey({matchId:match.id,mode:match.mode,winner,accountA:a.accountId,accountB:b.accountId});
- if(this.loadState){
-  const [savedA,savedB]=await Promise.all([this.loadState(a.accountId),this.loadState(b.accountId)]);
-  const proofA=rankedSettlementReceipt(savedA,match.id),proofB=rankedSettlementReceipt(savedB,match.id);
-  if(proofA||proofB){if(!proofA||!proofB||proofA.key!==key||proofB.key!==key)throw Object.assign(Error('Ranked settlement receipt mismatch; manual recovery required'),{code:'RANKED_SETTLEMENT_RECEIPT_CONFLICT'});
-   this.publish(a.accountId,savedA,aState);this.publish(b.accountId,savedB,bState);
-   match.rankTicketProtected={A:proofA.result.rankTicketProtected,B:proofB.result.rankTicketProtected};match.ratingDelta={A:proofA.result.ratingDelta,B:proofB.result.ratingDelta};match.ratingAfter={A:proofA.result.ratingAfter,B:proofB.result.ratingAfter};match.settled=true;match.settledAt=proofA.settledAt;match.decisionClock=null;return;
-  }
- }
- const aNext=clone(aState),bNext=clone(bState);ensureRankedState(aNext);ensureRankedState(bNext);const scoreA=winner==='A'?1:winner==='B'?0:.5,delta=rankedRatingDelta(aNext.rankedV1.rating,bNext.rankedV1.rating,scoreA),now=this.clock.now(),aBefore=aNext.rankedV1.rating,bBefore=bNext.rankedV1.rating;
- const shieldA=protectRankedLoss(aNext,match.id,delta.A),shieldB=protectRankedLoss(bNext,match.id,delta.B);
- settleProfile(aNext,{matchId:match.id,opponentName:b.name,opponentRating:bBefore,score:scoreA,delta:shieldA.delta,now,mode:match.mode,protected:shieldA.protected});
- settleProfile(bNext,{matchId:match.id,opponentName:a.name,opponentRating:aBefore,score:1-scoreA,delta:shieldB.delta,now,mode:match.mode,protected:shieldB.protected});
- const reason=match.battle?.result?.reason||match.forfeitReason||'completed';
- recordRankedSettlement(aNext,{matchId:match.id,key,outcome:winner==='A'?'win':winner==='B'?'loss':'draw',reason,mode:match.mode,opponentName:b.name,opponentRating:bBefore,ratingDelta:shieldA.delta,ratingAfter:aNext.rankedV1.rating,rankTicketProtected:shieldA.protected,settledAt:now});
- recordRankedSettlement(bNext,{matchId:match.id,key,outcome:winner==='B'?'win':winner==='A'?'loss':'draw',reason,mode:match.mode,opponentName:a.name,opponentRating:aBefore,ratingDelta:shieldB.delta,ratingAfter:bNext.rankedV1.rating,rankTicketProtected:shieldB.protected,settledAt:now});
- if(this.persistPair)await this.persistPair([{userId:a.accountId,state:aNext},{userId:b.accountId,state:bNext}],`ranked:settlement:${match.id}`);else await Promise.all([this.persist(a.accountId,aNext),this.persist(b.accountId,bNext)]);this.publish(a.accountId,aNext,aState);this.publish(b.accountId,bNext,bState);
- match.rankTicketProtected={A:shieldA.protected,B:shieldB.protected};match.ratingDelta={A:shieldA.delta,B:shieldB.delta};match.ratingAfter={A:aNext.rankedV1.rating,B:bNext.rankedV1.rating};match.settled=true;match.settledAt=now;match.decisionClock=null;}
+ async commitSettlement(match){return commitRankedSettlement.call(this,match);}
  cleanupMatch(match){for(const p of [match.participants.A,match.participants.B])if(this.playerMatch.get(p.accountId)===match.id)this.playerMatch.delete(p.accountId);this.matches.delete(match.id);}
- async applyDecisionTimeout(match,now){const decision=syncPvpDecisionClock(match,now);if(!decision||now<decision.deadlineAt||match.settled)return false;const sides=['A','B'];
-  if(decision.kind==='preview'){const pick=this.catalog.regulations[0].pick[match.mode];for(const side of sides)if(!match.participants[side].lockedBuildIds)match.participants[side].lockedBuildIds=firstPreviewPicks(match,side,pick);this.startBattleIfReady(match);}
-  else if(decision.kind==='command'){const revision=match.battle.phaseRevision;match.pending.commands[revision]??={};for(const side of sides)if(!match.pending.commands[revision][side]){const commands=chooseTimeoutCommands(match.battle,this.catalog,side);if(!commands){await this.finishNoContest(match,'action-timeout-no-legal-action');return true;}match.pending.commands[revision][side]=commands;}const resolved=resolvePvpCommands(match,this.catalog);if(!resolved.ok){await this.finishNoContest(match,'action-timeout-resolution-error');return true;}}
-  else if(decision.kind==='replacement'){const revision=match.battle.phaseRevision;match.pending.replacements[revision]??={};for(const side of sides){const required=replacementRequirements(match.battle,side);if(required.slots.length&&!match.pending.replacements[revision][side])match.pending.replacements[revision][side]=chooseTimeoutReplacements(match.battle,side);}const resolved=resolvePvpReplacements(match,this.catalog);if(!resolved.ok){await this.finishNoContest(match,'replacement-timeout-resolution-error');return true;}}
-  markPvpActivity(match,now);match.lastAutoAction={kind:decision.kind,at:now};syncPvpDecisionClock(match,now);if(match.battle?.phase==='FINISHED'&&!match.settled)await this.settle(match);this.notify([match.participants.A.accountId,match.participants.B.accountId]);return true;
- }
+ async applyDecisionTimeout(match,now){return applyRankedDecisionTimeout.call(this,match,now);}
  async tick(){const now=this.clock.now();for(const match of [...this.matches.values()])await this.withAccounts([match.participants.A.accountId,match.participants.B.accountId],()=>this.tickMatch(match,now));}
  async tickMatch(match,now){if(match.settled){if(now-(match.settledAt||now)>=PVP_TIMERS.resultRetentionMs){const accounts=[match.participants.A.accountId,match.participants.B.accountId];this.cleanupMatch(match);this.notify(accounts);}return;}
   // A previous commit may have succeeded before the network response failed.

@@ -40,13 +40,15 @@ export function evaluateSource(){return `(()=>({
  dpr:devicePixelRatio,viewport:innerWidth,cls:window.__qa.shifts.reduce((sum,x)=>sum+x,0),
  images:[...document.images].map(img=>({alt:img.alt,complete:img.complete,width:img.naturalWidth,height:img.naturalHeight,cssWidth:Math.round(img.getBoundingClientRect().width),currentSrc:img.currentSrc,failed:!img.naturalWidth})),
  resourceBytes:performance.getEntriesByType('resource').filter(item=>item.initiatorType==='img').reduce((sum,item)=>sum+item.decodedBodySize,0),
- resources:performance.getEntriesByType('resource').filter(item=>item.initiatorType==='img').map(item=>({url:item.name.split('/').slice(-1)[0],decodedBytes:item.decodedBodySize,durationMs:item.duration})),
+ transferBytes:performance.getEntriesByType('resource').filter(item=>item.initiatorType==='img').reduce((sum,item)=>sum+item.transferSize,0),
+ encodedBodyBytes:performance.getEntriesByType('resource').filter(item=>item.initiatorType==='img').reduce((sum,item)=>sum+item.encodedBodySize,0),
+ resources:performance.getEntriesByType('resource').filter(item=>item.initiatorType==='img').map(item=>({url:item.name.split('/').slice(-1)[0],decodedBytes:item.decodedBodySize,encodedBytes:item.encodedBodySize,transferBytes:item.transferSize,durationMs:item.duration})),
  firstContentfulPaint:performance.getEntriesByType('paint').find(e=>e.name==='first-contentful-paint')?.startTime??null
  }))()`;}
 
 function chromeCandidates(){return process.platform==='win32'?[process.env.PROGRAMFILES&&path.join(process.env.PROGRAMFILES,'Google/Chrome/Application/chrome.exe'),process.env['PROGRAMFILES(X86)']&&path.join(process.env['PROGRAMFILES(X86)'],'Google/Chrome/Application/chrome.exe')].filter(Boolean):['chromium','google-chrome','chromium-browser'];}
 async function launchChrome(chrome,profile){
- const args=['--headless=new','--disable-gpu','--disable-dev-shm-usage','--no-first-run','--disable-extensions','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'];
+ const args=['--headless=new','--disable-gpu','--disable-dev-shm-usage','--no-first-run','--disable-extensions','--no-proxy-server','--remote-debugging-port=0',`--user-data-dir=${profile}`,'about:blank'];
  if(process.platform!=='win32'&&process.getuid?.()===0)args.unshift('--no-sandbox');
  const proc=spawn(chrome,args,{stdio:'ignore'});
  let error=null;proc.on('error',err=>{error=err;});
@@ -95,22 +97,50 @@ async function serveGallery(samples){
  await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
  return {base:`http://127.0.0.1:${server.address().port}`,close:()=>new Promise(resolve=>server.close(resolve))};
 }
-async function capture(cdp,{base,mode,width,dpr,output}){
+export function assertGallerySelection(row,samples,{mode,dpr}){
+ if(row.images.length!==samples.length)throw Error(`Expected ${samples.length} image elements, got ${row.images.length}`);
+ for(let i=0;i<samples.length;i++){
+  const entry=samples[i],img=row.images[i];
+  if(img.alt!==entry.id||img.failed||!img.complete)throw Error(`Missing/unexpected image ${entry.id}`);
+  if(mode==='optimized'){
+   const expected=entry.variants[dpr===2?'2x':'1x'].url;
+   if(new URL(img.currentSrc,'http://127.0.0.1').pathname!==expected)throw Error(`Wrong DPR${dpr} source for ${entry.id}`);
+   if(img.naturalWidth<img.cssWidth*dpr-1)throw Error(`Insufficient DPR${dpr} density: ${entry.id}`);
+  }else if(!new URL(img.currentSrc,'http://127.0.0.1').pathname.startsWith('/__qa-master/'))throw Error(`Wrong original master: ${entry.id}`);
+ }
+}
+export function summarizeGalleryCaptures(rows){
+ const pairs=[];
+ for(const width of [360,1366])for(const dpr of [1,2]){
+  const baseline=rows.find(row=>row.width===width&&row.dpr===dpr&&row.mode==='baseline');
+  const optimized=rows.find(row=>row.width===width&&row.dpr===dpr&&row.mode==='optimized');
+  if(!baseline||!optimized)throw Error(`Missing baseline/optimized capture for ${width}px DPR${dpr}`);
+  pairs.push({width,dpr,originalTransfer:baseline.transferBytes,optimizedTransfer:optimized.transferBytes,
+   originalDecoded:baseline.resourceBytes,optimizedDecoded:optimized.resourceBytes,
+   transferSaved:baseline.transferBytes-optimized.transferBytes,originalCls:baseline.cls,optimizedCls:optimized.cls,
+   originalFcp:baseline.firstContentfulPaint,optimizedFcp:optimized.firstContentfulPaint});
+ }
+ if(rows.length!==8)throw Error(`Expected eight synthetic gallery captures, received ${rows.length}`);
+ return pairs;
+}
+async function capture(cdp,{base,mode,width,dpr,output,samples}){
  await cdp.send('Emulation.setDeviceMetricsOverride',{width,height:820,deviceScaleFactor:dpr,mobile:width<=360});
- await cdp.send('Network.clearBrowserCache');await cdp.send('Page.navigate',{url:`${base}/qa?mode=${mode}`});
+ await cdp.send('Network.clearBrowserCache');const navigation=await cdp.send('Page.navigate',{url:`${base}/qa?mode=${mode}`});
+ if(navigation.errorText)throw new Error(`Chromium navigation failed for synthetic gallery: ${navigation.errorText}`);
  let ready=false;
  for(let i=0;i<80;i++){
   await pause(150);
   const result=await cdp.send('Runtime.evaluate',{expression:'Boolean(window.__qa?.ready)',returnByValue:true});
   if(result.result.value){ready=true;break;}
  }
- if(!ready)throw new Error(`Gallery never completed image decoding: ${mode}, DPR${dpr}, ${width}px`);
+ if(!ready){
+  const state=await cdp.send('Runtime.evaluate',{expression:'({url:location.href,title:document.title,readyState:document.readyState,qa:window.__qa?.ready??null,images:document.images.length,failedImages:[...document.images].filter(img=>img.complete&&!img.naturalWidth).map(img=>img.alt)})',returnByValue:true});
+  throw new Error(`Gallery never completed image decoding: ${mode}, DPR${dpr}, ${width}px; browser state: ${JSON.stringify(state.result?.value||state.exceptionDetails)}`);
+ }
  const result=await cdp.send('Runtime.evaluate',{expression:evaluateSource(),returnByValue:true});
  if(result.exceptionDetails)throw new Error(JSON.stringify(result.exceptionDetails));
  const row=result.result.value;
- if(row.images.some(item=>item.failed))throw new Error(`Images failed: ${row.images.filter(item=>item.failed).map(item=>item.alt).join(', ')}`);
- if(mode==='optimized'&&!row.images.every(item=>item.currentSrc.includes('.png')))throw new Error('Unexpected optimized source format');
- if(mode==='optimized'&&row.images.some(item=>item.naturalWidth<item.cssWidth*dpr-1))throw new Error(`Insufficient DPR${dpr} density in ${row.images.filter(item=>item.naturalWidth<item.cssWidth*dpr-1).map(item=>item.alt).join(', ')}`);
+ assertGallerySelection(row,samples,{mode,dpr});
  const screenshot=await cdp.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
  const imageName=`${mode}-${width}px-dpr${dpr}.png`;await writeFile(path.join(output,imageName),Buffer.from(screenshot.data,'base64'));
  return {mode,width,dpr,screenshot:imageName,...row};
@@ -126,10 +156,10 @@ export async function runImageQa({chrome,output}){
   await cdp.send('Page.enable');await cdp.send('Runtime.enable');await cdp.send('Network.enable');
   const rows=[];
   for(const width of [360,1366])for(const dpr of [1,2])for(const mode of ['baseline','optimized']){
-   const row=await capture(cdp,{base:server.base,width,dpr,mode,output});rows.push(row);
+   const row=await capture(cdp,{base:server.base,width,dpr,mode,output,samples});rows.push(row);
    console.log(`${mode} ${width}px DPR${dpr}: ${row.resourceBytes} decoded resource B, CLS=${row.cls}, FCP=${row.firstContentfulPaint}`);
   }
-  const report={schemaVersion:1,samples:samples.map(entry=>entry.id),rows,notes:['Isolated synthetic gallery, not authenticated route/FCP of the full game.','Original-master baseline versus optimized srcset; decoded resource bytes are browser Resource Timing, not CDN transfer bytes.','Run game-route QA and rights review separately before closing #22.']};
+  const report={schemaVersion:2,samples:samples.map(entry=>entry.id),rows,comparisons:summarizeGalleryCaptures(rows),notes:['Isolated synthetic gallery, not authenticated route/FCP of the full game.','Original-master baseline versus verified 1x/2x srcset; browser transferSize includes HTTP headers and may vary with cache.','Run game-route QA and rights review separately before closing #22.']};
   await writeFile(path.join(output,'report.json'),JSON.stringify(report,null,2)+'\n');
   return report;
  }finally{cdp?.close();browser?.proc.kill('SIGKILL');if(server)await server.close();await rm(profile,{force:true,recursive:true,maxRetries:2,retryDelay:200});}

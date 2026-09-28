@@ -34,12 +34,13 @@ test('reward assets expose only existing ticket and rank variants',()=>{
 });
 
 test('currency/resource icons are wired in both app shells and override image pixelation',()=>{
- const client=source('public/client.js');
- assert.match(client,/rewardIcon\("vp"\)/);
- assert.match(client,/rewardIcon\("pokegem"\)/);
- assert.doesNotMatch(client,/class="currency" title="Recruitment tickets"/);
- assert.match(client,/data-action="bag"/);
- assert.match(client,/rewardIcon\('vp','mail-reward-icon'\)/);
+ const client=source('public/client.js'),shell=source('public/js/client-shell-layout.js'),chrome=source('public/js/client-chrome-views.js');
+ assert.match(client,/renderClientShell/);assert.match(client,/renderAccountControl/);
+ assert.match(shell,/rewardIcon\("vp"\)/);
+ assert.match(shell,/rewardIcon\("pokegem"\)/);
+ assert.doesNotMatch(shell,/class="currency" title="Recruitment tickets"/);
+ assert.match(chrome,/data-action="bag"/);
+ assert.match(chrome,/rewardIcon\('vp','mail-reward-icon'\)/);
  for(const shell of ['public/index.html','public/classic.html'])assert.match(source(shell),/reward-assets\.css/);
  const css=source('public/reward-assets.css');
  assert.match(css,/image-rendering:auto!important/);

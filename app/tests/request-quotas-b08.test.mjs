@@ -27,8 +27,14 @@ test('account, IP, and socket quotas are independent and cannot starve unrelated
 });
 
 test('the local-server wires lightweight pre-queue quotas through the B10 trusted-proxy policy',async()=>{
- const {readFile}=await import('node:fs/promises');const server=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
- assert.match(server,/quotas\.message\(/);assert.match(server,/quotas\.upgrade\(/);assert.match(server,/quotas\.inspector\(/);
- assert.match(server,/requestPolicy\.clientIp\(req\)/);assert.doesNotMatch(server,/req\.headers\[['"]x-forwarded-for['"]\]/);
- assert.ok(server.indexOf('quotas.message(')<server.indexOf('inbound.acquire(ws)'));
+ const {readFile}=await import('node:fs/promises');
+ const server=await readFile(new URL('../local-server.mjs',import.meta.url),'utf8');
+ const ws=await readFile(new URL('../server/websocket-controller.mjs',import.meta.url),'utf8');
+ const http=await readFile(new URL('../server/http-request-handler.mjs',import.meta.url),'utf8');
+ assert.match(server,/createWebsocketController\(/);
+ assert.match(ws,/quotas\.message\(/);assert.match(ws,/quotas\.upgrade\(/);
+ assert.match(server,/createHttpRequestHandler\(/);
+ assert.match(http,/quotas\.inspector\(/);assert.match(http,/requestPolicy\.clientIp\(req\)/);
+ assert.doesNotMatch(server+ws+http,/req\.headers\[['"]x-forwarded-for['"]\]/);
+ assert.ok(ws.indexOf('quotas.message(')<ws.indexOf('inbound.acquire(ws)'));
 });

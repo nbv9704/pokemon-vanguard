@@ -15,7 +15,7 @@
     "check:content": "node scripts/check-content.mjs",
     "validation-snapshots:verify": "node scripts/verify-validation-snapshots.mjs",
     "lint": "eslint . --max-warnings 0",
-    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run check:imports && npm run lint && npm run check:types && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate && npm run assets:responsive:validate && npm run workflow:validate && npm run catalog:retention:validate && npm run assets:ui-icons:policy && npm run contracts:negative:validate && npm run css:cascade:validate",
+    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run check:imports && npm run lint && npm run check:types && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate && npm run assets:responsive:validate && npm run workflow:validate && npm run catalog:retention:validate && npm run assets:ui-icons:policy && npm run contracts:negative:validate && npm run css:cascade:validate && npm run module:validate",
     "test": "node scripts/run-tests-batched.mjs",
     "pokemon:validate": "node scripts/validate-pokemon-candidate.mjs",
     "mechanics:coverage": "node scripts/generate-mechanics-coverage.mjs",
@@ -56,10 +56,14 @@
     "assets:responsive:generate": "python3 scripts/optimize-image-assets.py",
     "workflow:validate": "node scripts/verify-workflow-b26.mjs",
     "benchmark:image-browser": "node scripts/image-browser-qa-b26.mjs",
+    "benchmark:image-routes": "node scripts/image-route-audit-b34.mjs",
     "catalog:retention:validate": "node scripts/validate-catalog-retention-b27.mjs",
     "assets:ui-icons:policy": "node scripts/fetch-pokemon-ui-icons.mjs --policy",
+    "assets:rights:audit": "node scripts/ui-icon-rights-b34.mjs",
+    "assets:rights:release": "node scripts/ui-icon-rights-b34.mjs --release",
     "contracts:negative:validate": "node scripts/verify-contract-negative-gates-b28.mjs",
-    "css:cascade:validate": "node scripts/validate-css-layers-b32.mjs"
+    "css:cascade:validate": "node scripts/validate-css-layers-b32.mjs",
+    "module:validate": "node scripts/validate-module-boundaries-b35.mjs"
   },
   "engines": {
     "node": ">=22.13.0"
