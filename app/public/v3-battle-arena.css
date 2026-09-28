@@ -1,3 +1,4 @@
+@layer pv.routes{
 .v3-battle-arena{min-height:460px;background:radial-gradient(ellipse at 75% 22%,#34536d55,transparent 30%),radial-gradient(ellipse at 24% 82%,#31506b55,transparent 34%),linear-gradient(180deg,#15263b 0 54%,#111e30 54% 100%)}
 .v3-battle-arena:before{content:"";position:absolute;inset:0;background:linear-gradient(165deg,transparent 0 49%,#9dc4df0b 50% 51%,transparent 52%),repeating-linear-gradient(90deg,transparent 0 90px,#b9d7ea08 91px 92px);pointer-events:none}
 .v3-battle-arena:after{display:none}
@@ -65,3 +66,4 @@
 .v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-faint .art{animation-duration:.18s}
 @keyframes v3-special-faint{0%{opacity:1;transform:translateY(0) scale(1);filter:brightness(1)}45%{opacity:.65;filter:brightness(1.8) saturate(.2)}100%{opacity:0;transform:translateY(32px) scale(.72);filter:brightness(.5) saturate(0)}}
 @media(prefers-reduced-motion:reduce){.v3-battle-arena .v3-fighter.presentation-actor-faint .art{animation:none!important;opacity:.35}}
+}

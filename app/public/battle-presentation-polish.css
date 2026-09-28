@@ -1,3 +1,4 @@
+@layer pv.routes{
 /* Battle presentation polish — deliberately loaded after Pixel Era overrides. */
 
 /* Draggable battle log. */
@@ -112,3 +113,4 @@ body.pixel-era .pokemon-battle-log.battle-log-dragged,body.pixel-era.resolution-
 .v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-morph .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-shatter .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-break .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-vanish .art,.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-emerge .art{animation-duration:.29s!important}
 .v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-mega .art{animation-duration:.57s!important}.v3-battle-arena.playback-speed-2 .v3-fighter.presentation-actor-faint .art{animation-duration:.31s!important}
 .v3-mega-fx.speed-2{animation-duration:.625s!important}.v3-mega-fx.speed-2 i{animation-duration:.575s!important}
+}

@@ -1,3 +1,4 @@
+@layer pv.theme{
 /* R3-102 — Gen III / GBA-inspired pixel presentation pass.
    Presentation only: DOM semantics, UI state and battle mechanics remain unchanged. */
 
@@ -878,3 +879,4 @@ body.pixel-era .battle-clock{border-radius:0!important;box-shadow:inset 1px 1px 
 body.pixel-era .battle-clock b{font-family:var(--pixel-font)!important;font-size:8px!important}
 body.pixel-era .battle-clock small{font-family:var(--pixel-font)!important;font-size:5px!important}
 body.pixel-era.resolution-locked .pokemon-battle-statusbar{grid-template-columns:minmax(0,1fr) auto auto auto!important}
+}

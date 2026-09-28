@@ -1,3 +1,4 @@
+@layer pv.theme{
 /* Pokémon Vanguard Classic UI — independent alternate interface.
    Built on the existing semantic DOM and game state; no PokéRogue code or assets. */
 
@@ -587,3 +588,4 @@ body.aether-gba .brandmark.project-logo,
 body.aether-gba .loading .brandmark.project-logo{border:0;background:transparent;box-shadow:none}
 body.aether-gba .loading .brandmark.project-logo{width:72px;height:72px}
 body.aether-gba .pokemon-game-logo{width:34px;height:34px}
+}

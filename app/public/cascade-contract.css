@@ -1,0 +1,2 @@
+/* B32 cascade contract. Keep this order stable; later layers win. */
+@layer pv.reset, pv.tokens, pv.base, pv.components, pv.routes, pv.theme, pv.overrides;

@@ -1,3 +1,4 @@
+@layer pv.overrides{
 /* Pokémon Legends: Arceus presentation sprites used as UI metadata, not gameplay state. */
 .pv-type-symbol,.pv-move-category-symbol{display:inline-block;object-fit:contain;object-position:center;vertical-align:middle;image-rendering:pixelated!important;flex:none}
 .pv-type-symbol-icon{width:18px;height:18px}
@@ -54,3 +55,4 @@ body.pixel-era .pokemon-move-tile .move-card-stats small{font-family:var(--pixel
 body.pixel-era .pokemon-move-tile:hover:not(:disabled),body.pixel-era .pokemon-move-tile:focus-visible{background:#fffdf0!important;box-shadow:inset 1px 1px #fff,inset -1px -1px #aaa997,2px 2px #172a40,0 0 0 2px color-mix(in srgb,var(--move-type),transparent 52%)!important}
 body.pixel-era.resolution-locked .pokemon-move-tile{min-height:58px!important;padding:7px 9px!important}
 @media(max-width:600px){body.pixel-era .pokemon-move-tile{min-height:54px!important;padding:6px 7px!important;column-gap:7px!important}body.pixel-era .pokemon-move-tile .move-card-stats{min-width:62px;padding-left:6px}}
+}

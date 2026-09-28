@@ -1,3 +1,4 @@
+@layer pv.components{
 .battle-announcer{--fx-color:#b9f58a;display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:68px;margin-bottom:12px;padding:13px 18px;border:1px solid #34445d;border-left:3px solid var(--fx-color);border-radius:10px;background:linear-gradient(110deg,#1a2a40,#131e30);}
 .battle-announcer>div:first-child{min-width:0;}
 .battle-announcer strong{display:block;font-size:16px;color:var(--fx-color);line-height:1.3;}
@@ -19,3 +20,4 @@
 .reduce .arena .hpbox .progress i{transition:none;}
 @media(prefers-reduced-motion:reduce){.arena .art svg{animation:none!important;}.arena .hpbox .progress i{transition:none;}}
 @media(max-width:760px){.battle-announcer{padding:11px 12px;gap:8px;min-height:72px;}.battle-announcer strong{font-size:13px;}.battle-announcer span{font-size:9px;}.playback-controls{gap:7px;}.playback-controls label{gap:4px;}.playback-controls button{padding:5px 8px;font-size:10px;}}
+}

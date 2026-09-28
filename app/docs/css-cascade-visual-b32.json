@@ -1,0 +1,357 @@
+{
+  "batch": "B32",
+  "date": "2026-09-28",
+  "browser": "Codex in-app browser",
+  "captureCount": 27,
+  "viewports": [
+    360,
+    768,
+    1366,
+    1920
+  ],
+  "surfaces": [
+    "Bag",
+    "Shop",
+    "Training",
+    "Arena",
+    "Battle Practice",
+    "surrender confirmation modal"
+  ],
+  "accessibilityModes": [
+    "reduced motion",
+    "high contrast",
+    "larger text"
+  ],
+  "result": "PASS",
+  "notes": [
+    "Baseline was captured before layer migration against a disposable Local Beta save.",
+    "After captures used a fresh disposable save; animated battle sprites and focus/selection paint make some PNGs non-byte-stable.",
+    "All captures were manually compared; no geometry, clipping, content, focus visibility or responsive-breakpoint regression was observed."
+  ],
+  "captures": [
+    {
+      "case": "1366-arena",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "12e800f4ca28b4ca001a0f266eb4adef1a94733cd1b3b0e90f3daf858adf34db",
+      "afterSha256": "12e800f4ca28b4ca001a0f266eb4adef1a94733cd1b3b0e90f3daf858adf34db",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "1366-bag",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "a9d5b8b47927f9d67c3666f3cf7e96fd3c3c6cadb60d3b279ea84d21a73a0549",
+      "afterSha256": "5168f6e72b9f324bf87956fe94100589c37e4b84180dfc31018d7f3ffa55d1d9",
+      "byteExact": false,
+      "changedPixelPercent": 0.1082,
+      "maxMeanChannelDelta": 0.002
+    },
+    {
+      "case": "1366-battle",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "c1e0231b2dd9e4dfe5df717eaf32bb132e6e7d1b1cf3188c4aedbcc7273e8b03",
+      "afterSha256": "28ad8346d8aa92cb63d3f4f7bab273d2e7068a6d9f41da4659567040c0498a0e",
+      "byteExact": false,
+      "changedPixelPercent": 31.6158,
+      "maxMeanChannelDelta": 3.8036
+    },
+    {
+      "case": "1366-contrast",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "01f93c8468fd5750e540c3a172d9dc7e2196b3069dfc6adf4fce433682dfedcd",
+      "afterSha256": "dd5b081f4596dd87c4116687dad7c8c1baa0917e0b3bf4a66e383fc0ef283137",
+      "byteExact": false,
+      "changedPixelPercent": 11.5919,
+      "maxMeanChannelDelta": 1.0487
+    },
+    {
+      "case": "1366-large-text",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "9ae19b1b133cff1dc9b05abd19848141b4762e01a2c34dd4aadcd58f52a9f2c4",
+      "afterSha256": "19848b8e82424af069502ae3eba06386ed0450b522fc9886a2cc39fad6a576e5",
+      "byteExact": false,
+      "changedPixelPercent": 11.5633,
+      "maxMeanChannelDelta": 0.9871
+    },
+    {
+      "case": "1366-modal",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "6aa04123c8d317ab56eee9e7d16c4bdf96ec29ec792eaa008f833cd059fa6fbf",
+      "afterSha256": "460696571e72d94998cd3562e5c8153922232eda07f6b97f2fdcc454f7aee587",
+      "byteExact": false,
+      "changedPixelPercent": 24.4322,
+      "maxMeanChannelDelta": 2.3556
+    },
+    {
+      "case": "1366-reduced",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "01f93c8468fd5750e540c3a172d9dc7e2196b3069dfc6adf4fce433682dfedcd",
+      "afterSha256": "dd5b081f4596dd87c4116687dad7c8c1baa0917e0b3bf4a66e383fc0ef283137",
+      "byteExact": false,
+      "changedPixelPercent": 11.5919,
+      "maxMeanChannelDelta": 1.0487
+    },
+    {
+      "case": "1366-shop",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "c2ea6d7b4f35c06bae5bea09a825a297f3c7ffdb103d211be75cd6221724c958",
+      "afterSha256": "b4eefed2c5a41ac5f7e4f5ffa05aaabfcc1349663f30753d8f70a7e24593086a",
+      "byteExact": false,
+      "changedPixelPercent": 11.5919,
+      "maxMeanChannelDelta": 1.0487
+    },
+    {
+      "case": "1366-training",
+      "viewport": [
+        1366,
+        900
+      ],
+      "beforeSha256": "f3fd8b98e70b42539b5fea5617e2f8f006a695333fa058e41e9e42b809c53c1c",
+      "afterSha256": "f3fd8b98e70b42539b5fea5617e2f8f006a695333fa058e41e9e42b809c53c1c",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "1920-arena",
+      "viewport": [
+        1920,
+        900
+      ],
+      "beforeSha256": "e487d94c83297d34a7566466678d44ba7be6778e1de125dddf914e7c4dd48538",
+      "afterSha256": "e487d94c83297d34a7566466678d44ba7be6778e1de125dddf914e7c4dd48538",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "1920-bag",
+      "viewport": [
+        1920,
+        900
+      ],
+      "beforeSha256": "dbdfd48e33ceff5f60a90106c67866b50b80969b50948f88a2a86fcbd5f77111",
+      "afterSha256": "dbdfd48e33ceff5f60a90106c67866b50b80969b50948f88a2a86fcbd5f77111",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "1920-battle",
+      "viewport": [
+        1920,
+        900
+      ],
+      "beforeSha256": "56ef54e07fd4bb9f47574d754c3417f38e462162850b69d1eb25dbffb79bc932",
+      "afterSha256": "07ed4a39c8ed8691f80ab0da7734b9e7aa4a95515685df2221e8a124f54a11af",
+      "byteExact": false,
+      "changedPixelPercent": 32.678,
+      "maxMeanChannelDelta": 4.0395
+    },
+    {
+      "case": "1920-modal",
+      "viewport": [
+        1920,
+        900
+      ],
+      "beforeSha256": "b4731bd1486d6b8c9ef9b69cfabcabc90b9a9a1d7af4babf0d06861cfddea75c",
+      "afterSha256": "471d999c532f438ce922e4f34ca9fcf670a3f746b4986631e1729d3c963a0423",
+      "byteExact": false,
+      "changedPixelPercent": 27.7806,
+      "maxMeanChannelDelta": 2.3442
+    },
+    {
+      "case": "1920-shop",
+      "viewport": [
+        1920,
+        900
+      ],
+      "beforeSha256": "a493be6181619bb6a227ab28684c6391152c948b885e55934014d78aaabac492",
+      "afterSha256": "69543e858affe011583aeee467238e3f650b515b8869358c3cf60e06b0f0fd2a",
+      "byteExact": false,
+      "changedPixelPercent": 10.7925,
+      "maxMeanChannelDelta": 0.9784
+    },
+    {
+      "case": "1920-training",
+      "viewport": [
+        1920,
+        900
+      ],
+      "beforeSha256": "d816c8613e2b5f704cde200a1558f5c919c310517b953f713e56c0c1050fdadd",
+      "afterSha256": "d816c8613e2b5f704cde200a1558f5c919c310517b953f713e56c0c1050fdadd",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "360-arena",
+      "viewport": [
+        360,
+        900
+      ],
+      "beforeSha256": "be8b66de49a6517b4159fae32872701bb371c3b30b284f0c3cda410f90703f22",
+      "afterSha256": "be8b66de49a6517b4159fae32872701bb371c3b30b284f0c3cda410f90703f22",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "360-bag",
+      "viewport": [
+        360,
+        900
+      ],
+      "beforeSha256": "24ccc307d52dbd5dfb26c5d52d39b83a6879e0ca8f25c894ad5691e0eebe0ae1",
+      "afterSha256": "24ccc307d52dbd5dfb26c5d52d39b83a6879e0ca8f25c894ad5691e0eebe0ae1",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "360-battle",
+      "viewport": [
+        360,
+        900
+      ],
+      "beforeSha256": "9deb1b16922063cfc667f2e5dea8290d6912b76707c32584d46e93b1e5421fc2",
+      "afterSha256": "d35c0457470389fb7dabc26b17b7fdfc10410f9a301ba4222a4a90eb1a1d923a",
+      "byteExact": false,
+      "changedPixelPercent": 10.6077,
+      "maxMeanChannelDelta": 0.8803
+    },
+    {
+      "case": "360-modal",
+      "viewport": [
+        360,
+        900
+      ],
+      "beforeSha256": "82b48e203a4dba3920d6fabd9ef53ea6f2b7d624164d03eea8d93bb8fd6ff099",
+      "afterSha256": "9bd0f06a57c001c1ff966233d7ebf18c40e851286e22c7bbb0dff1f8ba6bcdf3",
+      "byteExact": false,
+      "changedPixelPercent": 8.6213,
+      "maxMeanChannelDelta": 0.5565
+    },
+    {
+      "case": "360-shop",
+      "viewport": [
+        360,
+        900
+      ],
+      "beforeSha256": "4ba364c2b5a055a3853fd5ff374c2688ff1b30e137c99a35991015013c869371",
+      "afterSha256": "66a521ab9b77b7574daf5e3e1d2a16f335c87587f306ae0e6f9be8d8931aac02",
+      "byteExact": false,
+      "changedPixelPercent": 2.7623,
+      "maxMeanChannelDelta": 0.1705
+    },
+    {
+      "case": "360-training",
+      "viewport": [
+        360,
+        900
+      ],
+      "beforeSha256": "0cbfe754d2a017e63a687615d71cbeb8cf78b9edbcb3951fe87dfb7a8db63215",
+      "afterSha256": "0cbfe754d2a017e63a687615d71cbeb8cf78b9edbcb3951fe87dfb7a8db63215",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "768-arena",
+      "viewport": [
+        768,
+        900
+      ],
+      "beforeSha256": "b49a68e3ae78fac265e753860ddb2daf2434d24dc3b5a26b0511baf7787fb85f",
+      "afterSha256": "b49a68e3ae78fac265e753860ddb2daf2434d24dc3b5a26b0511baf7787fb85f",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "768-bag",
+      "viewport": [
+        768,
+        900
+      ],
+      "beforeSha256": "0734a9abeb1cf8ec01f3c7916926d83160b5b06aa164a146cf4aac5958fb8a98",
+      "afterSha256": "0734a9abeb1cf8ec01f3c7916926d83160b5b06aa164a146cf4aac5958fb8a98",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    },
+    {
+      "case": "768-battle",
+      "viewport": [
+        768,
+        900
+      ],
+      "beforeSha256": "d17f2f9566db245d7d0837718701cc233b129ed1ace56fb54a2be6d735de7e91",
+      "afterSha256": "b1ea96d18f0de00d580785e178da92d4e5c99f1306d279932b1d6ac0e7dbdb34",
+      "byteExact": false,
+      "changedPixelPercent": 19.2568,
+      "maxMeanChannelDelta": 2.1141
+    },
+    {
+      "case": "768-modal",
+      "viewport": [
+        768,
+        900
+      ],
+      "beforeSha256": "03ca19f91b7b03d64a437f4b667a02fe0c9e05d5ad21c32801a513351d522f0e",
+      "afterSha256": "82d34a5f70163bbef79e749c423ae5eec5fa40f4aaa70cf9f55e0ba1345c78ba",
+      "byteExact": false,
+      "changedPixelPercent": 15.3799,
+      "maxMeanChannelDelta": 1.2499
+    },
+    {
+      "case": "768-shop",
+      "viewport": [
+        768,
+        900
+      ],
+      "beforeSha256": "6523b8164b9680773eff61a4a37230d10af96efe70a9cfeecbabd1f7eb39af10",
+      "afterSha256": "9e05aa0ca7e5a5ff0bf94da9fb45d127eed64dcbc53c86c4199847f43d28cf6c",
+      "byteExact": false,
+      "changedPixelPercent": 10.543,
+      "maxMeanChannelDelta": 0.8327
+    },
+    {
+      "case": "768-training",
+      "viewport": [
+        768,
+        900
+      ],
+      "beforeSha256": "a935bd8267b8747f5a2f48455c65a8f6f9ac9428798ccd7306d39fa65a65f5cd",
+      "afterSha256": "a935bd8267b8747f5a2f48455c65a8f6f9ac9428798ccd7306d39fa65a65f5cd",
+      "byteExact": true,
+      "changedPixelPercent": 0.0,
+      "maxMeanChannelDelta": 0.0
+    }
+  ]
+}

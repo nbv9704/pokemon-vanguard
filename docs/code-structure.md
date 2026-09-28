@@ -37,7 +37,7 @@ The `.aether-window` CSS class remains a presentation compatibility class for no
 
 `npm run structure:validate` is part of `npm run check`. Production JavaScript modules are capped at 360 lines, excluding generated `app/src/`, tests and the frozen legacy snapshot. The limit is a guardrail, not a reason to split cohesive code mechanically: split by responsibility and stable dependency direction.
 
-`pixel-era-ui.css` is intentionally not split in this cleanup. It is the final theme/resolution-lock override layer and its cascade order is part of the rendering contract. Route-specific CSS should continue to live in its existing page files; changes to the global Pixel Era sheet should be scoped and regression-tested.
+The B32 CSS contract is declared in `public/cascade-contract.css`; every active stylesheet is classified by `scripts/css-layer-manifest-b32.mjs` and validated by `npm run css:cascade:validate`. The stable order is reset, tokens, base, components, routes, theme and overrides. Keep lazy route CSS lazy, keep `cascade-contract.css` first in every HTML entry, and update the manifest deliberately when adding a stylesheet. `pixel-era-ui.css` remains the theme/resolution-lock layer; changes to it require focused UI tests and browser parity review.
 
 ## Contributor entry point (B26)
 

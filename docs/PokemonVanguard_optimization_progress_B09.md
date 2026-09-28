@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 19 |
+| DONE | 20 |
 | IN PROGRESS | 13 |
-| TODO | 1 |
+| TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B31 — đã tích hợp vào bản chính; #29 Social capacity/profile offline DONE trong phạm vi mã nguồn/kiểm thử**: accept khóa và đọc bền vững cả hai account, từ chối khi một bên đạt giới hạn, kiểm request hai chiều; lưu pair fail-closed và profile offline qua durable loader + cache TTL bounded. Official review: `npm run check` PASS, B24–B31 focused 50/50 PASS, full Node regression 1.436/1.436 PASS trên 229 test files, desktop smoke Home/Shop/Bag/Arena/Profile PASS. Không suy rộng thành xác nhận staging Supabase, multi-process, full browser matrix hoặc quyền phân phối artwork.
+Đợt hiện tại: **B32 — #23 CSS layers/cascade DONE**: 35 stylesheet hoạt động được phân loại vào hợp đồng `reset/tokens/base/components/routes/theme/overrides`; ba HTML entry nạp contract trước CSS, lazy route giữ nguyên. Gate chặn file chưa phân loại, import ẩn và `!important` tăng quá baseline. Browser baseline/after 27 capture trên Bag/Shop/Training/Arena/Battle/modal ở 360/768/1366/1920 px cùng reduced motion/high contrast/larger text PASS; `npm run check` PASS; full regression 1.439/1.439 PASS trên 230 file.
 
 ## Bảng tiến độ
 
@@ -50,7 +50,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 20 | Cache/nén HTTP | P2 | DONE | B22: cold/warm + invalidation + HEAD/gzip/Brotli/private no-store đều có regression; benchmark wire bytes/timing và browser/WebSocket smoke đạt; hosted CI PASS |
 | 21 | Lazy-load UI/catalog | P2 | DONE | B23: registry `import()` + catalog promise theo version, CSS ready barrier, retry cô lập; V3 không tải V2/legacy, save V1 active battle vẫn hoạt động; benchmark/browser/full CI PASS |
 | 22 | Tối ưu ảnh/manifest | P2 | IN PROGRESS | B25: 303 responsive images, 606 1×/2× lossless PNG, manifest SHA-256/dimensions/license-review, 544 original sprite hashes; 606/606 pixel-integrity QA và HTTP tests PASS. B26 thêm browser harness baseline master vs variant tại 360/1366px, DPR1/2; Chromium container vẫn treo, cần chạy harness + QA route thực trên desktop trước khi DONE; 39 icon còn fallback qua mạng, rà quyền ảnh trước phát hành công khai. |
-| 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
+| 23 | CSS layers/cascade | P2 | DONE | B32: native layer contract thứ tự cố định, manifest phân loại 35 stylesheet, tokens tách riêng, entry/lazy CSS giữ thứ tự; gate inventory 3.155 block/67 selector trùng và không cho `!important` vượt 1.062. Browser parity 27 capture ở 4 viewport + 3 accessibility mode PASS; full 1.439/1.439 PASS. |
 | 24 | Tách module theo trách nhiệm | P2 | IN PROGRESS | B20: tách hazard state và HP-threshold item hook, loại hai dependency cycle; còn composition root client/server/ranked và complexity/formatter rollout |
 | 25 | Lint/type contracts | P2 | DONE | B19–24 ESLint promise-aware, import/cycle, 7 strict Node modules. B28: strict DOM/browser config cho WebSocket envelope và Shop purchase builder; discriminated TS positive/negative assertions cho Command/Result/SavePort/reviewed action/ACK; storage bootstrap kiểm 9 method không clone; browser reject ACK/state malformed. Negative CI thực thi xác minh thiếu await và import browser→server đều FAIL. `npm run check` PASS; focused 12 file/61 test PASS. Giới hạn: không coi toàn bộ JS/storage internals là typed hoặc thay runtime schema #13. |
 | 26 | CI/test đúng artifact phát hành | P1/P2 | DONE | Run #10: Ubuntu + Windows npm-ci/check/inventory/1.333 test PASS; Ubuntu đóng gói, verify, clean-unpack và handle-leak PASS |
@@ -424,6 +424,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Desktop browser smoke với save temp:** Home, Shop, Bag, Arena và Profile render, socket `ONLINE`; Bag/reward chọn asset responsive fingerprinted ở DPR2; không có warning/error đã ghi nhận. Giao dịch Shop thử chỉ tác động save tạm sẽ bị xóa khi dừng harness.
 - **Hosted CI:** run [`36432772154`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36432772154) cho commit `33f03f2`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - Bằng chứng chi tiết: `app/docs/b31-official-integration-review.md`. #22 vẫn `IN PROGRESS` vì chưa có browser/AT matrix và quyền artwork; #23 vẫn `TODO`. **Tổng không đổi: 19 DONE, 13 IN PROGRESS, 1 TODO, 1 DEFERRED, 0 BLOCKED.**
+
+### 28/09/2026 — B32: đóng #23 CSS layers/cascade
+
+- **Hợp đồng cascade:** thêm `public/cascade-contract.css` với thứ tự cố định `reset → tokens → base → components → routes → theme → overrides`; chuyển base token sang `tokens.css`. Bao 35 stylesheet trong layer được manifest phân loại; current/Classic/Admin entry nạp contract đầu tiên. CSS lazy vẫn chỉ tải khi route cần, `.aether-window` và battle/event contract không đổi.
+- **Inventory/gate:** `npm run css:cascade:validate` nằm trong `npm run check`, chặn stylesheet thiếu/thừa manifest, layer envelope sai, `@import` ẩn, entry order sai và `!important` tăng quá baseline 1.062. Baseline ghi 3.155 selector block, 67 selector trùng xuyên file và 6 root/theme token rule; không xóa cơ học specificity debt cũ.
+- **Browser parity:** chụp trước/sau bằng save Local Beta tạm cho Bag, Shop, Training, Arena, Battle Practice và modal surrender tại **360/768/1366/1920 px**; bật Reduced motion, High contrast và Larger text qua Settings thật ở 1366 px. **27/27 capture PASS** khi đối chiếu layout, clipping, nội dung, focus và breakpoint. Training/Arena byte-identical cả bốn width; các PNG battle có frame sprite/focus paint không deterministic nên không khai là byte-identical. Báo cáo hash/pixel: `app/docs/css-cascade-visual-b32.json`.
+- **Nghiệm thu:** focused cascade/UI/PvP **58/58 PASS**; `npm run check` PASS; full `npm test` **1.439/1.439 PASS trên 230 file**, 0 fail/skip/todo. Tài liệu: `app/docs/css-cascade-b32.md`.
+- **Kết luận:** #23 `DONE`; bundle/minify và giảm dần 1.062 `!important` là tối ưu sau parity, không phải phần còn thiếu của hợp đồng layer. **Tổng: 20 DONE, 13 IN PROGRESS, 0 TODO, 1 DEFERRED, 0 BLOCKED.**
 
 ## Cách cập nhật file này
 
