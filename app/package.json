@@ -48,6 +48,7 @@
     "test:inventory": "node scripts/run-tests-batched.mjs --list-json",
     "content:inventory": "node scripts/content-dependency-inventory.mjs",
     "benchmark:hot-state": "node scripts/benchmark-hot-state-b12.mjs",
+    "benchmark:http-runtime": "node scripts/benchmark-http-runtime-b22.mjs",
     "release:verify": "node scripts/run-verify-release.mjs"
   },
   "engines": {
