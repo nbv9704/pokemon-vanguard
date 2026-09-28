@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 10 |
-| IN PROGRESS | 20 |
+| DONE | 11 |
+| IN PROGRESS | 19 |
 | TODO | 3 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B21 — promise safety và type-contract foundation**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B22 — nghiệm thu cache/runtime HTTP**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -47,7 +47,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 17 | Thu hồi room/presence | P1 | DONE | B07 TTL guard socket/join/job/PvP; B17 hard cap + safe detached LRU, dirty guard, presence cleanup, capacity rejection và aggregate metrics; distributed ownership theo #10/#18 |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
 | 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–15 bao phủ schema-3/account/schema-2 management; B16 thêm ACK + session outbox cho schema-2 PvE battle; còn PvP và multi-device QA |
-| 20 | Cache/nén HTTP | P2 | IN PROGRESS | B09-fix1: precompressed catalog V2/V3 + ETag/304/HEAD; q-weight/406 đúng, static bounded cache/streaming; cần browser/cold-warm/live WS |
+| 20 | Cache/nén HTTP | P2 | DONE | B22: cold/warm + invalidation + HEAD/gzip/Brotli/private no-store đều có regression; benchmark wire bytes/timing và browser/WebSocket smoke đạt; hosted CI PASS |
 | 21 | Lazy-load UI/catalog | P2 | TODO | Giữ legacy fallback |
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
@@ -325,6 +325,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** coordinator/queue/receipt/shutdown focused **16/16 PASS**; `npm run lint`, `npm run check:types` và `npm run check` PASS; full regression **1.375/1.375 PASS trên 215 file**, 0 fail/skip/todo. Tài liệu: `app/docs/async-type-contracts-b21.md`.
 - **Hosted CI:** run [`36375503188`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36375503188) cho commit `e006d3e`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** strict type coverage mới bao phủ contract lõi đầu tiên, chưa toàn bộ storage implementations, Save/DTO và browser action envelope; runtime schema validation vẫn bắt buộc. #25 giữ IN PROGRESS.
+
+### 28/09/2026 — B22: nghiệm thu cache/runtime HTTP
+
+- **#20 DONE:** giữ nguyên implementation B09 đã review và khép đủ tiêu chí nghiệm thu bằng runtime test mới: catalog Brotli cold 200, ETag warm 304 không body, private session `no-store`, live WebSocket đồng thời, catalog đổi nội dung sinh ETag mới và không trả stale 304. Bộ B09 tiếp tục bao phủ HEAD, weighted gzip/Brotli/identity/406, static invalidation, image không recompress, bounded cache/large stream và symlink/traversal.
+- **Benchmark lặp lại được:** thêm `npm run benchmark:http-runtime`. Windows/Node v22.15.0, 10 mẫu loopback: V3 cold Brotli **78.438 B / 24,074 ms**; warm 304 **0 B**, p50/p95 **1,601/1,923 ms**; `/` cold Brotli **564 B / 24,144 ms**, warm 304 **0 B**, p50/p95 **2,128/3,599 ms**; WebSocket handshake **11,031 ms**. Đây là bằng chứng development, không phải production SLA.
+- **Browser smoke:** đăng nhập local beta trong trình duyệt, Home render đầy đủ, WebSocket báo `ONLINE`; warm reload vẫn giữ session/kết nối và console không có warning/error. Tài liệu nghiệm thu: `app/docs/http-runtime-acceptance-b22.md`.
+- **Kiểm thử:** focused HTTP/runtime **8/8 PASS**; `npm run check` PASS; full regression **1.377/1.377 PASS trên 216 file**, 0 fail/skip/todo.
+- **Hosted CI:** run [`36396255917`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36396255917) cho commit `220eed3`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
+- **Kết luận:** toàn bộ tiêu chí mục #20 đã được thực hiện và kiểm chứng; không còn việc mở trong phạm vi cache/nén HTTP. Timing production/CDN chỉ là theo dõi vận hành, không mở lại hạng mục chức năng này.
 
 ## Cách cập nhật file này
 
