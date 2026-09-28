@@ -104,7 +104,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const serveV2Catalog=createCatalogHttpResponse(publicV2Catalog);
   const serveV3Catalog=createCatalogHttpResponse(publicV3Catalog);
   const serveStatic=createStaticHttpResponse(publicDir);
-  const server = http.createServer(async (req, res) => {
+  const handleHttp=async(req,res)=>{
     try {
       const url=requestPolicy.requestUrl(req);if(await auth.handle(req,res,url))return;const adminSession=auth.readSession(req);if(await admin.handle(req,res,url,adminSession))return;
       if(await servePokemonUiIcon(req,res,url))return;
@@ -120,7 +120,8 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
       if(pathname==='/api/v3/catalog')return serveV3Catalog(req,res);
       return await serveStatic(req,res,pathname);
     } catch (error) { res.writeHead(error.statusCode||(error.code === 'ENOENT' ? 404 : 400)); res.end('Not found'); }
-  });
+  };
+  const server=http.createServer((req,res)=>{void handleHttp(req,res);});
   const wss = new WebSocketServer({ noServer:true, maxPayload:70 * 1024 });
   function closeAuthSocket(ws,error='AUTH_EXPIRED'){if(ws.readyState===WebSocket.OPEN)sendBounded(ws,{type:'error',error},{openState:WebSocket.OPEN});ws.close(4001,error==='AUTH_REVOKED'?'session revoked':'session expired');}
   const joinDeadlineMs=Number.isSafeInteger(websocketJoinDeadlineMs)?Math.max(50,Math.min(60_000,websocketJoinDeadlineMs)):12_000;
@@ -326,5 +327,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
    requestRateLimits:{accountActions:envLimit('PV_RATE_ACCOUNT_ACTIONS_10S',45),ipActions:envLimit('PV_RATE_IP_ACTIONS_10S',180),socketMessages:envLimit('PV_RATE_SOCKET_MESSAGES_10S',70),ipUpgrades:envLimit('PV_RATE_IP_UPGRADES_MIN',30),httpInspector:envLimit('PV_RATE_INSPECTOR_MIN',40)}});
   const port = await app.listen(Number(process.env.PORT || 3100));
   console.log(`Pokémon Vanguard: http://localhost:${port}\nAccount saves: Supabase when configured; local storage is development-only.\nEdit public files and refresh the browser. Rule changes restart in watch mode.`);
-  for (const signal of ['SIGINT','SIGTERM']) process.on(signal,async()=>{await app.close();process.exit(0);});
+  for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>{void app.close().then(()=>process.exit(0),error=>{console.error('Graceful shutdown failed:',error.message);process.exitCode=1;});});
 }

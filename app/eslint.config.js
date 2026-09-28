@@ -1,4 +1,6 @@
 import js from '@eslint/js';
+import tseslint from '@typescript-eslint/eslint-plugin';
+import tsParser from '@typescript-eslint/parser';
 import globals from 'globals';
 import { defineConfig, globalIgnores } from 'eslint/config';
 
@@ -52,6 +54,23 @@ export default defineConfig([
         ignoreRestSiblings: true,
         varsIgnorePattern: '^_',
       }],
+    },
+  },
+  {
+    files: ['local-server.mjs', 'server/**/*.mjs'],
+    ignores: ['server/legacy/**'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        project: './tsconfig.async.json',
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: { '@typescript-eslint': tseslint },
+    rules: {
+      '@typescript-eslint/await-thenable': 'error',
+      '@typescript-eslint/no-floating-promises': ['error', { ignoreVoid: true }],
+      '@typescript-eslint/no-misused-promises': 'error',
     },
   },
 ]);
