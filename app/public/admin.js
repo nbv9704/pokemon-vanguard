@@ -1,5 +1,5 @@
 import {itemSpriteStyle} from './js/item-sprites.js';
-import {adminItemSearchText,adminPokemonSearchText,adminSearchMatch,normalizeAdminSearch as searchKey} from './js/admin-search.js';
+import {adminItemSearchText,adminPokemonSearchText,adminSearchMatch} from './js/admin-search.js';
 import {AdminPendingAction} from './js/admin-pending-action.js';
 
 const app=document.querySelector('#admin-app'),toast=document.querySelector('#admin-toast');

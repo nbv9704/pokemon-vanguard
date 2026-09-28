@@ -4,7 +4,6 @@ const indexById=(list=[])=>new Map(list.map(entry=>[entry.id,entry]));
 const title=value=>String(value||'').split('-').map(part=>part?part[0].toUpperCase()+part.slice(1):part).join(' ');
 const statLabels={hp:'HP',atk:'Attack',def:'Defense',spa:'Sp. Atk',spd:'Sp. Def',spe:'Speed'};
 const ownershipLabel=value=>value==='permanent'?'OWNED':value==='trial'?'TRIAL':value==='trial-expired'?'EXPIRED':'LOCKED';
-const ownershipRank=value=>({permanent:0,trial:1,'trial-expired':2,locked:3})[value]??4;
 
 export class V3OverviewView{
  constructor({onChange=()=>{}}={}){this.onChange=onChange;this.archive={selectedId:null,search:'',type:'all',ownership:'all',displayFormId:null};}

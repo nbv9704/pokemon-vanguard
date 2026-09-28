@@ -89,7 +89,7 @@ export function validateTacticalContent(regulations,aiTeams,species){
 
 async function loadJson(file) {
   try { return JSON.parse(await readFile(file, 'utf8')); }
-  catch (error) { throw new Error(`${path.basename(file)} is not valid JSON: ${error.message}`); }
+  catch (error) { throw new Error(`${path.basename(file)} is not valid JSON: ${error.message}`, { cause: error }); }
 }
 
 export async function checkContent(root = appRoot) {

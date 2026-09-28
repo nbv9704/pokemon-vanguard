@@ -14,7 +14,7 @@ export class BattleLogDragController{
  start(event,root=document){
   if(event.button!==0)return false;const handle=event.target?.closest?.('.pokemon-battle-log .aether-window-title');if(!handle)return false;
   const panel=handle.closest('.pokemon-battle-log'),stage=panel?.closest('.pokemon-battle-stage');if(!panel||!stage)return false;
-  const stageRect=stage.getBoundingClientRect(),panelRect=panel.getBoundingClientRect(),scaleX=stage.clientWidth/stageRect.width,scaleY=stage.clientHeight/stageRect.height,localX=(event.clientX-stageRect.left)*scaleX,localY=(event.clientY-stageRect.top)*scaleY;
+   const stageRect=stage.getBoundingClientRect(),scaleX=stage.clientWidth/stageRect.width,scaleY=stage.clientHeight/stageRect.height,localX=(event.clientX-stageRect.left)*scaleX,localY=(event.clientY-stageRect.top)*scaleY;
   this.drag={panel,stage,pointerId:event.pointerId,grabX:localX-panel.offsetLeft,grabY:localY-panel.offsetTop};handle.setPointerCapture?.(event.pointerId);panel.classList.add('battle-log-dragging');event.preventDefault();return true;
  }
  move(event){

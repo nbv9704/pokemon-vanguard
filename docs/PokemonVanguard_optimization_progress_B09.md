@@ -17,12 +17,12 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | Trạng thái | Số lượng |
 | --- | ---: |
 | DONE | 10 |
-| IN PROGRESS | 18 |
-| TODO | 5 |
+| IN PROGRESS | 19 |
+| TODO | 4 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B18 — runtime persistence/queue/transport observability**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
+Đợt hiện tại: **B19 — lint baseline và dọn code smell an toàn**. Hạng mục P1/P2 chưa xong vẫn theo dõi, không đánh dấu hoàn thành. Các thay đổi Supabase đã có migration và test adapter nhưng chưa được coi là hoàn tất production trước khi migration được áp dụng và smoke-test trên môi trường thật.
 
 ## Bảng tiến độ
 
@@ -52,7 +52,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 22 | Tối ưu ảnh/manifest | P2 | TODO | Cần visual QA |
 | 23 | CSS layers/cascade | P2 | TODO | Cần screenshot baseline |
 | 24 | Tách module theo trách nhiệm | P2 | TODO | Làm sau correctness |
-| 25 | Lint/type contracts | P2 | TODO | Thiết lập baseline |
+| 25 | Lint/type contracts | P2 | IN PROGRESS | B19: ESLint 10 gate cho toàn bộ source phát hành, 47 lỗi thật được dọn và 5 passive Ability handler bị thiếu registry được nối lại; còn import boundary, async contract và JSDoc/checkJs/schema types |
 | 26 | CI/test đúng artifact phát hành | P1/P2 | DONE | Run #10: Ubuntu + Windows npm-ci/check/inventory/1.333 test PASS; Ubuntu đóng gói, verify, clean-unpack và handle-leak PASS |
 | 27 | Snapshot content/repo size | P2 | IN PROGRESS | B09: inventory 35 catalog version (18.06 MiB), xác minh active SHA-256; chưa archive/delete version chưa rõ tương thích; UI icon mirror 0/39 trong source ZIP chưa được fetch |
 | 28 | Admin overview aggregate đúng | P1 | IN PROGRESS | Fixture 150 account; UI/API ghi rõ sample và online lấy registry toàn cục; còn aggregate DB + keyset campaign |
@@ -300,6 +300,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Kiểm thử:** success/failure persistence, percentile bounded, queue wait clock giả, broadcast bytes/drop reason, aggregate privacy, Admin UI và WebSocket/server thật; focused **34/34 PASS**; `npm run check` PASS; full regression **1.371/1.371 PASS trên 214 file**, 0 fail/skip/todo. Tài liệu: `app/docs/runtime-observability-b18.md`.
 - **Hosted CI:** run [`36337097639`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36337097639) cho commit `d1aa325`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Giới hạn:** metrics reset theo process, chưa shared export/alert, settlement-pending age, load/soak dài hoặc Supabase latency thật; #10/#30 giữ `IN PROGRESS`.
+
+### 28/09/2026 — B19: lint baseline và dọn code smell
+
+- **#25 chuyển `IN PROGRESS`:** thêm ESLint 10 + recommended core, tách Node/Browser globals và đưa `npm run lint` (có `--max-warnings 0`) vào `npm run check`. Dev-only dependencies không chạy cùng server, không dùng dịch vụ trả phí; Node contract nâng lên `>=22.13.0` đúng engine của ESLint 10.
+- Phạm vi lint bao phủ source phát hành; generated `src`, fragment `logic-src`, frozen legacy, cloud build lịch sử và test gate riêng được loại trừ có chú thích. Không miễn server/mechanics/UI/scripts sống; `require-atomic-updates` được tắt vì queue tuần tự gây false positive, nhưng unused import/local và correctness rules vẫn strict.
+- Dọn 47 lỗi thật sau khi chuẩn hóa boundary: import/biến/assignment chết, escape regex thừa và error wrapper thiếu `cause`. Lint đồng thời phát hiện 5 passive Ability declaration đã import nhưng chưa đăng ký; đã nối lại field aura, contact Protect pierce, Parental Bond, Shadow Tag và entry terrain vào `HANDLER_DEFINITIONS`.
+- **Kiểm thử:** `npm run lint` PASS 0 warning; mechanics mục tiêu **56/56 PASS**, registry regression **26/26 PASS**; `npm run check` PASS; full regression **1.372/1.372 PASS trên 214 file**, 0 fail/skip/todo. Tài liệu: `app/docs/quality-baseline-b19.md`.
+- **Giới hạn:** chưa có import-boundary/cycle rule, promise-aware lint và JSDoc/checkJs/schema-derived type cho Command/Result/Save/DTO/Storage; vì vậy #25 chưa `DONE`.
 
 ## Cách cập nhật file này
 

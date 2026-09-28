@@ -14,7 +14,8 @@
     "start": "node --env-file-if-exists=.dev.vars local-server.mjs",
     "check:content": "node scripts/check-content.mjs",
     "validation-snapshots:verify": "node scripts/verify-validation-snapshots.mjs",
-    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate",
+    "lint": "eslint . --max-warnings 0",
+    "check": "npm run validation-snapshots:verify && node scripts/compile-logic.mjs --verify && npm run check:content && node scripts/check-logic.mjs && node scripts/generate-move-fx-coverage.mjs --verify && npm run check:syntax && npm run lint && npm run structure:validate && npm run item-acquisition:validate && npm run assets:validate && npm run rank-assets:validate && npm run foundation:validate && npm run mega:validate && npm run ma:validate && npm run release:validate && npm run reward-assets:validate",
     "test": "node scripts/run-tests-batched.mjs",
     "pokemon:validate": "node scripts/validate-pokemon-candidate.mjs",
     "mechanics:coverage": "node scripts/generate-mechanics-coverage.mjs",
@@ -48,9 +49,14 @@
     "release:verify": "node scripts/run-verify-release.mjs"
   },
   "engines": {
-    "node": ">=22"
+    "node": ">=22.13.0"
   },
   "dependencies": {
     "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.11.0",
+    "globals": "^17.12.0"
   }
 }

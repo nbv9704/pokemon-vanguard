@@ -11,8 +11,6 @@ const signatures=new Set(SIGNATURE_MOVE_IDS),weather=new Set(WEATHER_MOVE_IDS),h
 const PROFILE_TO_TEMPLATE={
  projectile:'projectile',beam:'beam',slash:'slash',rush:'rush',barrage:'multi-hit',impact:'impact',aura:'aura',barrier:'barrier',drain:'drain','drain-contact':'drain',seed:'projectile',notes:'aura',orb:'projectile','field-burst':'field-wave'
 };
-const TARGETED_TEMPLATES=new Set(['projectile','beam','slash','rush','multi-hit','impact','drain']);
-
 const cue=(id,type,at,{duration=0,layer,anchor,primitive,role,targetIndex,sound,commit,meta}={})=>({id,type,at,duration,...(layer?{layer}:{}),...(anchor?{anchor}:{}),...(primitive?{primitive}:{}),...(role?{role}:{}),...(Number.isInteger(targetIndex)?{targetIndex}:{}),...(sound?{sound}:{}),...(commit?{commit}:{}),...(meta?{meta}:{})});
 const targetLoop=(targetCount,fn)=>{const out=[];for(let i=0;i<Math.max(1,targetCount);i++)out.push(...fn(i));return out;};
 

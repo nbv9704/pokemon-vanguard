@@ -3,7 +3,6 @@ import {roomActive} from '../rooms.mjs';
 import {abilityBerryConsumptionHeal,abilityBerryEffectMultiplier,abilitySuppressesHeldItems,opposingBerrySuppression} from '../ability-hooks.mjs';
 
 export const maxHp=unit=>unit?.maxHp??unit?.stats?.hp;
-const battleStageIds=['atk','def','spa','spd','spe','accuracy','evasion'];
 const inferredItemId=unit=>{const buildItem=unit?.buildSnapshot?.itemId;if(buildItem&&buildItem!=='none')return buildItem;return unit?.passiveEffects?.find(effect=>effect?.sourceKind==='item')?.sourceId||null;};
 export const itemEffects=(unit,kind,battle)=>(unit?.passiveEffects||[]).filter(effect=>effect?.sourceKind==='item'&&effect.kind===kind&&heldItemEffectActive(unit,effect,battle));
 
@@ -119,7 +118,7 @@ export function activateHeldItem(battle,{actorId,itemId,reason,consume=false,act
  state.activationCount++;state.lastActivationKey=activationKey||null;events.push({kind:'itemActivated',sourceId:actorId,itemId,reason,activationCount:state.activationCount});
  if(consume){state.consumed=true;recordConsumedItem(unit,itemId,next,{reason,effects:consumedEffects});scheduleBerryReplay(unit,itemId,next,consumedEffects);events.push({kind:'itemConsumed',sourceId:actorId,itemId,reason});
   if(itemId?.endsWith('-berry')){state.consumedBerryEver=true;const effect=abilityBerryConsumptionHeal(unit);if(effect&&unit.hp>0&&unit.hp<maxHp(unit)){const before=unit.hp,amount=Math.max(1,Math.floor(maxHp(unit)*effect.numerator/effect.denominator));unit.hp=Math.min(maxHp(unit),unit.hp+amount);events.push({kind:'abilityTriggered',sourceId:actorId,abilityId:effect.sourceId,effectId:effect.kind,itemId},{kind:'heal',targetId:actorId,hpBefore:before,hpAfter:unit.hp,amount:unit.hp-before,source:`ability:${effect.sourceId}`,abilityId:effect.sourceId,trigger:'berry-consumed'});}}
-  const passed=resolveImmediateAllyItemPass(next,{actorId,reason});next=passed.battle;events.push(...passed.events);unit=unitById(next,actorId);
+   const passed=resolveImmediateAllyItemPass(next,{actorId,reason});next=passed.battle;events.push(...passed.events);
  }
  return {battle:next,applied:true,events};
 }

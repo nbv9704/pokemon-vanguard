@@ -1,5 +1,4 @@
 import http from 'node:http';
-import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -13,7 +12,7 @@ import {upgradeAdventureToV3} from './server/v3-release.mjs';
 import {applyV3BattlePlayerAction} from './server/v3-battle-player-actions.mjs';
 import {v3BattleView} from './server/v3-battle-view.mjs';
 import { applyV2ProgressionAction, v2TrainingView } from './server/v2-progression.mjs';
-import { applyV2BattleAction, v2BattleView } from './server/v2-battle-actions.mjs';
+import { v2BattleView } from './server/v2-battle-actions.mjs';
 import {applyV2BattlePlayerAction} from './server/v2-battle-player-actions.mjs';
 import { applyV2EconomyAction, isV2EconomyAction } from './server/v2-economy.mjs';
 import { inspectV2Damage } from './server/v2-damage-inspector.mjs';

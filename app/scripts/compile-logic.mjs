@@ -13,7 +13,7 @@ export async function buildLogic(root = defaultRoot) {
   const manifestPath = path.join(sourceDir, 'manifest.json');
   let manifest;
   try { manifest = JSON.parse(await readFile(manifestPath, 'utf8')); }
-  catch (error) { throw new Error(`Cannot read logic-src/manifest.json: ${error.message}`); }
+  catch (error) { throw new Error(`Cannot read logic-src/manifest.json: ${error.message}`, { cause: error }); }
   if (manifest?.formatVersion !== 1 || !Array.isArray(manifest.fragments) || !manifest.fragments.length) {
     throw new Error('logic-src/manifest.json must declare formatVersion 1 and a non-empty fragments array');
   }
@@ -40,9 +40,9 @@ export async function compileLogic({ root = defaultRoot, verify = false } = {}) 
   if (verify) {
     let actual,actualEngine;
     try { actual = await readFile(target, 'utf8'); }
-    catch (error) { throw new Error(`Cannot verify src/logic.js: ${error.message}`); }
+    catch (error) { throw new Error(`Cannot verify src/logic.js: ${error.message}`, { cause: error }); }
     try { actualEngine=await readFile(engineTarget,'utf8'); }
-    catch(error){throw new Error(`Cannot verify src/v2-engine.mjs: ${error.message}`);}
+    catch(error){throw new Error(`Cannot verify src/v2-engine.mjs: ${error.message}`, {cause:error});}
     if (normalize(actual) !== normalize(expected)) throw new Error('src/logic.js is stale; run npm run compile:logic');
     if(normalize(actualEngine)!==normalize(expectedEngine))throw new Error('src/v2-engine.mjs is stale; run npm run compile:logic');
     return { changed:false, target };

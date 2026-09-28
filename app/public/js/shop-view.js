@@ -3,8 +3,6 @@ import {itemSpriteStyle} from './item-sprites.js';
 
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const itemIcon=(item,className='')=>{const style=itemSpriteStyle(item?.id);return style?`<span class="item-sprite ${className}" style="${style}" aria-hidden="true"></span>`:'<span class="shop-item-fallback" aria-hidden="true">◇</span>';};
-const title=value=>String(value||'').replace(/(^|-)(\w)/g,(_,dash,char)=>`${dash?' ':''}${char.toUpperCase()}`);
-
 export class ShopView{
  constructor({sendAction,onChange,createActionId=()=>`shop:${Date.now()}`}){this.send=sendAction;this.onChange=onChange;this.createActionId=createActionId;this.filter='all';this.query='';this.selectedId=null;}
  filters(data){const counts={all:data.items.length,owned:data.items.filter(item=>item.owned).length,held:data.items.filter(item=>item.category==='held-item').length,berry:data.items.filter(item=>item.category==='berry').length,mega:data.items.filter(item=>item.category==='mega-evolution').length};return [['all','All'],['held','Held Items'],['berry','Berries'],['mega','Mega Stones'],['owned','Owned']].map(([id,label])=>({id,label,count:counts[id]}));}

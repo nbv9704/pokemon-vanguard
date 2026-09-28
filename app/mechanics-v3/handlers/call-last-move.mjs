@@ -1,4 +1,4 @@
-import {clone,unitById} from '../../rules-v3/battle-state.mjs';
+import {clone} from '../../rules-v3/battle-state.mjs';
 import {calledMoveBlocked} from '../called-moves.mjs';
 
 const fail=(battle,payload,reason,extra={})=>({battle:clone(battle),payload:{...payload},events:[{kind:'moveFailed',actorId:payload.action.actorId,moveId:payload.move.id,reason,...extra}]});

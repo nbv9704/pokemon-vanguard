@@ -1,6 +1,6 @@
 const SCRIPT_PATTERN=/<script[^>]*>([\s\S]*?)<\/script>/gi;
 const PUSH_PATTERN=/^\s*self\.__next_f\.push\(([\s\S]*)\)\s*$/;
-const ROW_PATTERN=/(?:^|\n)([0-9a-f]+):(?=[\[{])/gi;
+const ROW_PATTERN=/(?:^|\n)([0-9a-f]+):(?=[[{])/gi;
 
 function readJsonValue(text,start){
  const opener=text[start],closer=opener==='['?']':'}';

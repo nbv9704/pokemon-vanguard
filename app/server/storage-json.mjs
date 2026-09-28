@@ -1,4 +1,4 @@
-import {readFile,writeFile,mkdir,rename,copyFile,access,readdir,rm,open,link} from 'node:fs/promises';
+import {readFile,mkdir,rename,copyFile,access,readdir,rm,open,link} from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
 import {validCampaignId} from './admin-campaigns.mjs';
 import {JsonPairJournal} from './json-pair-journal.mjs';

@@ -8,7 +8,7 @@ export const resetStatStagesHandler={
  run({battle,payload,params}){
   const next=clone(battle),{action,move}=payload,actor=unitById(next,action.actorId);
   if(!actor||actor.hp<=0)return {battle:next,payload:{...payload,resetStageTargetIds:[]},events:[{kind:'moveFailed',actorId:action.actorId,moveId:move.id,reason:'actorUnavailable'}]};
-  let targetIds=[];
+  let targetIds;
   if(params.scope==='all-active')targetIds=['A','B'].flatMap(side=>activeUnits(next,side).map(entry=>entry.actorId));
   else if(params.scope==='damaged-targets')targetIds=[...new Set(payload.damagedTargetIds||[])];
   else throw new Error(`unsupported reset-stat-stages scope: ${params.scope}`);
