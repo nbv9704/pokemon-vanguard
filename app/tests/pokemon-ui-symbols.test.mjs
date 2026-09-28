@@ -8,7 +8,7 @@ test('project symbol catalog covers all 18 types and all three move categories',
  assert.equal(pokemonTypeIds.length,18);
  assert.equal(moveCategoryIds.length,3);
  assert.deepEqual(moveCategoryIds,['physical','special','status']);
- assert.deepEqual(SYMBOL_DIMENSIONS,{typeIcon:[86,86],typeIc:[152,36],moveCategory:[50,50]});
+ assert.deepEqual(SYMBOL_DIMENSIONS,{typeIcon:[86,86],typeIc:[120,28],moveCategory:[50,50]});
  for(const id of pokemonTypeIds){
   const entry=POKEMON_TYPE_SYMBOLS[id];
   assert.equal(entry.icon,`${id}.png`);

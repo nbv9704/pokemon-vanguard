@@ -2,4 +2,4 @@ export const POKEMON_TYPE_SYMBOLS=Object.freeze({
  bug:{icon:'bug.png',ic:'bug.png'},dark:{icon:'dark.png',ic:'dark.png'},dragon:{icon:'dragon.png',ic:'dragon.png'},electric:{icon:'electric.png',ic:'electric.png'},fairy:{icon:'fairy.png',ic:'fairy.png'},fighting:{icon:'fighting.png',ic:'fighting.png'},fire:{icon:'fire.png',ic:'fire.png'},flying:{icon:'flying.png',ic:'flying.png'},ghost:{icon:'ghost.png',ic:'ghost.png'},grass:{icon:'grass.png',ic:'grass.png'},ground:{icon:'ground.png',ic:'ground.png'},ice:{icon:'ice.png',ic:'ice.png'},normal:{icon:'normal.png',ic:'normal.png'},poison:{icon:'poison.png',ic:'poison.png'},psychic:{icon:'psychic.png',ic:'psychic.png'},rock:{icon:'rock.png',ic:'rock.png'},steel:{icon:'steel.png',ic:'steel.png'},water:{icon:'water.png',ic:'water.png'}
 });
 export const MOVE_CATEGORY_SYMBOLS=Object.freeze({physical:{file:'physical.png'},special:{file:'special.png'},status:{file:'status.png'}});
-export const SYMBOL_DIMENSIONS=Object.freeze({typeIcon:[86,86],typeIc:[152,36],moveCategory:[50,50]});
+export const SYMBOL_DIMENSIONS=Object.freeze({typeIcon:[86,86],typeIc:[120,28],moveCategory:[50,50]});

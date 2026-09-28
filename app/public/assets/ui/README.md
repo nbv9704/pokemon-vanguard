@@ -5,7 +5,7 @@ Pokémon Vanguard loads only artwork supplied inside this project. There is no e
 Expected local layout:
 
 - `pokemon-types/icon/` — `bug.png` through `water.png`, one for each of the 18 type IDs (86×86)
-- `pokemon-types/ic/` — the same 18 lowercase filenames, rendered as horizontal labels (152×36)
+- `pokemon-types/ic/` — the same 18 lowercase filenames, rendered as horizontal labels (120×28)
 - `move-categories/` — `physical.png`, `special.png`, `status.png` (50×50)
 
 All files must be PNGs with the exact dimensions above. Keep the lowercase filenames unchanged; the runtime contract is listed in `public/js/ui/pokemon-symbol-assets-data.js`.
