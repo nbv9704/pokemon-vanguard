@@ -1,4 +1,5 @@
 import {MOVE_CATEGORY_SYMBOLS,POKEMON_TYPE_SYMBOLS} from './pokemon-symbol-assets-data.js';
+import {assetUrl} from '../asset-runtime.js';
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const normal=value=>String(value||'normal').trim().toLowerCase();
 const title=value=>normal(value).replace(/(^|-)(\w)/g,(_,dash,char)=>`${dash?' ':''}${char.toUpperCase()}`);
@@ -7,11 +8,11 @@ export const moveCategoryIds=Object.freeze(Object.keys(MOVE_CATEGORY_SYMBOLS));
 export const pokemonSymbolSources=Object.freeze({types:POKEMON_TYPE_SYMBOLS,categories:MOVE_CATEGORY_SYMBOLS});
 export function typeSymbolAsset(type,variant='icon'){
  const id=normal(type),entry=POKEMON_TYPE_SYMBOLS[id]||POKEMON_TYPE_SYMBOLS.normal,key=variant==='ic'?'ic':'icon';
- return {id,variant:key,local:`/assets/ui/pokemon-types/${key}/${entry[key]}`};
+ return {id,variant:key,local:assetUrl(`/assets/ui/pokemon-types/${key}/${entry[key]}`)};
 }
 export function moveCategoryAsset(category){
  const id=normal(category),entry=MOVE_CATEGORY_SYMBOLS[id]||MOVE_CATEGORY_SYMBOLS.status;
- return {id,local:`/assets/ui/move-categories/${entry.file}`};
+ return {id,local:assetUrl(`/assets/ui/move-categories/${entry.file}`)};
 }
 function fallbackAttrs(asset,{label,short}){return `src="${esc(asset.local)}" data-pv-symbol-label="${esc(label)}" data-pv-symbol-short="${esc(short)}"`;}
 export function typeSymbolImg(type,{variant='icon',className='',alt=null}={}){

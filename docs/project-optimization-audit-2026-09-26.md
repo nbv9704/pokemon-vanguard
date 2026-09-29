@@ -581,6 +581,18 @@ Cách làm:
 
 Kiểm thử/đạt: enqueue 51+ quà chưa claim, mix read/unread/expired/claimed, duplicate campaign và retry sau archive; không mất quyền nhận quà hợp lệ, balance chỉ tăng một lần.
 
+### 35 — Phân phối asset và loading theo nhu cầu (bổ sung sau B43)
+
+**P1 trước khi bật CDN cho người chơi; IN PROGRESS sau B44.** 35A/35B đã hoàn tất và browser slow/503 fallback đã đạt; 35C còn offline/cache/DPR/PvP two-client, 35D còn CDN thật. Yêu cầu gồm object storage/CDN tùy cấu hình, loading khởi động có tiến độ thật, skeleton theo route và chuẩn bị tài nguyên battle.
+
+Kế hoạch chi tiết: [asset-delivery-loading-roadmap.md](./asset-delivery-loading-roadmap.md). B44 hoàn tất 35A bằng manifest 1.496 file/93.097.328 byte, release hash, resolver local/CDN và gate stale-manifest; hoàn tất 35B bằng boot progress thật, timeout/fallback/a11y, route skeleton/retry kế thừa và browser slow/503 acceptance. 35C đã có preload sprite battle công khai chạy nền/deduplicate cùng circuit breaker cho phiên, nhưng còn offline/cache/DPR/reconnect/PvP two-client; 35D còn provider rollout và nghiệm thu CDN thật. Sau #35 quay lại #09/#08; lỗi toàn vẹn dữ liệu #02/#04 vẫn được ưu tiên nếu xuất hiện.
+
+#22 sở hữu tối ưu ảnh/DPR/quyền sử dụng; #35 sở hữu phân phối và loading. Kế thừa #20 cache, #21 lazy-load, #27 source/release và #31 accessibility; không mở lại trạng thái DONE của chúng chỉ vì thêm tính năng mới. Tổng roadmap tăng từ 34 lên 35 mục.
+
+Tiêu chí trọng yếu: vào Home sau nhóm tài nguyên thiết yếu; byte/file progress trung thực; timeout/retry/fallback; cache version/quota; local rollback và release tái lập. PvP hiện bắt đầu preview timer ngay khi ghép/join: preload trước queue, hiển thị state/input bằng fallback trong deadline, không khóa lượt để đợi ảnh. Chọn provider sau khi đo quota/traffic; Supabase public bucket là ứng viên đầu, không mặc định dịch vụ miễn phí vô hạn. Không xóa asset khỏi Git trước khi có nguồn master và bundle khôi phục theo hash.
+
+Chỉ DONE sau browser cold/warm/network-failure/reconnect acceptance, CDN thật, báo cáo quota và CI/release smoke; việc viết kế hoạch không phải hoàn thành runtime.
+
 ## 4. Nguyên tắc bắt buộc khi triển khai
 
 1. Không sửa `app/src/logic.js` hoặc `app/src/v2-engine.mjs` bằng tay. Sửa `logic-src` và chạy generator đúng workflow. Không chỉnh frozen legacy chỉ để qua lint.

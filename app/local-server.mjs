@@ -16,7 +16,7 @@ import {AdminService} from './server/admin-service.mjs';
 import {AccountCoordinator} from './server/account-coordinator.mjs';
 import {createRequestQuotas} from './server/request-quotas.mjs';
 import {pruneDetachedRooms,roomResourceSnapshot,DETACHED_ROOM_RETENTION_MS} from './server/room-lifecycle.mjs';
-import {createCatalogHttpResponse,createStaticHttpResponse} from './server/http-public-assets.mjs';
+import {createAssetConfigHttpResponse,createCatalogHttpResponse,createStaticHttpResponse} from './server/http-public-assets.mjs';
 import {createPublicOriginPolicy} from './server/public-origin-policy.mjs';
 import {createHttpRequestHandler} from './server/http-request-handler.mjs';
 import {createWebsocketController} from './server/websocket-controller.mjs';
@@ -94,9 +94,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const publicDir = path.join(root, 'public');
   const serveV2Catalog=createCatalogHttpResponse(publicV2Catalog);
   const serveV3Catalog=createCatalogHttpResponse(publicV3Catalog);
+  const serveAssetConfig=createAssetConfigHttpResponse({baseUrl:authEnv.PUBLIC_ASSET_BASE_URL});
   const serveStatic=createStaticHttpResponse(publicDir);
   const handleHttp=createHttpRequestHandler({isClosing:()=>closing,readiness,requestPolicy,auth,admin,sessionCommits,
-   quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic});
+   quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveAssetConfig,serveStatic});
   const server=http.createServer((req,res)=>{void handleHttp(req,res);});
   wsController=createWebsocketController({server,isClosing:()=>closing,requestPolicy,auth,authRequired,quotas,rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,ensureBetaTestWallet,ops,sessionCommits,websocketHeartbeatMs,websocketJoinDeadlineMs,maxSocketsPerIp,maxSocketsPerAccount,setBroadcast:next=>{broadcast=next;}});
   const {wss,websocketHeartbeatTimer,sessionSweepTimer}=wsController;

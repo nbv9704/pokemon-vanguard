@@ -17,7 +17,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | Trạng thái | Số lượng |
 | --- | ---: |
 | DONE | 28 |
-| IN PROGRESS | 5 |
+| IN PROGRESS | 6 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
@@ -62,6 +62,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 32 | Workflow/tài liệu thống nhất | P2 | DONE | B26: DONE — chuẩn hóa root README/AGENTS, app AGENTS, code structure và developer workflow Node/npm duy nhất; archive README cũ; gate đối chiếu đường dẫn/scripts/lock; clean-source ZIP `npm run check` và 11 focused tests PASS với dependency lock-matched đã cài sẵn; local auth smoke PASS. `npm ci` mới trong container bị chặn bởi npm registry DNS EAI_AGAIN, không tuyên bố fresh install ở B26; B23 hosted đã xác minh cùng lockfile. Con người có thể review tài liệu tiếp. |
 | 33 | Release tái lập/clean environment | P2 | DONE | Reproducible per-file content/source archive (không cam kết whole-ZIP byte-identical cross-zlib); B09-fix1 + hosted Linux/Windows B24 npm-ci/check và clean-unpack smoke, B25 thêm test hai lần đóng gói byte-stable với cùng tool, xác nhận safe manifest/CRC và save không thay đổi. Runtime ZIP/debug report không thuộc loại artifact đã hỗ trợ. |
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
+| 35 | Phân phối asset và loading theo nhu cầu | P1 | IN PROGRESS | B44: 35A DONE — manifest 1.496 file/93.097.328 byte, SHA-256/version/group/size/MIME/dimensions; resolver local/CDN cấu hình qua `PUBLIC_ASSET_BASE_URL`, fallback local và gate stale-manifest. 35B DONE — boot progress thật theo số bước/file, timeout, route skeleton/retry và browser slow-CDN fallback đã đạt. 35C đã warm sprite battle công khai không khóa timer/deduplicate và có session circuit breaker; còn offline/cache eviction/DPR/reconnect/PvP two-client. 35D CDN thật/quota/CORS/header chưa nghiệm thu, không upload hoặc mở gói trả phí. Kế hoạch: [asset-delivery-loading-roadmap.md](./asset-delivery-loading-roadmap.md). |
+
+## Thứ tự tiếp theo — bổ sung asset/loading
+
+35A và 35B đã hoàn tất trong B44. Tiếp tục #35C bằng offline/cache eviction, DPR và reconnect/PvP two-client deadline (browser slow/503 + local fallback đã đạt), rồi #35D nghiệm thu CDN thật cùng quota/CORS/cache header/rollback. Sau đó quay lại #09 → #08; #02/#04 tiếp tục xử lý nếu có vấn đề toàn vẹn dữ liệu. #22 giữ IN PROGRESS cho ảnh/DPR/quyền sử dụng; #35 dùng manifest ảnh của #22 và kế thừa #20/#21/#31 đã DONE. Không tự mở gói trả phí hoặc bỏ asset local khỏi Git. Chi tiết, dependency và tiêu chí DONE ở [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+
+#35 đã chuyển sang IN PROGRESS sau B44; chưa nâng DONE vì chưa có nghiệm thu browser/CDN thật. Tổng hiện tại **35 mục: 28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -545,6 +552,25 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu local:** `npm run check` PASS với 469 source syntax, 407 module/1.166 edge/0 cycle và 488 production file trong structure gate. Full `npm test` **1.494/1.494 PASS trên 239 file**, 0 fail/skip/todo.
 - **Hosted CI:** run [`36577024267`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36577024267) cho commit `9a6fd1c`: Ubuntu PASS, Windows PASS và `release-smoke` PASS; child-process lock/crash recovery vì vậy đã được chạy trên cả hai hệ điều hành.
 - **Ranh giới:** đây là durability domain local filesystem dùng chung, không hứa raw reader thấy hai file atomically, không chứng nhận network filesystem/hardware cache mất điện và không thay Supabase CAS/transaction B41. Khôi phục snapshot/timer Ranked/Friendly đang chạy vẫn là #18 `DEFERRED`, không thuộc thiếu sót của JSON adapter. Chi tiết: `app/docs/json-storage-completion-b43.md`. **Tổng sau B43: 28 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### Bổ sung sau B43 — kế hoạch asset delivery và loading
+
+- Thêm #35 TODO riêng cho phân phối asset và UX loading; giữ #22 cho tối ưu ảnh và nghiệm thu artwork. #20/#21/#27/#31 giữ DONE trong phạm vi đã nghiệm thu.
+- Chốt local-first, giữ artwork/icon hiện có, ứng viên Supabase public bucket sau khi đo quota; resolver cho phép đổi provider. Chưa upload, xóa file asset, sửa runtime hoặc mở dịch vụ trả phí.
+- Điều chỉnh đề xuất battle loading: server hiện bắt đầu preview timer khi ghép/join PvP; chuẩn bị trước queue và render fallback khi đang có deadline, không dùng overlay khóa input trong trận.
+- Tài liệu triển khai và acceptance: `docs/asset-delivery-loading-roadmap.md`. Đã cập nhật kế hoạch gốc và đồng bộ hai tracker; kiểm tra tài liệu phù hợp phạm vi, không chạy lại full gameplay test cho thay đổi Markdown.
+- **Tổng mới: 28 DONE / 5 IN PROGRESS / 1 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B44: hoàn tất #35A/#35B và nền battle readiness
+
+- **35A DONE:** sinh `public/asset-manifest.json` xác định bằng nội dung cho 1.496 media file, tổng 93.097.328 byte; mỗi entry có SHA-256, byte, MIME, group, essential và kích thước khi đọc được. Release ID là hash của inventory đã sắp xếp; `npm run assets:manifest:validate` nằm trong gate tổng và từ chối manifest stale.
+- **Resolver local/CDN:** browser mặc định giữ nguyên URL local. Server chỉ công bố base HTTPS hoặc localhost từ `PUBLIC_ASSET_BASE_URL`, loại credential/protocol không an toàn; presentation, responsive variants, reward, navigation và Pokémon symbols đi qua resolver. Lỗi asset thiết yếu mở circuit breaker cho phiên hiện tại rồi rơi về URL local, tránh mọi view tiếp tục thử CDN hỏng; không chứa service key và không proxy asset qua game server.
+- **35B DONE trong phạm vi runtime:** boot có progressbar accessible theo bước cấu hình và số ảnh shell đã load/decode, timeout hữu hạn; login không bị chặn bởi asset theo tài khoản. Manifest 550 KB không bị tải trong boot. Route optional tiếp tục dùng skeleton/status/retry/focus contract đã nghiệm thu ở #21/#31.
+- **35C code foundation:** mỗi state push chỉ quét các nhánh battle công khai, warm front/back sprite mới và deduplicate; receiver riêng gọi warm trước khi render nhưng không `await`, nên không che input hoặc dừng preview/decision deadline PvP. Fallback local vẫn hoạt động nếu CDN lỗi.
+- **Browser slow/failure acceptance:** harness local cho CDN trả 503 sau 750 ms xác nhận progress dừng trung thực ở 45% khi chuẩn bị asset. Browser lần đầu phát hiện UI thử lại CDN sau preload; circuit breaker đã sửa điểm này. Lần nghiệm thu cuối mở Home khoảng **2,125 ms** trong page scope, 11/11 icon dùng local và load thành công, không warning/error. Đây là bằng chứng fallback trong môi trường local, không phải budget CDN production.
+- **Nghiệm thu:** `npm run check` PASS với manifest/release/accessibility/module gates; full `npm test` PASS **1.500/1.500 trên 240 file**, 0 fail/skip/todo. Focused 6/6; syntax 473 file, import 410 module/1.176 edge/0 cycle, structure 492 production file và max 359/360 dòng.
+- **Còn lại:** 35C cần DPR, offline/cache eviction và reconnect/PvP two-client deadline; 35D cần bucket/release thật, quota/traffic, CORS/header immutable, rollback và hosted verification. Không upload, không xóa asset local và không phát sinh gói trả phí trong B44.
+- **Tổng sau B44:** **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

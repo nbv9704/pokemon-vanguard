@@ -32,6 +32,12 @@ export function createCatalogHttpResponse(data){
   res.writeHead(200,headers);res.end(req.method==='HEAD'?undefined:payload);
  };
 }
+export function createAssetConfigHttpResponse({baseUrl=''}={}){
+ let safeBase='';
+ try{const value=String(baseUrl||'').trim(),url=value?new URL(value):null;if(url&&!url.username&&!url.password&&(url.protocol==='https:'||(url.protocol==='http:'&&['localhost','127.0.0.1','::1'].includes(url.hostname))))safeBase=url.href.replace(/\/+$/,'');}catch{}
+ const body=Buffer.from(JSON.stringify({schemaVersion:1,baseUrl:safeBase,manifestPath:'/asset-manifest.json'}));
+ return function serveAssetConfig(req,res){const headers={'Content-Type':'application/json; charset=utf-8','Cache-Control':'public, max-age=60, must-revalidate','X-Content-Type-Options':'nosniff','Content-Length':String(body.length)};res.writeHead(200,headers);res.end(req.method==='HEAD'?undefined:body);};
+}
 function streamToResponse(reader,transform,res){
  // Pipeline owns the reader, compressor and response; all I/O errors are handled.
  const done=error=>{if(error&&!res.destroyed)res.destroy(error);};
