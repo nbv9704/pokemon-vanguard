@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 24 |
-| IN PROGRESS | 9 |
+| DONE | 25 |
+| IN PROGRESS | 8 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B39 — hoàn tất #16 state delta/render**. Client mới negotiate `state-delta-v1`; server gửi full snapshot khi join/reconnect/resync và delta top-level có cursor cho các lần sau, tự fallback full nếu delta không có lợi. Client kiểm chặt patch metadata, tự resync khi lệch cursor và chỉ patch chrome cho domain không liên quan route; battle/playback giữ full-render an toàn. Benchmark 40 mẫu giảm wire bytes 54,35–99,97% tùy scenario; browser hai tab giữ focus/caret/scroll. `npm run check` PASS; full regression **1.480/1.480 PASS trên 236 file**.
+Đợt hiện tại: **B40 — hoàn tất #10 WebSocket resource guards**. Đã chốt giới hạn transport/admission/queue/quota/backpressure/room, bổ sung acceptance trên WebSocket thật cho join deadline, giới hạn bốn tab, flood cô lập, frame quá cỡ và counter cleanup. Benchmark 100.000 lượt giữ queue đúng 32, quota đúng 70, ngắt slow consumer trên 8 MiB và chỉ encode một delta dùng chung cho bốn tab. `npm run check` PASS; full regression **1.483/1.483 PASS trên 237 file**.
 
 ## Bảng tiến độ
 
@@ -37,7 +37,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn. Còn receipt PvP qua process restart (#18) và archival/compaction bền vững (#09) |
 | 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
-| 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline/cap; B08 quota; B10 trusted proxy; B18 đếm broadcast bytes và drop theo backpressure/closed/error; B24 checkJs strict quota/flow-control, hành vi guard giữ nguyên; còn soak và distributed cap |
+| 10 | Giới hạn WebSocket/backpressure | P1 | DONE | B06/B07/B08/B10/B17/B18/B24/B39/B40: payload 70 KiB, join 12s, 24 socket/IP, 4/account, queue 32, buffer 8 MiB, token bucket, room cap/TTL/LRU và cursor/resync. Real-transport flood/oversize/multi-tab/no-starvation cùng benchmark 100k PASS; cross-worker/global ownership thuộc #18/deployment. `app/docs/websocket-guard-completion-b40.md` |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
@@ -507,6 +507,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** `npm run check` PASS; full `npm test` **1.480/1.480 PASS trên 236 file**, 0 fail/skip/todo; benchmark và focused protocol/browser tests PASS. Lần gate đầu bắt `client.js` vượt byte budget và test attribute-order; đã tách `live-chrome.js`, giữ contract accessibility và chạy lại toàn bộ PASS. Chi tiết: `app/docs/state-delta-b39.md`.
 - **Hosted CI:** run [`36534318331`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36534318331) cho commit `485466e`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** không thêm distributed room ownership, deep JSON Patch hay thay persistence/action ordering. #10/#18 vẫn sở hữu multi-process/restart PvP. **Tổng sau B39: 24 DONE / 9 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B40: đóng #10 WebSocket resource guards
+
+- **Hợp đồng giới hạn:** giữ trần payload 70 KiB, join deadline 12 giây, 24 socket/IP, 4 socket/account, 32 message đang chờ/socket, outgoing buffer 8 MiB, token bucket theo socket/account/IP và room cap 1.000 với TTL/LRU an toàn. Slow consumer bị ngắt; reconnect nhận full authoritative snapshot qua contract B39.
+- **WebSocket thật:** fixture server/save tạm xác nhận socket chưa join đóng 4000; bốn tab cùng account hoạt động và tab thứ năm đóng 1013; malformed JSON có lỗi ổn định; burst 1.000 frame chạm queue bound nhưng account yên lặng vẫn nhận pong dưới ba giây; frame 71 KiB đóng 1009 trước application parsing; counters trở về trạng thái bounded.
+- **Benchmark lặp lại:** 100.000 lần thử queue chỉ nhận đúng 32; 100.000 quota attempts chỉ nhận đúng 70 và không làm đói account/IP khác; slow consumer bị terminate trên 8.388.608 byte; bốn tab cùng audience chỉ tạo một projection/full frame và một serialized delta 122 byte dùng chung. Run đo khoảng 592 KiB heap growth với queue/fixture cố ý còn sống; thời gian tuyệt đối chỉ tham khảo.
+- **Nghiệm thu:** focused guards/state/room **16/16 PASS**; `npm run benchmark:websocket-guards` PASS; `npm run check` PASS; full `npm test` **1.483/1.483 PASS trên 237 file**, 0 fail/skip/todo. Chi tiết: `app/docs/websocket-guard-completion-b40.md`.
+- **Ranh giới:** guard là per-process. Global connection ownership/cap đa worker thuộc #18 và hạ tầng deployment; không tuyên bố DDoS/WAF hay production traffic SLO. **Tổng sau B40: 25 DONE / 8 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

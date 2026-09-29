@@ -1,0 +1,15 @@
+import {performance} from 'node:perf_hooks';
+import {createRequestQuotas} from '../server/request-quotas.mjs';
+import {createInboundLimiter,sendBounded,WS_LIMITS} from '../server/ws-flow-control.mjs';
+import {createDeltaStateBroadcaster} from '../server/state-broadcast.mjs';
+
+const attempts=100_000,startedHeap=process.memoryUsage().heapUsed;
+const limiter=createInboundLimiter(),noisy={};let queueAccepted=0,started=performance.now();for(let index=0;index<attempts;index++)if(limiter.acquire(noisy))queueAccepted++;const queueMs=performance.now()-started;
+if(queueAccepted!==WS_LIMITS.pendingMessagesPerSocket||limiter.pending(noisy)!==WS_LIMITS.pendingMessagesPerSocket)throw Error('queue bound changed');
+let tick=0;const quotas=createRequestQuotas({now:()=>tick,limits:{accountActions:70,ipActions:70,socketMessages:70}}),quotaSocket={};let quotaAccepted=0;started=performance.now();for(let index=0;index<attempts;index++)if(quotas.message({accountId:'noisy',ip:'ip-a',socket:quotaSocket}).ok)quotaAccepted++;const quotaMs=performance.now()-started;
+if(quotaAccepted!==70||!quotas.message({accountId:'quiet',ip:'ip-b',socket:{}}).ok)throw Error('quota isolation changed');
+const slow={readyState:1,bufferedAmount:WS_LIMITS.maxBufferedBytes+1,send(){throw Error('unexpected send');},terminate(){this.terminated=true;}},drops=[];sendBounded(slow,{type:'state'},{onDrop:reason=>drops.push(reason)});if(!slow.terminated||drops[0]!=='backpressure')throw Error('slow consumer was not terminated');
+const sockets=Array.from({length:4},()=>({})),clients=new Map(sockets.map(socket=>[socket,'owner'])),frames=new Map(sockets.map(socket=>[socket,[]])),broadcaster=createDeltaStateBroadcaster();let view={coins:10,socialV1:{online:1},trainingV3:{payload:'x'.repeat(250_000)}};
+const first=broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(socket,frame)=>frames.get(socket).push(frame)});view={...view,socialV1:{online:2}};const second=broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(socket,frame)=>frames.get(socket).push(frame)});
+if(first.projections!==1||first.serializations!==1||second.projections!==1||second.deltaFrames!==4||new Set(sockets.map(socket=>frames.get(socket)[1])).size!==1)throw Error('multi-tab shared delta changed');
+console.log(JSON.stringify({node:process.version,platform:process.platform,attempts,queue:{accepted:queueAccepted,maxPending:WS_LIMITS.pendingMessagesPerSocket,elapsedMs:Number(queueMs.toFixed(3))},quota:{accepted:quotaAccepted,capacity:70,elapsedMs:Number(quotaMs.toFixed(3)),isolatedAccountAccepted:true},slowConsumer:{maxBufferedBytes:WS_LIMITS.maxBufferedBytes,terminated:slow.terminated,reason:drops[0]},fourTabs:{fullBytes:Buffer.byteLength(frames.get(sockets[0])[0]),deltaBytes:Buffer.byteLength(frames.get(sockets[0])[1]),fullProjections:first.projections,deltaProjections:second.projections,sharedDeltaFrames:new Set(sockets.map(socket=>frames.get(socket)[1])).size},heapGrowthBytes:Math.max(0,process.memoryUsage().heapUsed-startedHeap)},null,2));
