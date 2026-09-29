@@ -26,18 +26,19 @@ export async function initializeAssetRuntime({fetchImpl=fetch,origin=location.or
  if(loadManifest)try{setAssetManifest(await fetchJson(fetchImpl,assetUrl(config.manifestPath)));}catch{if(config.baseUrl){configureAssetRuntime(DEFAULT_CONFIG,origin);try{setAssetManifest(await fetchJson(fetchImpl,config.manifestPath));}catch{}}}
  onProgress({stage:'ready',loaded:total,total});return assetRuntimeSnapshot();
 }
-export async function preloadAssets(paths,{ImageImpl=typeof Image!=='undefined'?Image:null,onProgress=()=>{},timeoutMs=7000,origin=typeof location!=='undefined'?location.href:LOCAL_TEST_ORIGIN,disableRemoteOnFailure=true}={}){
+export async function preloadAssets(paths,{ImageImpl=typeof Image!=='undefined'?Image:null,onProgress=()=>{},timeoutMs=7000,origin=typeof location!=='undefined'?location.href:LOCAL_TEST_ORIGIN,disableRemoteOnFailure=true,concurrency=4,connection=typeof navigator!=='undefined'?navigator.connection:null}={}){
  const list=[...new Set((paths||[]).map(normalizePath).filter(Boolean))];let loaded=0;
  if(!ImageImpl){onProgress({stage:'assets',loaded:list.length,total:list.length});return {loaded:list.length,failed:[]};}
- const failed=[];
- await Promise.all(list.map(path=>new Promise(resolve=>{
+ const failed=[],limit=Math.max(1,Math.min(list.length,connection?.saveData||/^(slow-)?2g$/.test(connection?.effectiveType||'')?2:concurrency));let cursor=0;
+ const load=path=>new Promise(resolve=>{
   let settled=false,timer;const image=new ImageImpl();
   const finish=ok=>{if(settled)return;settled=true;clearTimeout(timer);image.onload=null;image.onerror=null;loaded++;if(!ok)failed.push(path);onProgress({stage:'assets',loaded,total:list.length});resolve();};
   timer=setTimeout(()=>finish(false),timeoutMs);
   image.onload=()=>{const decoded=image.decode?.();if(decoded?.then)decoded.then(()=>finish(true),()=>finish(true));else finish(true);};
   image.onerror=()=>{const local=new URL(path,origin).href;if(image.src!==local){if(disableRemoteOnFailure&&config.baseUrl)config={...config,baseUrl:''};image.src=path;return;}finish(false);};
   image.src=assetUrl(path);
- })));
+ });
+ await Promise.all(Array.from({length:limit},async()=>{while(cursor<list.length)await load(list[cursor++]);}));
  return {loaded,failed};
 }
 export function bindAssetFallback(documentRef=typeof document!=='undefined'?document:null){

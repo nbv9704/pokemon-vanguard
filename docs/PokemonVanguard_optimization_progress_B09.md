@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B43 — hoàn tất #13 Save JSON schema/concurrency/recovery**. Local storage có schema/reference gate, khóa thư mục liên tiến trình, WAL được mọi process kiểm tra trước I/O, backup versioned có checksum/account binding/retention và pre-restore safety copy. Child-process fault test kết thúc writer sau rename đầu rồi xác nhận instance mới roll-forward; `npm run check` và full regression **1.494/1.494 PASS trên 239 file**.
+Đợt hiện tại: **B45 — hoàn tất 35C và chuẩn bị 35D fail-closed**. Cache/DPR/CDN-offline và hai client PvP đã có browser/automated acceptance; bộ deploy Supabase dùng release SHA bất biến, không overwrite, upload manifest cuối và full remote hash verification. Kích hoạt production còn chờ bucket của chủ dự án và gate quyền phân phối #22 đang còn 847 record.
 
 ## Bảng tiến độ
 
@@ -62,13 +62,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 32 | Workflow/tài liệu thống nhất | P2 | DONE | B26: DONE — chuẩn hóa root README/AGENTS, app AGENTS, code structure và developer workflow Node/npm duy nhất; archive README cũ; gate đối chiếu đường dẫn/scripts/lock; clean-source ZIP `npm run check` và 11 focused tests PASS với dependency lock-matched đã cài sẵn; local auth smoke PASS. `npm ci` mới trong container bị chặn bởi npm registry DNS EAI_AGAIN, không tuyên bố fresh install ở B26; B23 hosted đã xác minh cùng lockfile. Con người có thể review tài liệu tiếp. |
 | 33 | Release tái lập/clean environment | P2 | DONE | Reproducible per-file content/source archive (không cam kết whole-ZIP byte-identical cross-zlib); B09-fix1 + hosted Linux/Windows B24 npm-ci/check và clean-unpack smoke, B25 thêm test hai lần đóng gói byte-stable với cùng tool, xác nhận safe manifest/CRC và save không thay đổi. Runtime ZIP/debug report không thuộc loại artifact đã hỗ trợ. |
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
-| 35 | Phân phối asset và loading theo nhu cầu | P1 | IN PROGRESS | B44: 35A DONE — manifest 1.496 file/93.097.328 byte, SHA-256/version/group/size/MIME/dimensions; resolver local/CDN cấu hình qua `PUBLIC_ASSET_BASE_URL`, fallback local và gate stale-manifest. 35B DONE — boot progress thật theo số bước/file, timeout, route skeleton/retry và browser slow-CDN fallback đã đạt. 35C đã warm sprite battle công khai không khóa timer/deduplicate và có session circuit breaker; còn offline/cache eviction/DPR/reconnect/PvP two-client. 35D CDN thật/quota/CORS/header chưa nghiệm thu, không upload hoặc mở gói trả phí. Kế hoạch: [asset-delivery-loading-roadmap.md](./asset-delivery-loading-roadmap.md). |
+| 35 | Phân phối asset và loading theo nhu cầu | P1 | IN PROGRESS | B44–B45: 35A/35B/35C DONE — manifest/resolver, progress/fallback, bounded Save-Data preload, immutable browser cache, DPR2 và PvP two-client không khóa deadline đều đạt. 35D tooling DONE trong source: plan/deploy/verify 1.497 object, `upsert=false`, manifest cuối, full SHA-256, local rollback và setup guide. Chưa thể đóng #35 hoặc upload public vì bucket thật thuộc tài khoản người dùng và `assets:rights:release` vẫn fail với 847 record #22. [Hướng dẫn](../app/docs/asset-cdn-supabase-b45.md). |
 
 ## Thứ tự tiếp theo — bổ sung asset/loading
 
-35A và 35B đã hoàn tất trong B44. Tiếp tục #35C bằng offline/cache eviction, DPR và reconnect/PvP two-client deadline (browser slow/503 + local fallback đã đạt), rồi #35D nghiệm thu CDN thật cùng quota/CORS/cache header/rollback. Sau đó quay lại #09 → #08; #02/#04 tiếp tục xử lý nếu có vấn đề toàn vẹn dữ liệu. #22 giữ IN PROGRESS cho ảnh/DPR/quyền sử dụng; #35 dùng manifest ảnh của #22 và kế thừa #20/#21/#31 đã DONE. Không tự mở gói trả phí hoặc bỏ asset local khỏi Git. Chi tiết, dependency và tiêu chí DONE ở [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+35A–35C đã hoàn tất. 35D không còn thiếu code: bước kế tiếp bắt buộc là hoàn tất quyền phân phối #22, tạo public bucket theo hướng dẫn, chạy deploy/full remote verify và đo quota/traffic thật; sau đó mới nâng #35 DONE. Tiếp theo quay lại #09 → #08; #02/#04 tiếp tục xử lý nếu có vấn đề toàn vẹn dữ liệu. Không tự mở gói trả phí, không public asset khi rights gate fail và không bỏ fallback local khỏi Git. Chi tiết ở [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#35 đã chuyển sang IN PROGRESS sau B44; chưa nâng DONE vì chưa có nghiệm thu browser/CDN thật. Tổng hiện tại **35 mục: 28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#35 giữ IN PROGRESS sau B45: browser/local-CDN acceptance và deployment tooling đã đạt, nhưng tiêu chí CDN production không thể đạt trước rights gate #22 và bucket thật của chủ dự án. Tổng hiện tại **35 mục: 28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -571,6 +571,16 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** `npm run check` PASS với manifest/release/accessibility/module gates; full `npm test` PASS **1.500/1.500 trên 240 file**, 0 fail/skip/todo. Focused 6/6; syntax 473 file, import 410 module/1.176 edge/0 cycle, structure 492 production file và max 359/360 dòng.
 - **Còn lại:** 35C cần DPR, offline/cache eviction và reconnect/PvP two-client deadline; 35D cần bucket/release thật, quota/traffic, CORS/header immutable, rollback và hosted verification. Không upload, không xóa asset local và không phát sinh gói trả phí trong B44.
 - **Tổng sau B44:** **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 30/09/2026 — B45: hoàn tất 35C và deployment toolkit 35D
+
+- **35C DONE:** `preloadAssets` giới hạn concurrency, tự hạ còn 2 worker khi Save-Data/2G; DPR `srcset` 1×/2× đều qua release resolver. Test hai client Ranked cho thấy cả hai nhận state ngay khi warm Promise không hoàn tất và decision deadline 45 giây vẫn tự tiến. Không thêm client readiness vào gameplay protocol.
+- **Browser cache/offline:** local immutable CDN harness mở Home cold khoảng 784 ms và warm khoảng 721 ms trong page scope; 11/11 shell icon cùng artwork load từ release hash, responsive icon chọn bản 2× ở DPR 1,25, không failed image/warning/error. Sau khi CDN bị tắt, browser vẫn mở Home khoảng 767 ms từ cache; B44 đã chứng minh empty-cache CDN 503 chuyển local. Đây là harness local, không nhận là Supabase production latency.
+- **35D source tooling:** thêm `assets:release:plan`, `assets:supabase:deploy`, `assets:remote:verify`. Local gate kiểm byte/hash/tổng/release; deploy dùng `releases/sha256-…`, `x-upsert:false`, concurrency hữu hạn, upload manifest cuối và tải lại đủ **1.497 object / 93.647.360 byte** để đối chiếu SHA-256. Duplicate release chỉ được chấp nhận nếu remote byte khớp; tamper, bucket private, URL/credential/path sai đều fail-closed.
+- **Bảo mật/rollback:** secret chỉ dùng ở CLI server-side và không đi theo public verification; runtime chỉ nhận public base URL. Bỏ `PUBLIC_ASSET_BASE_URL` + restart là rollback local. Không xóa release từ script, không sửa `storage` schema và không thêm migration Supabase. Hướng dẫn: `app/docs/asset-cdn-supabase-b45.md`.
+- **Ranh giới bắt buộc:** deploy gọi `assets:rights:release` trước mọi network write. Gate hiện còn **847 record** chưa duyệt nên chưa có upload/bucket/CDN production và #35 chưa thể DONE. Sau khi chủ dự án hoàn tất rights + bucket, chạy đúng ba lệnh trong hướng dẫn để nghiệm thu remote/quota rồi đóng mục.
+- **Nghiệm thu batch:** focused asset/release/PvP **17/17 PASS**; `npm run check` PASS (syntax 475 file, import 410 module/1.176 edge/0 cycle, structure 494 production file, max 359/360 dòng); full `npm test` **1.506/1.506 PASS trên 241 file**, 0 fail/skip/todo. `assets:rights:release` và deploy với cấu hình giả đều dừng trước network đúng thiết kế vì 847 record chưa duyệt.
+- **Tổng giữ nguyên:** **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**; đã hoàn thành trọn checkpoint 35C và toàn bộ phần code 35D, không khai khống external acceptance.
 
 ## Cách cập nhật file này
 

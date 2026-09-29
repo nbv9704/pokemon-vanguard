@@ -6,6 +6,7 @@ import {TrainingPvpService} from '../server/training-pvp-v1.mjs';
 import {PVP_TIMERS,chooseTimeoutCommands} from '../server/pvp-lifecycle.mjs';
 import {createV3BetaProgression} from '../server/v3-progression.mjs';
 import {v3Catalog} from '../server/v3-catalog.mjs';
+import {createClientStateReceiver} from '../public/js/client-state-receiver.js';
 
 const makeState=()=>({schemaVersion:3,seed:11,wins:0,badges:[],wallet:{coins:0,crystals:0,recruitmentTickets:0},progressionV3:createV3BetaProgression(v3Catalog)});
 const linked=name=>({name,provider:'discord'});
@@ -14,6 +15,8 @@ function rankedHarness(){let now=1_000_000;const states=new Map([['a',makeState(
 async function matchRanked(ctx,{lock=true}={}){await ctx.service.action('a',linked('Alpha'),{type:'rankedV1.queue.join',mode:'single'});await ctx.service.action('b',linked('Bravo'),{type:'rankedV1.queue.join',mode:'single'});if(!lock)return;for(const [id,name] of [['a','Alpha'],['b','Bravo']]){const team=activeTeam(ctx.states.get(id));await ctx.service.action(id,linked(name),{type:'rankedV1.preview.lock',buildIds:team.buildIds.slice(0,3)});}}
 
 test('PvP decision clock auto-submits a legal move after 45 seconds',async()=>{const ctx=rankedHarness();await matchRanked(ctx);const match=ctx.service.matches.get(ctx.service.playerMatch.get('a')),startRevision=match.battle.phaseRevision,commands=chooseTimeoutCommands(match.battle,v3Catalog,'A');assert.ok(commands?.length);assert.equal(ctx.service.viewFor('a',ctx.states.get('a')).battleV3.timing.decision.remainingMs,PVP_TIMERS.decisionMs);ctx.now+=PVP_TIMERS.decisionMs;await ctx.service.tick();assert.equal(match.lastAutoAction.kind,'command');assert.ok(match.lastTurnRaw);assert.notEqual(match.battle.phaseRevision,startRevision);});
+
+test('two PvP clients render immediately while asset warming remains pending and server deadline keeps running',async()=>{const ctx=rankedHarness();await matchRanked(ctx);const received=[];for(const id of ['a','b']){const accept=createClientStateReceiver({root:{},warm:()=>new Promise(()=>{}),receive:view=>received.push([id,view.battleV3.timing.decision.deadlineAt])});accept(ctx.service.viewFor(id,ctx.states.get(id)));}assert.equal(received.length,2);assert.equal(received[0][1],received[1][1]);const match=ctx.service.matches.get(ctx.service.playerMatch.get('a')),revision=match.battle.phaseRevision;ctx.now+=PVP_TIMERS.decisionMs;await ctx.service.tick();assert.notEqual(match.battle.phaseRevision,revision);});
 
 test('Ranked disconnect grace is 90 seconds and awards the connected trainer a normal win',async()=>{const ctx=rankedHarness();await matchRanked(ctx);const beforeA=ctx.states.get('a').rankedV1.rating,beforeB=ctx.states.get('b').rankedV1.rating;ctx.service.unregister('b');const match=ctx.service.matches.get(ctx.service.playerMatch.get('a')),lostSide=ctx.service.sideFor(match,'b');assert.equal(match.participants[lostSide].disconnectDeadlineAt,ctx.now+PVP_TIMERS.disconnectGraceMs);ctx.now+=PVP_TIMERS.disconnectGraceMs;await ctx.service.tick();assert.equal(match.settled,true);assert.equal(match.battle.result.winner,ctx.service.sideFor(match,'a'));assert.equal(match.battle.result.reason,'disconnect-timeout');assert.ok(ctx.states.get('a').rankedV1.rating>beforeA);assert.ok(ctx.states.get('b').rankedV1.rating<beforeB);});
 

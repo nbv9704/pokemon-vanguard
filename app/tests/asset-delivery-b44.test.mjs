@@ -5,6 +5,7 @@ import {createAssetConfigHttpResponse} from '../server/http-public-assets.mjs';
 import {assetRuntimeSnapshot,assetUrl,configureAssetRuntime,initializeAssetRuntime,localAssetPath,preloadAssets} from '../public/js/asset-runtime.js';
 import {collectBattleAssetPaths,resetBattleAssetReadiness,warmBattleAssets} from '../public/js/battle-asset-readiness.js';
 import {createClientStateReceiver} from '../public/js/client-state-receiver.js';
+import {imageAttributes} from '../public/js/image-variants.js';
 
 function invoke(handler,method='GET'){
  const result={};const res={writeHead(status,headers){result.status=status;result.headers=headers;},end(body){result.body=body;}};handler({method},res);return result;
@@ -35,6 +36,13 @@ test('an essential CDN image failure opens the session circuit breaker and compl
  }
  const result=await preloadAssets(['/assets/icons/Home.png'],{ImageImpl:FakeImage,origin:'https://game.example.test/',timeoutMs:100});
  assert.deepEqual(result,{loaded:1,failed:[]});assert.equal(assetRuntimeSnapshot().config.baseUrl,'');assert.equal(assetUrl('/assets/icons/arena.png'),'/assets/icons/arena.png');
+});
+
+test('preload bounds concurrency on Save-Data and responsive DPR candidates use the release resolver',async()=>{
+ configureAssetRuntime({baseUrl:'https://cdn.example.test/pv/r1'},'https://game.example.test');let active=0,peak=0;
+ class SlowImage{set src(value){this._src=new URL(value,'https://game.example.test/').href;active++;peak=Math.max(peak,active);setTimeout(()=>{active--;this.onload?.();},2);}get src(){return this._src;}decode(){return Promise.resolve();}}
+ await preloadAssets(['/logo.png','/assets/icons/Home.png','/assets/icons/arena.png'],{ImageImpl:SlowImage,origin:'https://game.example.test/',connection:{saveData:true},concurrency:8});assert.equal(peak,2);
+ const attributes=imageAttributes('/assets/icons/Home.png',{lazy:false});assert.match(attributes,/src="https:\/\/cdn\.example\.test\/pv\/r1\/assets\/icons\/Home\.png"/);assert.match(attributes,/srcset="https:\/\/cdn\.example\.test\/pv\/r1\/assets\/optimized\/.+ 1x, https:\/\/cdn\.example\.test\/pv\/r1\/assets\/optimized\/.+ 2x"/);
 });
 
 test('checked-in runtime manifest has deterministic release metadata and essential fallback files',async()=>{

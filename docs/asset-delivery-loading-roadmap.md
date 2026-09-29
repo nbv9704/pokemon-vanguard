@@ -1,6 +1,6 @@
 # Roadmap phân phối asset và loading — bổ sung sau B43
 
-Trạng thái sau B44: #35 IN PROGRESS. 35A và 35B hoàn tất; browser slow/503 đã xác nhận progress và local fallback. 35C có preload battle không khóa timer cùng session circuit breaker, còn offline/cache/DPR và PvP two-client; 35D chưa có CDN thật. Chưa chuyển asset lên dịch vụ ngoài hoặc mở gói trả phí.
+Trạng thái sau B45: #35 IN PROGRESS. 35A–35C hoàn tất; local immutable-CDN browser cold/warm/DPR/cache-offline và empty-cache fallback đều đạt. 35D deployment tooling hoàn tất nhưng production activation bị chặn đúng bởi 847 rights record #22 và public bucket chưa được chủ dự án tạo. Chưa chuyển asset lên dịch vụ ngoài hoặc mở gói trả phí.
 
 ## Quyết định kiến trúc
 
@@ -14,8 +14,8 @@ Giữ HTML/CSS/JS, catalog và fallback thiết yếu trên origin ứng dụng 
 
 1. **35A — DONE trong B44: inventory, manifest và resolver local.** Đã đo 1.496 file/93.097.328 byte, sinh manifest fingerprint và đưa các nhóm ảnh động chính qua resolver; local vẫn là mặc định.
 2. **35B — DONE trong B44: boot và route loading.** Boot có tiến độ theo công việc thật, timeout/fallback/accessibility; route skeleton/retry kế thừa contract #21/#31 và không tải manifest lớn trong critical path.
-3. **35C — IN PROGRESS: chuẩn bị battle và cache.** B44 đã warm/deduplicate sprite từ state battle công khai mà không khóa input; browser với CDN 503 trễ đã chuyển 11/11 icon về local và circuit breaker ngăn retry lặp. Còn kiểm tra offline/cache eviction, DPR, reconnect và deadline PvP bằng hai client.
-4. **35D — thử CDN có kiểm soát và rollout.** Chọn nhà cung cấp bằng số đo, upload một release bất biến, xác minh CORS/cache/hash/chi phí, thử client rồi mới chuyển cấu hình mặc định. Đóng #35 khi cả 35A–D đạt; nếu chưa có hạ tầng thì ghi rõ phần còn thiếu, không coi bản local là đã nghiệm thu CDN.
+3. **35C — DONE trong B45: chuẩn bị battle và cache.** Warm/deduplicate chỉ dùng state battle công khai, không khóa input; bounded preloader nhường Save-Data/2G. Browser xác nhận hashed CDN path, DPR responsive, warm/offline cache và empty-cache fallback. Hai client Ranked vẫn render ngay và server deadline tiến khi warm treo.
+4. **35D — SOURCE READY, production activation pending.** Tooling plan/deploy/verify/rollback, immutable prefix, no-upsert, manifest-last và full remote SHA đã có test. Còn tạo bucket thật, rights gate #22, upload/remote browser/header/quota acceptance; không coi local harness là CDN production.
 5. Tiếp tục #09 rồi #08; #02/#04 vẫn giữ ưu tiên xử lý khi phát hiện vấn đề toàn vẹn dữ liệu. #22 đóng riêng khi nghiệm thu ảnh/quyền sử dụng còn lại hoàn tất; #18 vẫn DEFERRED.
 
 Các nhãn 35A–D là checkpoint trong một mục lớn, không phải bốn mục DONE độc lập hay số batch B44–B47 đã cam kết.
