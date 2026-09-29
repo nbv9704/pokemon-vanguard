@@ -599,7 +599,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 - Theo quyết định chủ dự án, xóa remote base resolver, `/api/assets/config`, `PUBLIC_ASSET_BASE_URL`/bucket env, Supabase upload/verify scripts, test và setup guide; không đụng Supabase account/save hoặc migrations.
 - Giữ boot progress, 11 shell preloads, bounded concurrency + Save-Data/2G, local responsive `srcset`, battle warm/deduplicate, static ETag/immutable hashed cache và manifest/hash inventory. Missing local file được báo fail một lần, không thử remote.
-- `pokemon-artwork-2` là untracked user data và được giữ nguyên; kiểm tra cho thấy 272/272 file hiện giống byte với artwork cũ nên chưa nhập vào runtime/rights ledger.
+- `pokemon-artwork-2` đã được đối chiếu trước khi chốt batch: 272/272 file giống byte với artwork cũ, vì vậy không nhập vào runtime/rights ledger hoặc commit dự án.
 - **Nghiệm thu:** focused asset/server/PvP **19/19 PASS**; `npm run check` PASS (syntax 473 file, import graph 410 module/1.176 edge/0 cycle, structure 492 file và file lớn nhất 359/360 dòng); full `npm test` **1.501/1.501 PASS trên 240 file**, 0 fail/skip/todo; `git diff --check` sạch.
 - #35 chuyển **DONE** trong phạm vi local-only; #22 vẫn IN PROGRESS và độc lập với kỹ thuật loading. Tổng mới **29 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
