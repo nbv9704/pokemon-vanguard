@@ -1,4 +1,4 @@
-import {bindAssetFallback,initializeAssetRuntime,preloadAssets} from './js/asset-runtime.js';
+import {initializeAssetRuntime,preloadAssets} from './js/asset-runtime.js';
 const app=document.querySelector('#app'),progress=document.querySelector('#boot-progress'),progressFill=document.querySelector('#boot-progress-fill'),progressDetail=document.querySelector('#boot-progress-detail');
 const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const shellAssets=['/assets/icons/Home.png','/assets/icons/arena.png','/assets/icons/pokedex.png','/assets/icons/box.png','/assets/icons/recruitment.png','/assets/icons/shop.png','/assets/icons/missions.png','/assets/icons/friends.png','/assets/icons/gym.png','/assets/icons/training.png','/assets/icons/mailbox.png'];
@@ -12,6 +12,6 @@ try{
  bootProgress(5,'Checking your session…');
  const assetsReady=initializeAssetRuntime({onProgress:({loaded,total})=>bootProgress(10+(loaded/total)*35,'Preparing game assets…')});
  const response=await fetch('/api/auth/session',{credentials:'same-origin',headers:{Accept:'application/json'}});if(!response.ok)throw new Error('auth unavailable');const auth=await response.json();
- if(auth.authenticated){window.__PV_AUTH__=auth.user;await assetsReady;bindAssetFallback(document);await preloadAssets(shellAssets,{onProgress:({loaded,total})=>bootProgress(45+(loaded/Math.max(1,total))*45,`Loading interface ${loaded}/${total}…`)});bootProgress(95,'Opening your adventure…');await import('./client.js');bootProgress(100,'Ready');}
+ if(auth.authenticated){window.__PV_AUTH__=auth.user;await assetsReady;await preloadAssets(shellAssets,{onProgress:({loaded,total})=>bootProgress(45+(loaded/Math.max(1,total))*45,`Loading interface ${loaded}/${total}…`)});bootProgress(95,'Opening your adventure…');await import('./client.js');bootProgress(100,'Ready');}
  else loginScreen(auth,new URLSearchParams(location.search).get('auth_error'));
 }catch{app.innerHTML='<div class="empty">Authentication service is unavailable. Restart the local server and try again.</div>';}

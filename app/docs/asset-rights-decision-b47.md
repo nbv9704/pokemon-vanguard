@@ -1,6 +1,6 @@
 # Asset redistribution decision — B47
 
-Status: the technical CDN release is ready, but public upload remains closed because the current upstream evidence does not grant this project blanket redistribution rights for the Pokémon images.
+Status: the project uses local assets only. Public release rights remain unresolved because the current upstream evidence does not grant this project blanket redistribution rights for the Pokémon images.
 
 ## Verified inventory
 
@@ -26,10 +26,10 @@ Choose one release direction before public upload:
 
 1. **Replace restricted Pokémon media:** provide independently created/commissioned front sprites, back sprites, and artwork, then regenerate the manifests and re-run the rights gate.
 2. **Obtain permission:** record specific permission or compatible-license evidence for every reviewed work and pin it to the existing SHA-256 values.
-3. **Keep the current media only for private development:** do not publish the CDN release or present #22/#35 as production-ready.
+3. **Keep the current media only for private development:** do not publish the media or present #22 as public-release ready. Local delivery #35 can remain technically complete.
 
 The 31 project-supplied masters can be reviewed separately if the project owner explicitly confirms that they created or own all redistribution rights. That statement must not be inferred from file presence alone.
 
 ## Completed technical cleanup
 
-`public/assets/ui/README.md` is documentation, not runtime media. B47 excludes unsupported file extensions from `asset-manifest.json`, so the immutable release now contains 1,495 media files plus the manifest, and no longer requires `application/octet-stream` for this documentation file.
+`public/assets/ui/README.md` is documentation, not runtime media. B47 excludes unsupported file extensions from `asset-manifest.json`; the local inventory contains 1,495 media files and no longer classifies this documentation file as `application/octet-stream`.

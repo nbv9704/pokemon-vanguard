@@ -5,11 +5,6 @@ SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_replace_me
 SUPABASE_SECRET_KEY=sb_secret_replace_me
 
-# Optional immutable public asset release. Leave unset to serve every asset locally.
-# Generate the exact value with: npm run assets:release:plan
-# PUBLIC_ASSET_BASE_URL=https://your-project-ref.supabase.co/storage/v1/object/public/pokemon-vanguard-assets/releases/sha256-release-hash
-# PV_ASSET_BUCKET=pokemon-vanguard-assets
-
 # Required for an HTTPS deployment. OAuth redirects, Secure cookies, and
 # browser Origin checks use this exact canonical origin (no path/query/hash).
 PUBLIC_ORIGIN=https://play.example.com

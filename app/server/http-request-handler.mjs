@@ -13,7 +13,7 @@ export async function readJsonBody(req,maxBytes=32*1024){
 }
 
 /** Keep route precedence and HEAD behavior explicit and testable without a server. */
-export function createHttpRequestHandler({isClosing,readiness,requestPolicy,auth,admin,sessionCommits={run:(_session,work)=>work()},quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveAssetConfig,serveStatic}){
+export function createHttpRequestHandler({isClosing,readiness,requestPolicy,auth,admin,sessionCommits={run:(_session,work)=>work()},quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic}){
  return async function handleHttp(req,res){
   try{
    const healthPath=new URL(req.url,'http://localhost').pathname;
@@ -39,7 +39,6 @@ export function createHttpRequestHandler({isClosing,readiness,requestPolicy,auth
    if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);return res.end();}
    if(pathname==='/api/v2/catalog')return serveV2Catalog(req,res);
    if(pathname==='/api/v3/catalog')return serveV3Catalog(req,res);
-   if(pathname==='/api/assets/config'&&serveAssetConfig)return serveAssetConfig(req,res);
    return await serveStatic(req,res,pathname);
   }catch(error){
    // A downstream handler may have already sent headers. Abort the partial

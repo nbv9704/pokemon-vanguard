@@ -583,15 +583,15 @@ Kiểm thử/đạt: enqueue 51+ quà chưa claim, mix read/unread/expired/claim
 
 ### 35 — Phân phối asset và loading theo nhu cầu (bổ sung sau B43)
 
-**P1 trước khi bật CDN cho người chơi; IN PROGRESS sau B45.** 35A–35C đã hoàn tất; 35D source tooling đã sẵn sàng nhưng activation còn chờ quyền phân phối #22, bucket thật và remote quota/header acceptance. Yêu cầu gồm object storage/CDN tùy cấu hình, loading khởi động có tiến độ thật, skeleton theo route và chuẩn bị tài nguyên battle.
+**DONE theo phạm vi local-only đã được chủ dự án chốt ở B48.** Loading khởi động có tiến độ thật, skeleton theo route, responsive local assets, cache HTTP và chuẩn bị tài nguyên battle đã hoàn tất; nhánh Supabase Storage/CDN được gỡ thay vì trở thành yêu cầu phát hành.
 
-Kế hoạch chi tiết: [asset-delivery-loading-roadmap.md](./asset-delivery-loading-roadmap.md). B44 hoàn tất 35A/35B. B45 đóng 35C bằng bounded Save-Data preload, DPR/cache/offline browser acceptance và two-client PvP deadline test; đồng thời hoàn tất code 35D bằng immutable Supabase release plan/deploy/full-hash verify/local rollback. Production upload bị fail-closed trước network khi 847 rights record #22 còn mở; bucket/account/quota thật thuộc bước owner activation. Sau #35 quay lại #09/#08; lỗi toàn vẹn dữ liệu #02/#04 vẫn được ưu tiên nếu xuất hiện.
+Kế hoạch chốt: [asset-delivery-loading-roadmap.md](./asset-delivery-loading-roadmap.md). B44–B45 hoàn tất loader, bounded Save-Data preload, DPR/cache và two-client PvP deadline test. B48 xóa remote resolver, endpoint config, env, deployment scripts/tests/docs và giữ manifest như inventory/hash gate local. Sau #35 quay lại #09/#08; lỗi toàn vẹn dữ liệu #02/#04 vẫn được ưu tiên nếu xuất hiện.
 
 #22 sở hữu tối ưu ảnh/DPR/quyền sử dụng; #35 sở hữu phân phối và loading. Kế thừa #20 cache, #21 lazy-load, #27 source/release và #31 accessibility; không mở lại trạng thái DONE của chúng chỉ vì thêm tính năng mới. Tổng roadmap tăng từ 34 lên 35 mục.
 
-Tiêu chí trọng yếu: vào Home sau nhóm tài nguyên thiết yếu; byte/file progress trung thực; timeout/retry/fallback; cache version/quota; local rollback và release tái lập. PvP hiện bắt đầu preview timer ngay khi ghép/join: preload trước queue, hiển thị state/input bằng fallback trong deadline, không khóa lượt để đợi ảnh. Chọn provider sau khi đo quota/traffic; Supabase public bucket là ứng viên đầu, không mặc định dịch vụ miễn phí vô hạn. Không xóa asset khỏi Git trước khi có nguồn master và bundle khôi phục theo hash.
+Tiêu chí trọng yếu: vào Home sau nhóm tài nguyên thiết yếu; file progress trung thực; timeout/fallback; local cache và release tái lập. PvP bắt đầu preview timer ngay khi ghép/join: warm không khóa state/input hoặc lượt để đợi ảnh. Không xóa asset khỏi Git trước khi có nguồn master và bundle khôi phục theo hash.
 
-Chỉ DONE sau browser cold/warm/network-failure/reconnect acceptance, CDN thật, báo cáo quota và CI/release smoke; việc viết kế hoạch không phải hoàn thành runtime.
+DONE sau automated/browser local acceptance và CI/release smoke; việc viết kế hoạch không phải hoàn thành runtime. CDN về sau là hạng mục mới nếu chủ dự án đổi quyết định.
 
 ## 4. Nguyên tắc bắt buộc khi triển khai
 

@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 28 |
-| IN PROGRESS | 6 |
+| DONE | 29 |
+| IN PROGRESS | 5 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B45 — hoàn tất 35C và chuẩn bị 35D fail-closed**. Cache/DPR/CDN-offline và hai client PvP đã có browser/automated acceptance; bộ deploy Supabase dùng release SHA bất biến, không overwrite, upload manifest cuối và full remote hash verification. Kích hoạt production còn chờ bucket của chủ dự án và gate quyền phân phối #22 đang còn 847 record.
+Đợt hiện tại: **B48 — đóng #35 theo kiến trúc local-only**. Chủ dự án bỏ Supabase Storage/CDN; remote resolver/config endpoint/env/deploy tooling đã được gỡ. Loading thật, bounded preload, local DPR/cache, manifest inventory và PvP non-blocking warm được giữ lại.
 
 ## Bảng tiến độ
 
@@ -62,13 +62,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 32 | Workflow/tài liệu thống nhất | P2 | DONE | B26: DONE — chuẩn hóa root README/AGENTS, app AGENTS, code structure và developer workflow Node/npm duy nhất; archive README cũ; gate đối chiếu đường dẫn/scripts/lock; clean-source ZIP `npm run check` và 11 focused tests PASS với dependency lock-matched đã cài sẵn; local auth smoke PASS. `npm ci` mới trong container bị chặn bởi npm registry DNS EAI_AGAIN, không tuyên bố fresh install ở B26; B23 hosted đã xác minh cùng lockfile. Con người có thể review tài liệu tiếp. |
 | 33 | Release tái lập/clean environment | P2 | DONE | Reproducible per-file content/source archive (không cam kết whole-ZIP byte-identical cross-zlib); B09-fix1 + hosted Linux/Windows B24 npm-ci/check và clean-unpack smoke, B25 thêm test hai lần đóng gói byte-stable với cùng tool, xác nhận safe manifest/CRC và save không thay đổi. Runtime ZIP/debug report không thuộc loại artifact đã hỗ trợ. |
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
-| 35 | Phân phối asset và loading theo nhu cầu | P1 | IN PROGRESS | B44–B45: 35A/35B/35C DONE — manifest/resolver, progress/fallback, bounded Save-Data preload, immutable browser cache, DPR2 và PvP two-client không khóa deadline đều đạt. 35D tooling DONE trong source: plan/deploy/verify 1.497 object, `upsert=false`, manifest cuối, full SHA-256, local rollback và setup guide. Chưa thể đóng #35 hoặc upload public vì bucket thật thuộc tài khoản người dùng và `assets:rights:release` vẫn fail với 847 record #22. [Hướng dẫn](../app/docs/asset-cdn-supabase-b45.md). |
+| 35 | Phân phối asset và loading theo nhu cầu | P1 | DONE | B44–B48: local manifest/hash inventory, boot progress, bounded Save-Data preload, responsive DPR/cache và PvP two-client non-blocking warm đạt. B48 chốt local-only và gỡ toàn bộ Supabase Storage/CDN surface; #22 tiếp tục quản lý quyền artwork độc lập. [Kiến trúc](./asset-delivery-loading-roadmap.md). |
 
 ## Thứ tự tiếp theo — bổ sung asset/loading
 
-35A–35C đã hoàn tất. 35D không còn thiếu code: bước kế tiếp bắt buộc là hoàn tất quyền phân phối #22, tạo public bucket theo hướng dẫn, chạy deploy/full remote verify và đo quota/traffic thật; sau đó mới nâng #35 DONE. Tiếp theo quay lại #09 → #08; #02/#04 tiếp tục xử lý nếu có vấn đề toàn vẹn dữ liệu. Không tự mở gói trả phí, không public asset khi rights gate fail và không bỏ fallback local khỏi Git. Chi tiết ở [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+#35 đã DONE theo quyết định local-only; không còn bước bucket/CDN trong roadmap hiện hành. Tiếp theo quay lại #09 → #08; #02/#04 tiếp tục xử lý nếu có vấn đề toàn vẹn dữ liệu. #22 vẫn theo dõi quyền artwork trước mọi public release. Chi tiết ở [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#35 giữ IN PROGRESS sau B45: browser/local-CDN acceptance và deployment tooling đã đạt, nhưng tiêu chí CDN production không thể đạt trước rights gate #22 và bucket thật của chủ dự án. Tổng hiện tại **35 mục: 28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#35 DONE sau B48 với runtime local-only. Tổng hiện tại **35 mục: 29 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -594,6 +594,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - 31 UI master ghi “project supplied” vẫn cần chủ dự án xác nhận quyền sở hữu/sáng tạo; 39 symbol B36 đã hoàn chỉnh và không nằm trong 847 record pending. Quyết định và ba hướng hợp lệ được ghi tại `app/docs/asset-rights-decision-b47.md`.
 - Loại `public/assets/ui/README.md` khỏi runtime manifest; release mới `sha256-ad91a66…` có **1.495 media + manifest = 1.496 object / 93.645.951 byte**, không còn `application/octet-stream`. Focused asset/release/rights **19/19 PASS**; rights gate tiếp tục fail-closed đúng với **847 pending**.
 - Chưa upload hoặc sử dụng secret. #22 và #35 giữ IN PROGRESS cho tới khi chủ dự án chọn thay thế, xin quyền, hoặc giữ private; tổng giữ nguyên **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 30/09/2026 — B48: gỡ Supabase asset delivery, đóng #35 local-only
+
+- Theo quyết định chủ dự án, xóa remote base resolver, `/api/assets/config`, `PUBLIC_ASSET_BASE_URL`/bucket env, Supabase upload/verify scripts, test và setup guide; không đụng Supabase account/save hoặc migrations.
+- Giữ boot progress, 11 shell preloads, bounded concurrency + Save-Data/2G, local responsive `srcset`, battle warm/deduplicate, static ETag/immutable hashed cache và manifest/hash inventory. Missing local file được báo fail một lần, không thử remote.
+- `pokemon-artwork-2` là untracked user data và được giữ nguyên; kiểm tra cho thấy 272/272 file hiện giống byte với artwork cũ nên chưa nhập vào runtime/rights ledger.
+- **Nghiệm thu:** focused asset/server/PvP **19/19 PASS**; `npm run check` PASS (syntax 473 file, import graph 410 module/1.176 edge/0 cycle, structure 492 file và file lớn nhất 359/360 dòng); full `npm test` **1.501/1.501 PASS trên 240 file**, 0 fail/skip/todo; `git diff --check` sạch.
+- #35 chuyển **DONE** trong phạm vi local-only; #22 vẫn IN PROGRESS và độc lập với kỹ thuật loading. Tổng mới **29 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 
