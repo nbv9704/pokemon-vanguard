@@ -514,6 +514,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **WebSocket thật:** fixture server/save tạm xác nhận socket chưa join đóng 4000; bốn tab cùng account hoạt động và tab thứ năm đóng 1013; malformed JSON có lỗi ổn định; burst 1.000 frame chạm queue bound nhưng account yên lặng vẫn nhận pong dưới ba giây; frame 71 KiB đóng 1009 trước application parsing; counters trở về trạng thái bounded.
 - **Benchmark lặp lại:** 100.000 lần thử queue chỉ nhận đúng 32; 100.000 quota attempts chỉ nhận đúng 70 và không làm đói account/IP khác; slow consumer bị terminate trên 8.388.608 byte; bốn tab cùng audience chỉ tạo một projection/full frame và một serialized delta 122 byte dùng chung. Run đo khoảng 592 KiB heap growth với queue/fixture cố ý còn sống; thời gian tuyệt đối chỉ tham khảo.
 - **Nghiệm thu:** focused guards/state/room **16/16 PASS**; `npm run benchmark:websocket-guards` PASS; `npm run check` PASS; full `npm test` **1.483/1.483 PASS trên 237 file**, 0 fail/skip/todo. Chi tiết: `app/docs/websocket-guard-completion-b40.md`.
+- **Hosted CI:** run [`36536450212`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36536450212) cho commit `b23b413`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** guard là per-process. Global connection ownership/cap đa worker thuộc #18 và hạ tầng deployment; không tuyên bố DDoS/WAF hay production traffic SLO. **Tổng sau B40: 25 DONE / 8 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
