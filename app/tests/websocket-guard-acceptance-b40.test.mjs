@@ -15,7 +15,7 @@ async function joined(port,room,player=room){const ws=await open(port,room),stat
 async function close(ws){if(!ws||ws.readyState===WebSocket.CLOSED)return;const done=closed(ws);ws.close();await done;}
 
 test('real server enforces join deadline and four-tab account cap with bounded resource counters',async()=>{
- const saveDir=await mkdtemp(path.join(tmpdir(),'pv-b40-cap-')),app=createLocalServer({saveDir,websocketJoinDeadlineMs:60,maxSocketsPerAccount:4,requestRateLimits:{ipUpgrades:100}}),tabs=[];let silent,overflow;
+ const saveDir=await mkdtemp(path.join(tmpdir(),'pv-b40-cap-')),app=createLocalServer({saveDir,websocketJoinDeadlineMs:1000,maxSocketsPerAccount:4,requestRateLimits:{ipUpgrades:100}}),tabs=[];let silent,overflow;
  try{
   const port=await app.listen(0);silent=await open(port,'silent');assert.equal((await closed(silent)).code,4000);
   for(let index=0;index<4;index++)tabs.push((await joined(port,'four-tabs','owner')).ws);
