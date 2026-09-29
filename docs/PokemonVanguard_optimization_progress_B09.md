@@ -505,6 +505,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Đo lường:** benchmark 40 mẫu với full 264.659 byte: idle 91 byte; presence 13.825; Bag 19.262; Team 120.811; Double event p50/p95 111.942/112.716. Full encode CPU p95 1,246–1,427 ms, delta p95 3,747–5,893 ms: chấp nhận thêm CPU bounded để giảm wire/render; reconnect vẫn full. Baseline render B13 được giữ làm đối chứng, còn push không liên quan route loại bỏ hẳn full route render.
 - **Browser/WebSocket thật:** hai tab cùng save tạm đồng bộ; join tab hai tạo presence push nhưng tab một vẫn giữ team-name `B39 focus continuity`, focus, caret 20 và scroll, không console warning/error. Integration xác nhận negotiated delta, full resync và legacy full-only.
 - **Nghiệm thu:** `npm run check` PASS; full `npm test` **1.480/1.480 PASS trên 236 file**, 0 fail/skip/todo; benchmark và focused protocol/browser tests PASS. Lần gate đầu bắt `client.js` vượt byte budget và test attribute-order; đã tách `live-chrome.js`, giữ contract accessibility và chạy lại toàn bộ PASS. Chi tiết: `app/docs/state-delta-b39.md`.
+- **Hosted CI:** run [`36534318331`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36534318331) cho commit `485466e`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** không thêm distributed room ownership, deep JSON Patch hay thay persistence/action ordering. #10/#18 vẫn sở hữu multi-process/restart PvP. **Tổng sau B39: 24 DONE / 9 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
