@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "release": "sha256-71ba83e93a96bfdfc94d13dfec13a4eaaf3d9c69a244893f4b0e8b32dcf71fb4",
+  "release": "sha256-ad91a66ac99f02703c232921f912488115265c11dca3c26e888ca6e97d2607a2",
   "generatedBy": "scripts/generate-runtime-asset-manifest.mjs",
   "scope": "public runtime media; distribution rights remain tracked separately",
   "totals": {
-    "files": 1496,
-    "bytes": 93097328
+    "files": 1495,
+    "bytes": 93096206
   },
   "groups": {
     "battle-sprites": {
@@ -13,8 +13,8 @@
       "bytes": 46734597
     },
     "battle-ui": {
-      "files": 40,
-      "bytes": 174717
+      "files": 39,
+      "bytes": 173595
     },
     "items": {
       "files": 10,
@@ -1004,15 +1004,6 @@
       "width": 104,
       "height": 104,
       "group": "shared",
-      "essential": false
-    },
-    {
-      "id": "/assets/ui/README.md",
-      "path": "/assets/ui/README.md",
-      "sha256": "6cbd6d8dcbfcc14b6e93efe99a841e10124fd0d824398fa5e9a5fcc8017727bb",
-      "bytes": 1122,
-      "mime": "application/octet-stream",
-      "group": "battle-ui",
       "essential": false
     },
     {

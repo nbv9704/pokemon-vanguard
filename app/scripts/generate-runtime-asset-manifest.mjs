@@ -36,7 +36,7 @@ function group(relative){
  return 'shared';
 }
 
-const paths=[...rootFiles];for(const directory of roots)paths.push(...await walk(directory));paths.sort();
+const paths=[...rootFiles];for(const directory of roots)paths.push(...(await walk(directory)).filter(relative=>mime[path.extname(relative).toLowerCase()]));paths.sort();
 const entries=[];
 for(const relative of paths){
  const absolute=path.join(publicDir,relative),body=await readFile(absolute),extension=path.extname(relative).toLowerCase(),fileStat=await stat(absolute);

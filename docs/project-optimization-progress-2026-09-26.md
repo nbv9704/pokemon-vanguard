@@ -588,6 +588,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Public full-hash verification tiếp tục không mang secret. Focused deployment **5/5 PASS**, syntax **475 file PASS**, ESLint PASS và `git diff --check` sạch.
 - Bucket thật đã được chủ dự án tạo public với giới hạn file/MIME. Chưa upload vì gate quyền phân phối #22 còn 847 record; tổng vẫn **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
+### 30/09/2026 — B47: kết luận rights upstream và làm sạch release manifest
+
+- Đối chiếu primary source xác nhận 272 PokéAPI artwork vẫn là nội dung ảnh thuộc The Pokémon Company; kho Smogon nói 544 sprite thuộc Nintendo/Game Freak/The Pokémon Company và license của một phần sprite cộng đồng còn chưa xác định. Không đổi 816 record sang approved chỉ vì URL/repository công khai hoặc dự án miễn phí.
+- 31 UI master ghi “project supplied” vẫn cần chủ dự án xác nhận quyền sở hữu/sáng tạo; 39 symbol B36 đã hoàn chỉnh và không nằm trong 847 record pending. Quyết định và ba hướng hợp lệ được ghi tại `app/docs/asset-rights-decision-b47.md`.
+- Loại `public/assets/ui/README.md` khỏi runtime manifest; release mới `sha256-ad91a66…` có **1.495 media + manifest = 1.496 object / 93.645.951 byte**, không còn `application/octet-stream`. Focused asset/release/rights **19/19 PASS**; rights gate tiếp tục fail-closed đúng với **847 pending**.
+- Chưa upload hoặc sử dụng secret. #22 và #35 giữ IN PROGRESS cho tới khi chủ dự án chọn thay thế, xin quyền, hoặc giữ private; tổng giữ nguyên **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
 ## Cách cập nhật file này
 
 Sau mỗi hạng mục: cập nhật bảng tổng quan, dòng tương ứng và thêm nhật ký gồm file đã đổi, test đã chạy, kết quả, giới hạn còn lại. Chỉ đánh dấu `DONE` khi test mục tiêu đạt; nếu chỉ hoàn thành một phần thì giữ `IN PROGRESS`.

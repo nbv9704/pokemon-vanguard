@@ -48,6 +48,7 @@ test('preload bounds concurrency on Save-Data and responsive DPR candidates use 
 test('checked-in runtime manifest has deterministic release metadata and essential fallback files',async()=>{
  const manifest=JSON.parse(await readFile(new URL('../public/asset-manifest.json',import.meta.url),'utf8'));
  assert.equal(manifest.schemaVersion,1);assert.match(manifest.release,/^sha256-[a-f0-9]{64}$/);assert.ok(manifest.totals.files>1000);assert.ok(manifest.totals.bytes>0);
+ assert.ok(manifest.entries.every(entry=>entry.mime!=='application/octet-stream'));assert.ok(!manifest.entries.some(entry=>entry.path.endsWith('.md')));
  for(const required of ['/logo.png','/pokemon-placeholder.svg']){const entry=manifest.entries.find(value=>value.path===required);assert.ok(entry);assert.equal(entry.essential,true);assert.match(entry.sha256,/^[a-f0-9]{64}$/);}
 });
 

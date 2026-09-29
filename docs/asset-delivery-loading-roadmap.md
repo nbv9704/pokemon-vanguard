@@ -12,7 +12,7 @@ Giữ HTML/CSS/JS, catalog và fallback thiết yếu trên origin ứng dụng 
 
 ## Thứ tự thực hiện
 
-1. **35A — DONE trong B44: inventory, manifest và resolver local.** Đã đo 1.496 file/93.097.328 byte, sinh manifest fingerprint và đưa các nhóm ảnh động chính qua resolver; local vẫn là mặc định.
+1. **35A — DONE trong B44/B47: inventory, manifest và resolver local.** Manifest hiện có 1.495 runtime media/93.096.206 byte sau khi loại README không phải media, sinh fingerprint và đưa các nhóm ảnh động chính qua resolver; local vẫn là mặc định.
 2. **35B — DONE trong B44: boot và route loading.** Boot có tiến độ theo công việc thật, timeout/fallback/accessibility; route skeleton/retry kế thừa contract #21/#31 và không tải manifest lớn trong critical path.
 3. **35C — DONE trong B45: chuẩn bị battle và cache.** Warm/deduplicate chỉ dùng state battle công khai, không khóa input; bounded preloader nhường Save-Data/2G. Browser xác nhận hashed CDN path, DPR responsive, warm/offline cache và empty-cache fallback. Hai client Ranked vẫn render ngay và server deadline tiến khi warm treo.
 4. **35D — SOURCE READY, production activation pending.** Tooling plan/deploy/verify/rollback, immutable prefix, no-upsert, manifest-last và full remote SHA đã có test. Còn tạo bucket thật, rights gate #22, upload/remote browser/header/quota acceptance; không coi local harness là CDN production.

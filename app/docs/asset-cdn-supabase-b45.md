@@ -6,8 +6,8 @@ Status: deployment tooling complete and locally/browser verified. Production act
 
 - Reads `public/asset-manifest.json` and verifies every local byte before any network write.
 - Uses `releases/sha256-…/` as an immutable object prefix. Existing objects are never overwritten (`x-upsert: false`).
-- Uploads 1,496 media objects first and `asset-manifest.json` last.
-- Downloads all 1,497 public objects again and verifies length plus SHA-256 before printing `PUBLIC_ASSET_BASE_URL`.
+- Uploads 1,495 runtime-media objects first and `asset-manifest.json` last. Documentation such as `public/assets/ui/README.md` is excluded.
+- Downloads all 1,496 public objects again and verifies length plus SHA-256 before printing `PUBLIC_ASSET_BASE_URL`.
 - Keeps `SUPABASE_SECRET_KEY` only in server-side request headers. New `sb_secret_…` keys are sent through `apikey`, never incorrectly as a bearer JWT; legacy service-role JWTs remain compatible. Public verification requests never carry either key.
 - Refuses deployment while `npm run assets:rights:release` fails. Do not bypass this gate merely because a source URL is publicly reachable.
 
@@ -19,7 +19,7 @@ Supabase public buckets allow unauthenticated reads and are CDN cached, while up
 2. Name it `pokemon-vanguard-assets`.
 3. Enable **Public bucket**. Do not add anonymous upload/update/delete policies.
 4. Set a file-size limit of at least 2 MiB. The current largest object is below that, but re-run `npm run assets:release:plan` after future asset changes.
-5. Allow the MIME types used by the manifest: `image/png`, `image/gif`, `image/svg+xml`, `image/jpeg`, `image/webp`, `font/woff2`, and `application/json`.
+5. Allow the MIME types used by the manifest: `image/png`, `image/gif`, `image/svg+xml`, `image/jpeg`, `image/webp`, `font/woff2`, and `application/json`. `application/octet-stream` is no longer required by the runtime release.
 
 Create the bucket through the Storage Dashboard/API, not by editing `storage.buckets` manually. Supabase documents the managed `storage` schema as read-only for object operations.
 
