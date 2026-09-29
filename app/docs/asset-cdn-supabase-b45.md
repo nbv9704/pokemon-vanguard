@@ -8,7 +8,7 @@ Status: deployment tooling complete and locally/browser verified. Production act
 - Uses `releases/sha256-…/` as an immutable object prefix. Existing objects are never overwritten (`x-upsert: false`).
 - Uploads 1,496 media objects first and `asset-manifest.json` last.
 - Downloads all 1,497 public objects again and verifies length plus SHA-256 before printing `PUBLIC_ASSET_BASE_URL`.
-- Keeps `SUPABASE_SECRET_KEY` only in server-side request headers. Public verification requests never carry it.
+- Keeps `SUPABASE_SECRET_KEY` only in server-side request headers. New `sb_secret_…` keys are sent through `apikey`, never incorrectly as a bearer JWT; legacy service-role JWTs remain compatible. Public verification requests never carry either key.
 - Refuses deployment while `npm run assets:rights:release` fails. Do not bypass this gate merely because a source URL is publicly reachable.
 
 Supabase public buckets allow unauthenticated reads and are CDN cached, while upload/delete operations remain protected. Release paths are never reused because CDN/browser invalidation is not instantaneous.

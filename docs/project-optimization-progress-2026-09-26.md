@@ -582,6 +582,12 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu batch:** focused asset/release/PvP **17/17 PASS**; `npm run check` PASS (syntax 475 file, import 410 module/1.176 edge/0 cycle, structure 494 production file, max 359/360 dòng); full `npm test` **1.506/1.506 PASS trên 241 file**, 0 fail/skip/todo. `assets:rights:release` và deploy với cấu hình giả đều dừng trước network đúng thiết kế vì 847 record chưa duyệt.
 - **Tổng giữ nguyên:** **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**; đã hoàn thành trọn checkpoint 35C và toàn bộ phần code 35D, không khai khống external acceptance.
 
+### 30/09/2026 — B46: tương thích Supabase Secret API key mới
+
+- Uploader nhận key mới dạng `sb_secret_…` qua header `apikey` và không gửi sai dưới dạng bearer JWT; legacy `service_role` JWT vẫn tương thích bằng `Authorization` + `apikey`.
+- Public full-hash verification tiếp tục không mang secret. Focused deployment **5/5 PASS**, syntax **475 file PASS**, ESLint PASS và `git diff --check` sạch.
+- Bucket thật đã được chủ dự án tạo public với giới hạn file/MIME. Chưa upload vì gate quyền phân phối #22 còn 847 record; tổng vẫn **28 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
 ## Cách cập nhật file này
 
 Sau mỗi hạng mục: cập nhật bảng tổng quan, dòng tương ứng và thêm nhật ký gồm file đã đổi, test đã chạy, kết quả, giới hạn còn lại. Chỉ đánh dấu `DONE` khi test mục tiêu đạt; nếu chỉ hoàn thành một phần thì giữ `IN PROGRESS`.

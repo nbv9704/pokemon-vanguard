@@ -17,6 +17,10 @@ export function normalizeSupabaseUrl(value,{allowLocal=false}={}){
  return url.origin;
 }
 export function validateBucketName(value){const bucket=String(value||'');if(!bucketPattern.test(bucket))throw new Error('PV_ASSET_BUCKET must contain 2-63 lowercase letters, numbers, hyphens, or underscores');return bucket;}
+export function supabaseAdminHeaders(secretKey){
+ const key=String(secretKey||'').trim();if(!key)throw new Error('SUPABASE_SECRET_KEY is required for upload and must remain server-side');
+ return key.startsWith('sb_secret_')?{apikey:key}:{Authorization:`Bearer ${key}`,apikey:key};
+}
 export function assetReleaseLocations({supabaseUrl,bucket,release,allowLocal=false}){
  const origin=normalizeSupabaseUrl(supabaseUrl,{allowLocal}),safeBucket=validateBucketName(bucket);if(!releasePattern.test(release))throw new Error('Invalid immutable asset release');
  const prefix=`releases/${release}`,encodedBucket=encodeURIComponent(safeBucket),encodedPrefix=encodePath(prefix);
@@ -45,8 +49,7 @@ export async function verifyRemoteAssetRelease({release,supabaseUrl,bucket,fetch
  return {...locations,files:release.objects.length,bytes:release.bytes};
 }
 export async function deploySupabaseAssetRelease({release,supabaseUrl,bucket,secretKey,fetchImpl=fetch,concurrency=6,timeoutMs=30_000,onProgress=()=>{},allowLocal=false}){
- if(!String(secretKey||'').trim())throw new Error('SUPABASE_SECRET_KEY is required for upload and must remain server-side');
- const locations=assetReleaseLocations({supabaseUrl,bucket,release:release.release,allowLocal}),auth={Authorization:`Bearer ${secretKey}`,apikey:secretKey};
+ const locations=assetReleaseLocations({supabaseUrl,bucket,release:release.release,allowLocal}),auth=supabaseAdminHeaders(secretKey);
  const bucketResponse=await request(fetchImpl,locations.bucketUrl,{headers:{...auth,Accept:'application/json'}},timeoutMs);if(!bucketResponse.ok)throw new Error(`Asset bucket is unavailable (${bucketResponse.status}); create it as a public bucket first`);const bucketInfo=await bucketResponse.json();if(bucketInfo.public!==true)throw new Error('Asset bucket must be public before deployment');
  let completed=0;const upload=async object=>{const body=await readFile(object.absolute),url=`${locations.uploadBase}/${encodePath(object.objectPath)}`,response=await request(fetchImpl,url,{method:'POST',headers:{...auth,'Content-Type':object.mime,'Cache-Control':'max-age=31536000','x-upsert':'false'},body},timeoutMs);if(!response.ok){if(![400,409].includes(response.status))throw new Error(`Asset upload failed (${response.status}): ${object.path}`);const existing=await request(fetchImpl,`${locations.publicBase}/${encodePath(object.objectPath)}`,{cache:'no-store'},timeoutMs);await remoteDigest(existing,object);}onProgress({stage:'upload',completed:++completed,total:release.objects.length,path:object.path});};
  const content=release.objects.filter(object=>object.path!=='/asset-manifest.json'),pointer=release.objects.find(object=>object.path==='/asset-manifest.json');await mapConcurrent(content,concurrency,upload);await upload(pointer);
