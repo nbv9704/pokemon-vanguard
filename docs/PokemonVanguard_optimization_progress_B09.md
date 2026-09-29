@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 23 |
-| IN PROGRESS | 10 |
+| DONE | 24 |
+| IN PROGRESS | 9 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B38 — hoàn tất #19 ACK/trạng thái lưu**. Ranked/Friendly PvP có outbox theo `actionId` + domain, explicit Retry/Discard, không tự replay; state/presence push không xóa pending. ACK phân biệt `committed` bền vững với `session` chỉ được match server chấp nhận; Friendly chống duplicate/conflict giữa nhiều client trong cùng phiên. `npm run check` PASS; full regression **1.474/1.474 PASS trên 235 file**. #18 vẫn `DEFERRED`, nên UI không gọi action PvP giữa trận là đã lưu qua restart.
+Đợt hiện tại: **B39 — hoàn tất #16 state delta/render**. Client mới negotiate `state-delta-v1`; server gửi full snapshot khi join/reconnect/resync và delta top-level có cursor cho các lần sau, tự fallback full nếu delta không có lợi. Client kiểm chặt patch metadata, tự resync khi lệch cursor và chỉ patch chrome cho domain không liên quan route; battle/playback giữ full-render an toàn. Benchmark 40 mẫu giảm wire bytes 54,35–99,97% tùy scenario; browser hai tab giữ focus/caret/scroll. `npm run check` PASS; full regression **1.480/1.480 PASS trên 236 file**.
 
 ## Bảng tiến độ
 
@@ -32,7 +32,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 02 | Ranked chỉ settlement sau khi lưu thành công | P0 | IN PROGRESS | B03 JSON pair WAL; B08 xác nhận chặn pair cross-backend trước mọi write; B04 thêm receipt kết quả trong hai save, kiểm tra lại receipt sau mất ACK và lifecycle retry; còn mid-battle recovery, multi-process/Supabase rollout |
 | 03 | Bộ đóng gói chưa loại hết dữ liệu local | P0 | DONE | Exclude backup/report/admin backup/campaign journal/raw candidate/node_modules/dist; release ZIP vẫn chứa normalized validation snapshot đã review |
 | 04 | Một cơ chế khóa thống nhất cho account và match | P1 | IN PROGRESS | `AccountCoordinator` khóa tập account; WS/Admin/Social/Ranked/Friendly action đã dùng; B24 thêm FIFO reservation cho giao dịch multi-account để không bị request mới vượt hàng; còn lifecycle Friendly và multi-process |
-| 05 | Supabase optimistic concurrency và transaction | P1 | IN PROGRESS | CAS revision + pair-save RPC; thêm bảng campaign idempotency bằng migration 202609260002; cần apply migration 001/002 và B29 migration 003, kiểm chứng RLS/RPC + pair transaction trên Supabase staging thật |
+| 05 | Supabase optimistic concurrency và transaction | P1 | IN PROGRESS | CAS revision + pair-save RPC + campaign/reporting migration 001–003; chủ dự án xác nhận đã apply đủ ngày 29/09/2026. Còn kiểm chứng RLS/RPC, CAS conflict và pair transaction trên Supabase staging thật trước khi DONE |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn. Còn receipt PvP qua process restart (#18) và archival/compaction bền vững (#09) |
@@ -43,7 +43,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
 | 15 | Public projection allowlist/pure | P1 | DONE | B11 root save, Training V2/V3, Battle V2/V3 và preview dùng allowlist fail-closed; negative sentinel + WebSocket thật chứng minh receipt/field tương lai không lọt ra public |
-| 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab project + serialize 1 lần; B13 browser baseline: Team p50/p95 11,5/51,9 ms, các route chính còn lại p95 <=3,8 ms, focus/caret giữ qua push; B24 guard broadcaster fail-fast khi projector trả undefined; còn delta/cursor và profiling Team |
+| 16 | Giảm full-state broadcast/render | P2 | DONE | B12/B13/B24/B39: shared audience projection; full join/reconnect/resync + capability-gated top-level delta/cursor; strict mismatch resync; route-aware chrome patch, battle/playback full-render. 40-sample bytes giảm 54,35–99,97%; real WS legacy/new client và browser hai tab focus/caret/scroll PASS. `app/docs/state-delta-b39.md` |
 | 17 | Thu hồi room/presence | P1 | DONE | B07 TTL guard socket/join/job/PvP; B17 hard cap + safe detached LRU, dirty guard, presence cleanup, capacity rejection và aggregate metrics; distributed ownership theo #10/#18 |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
 | 19 | ACK và trạng thái đã lưu | P1 | DONE | B05–16 bao phủ action bền vững/PvE; B38 thêm Ranked/Friendly outbox theo ID+domain, ACK `committed`/`session`, state-before-ACK, lost-ACK explicit retry và multi-client duplicate/conflict; không tuyên bố PvP mid-match bền qua restart (#18) |
@@ -496,6 +496,16 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** `npm run check` PASS; focused PvP/ACK/contract **36/36 PASS** sau bước siết ACK domain cuối; full `npm test` **1.474/1.474 PASS trên 235 file**, 0 fail/skip/todo. Full suite bao gồm test B38 state-before-ACK, reload, explicit same-ID retry, hai client duplicate, conflict payload và parser status/revision. Chi tiết: `app/docs/pvp-ack-b38.md`.
 - **Hosted CI:** run [`36531482564`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36531482564) cho commit `06016d4`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** #18 tiếp tục `DEFERRED`; receipt lệnh giữa trận không bền qua process restart. Archival/compaction receipt bền vững còn thuộc #08/#09; distributed/Supabase staging thuộc #04/#05. **Tổng sau B38: 23 DONE / 10 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B39: đóng #16 state delta và route-aware rendering
+
+- **Wire contract:** browser quảng bá capability `state-delta-v1`; server giữ baseline/cursor theo socket, gửi full snapshot khi join/reconnect/resync và shallow top-level delta sau đó. Delta >=90% full tự fallback full; legacy client không capability luôn nhận full. Failed send không tiến baseline.
+- **Fail-closed client:** kiểm cursor liên tiếp, key an toàn, key-count giới hạn và `changedKeys` khớp chính xác `patch + removed`; gap chỉ phát một yêu cầu resync rồi chờ full snapshot. No-op delta không redraw.
+- **Render scope:** tách updater resource/connection/badge ra module riêng. Delta không liên quan route chỉ patch shell; domain battle/Ranked/Friendly hoặc playback luôn đi full path để không bỏ animation/thứ tự. Gate module giữ nguyên 59.000 byte thay vì được nới.
+- **Đo lường:** benchmark 40 mẫu với full 264.659 byte: idle 91 byte; presence 13.825; Bag 19.262; Team 120.811; Double event p50/p95 111.942/112.716. Full encode CPU p95 1,246–1,427 ms, delta p95 3,747–5,893 ms: chấp nhận thêm CPU bounded để giảm wire/render; reconnect vẫn full. Baseline render B13 được giữ làm đối chứng, còn push không liên quan route loại bỏ hẳn full route render.
+- **Browser/WebSocket thật:** hai tab cùng save tạm đồng bộ; join tab hai tạo presence push nhưng tab một vẫn giữ team-name `B39 focus continuity`, focus, caret 20 và scroll, không console warning/error. Integration xác nhận negotiated delta, full resync và legacy full-only.
+- **Nghiệm thu:** `npm run check` PASS; full `npm test` **1.480/1.480 PASS trên 236 file**, 0 fail/skip/todo; benchmark và focused protocol/browser tests PASS. Lần gate đầu bắt `client.js` vượt byte budget và test attribute-order; đã tách `live-chrome.js`, giữ contract accessibility và chạy lại toàn bộ PASS. Chi tiết: `app/docs/state-delta-b39.md`.
+- **Ranh giới:** không thêm distributed room ownership, deep JSON Patch hay thay persistence/action ordering. #10/#18 vẫn sở hữu multi-process/restart PvP. **Tổng sau B39: 24 DONE / 9 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

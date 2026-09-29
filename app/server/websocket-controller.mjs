@@ -15,7 +15,7 @@ import {reconcileV3BattlePresentation} from './v3-battle-session.mjs';
 import {SerialTaskQueue} from './serial-task-queue.mjs';
 import {markWebSocketAlive,startWebSocketHeartbeat} from './websocket-heartbeat.mjs';
 import {createInboundLimiter,sendBounded,sendSerializedBounded} from './ws-flow-control.mjs';
-import {broadcastSharedFrames} from './state-broadcast.mjs';
+import {createDeltaStateBroadcaster} from './state-broadcast.mjs';
 import {createPlayerStateProjector} from './public-state-projector.mjs';
 import {createPlayerActionDispatcher} from './player-action-dispatch.mjs';
 
@@ -58,8 +58,9 @@ export function createWebsocketController({server,isClosing,requestPolicy,auth,a
   const dispatchPlayerAction=createPlayerActionDispatcher({accounts,ranked,social,trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,clock,persist,broadcast:room=>broadcast(room),send});
   const inbound=createInboundLimiter();
   const projectPlayerState=createPlayerStateProjector({clock,ranked,trainingPvp,social});
+  const stateBroadcaster=createDeltaStateBroadcaster();
   broadcast = room => {
-   const stats=broadcastSharedFrames(room.clients,{project:player=>projectPlayerState(room,player),send:sendFrame});
+   const stats=stateBroadcaster.broadcast(room.clients,{project:player=>projectPlayerState(room,player),send:sendFrame,supportsDelta:socket=>socket.stateDeltaV1===true});
    runtimeMetrics.observeBroadcast(stats);
   };
   setBroadcast(broadcast);
@@ -96,6 +97,7 @@ export function createWebsocketController({server,isClosing,requestPolicy,auth,a
           if (typeof message.playerId !== 'string' || !message.playerId.trim() || message.playerId.length > 128) return fail('playerId required');
           if(session&&message.playerId!==session.playerId)return fail('AUTH_IDENTITY_MISMATCH');
           if (room.clients.has(ws)) return fail('already joined');
+          ws.stateDeltaV1=Array.isArray(message.capabilities)&&message.capabilities.includes('state-delta-v1');
           room.dirty=true;
           if (!room.state) {
             const loaded=await storage.load(name);
@@ -109,13 +111,14 @@ export function createWebsocketController({server,isClosing,requestPolicy,auth,a
         }
         const player = room.clients.get(ws);
         if (!player) return fail('join first');
+        if(message.type==='resync'){stateBroadcaster.reset(ws);broadcast(room);return;}
         if (message.type !== 'action') return fail('unknown message type');
         if (player !== room.state.owner) return fail('spectators cannot act');
         if (Buffer.byteLength(JSON.stringify(message.action ?? null)) > 64 * 1024) return fail('action too large');
         return dispatchPlayerAction({ws,name,room,player,session,message,fail});
       }).catch(error => {const operationId=ops.record({domain:'ws-action',operation:'action',outcome:'error',errorCode:error?.code});console.error('Player action failed',operationId);send(ws,{type:'error',error:'Could not save this action. Check the local server terminal.'});}).finally(()=>inbound.release(ws));
     });
-    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>{ops.record({domain:'lifecycle',operation:'tick',outcome:'error',errorCode:error?.code});console.error('Socket cleanup failed [redacted]');}); });
+    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);stateBroadcaster.reset(ws);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>{ops.record({domain:'lifecycle',operation:'tick',outcome:'error',errorCode:error?.code});console.error('Socket cleanup failed [redacted]');}); });
   });
   return {wss,websocketHeartbeatTimer,closeAuthSocket};
 }

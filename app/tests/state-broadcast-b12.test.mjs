@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {broadcastSharedFrames} from '../server/state-broadcast.mjs';
+import {broadcastSharedFrames,createDeltaStateBroadcaster} from '../server/state-broadcast.mjs';
 import {sendSerializedBounded} from '../server/ws-flow-control.mjs';
 
 test('broadcast projects and serializes once per audience while delivering every socket',()=>{
@@ -26,4 +26,15 @@ test('serialized bounded send reuses the exact frame and keeps slow-consumer pro
 test('broadcast rejects undefined projection before sending a partial frame',()=>{
  const sent=[];assert.throws(()=>broadcastSharedFrames([[{},'owner']],{project:()=>undefined,send:(_s,frame)=>sent.push(frame)}),/JSON-serializable/);
  assert.deepEqual(sent,[]);
+});
+
+test('cursor broadcaster sends one shared full frame, then one shared domain delta to two tabs',()=>{
+ const sockets=[{id:'tab-a'},{id:'tab-b'}],clients=new Map(sockets.map(socket=>[socket,'owner'])),sent=new Map(sockets.map(socket=>[socket,[]])),broadcaster=createDeltaStateBroadcaster();let view={coins:10,socialV1:{online:1},trainingV3:{large:'x'.repeat(2000)}};
+ let stats=broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(socket,encoded)=>sent.get(socket).push(encoded)});
+ assert.equal(stats.projections,1);assert.equal(stats.serializations,1);assert.equal(stats.fullFrames,2);assert.equal(sent.get(sockets[0])[0],sent.get(sockets[1])[0]);assert.equal(JSON.parse(sent.get(sockets[0])[0]).cursor,1);
+ view={...view,socialV1:{online:2}};stats=broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(socket,encoded)=>sent.get(socket).push(encoded)});
+ assert.equal(stats.projections,1);assert.equal(stats.serializations,2);assert.equal(stats.deltaFrames,2);assert.equal(sent.get(sockets[0])[1],sent.get(sockets[1])[1]);
+ const delta=JSON.parse(sent.get(sockets[0])[1]);assert.deepEqual(delta,{type:'state-delta',baseCursor:1,cursor:2,patch:{socialV1:{online:2}},removed:[],changedKeys:['socialV1']});assert.ok(Buffer.byteLength(sent.get(sockets[0])[1])<Buffer.byteLength(sent.get(sockets[0])[0])/10);
+ broadcaster.reset(sockets[1]);view={...view,coins:11};broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(socket,encoded)=>sent.get(socket).push(encoded)});
+ assert.equal(JSON.parse(sent.get(sockets[0])[2]).type,'state-delta');assert.equal(JSON.parse(sent.get(sockets[1])[2]).type,'state');
 });

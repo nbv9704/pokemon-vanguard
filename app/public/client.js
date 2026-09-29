@@ -33,6 +33,8 @@ import {ArenaView} from "./js/arena-view.js";
 import {SocialView} from "./js/social-view.js";
 import {BATTLE_PRESENTATION_EVENT,BATTLE_AUDIO_EVENT} from "./js/ui/events.js";
 import {BattleLogDragController} from "./js/ui/battle-log-drag-controller.js";
+import {deltaCanPatchChrome} from "./js/state-delta-render-policy.js";
+import {patchLiveChrome} from "./js/live-chrome.js";
 createGameViewportScaler().attach();
 const browserStore=createBrowserStore({storage:availableBrowserStorage(window),cryptoApi:crypto,locationLike:location});
 const auth=window.__PV_AUTH__||null;
@@ -65,10 +67,14 @@ function prefs(){document.body.classList.toggle("reduce",!!settings.reduce);docu
 prefs();
 const audioManager=new AudioManager({settings,onSettingsChange:()=>browserStore.saveSettings()});
 audioManager.attachDocument(document);
-const connection=new AdventureConnection({url:websocketUrl(location,room),playerId:id,WebSocketImpl:WebSocket,onFatal:()=>{connected=false;joinedReady=false;pending=false;notify('This session is no longer authorized. Sign in again.');if(V)draw();},onState:view=>{if(view.spectator){$("#app").innerHTML='<div class="empty">This adventure belongs to another player. <a href="/">Open your own adventure</a></div>';return;}receiveView(view);},onError:(error,frame)=>{pending=false;if(frame?.actionId){socialPending.reject(frame.actionId,error);commercePending.reject(frame.actionId,error);pvpPending.reject(frame.actionId,error);}v3TeamBuilder?.handleActionError?.(error);notify(error);if(V)draw();},onActionAck:frame=>{if(frame.actionType?.startsWith('socialV1.')&&socialPending.acknowledge(frame.actionId)){pending=false;if(V&&router.current==='friends')draw();}if(commercePending.acknowledge(frame.actionId)){pending=false;if(V)draw();}if(pvpPending.acknowledge(frame.actionId,frame.actionType)){pending=false;if(V)draw();}},onStatus:value=>{connected=value;joinedReady=false;if(value){if(V)draw();return;}pending=false;if(playback)finishPlayback();else if(V)draw();else $("#connection").textContent="Connection interrupted. Reconnecting…";}});
+const connection=new AdventureConnection({url:websocketUrl(location,room),playerId:id,WebSocketImpl:WebSocket,onFatal:()=>{connected=false;joinedReady=false;pending=false;notify('This session is no longer authorized. Sign in again.');if(V)draw();},onState:(view,envelope)=>{if(view.spectator){$("#app").innerHTML='<div class="empty">This adventure belongs to another player. <a href="/">Open your own adventure</a></div>';return;}receiveView(view,envelope);},onError:(error,frame)=>{pending=false;if(frame?.actionId){socialPending.reject(frame.actionId,error);commercePending.reject(frame.actionId,error);pvpPending.reject(frame.actionId,error);}v3TeamBuilder?.handleActionError?.(error);notify(error);if(V)draw();},onActionAck:frame=>{if(frame.actionType?.startsWith('socialV1.')&&socialPending.acknowledge(frame.actionId)){pending=false;if(V&&router.current==='friends')draw();}if(commercePending.acknowledge(frame.actionId)){pending=false;if(V)draw();}if(pvpPending.acknowledge(frame.actionId,frame.actionType)){pending=false;if(V)draw();}},onStatus:value=>{connected=value;joinedReady=false;if(value){if(V)draw();return;}pending=false;if(playback)finishPlayback();else if(V)draw();else $("#connection").textContent="Connection interrupted. Reconnecting…";}});
 const completedBattleResults=new CompletedBattleResults({sendAction:action=>action.type?.startsWith('rankedV1.')||action.type?.startsWith('trainingPvpV1.')?pvpRetry.send(action):connection.sendAction(action),createActionId:kind=>`${kind}:${crypto.randomUUID()}`});
-function receiveView(next){
+function updateLiveChrome(){
+ patchLiveChrome({root:document,view:V,connectionText:connectionLabel(),unreadMailCount:unreadMailCount()});
+}
+function receiveView(next,envelope=null){
  joinedReady=true;const previous=latestView;latestView=next;pending=false;completedBattleResults.accept(next,{reentry:!previous});
+ if(deltaCanPatchChrome({envelope,route:router.current,hasView:!!V,playback:!!playback})){V=next;announceNotice(!!previous);updateLiveChrome();return;}
  prepareRoute(router.current,next);
  if(playback){
   // Presence broadcasts for the same saved turn must not restart its animation.

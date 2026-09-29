@@ -64,10 +64,22 @@ test('connection joins, filters protocol frames and sends authoritative actions'
  const connection=new AdventureConnection({url:'ws://local/ws/test',playerId:'p1',WebSocketImpl:FakeSocket,onState:view=>states.push(view),onError:error=>errors.push(error),onStatus:value=>statuses.push(value),reconnect:false,pingMs:60000});
  connection.start();const socket=FakeSocket.instance;socket.readyState=1;socket.onopen();
  socket.onmessage({data:'not json'});socket.onmessage({data:'__pong'});socket.onmessage({data:JSON.stringify({type:'state',view:{coins:1}})});socket.onmessage({data:JSON.stringify({type:'error',error:'bad'})});
- assert.deepEqual(JSON.parse(socket.sent[0]),{type:'join',playerId:'p1'});assert.equal(connection.sendAction({type:'claim',id:0}),true);
+ assert.deepEqual(JSON.parse(socket.sent[0]),{type:'join',playerId:'p1',capabilities:['state-delta-v1']});assert.equal(connection.sendAction({type:'claim',id:0}),true);
  assert.deepEqual(JSON.parse(socket.sent[1]),{type:'action',action:{type:'claim',id:0}});assert.deepEqual(states,[{coins:1}]);assert.deepEqual(errors,['bad']);assert.deepEqual(statuses,[true]);
  connection.stop();assert.equal(connection.sendAction({type:'claim',id:1}),false);
  assert.equal(websocketUrl({protocol:'https:',host:'game.test'},'a b'),'wss://game.test/ws/a%20b');
+});
+
+test('connection applies ordered state deltas, skips no-op redraw and requests full resync on cursor gaps',()=>{
+ class FakeSocket{static OPEN=1;constructor(){this.readyState=0;this.sent=[];FakeSocket.instance=this;}send(value){this.sent.push(value);}close(){this.readyState=3;}}
+ const updates=[],connection=new AdventureConnection({url:'ws://local/ws/test',playerId:'p1',WebSocketImpl:FakeSocket,onState:(view,envelope)=>updates.push([view,envelope.type]),reconnect:false,pingMs:60000});connection.start();const socket=FakeSocket.instance;socket.readyState=1;socket.onopen();
+ socket.onmessage({data:JSON.stringify({type:'state',cursor:4,view:{coins:10,socialV1:{online:1}}})});
+ socket.onmessage({data:JSON.stringify({type:'state-delta',baseCursor:4,cursor:5,patch:{socialV1:{online:2}},removed:[],changedKeys:['socialV1']})});
+ socket.onmessage({data:JSON.stringify({type:'state-delta',baseCursor:5,cursor:6,patch:{},removed:[],changedKeys:[]})});
+ assert.deepEqual(updates,[[{coins:10,socialV1:{online:1}},'state'],[{coins:10,socialV1:{online:2}},'state-delta']]);
+ socket.onmessage({data:JSON.stringify({type:'state-delta',baseCursor:8,cursor:9,patch:{coins:99},removed:[],changedKeys:['coins']})});
+ assert.deepEqual(JSON.parse(socket.sent.at(-1)),{type:'resync',cursor:6});
+ socket.onmessage({data:JSON.stringify({type:'state',cursor:10,view:{coins:12}})});assert.deepEqual(updates.at(-1),[{coins:12},'state']);connection.stop();
 });
 
 test('connection heartbeat drops a silent half-open socket instead of staying falsely connected',async()=>{

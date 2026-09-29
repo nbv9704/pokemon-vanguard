@@ -53,6 +53,7 @@
     "benchmark:http-runtime": "node scripts/benchmark-http-runtime-b22.mjs",
     "benchmark:lazy-ui": "node scripts/benchmark-lazy-ui-b23.mjs",
     "benchmark:operations": "node scripts/benchmark-operations-b30.mjs",
+    "benchmark:state-delta": "node scripts/benchmark-state-delta-b39.mjs",
     "release:verify": "node scripts/run-verify-release.mjs",
     "assets:responsive:validate": "node scripts/validate-image-assets-b25.mjs",
     "assets:responsive:generate": "python3 scripts/optimize-image-assets.py",

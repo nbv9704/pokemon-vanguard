@@ -1,6 +1,7 @@
 // Browser connection. A socket OPEN is not proof that join completed or data saved.
 const TERMINAL_CLOSE_CODES=new Set([4001,4003,4401,4403]);
 const ACTION_ID=/^[A-Za-z0-9:_-]{1,128}$/;
+const SAFE_PATCH_KEY=/^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/;
 /** @param {unknown} value @returns {value is Record<string, unknown>} */
 const plainObject=value=>!!value&&typeof value==='object'&&!Array.isArray(value);
 
@@ -14,6 +15,13 @@ export function parseServerEnvelope(raw){
  if(!plainObject(raw))return null;
  if(raw.type==='state'){
   if(!plainObject(raw.view))return null;
+  if(raw.cursor!==undefined&&(typeof raw.cursor!=='number'||!Number.isSafeInteger(raw.cursor)||raw.cursor<1))return null;
+  return /** @type {import('./types/browser-contracts.d.ts').ServerEnvelope} */(/** @type {unknown} */(raw));
+ }
+ if(raw.type==='state-delta'){
+  if(typeof raw.baseCursor!=='number'||!Number.isSafeInteger(raw.baseCursor)||raw.baseCursor<1||typeof raw.cursor!=='number'||!Number.isSafeInteger(raw.cursor)||raw.cursor!==raw.baseCursor+1||!plainObject(raw.patch)||!Array.isArray(raw.removed)||!Array.isArray(raw.changedKeys))return null;
+  const patchKeys=Object.keys(raw.patch),expected=[...patchKeys,...raw.removed],keys=[...expected,...raw.changedKeys];if(keys.length>400||keys.some(key=>typeof key!=='string'||!SAFE_PATCH_KEY.test(key)||['__proto__','prototype','constructor'].includes(key)))return null;
+  const expectedSet=new Set(expected),changedSet=new Set(raw.changedKeys);if(expectedSet.size!==expected.length||changedSet.size!==raw.changedKeys.length||expectedSet.size!==changedSet.size||[...expectedSet].some(key=>!changedSet.has(key)))return null;
   return /** @type {import('./types/browser-contracts.d.ts').ServerEnvelope} */(/** @type {unknown} */(raw));
  }
  if(raw.type==='error'){
@@ -42,7 +50,7 @@ export class AdventureConnection{
   /** @type {ReturnType<typeof setInterval>|null} */this.pingTimer=null;
   /** @type {ReturnType<typeof setTimeout>|null} */this.pongTimer=null;
   /** @type {ReturnType<typeof setTimeout>|null} */this.joinTimer=null;
-  this.retry=0;this.stopped=true;this.joined=false;this.awaitingPong=false;
+  this.retry=0;this.stopped=true;this.joined=false;this.awaitingPong=false;/** @type {import('./types/browser-contracts.d.ts').PublicView|null} */this.stateView=null;this.stateCursor=0;this.resyncing=false;
  }
  get connected(){return this.socket?.readyState===(this.WebSocketImpl.OPEN??1);}
  start(){if(!this.stopped)return;this.stopped=false;this.open();this.pingTimer=setInterval(()=>this.heartbeat(),this.pingMs);}
@@ -67,11 +75,11 @@ export class AdventureConnection{
  handleJoinTimeout(socket){if(!this.joined)this.disconnectUnhealthy(socket,'join timeout');}
  open(){
   if(this.stopped)return;
-  if(this.reconnectTimer!==null)clearTimeout(this.reconnectTimer);this.reconnectTimer=null;this.clearPongWatch();this.clearJoinWatch();this.joined=false;
+  if(this.reconnectTimer!==null)clearTimeout(this.reconnectTimer);this.reconnectTimer=null;this.clearPongWatch();this.clearJoinWatch();this.joined=false;this.stateView=null;this.stateCursor=0;this.resyncing=false;
   const socket=this.socket=new this.WebSocketImpl(this.url);
   socket.onopen=()=>{
    if(socket!==this.socket||this.stopped)return;this.markAlive();this.onStatus?.(true);
-   socket.send(JSON.stringify({type:'join',playerId:this.playerId}));
+   socket.send(JSON.stringify({type:'join',playerId:this.playerId,capabilities:['state-delta-v1']}));
    this.joinTimer=setTimeout(()=>this.handleJoinTimeout(socket),this.joinTimeoutMs);
   };
   socket.onmessage=event=>{
@@ -80,21 +88,27 @@ export class AdventureConnection{
    const message=parseServerEnvelope(raw);if(!message)return;
    if(message.type==='error'){this.onError?.(message.error,message);return;}
    if(message.type==='action-ack'){this.onActionAck?.(message);return;}
+   if(message.type==='state-delta'){
+    if(!this.joined||!this.stateView||message.baseCursor!==this.stateCursor){if(!this.resyncing){this.resyncing=true;socket.send(JSON.stringify({type:'resync',cursor:this.stateCursor}));}return;}
+    /** @type {import('./types/browser-contracts.d.ts').PublicView} */const view={...this.stateView,...message.patch};for(const key of message.removed)delete view[key];this.stateView=view;this.stateCursor=message.cursor;
+    if(message.changedKeys.length)this.onState?.(view,message);return;
+   }
    if(message.type==='state'){
     if(!this.joined){this.joined=true;this.retry=0;this.clearJoinWatch();}
+    this.stateView=message.view;this.stateCursor=message.cursor||0;this.resyncing=false;
     this.onState?.(message.view,message);
    }
   };
   socket.onerror=()=>{};
   socket.onclose=event=>{
-   if(socket!==this.socket)return;this.clearPongWatch();this.clearJoinWatch();this.joined=false;this.socket=null;this.onStatus?.(false);
+   if(socket!==this.socket)return;this.clearPongWatch();this.clearJoinWatch();this.joined=false;this.stateView=null;this.stateCursor=0;this.resyncing=false;this.socket=null;this.onStatus?.(false);
    if(TERMINAL_CLOSE_CODES.has(event?.code)){this.stopped=true;if(this.pingTimer!==null)clearInterval(this.pingTimer);this.onFatal?.(event.code);return;}
    this.scheduleReconnect();
   };
  }
  /** @param {import('./types/browser-contracts.d.ts').ActionRequest} action */
  sendAction(action){if(!this.connected||!this.joined||!action||typeof action.type!=='string')return false;this.socket?.send(JSON.stringify({type:'action',action}));return true;}
- stop(){this.stopped=true;if(this.reconnectTimer!==null)clearTimeout(this.reconnectTimer);if(this.pingTimer!==null)clearInterval(this.pingTimer);this.clearPongWatch();this.clearJoinWatch();this.joined=false;const socket=this.socket;this.socket=null;socket?.close();}
+ stop(){this.stopped=true;if(this.reconnectTimer!==null)clearTimeout(this.reconnectTimer);if(this.pingTimer!==null)clearInterval(this.pingTimer);this.clearPongWatch();this.clearJoinWatch();this.joined=false;this.stateView=null;this.stateCursor=0;this.resyncing=false;const socket=this.socket;this.socket=null;socket?.close();}
 }
 /** @param {{protocol:string,host:string}} locationLike @param {string} room */
 export function websocketUrl(locationLike,room){return (locationLike.protocol==='https:'?'wss:':'ws:')+'//'+locationLike.host+'/ws/'+encodeURIComponent(room);}

@@ -1,0 +1,13 @@
+import {performance} from 'node:perf_hooks';
+import {createDeltaStateBroadcaster} from '../server/state-broadcast.mjs';
+
+const samples=40,largeList=(count,prefix)=>Array.from({length:count},(_,index)=>({id:`${prefix}-${index}`,name:`Entry ${index}`,value:index,description:'x'.repeat(72)}));
+const base={schemaVersion:3,coins:1000,gems:50,trainingV3:{mons:largeList(272,'mon'),builds:largeList(600,'build'),teams:largeList(5,'team')},socialV1:{friends:largeList(100,'friend'),conversations:{}},bagV1:{items:largeList(141,'item')},battleV3:{id:'double',phase:'COMMAND',events:largeList(800,'event'),snapshot:{turn:10}},missions:{claimableCount:0},mailboxV1:{unreadCount:0}};
+const percentile=(values,p)=>values.slice().sort((a,b)=>a-b)[Math.min(values.length-1,Math.floor(values.length*p))];
+function scenario(name,mutate){
+ const socket={},clients=[[socket,'owner']],broadcaster=createDeltaStateBroadcaster(),frames=[],fullTimes=[],deltaTimes=[];let view=structuredClone(base);broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(_socket,frame)=>frames.push(frame)});const fullBytes=Buffer.byteLength(frames.at(-1));
+ for(let index=0;index<samples;index++){view=mutate(structuredClone(view),index);let start=performance.now();JSON.stringify({type:'state',view});fullTimes.push(performance.now()-start);start=performance.now();broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(_socket,frame)=>frames.push(frame)});deltaTimes.push(performance.now()-start);}
+ const deltaBytes=frames.slice(1).map(frame=>Buffer.byteLength(frame));broadcaster.reset(socket);broadcaster.broadcast(clients,{project:()=>({type:'state',view}),send:(_socket,frame)=>frames.push(frame)});return {name,fullBytes,deltaBytesP50:percentile(deltaBytes,.5),deltaBytesP95:percentile(deltaBytes,.95),reconnectBytes:Buffer.byteLength(frames.at(-1)),fullCpuMsP50:Number(percentile(fullTimes,.5).toFixed(3)),fullCpuMsP95:Number(percentile(fullTimes,.95).toFixed(3)),deltaCpuMsP50:Number(percentile(deltaTimes,.5).toFixed(3)),deltaCpuMsP95:Number(percentile(deltaTimes,.95).toFixed(3))};
+}
+const results=[scenario('idle',view=>view),scenario('chat-presence',(view,index)=>(view.socialV1={...view.socialV1,online:index%2},view)),scenario('bag-ticket',(view,index)=>(view.bagV1={...view.bagV1,rankTickets:index},view)),scenario('team-name',(view,index)=>(view.trainingV3.teams[0].name=`Team ${index}`,view)),scenario('double-battle-event',(view,index)=>(view.battleV3.events.push({id:`new-${index}`,description:'turn event'}),view))];
+console.log(JSON.stringify({samples,node:process.version,platform:process.platform,arch:process.arch,results},null,2));
