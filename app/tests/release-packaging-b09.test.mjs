@@ -14,10 +14,14 @@ test('release is byte-stable across input mtimes, verified per-file, private dir
  try{
   mkdirSync(path.join(root,'app','public'),{recursive:true});
   mkdirSync(path.join(root,'app','.local-data'),{recursive:true});
+  mkdirSync(path.join(root,'app','.restore-backups'),{recursive:true});
+  mkdirSync(path.join(root,'app','.storage.lock'),{recursive:true});
   writeFileSync(path.join(root,'app','package.json'),'{}');
   writeFileSync(path.join(root,'app','.dev.vars.example'),'SESSION_SECRET=fixture');
   writeFileSync(path.join(root,'app','public','file.js'),'console.log("public")');
   writeFileSync(path.join(root,'app','.local-data','player.json'),'save');
+  writeFileSync(path.join(root,'app','.restore-backups','player.pvbackup.json'),'backup');
+  writeFileSync(path.join(root,'app','.storage.lock','owner.json'),'lock');
   writeFileSync(path.join(root,'app','.dev.vars'),'secret');
   symlinkSync(path.join(root,'app','.local-data'),path.join(root,'app','public','leak'),process.platform==='win32'?'junction':'dir');
   const a=path.join(tmp,'a.zip'),b=path.join(tmp,'b.zip');
@@ -30,6 +34,6 @@ test('release is byte-stable across input mtimes, verified per-file, private dir
   assert.equal(inspect.status,0,inspect.stderr);assert.equal(inspect.stdout.trim(),'PokemonVanguard');
   const check=run(verifyScript,[a]);assert.equal(check.status,0,check.stderr);assert.match(check.stdout,/manifest\/CRC\/security PASS/);
   const dry=run(packageScript,['--project-root',root,'--dry-run']);assert.equal(dry.status,0,dry.stderr);
-  assert.match(dry.stdout,/EXCLUDED.*\.local-data/);assert.match(dry.stdout,/EXCLUDED symlink app\/public\/leak/);
+  assert.match(dry.stdout,/EXCLUDED.*\.local-data/);assert.match(dry.stdout,/EXCLUDED.*\.restore-backups/);assert.match(dry.stdout,/EXCLUDED.*\.storage.lock/);assert.match(dry.stdout,/EXCLUDED symlink app\/public\/leak/);
  }finally{rmSync(tmp,{recursive:true,force:true});}
 });

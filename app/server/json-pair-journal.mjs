@@ -1,6 +1,7 @@
 // Local JSON WAL: a durable prepared intention is rolled forward before any
-// subsequent adapter read or write. This is single-process recovery, NOT a
-// multi-process transaction or instantaneous atomic visibility to raw readers.
+// subsequent adapter read or write. The storage adapter holds a cross-process
+// directory lock around this journal; raw external readers still do not receive
+// instantaneous atomic visibility across both account files.
 import {createHash,randomUUID} from 'node:crypto';
 import {readFile,mkdir,rename,rm,open} from 'node:fs/promises';
 import path from 'node:path';

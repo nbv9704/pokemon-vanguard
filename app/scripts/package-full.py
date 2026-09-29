@@ -12,7 +12,7 @@ from pathlib import Path
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 
 SKIP_DIRS = {
-    '.admin-backups', '.campaigns', '.transactions', '.git', '.local-data', '.wrangler', '__pycache__',
+    '.admin-backups', '.campaigns', '.restore-backups', '.storage.lock', '.transactions', '.git', '.local-data', '.wrangler', '__pycache__',
     '.pytest_cache', 'backups', 'content-candidates', 'dist', 'logs', 'node_modules', 'reports',
 }
 SKIP_FILES = {'.dev.vars', '.ds_store', 'id_rsa', 'id_ed25519'}

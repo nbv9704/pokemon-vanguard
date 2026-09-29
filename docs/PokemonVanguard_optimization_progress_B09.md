@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 27 |
-| IN PROGRESS | 6 |
+| DONE | 28 |
+| IN PROGRESS | 5 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B42 — hoàn tất #11 vòng đời session và thu hồi phiên**. Session bị thu hồi được ghi bằng hash vào journal bền, dùng atomic replace và khóa liên tiến trình; HTTP/WebSocket xác thực lại từ journal, socket được quét mỗi giây và mọi persistence commit đều có cổng kiểm tra session mới nhất. Kiểm thử liên tiến trình/restart/fail-closed cùng verifier Supabase live đều PASS; `npm run check` và full regression **1.487/1.487 PASS trên 238 file**.
+Đợt hiện tại: **B43 — hoàn tất #13 Save JSON schema/concurrency/recovery**. Local storage có schema/reference gate, khóa thư mục liên tiến trình, WAL được mọi process kiểm tra trước I/O, backup versioned có checksum/account binding/retention và pre-restore safety copy. Child-process fault test kết thúc writer sau rename đầu rồi xác nhận instance mới roll-forward; `npm run check` và full regression **1.494/1.494 PASS trên 239 file**.
 
 ## Bảng tiến độ
 
@@ -40,7 +40,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 10 | Giới hạn WebSocket/backpressure | P1 | DONE | B06/B07/B08/B10/B17/B18/B24/B39/B40: payload 70 KiB, join 12s, 24 socket/IP, 4/account, queue 32, buffer 8 MiB, token bucket, room cap/TTL/LRU và cursor/resync. Real-transport flood/oversize/multi-tab/no-starvation cùng benchmark 100k PASS; cross-worker/global ownership thuộc #18/deployment. `app/docs/websocket-guard-completion-b40.md` |
 | 11 | Vòng đời session và thu hồi phiên | P1 | DONE | B07/B42: SID + expiry/binding, journal thu hồi bền chỉ lưu SHA-256 với atomic replace/khóa liên tiến trình, quét socket mỗi giây, xác thực mới ở HTTP/WS và ngay trước commit. Test restart/hai server/child process/fail-closed cùng Supabase UUID live PASS. Mô hình nhiều host không dùng chung save directory thuộc #04/#18. `app/docs/session-lifecycle-b42.md` |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
-| 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
+| 13 | Save JSON schema/concurrency/recovery | P1 | DONE | B03/B43: unique temp + file/directory sync contract, schema/reference gate, cross-process directory lock và WAL roll-forward sau process kill; versioned checksum/account-bound backup, retention và automatic pre-restore copy. Windows/POSIX hosted acceptance bắt buộc; live PvP rehydration thuộc #18. `app/docs/json-storage-completion-b43.md` |
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
 | 15 | Public projection allowlist/pure | P1 | DONE | B11 root save, Training V2/V3, Battle V2/V3 và preview dùng allowlist fail-closed; negative sentinel + WebSocket thật chứng minh receipt/field tương lai không lọt ra public |
 | 16 | Giảm full-state broadcast/render | P2 | DONE | B12/B13/B24/B39: shared audience projection; full join/reconnect/resync + capability-gated top-level delta/cursor; strict mismatch resync; route-aware chrome patch, battle/playback full-render. 40-sample bytes giảm 54,35–99,97%; real WS legacy/new client và browser hai tab focus/caret/scroll PASS. `app/docs/state-delta-b39.md` |
@@ -535,6 +535,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Migration:** B42 không thêm schema hay migration Supabase; migrations 001–003 hiện tại là đủ. Journal là metadata vận hành của server và phải nằm trên save directory dùng chung giữa các process trên cùng host.
 - **Hosted CI:** run [`36542157290`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36542157290) cho commit `5b455e2`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** chưa tuyên bố orchestration nhiều host không có shared volume, distributed room ownership hay khôi phục PvP đang chạy; các phần đó vẫn thuộc #04/#18. Việc thu hồi access token tại nhà cung cấp OAuth cũng không phải contract của session nội bộ. Chi tiết: `app/docs/session-lifecycle-b42.md`. **Tổng sau B42: 27 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B43: đóng #13 Save JSON schema/concurrency/recovery
+
+- **Schema fail-closed:** tách `save-schema.mjs`, áp dụng trên load/save/mỗi entry pair/restore; từ chối JSON truncated, root/version/owner/revision/economy sai, ID trùng, tham chiếu mon/build/team treo và item build không thuộc inventory. Save hỏng giữ nguyên byte để chẩn đoán; input hoặc write lỗi không thay bản tốt gần nhất.
+- **Concurrency và crash recovery:** thêm `.storage.lock` dạng thư mục atomic với owner token, heartbeat, acquisition deadline và stale recovery. Queue trong process vẫn giữ thứ tự; mọi process giữ cùng lock và kiểm tra WAL trước mỗi I/O. Temp file là UUID cùng volume, được flush trước rename; directory sync trên POSIX, còn Windows được ghi rõ giới hạn không có directory fsync tương đương trong Node.
+- **Backup/restore:** envelope backup chứa ID ngẫu nhiên, UTC time, account ID, SHA-256, schema/catalog version và state đã validate; mặc định giữ 20 bản/account/folder. Restore kiểm account/checksum trước mutation và tự tạo `.restore-backups` safety copy. Legacy raw backup chỉ được nhận khi filename còn chứng minh account đích; package loại `.storage.lock` và `.restore-backups`.
+- **Fault acceptance:** test B43 chạy hai child process commit hai pair WAL trên cùng directory và đều hoàn tất; child riêng `exit(91)` sau rename account đầu, để lại lock/WAL rồi instance mới reclaim và roll-forward cả hai save + receipt. Có thêm permission/write failure, corrupt/future/reference schema, stale temp/lock, retention, tamper, wrong-account restore và bảo toàn raw save hỏng trước restore. Focused storage/Ranked/Social/package **44/44 PASS**.
+- **Nghiệm thu local:** `npm run check` PASS với 469 source syntax, 407 module/1.166 edge/0 cycle và 488 production file trong structure gate. Full `npm test` **1.494/1.494 PASS trên 239 file**, 0 fail/skip/todo.
+- **Ranh giới:** đây là durability domain local filesystem dùng chung, không hứa raw reader thấy hai file atomically, không chứng nhận network filesystem/hardware cache mất điện và không thay Supabase CAS/transaction B41. Khôi phục snapshot/timer Ranked/Friendly đang chạy vẫn là #18 `DEFERRED`, không thuộc thiếu sót của JSON adapter. Chi tiết: `app/docs/json-storage-completion-b43.md`. **Tổng sau B43: 28 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 
