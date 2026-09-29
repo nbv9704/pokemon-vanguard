@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 25 |
-| IN PROGRESS | 8 |
+| DONE | 26 |
+| IN PROGRESS | 7 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B40 — hoàn tất #10 WebSocket resource guards**. Đã chốt giới hạn transport/admission/queue/quota/backpressure/room, bổ sung acceptance trên WebSocket thật cho join deadline, giới hạn bốn tab, flood cô lập, frame quá cỡ và counter cleanup. Benchmark 100.000 lượt giữ queue đúng 32, quota đúng 70, ngắt slow consumer trên 8 MiB và chỉ encode một delta dùng chung cho bốn tab. `npm run check` PASS; full regression **1.483/1.483 PASS trên 237 file**.
+Đợt hiện tại: **B41 — hoàn tất #05 Supabase optimistic concurrency/transaction**. Verifier live tạo hai Auth fixture cô lập rồi kiểm RLS, CAS stale writer, pair commit/duplicate/conflict, rollback nguyên tử, ba RPC reporting và campaign service-role-only; campaign/tài khoản được dọn trong `finally`. Hai lượt live đều PASS và cleanup PASS; `npm run check` cùng full regression **1.483/1.483 PASS trên 237 file**.
 
 ## Bảng tiến độ
 
@@ -32,7 +32,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 02 | Ranked chỉ settlement sau khi lưu thành công | P0 | IN PROGRESS | B03 JSON pair WAL; B08 xác nhận chặn pair cross-backend trước mọi write; B04 thêm receipt kết quả trong hai save, kiểm tra lại receipt sau mất ACK và lifecycle retry; còn mid-battle recovery, multi-process/Supabase rollout |
 | 03 | Bộ đóng gói chưa loại hết dữ liệu local | P0 | DONE | Exclude backup/report/admin backup/campaign journal/raw candidate/node_modules/dist; release ZIP vẫn chứa normalized validation snapshot đã review |
 | 04 | Một cơ chế khóa thống nhất cho account và match | P1 | IN PROGRESS | `AccountCoordinator` khóa tập account; WS/Admin/Social/Ranked/Friendly action đã dùng; B24 thêm FIFO reservation cho giao dịch multi-account để không bị request mới vượt hàng; còn lifecycle Friendly và multi-process |
-| 05 | Supabase optimistic concurrency và transaction | P1 | IN PROGRESS | CAS revision + pair-save RPC + campaign/reporting migration 001–003; chủ dự án xác nhận đã apply đủ ngày 29/09/2026. Còn kiểm chứng RLS/RPC, CAS conflict và pair transaction trên Supabase staging thật trước khi DONE |
+| 05 | Supabase optimistic concurrency và transaction | P1 | DONE | B41 live verifier trên project cấu hình: RLS own/cross-user và role denial, stale CAS, atomic pair commit/rollback, duplicate/conflict receipt, reporting RPC và campaign service-role-only đều PASS; hai Auth fixture/campaign tự cleanup. Migration 001–003 đã được xác nhận bằng runtime. `app/docs/supabase-staging-verification-b41.md` |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn. Còn receipt PvP qua process restart (#18) và archival/compaction bền vững (#09) |
@@ -55,7 +55,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 25 | Lint/type contracts | P2 | DONE | B19–24 ESLint promise-aware, import/cycle, 7 strict Node modules. B28: strict DOM/browser config cho WebSocket envelope và Shop purchase builder; discriminated TS positive/negative assertions cho Command/Result/SavePort/reviewed action/ACK; storage bootstrap kiểm 9 method không clone; browser reject ACK/state malformed. Negative CI thực thi xác minh thiếu await và import browser→server đều FAIL. `npm run check` PASS; focused 12 file/61 test PASS. Giới hạn: không coi toàn bộ JS/storage internals là typed hoặc thay runtime schema #13. |
 | 26 | CI/test đúng artifact phát hành | P1/P2 | DONE | Run #10: Ubuntu + Windows npm-ci/check/inventory/1.333 test PASS; Ubuntu đóng gói, verify, clean-unpack và handle-leak PASS |
 | 27 | Snapshot content/repo size | P2 | DONE | B27 pin 35 immutable catalog (1 active, 34 source-history; 18.06 MiB raw); giữ nguyên bản nguồn, profile runtime-source chỉ chứa active; kiểm tra toàn bộ SHA/path/classification trước đóng gói, ZIP verifier độc lập kiểm source/runtime membership, clean-runtime `npm run check` + 10/10 V3 migration/API tests PASS. B36 đã bỏ icon proxy/mirror ngoài; 39 artwork gốc local được theo dõi ở #22. Không tuyên bố replay battle lịch sử/mid-match restart (#18). |
-| 28 | Admin overview aggregate đúng | P1 | DONE | B29: RPC read-only service-role-only aggregate toàn bộ profiles (không sample 100), summary-only SQL page, UI load-more ổn định theo ID, local JSON scan toàn tập, gift audience UUID keyset 250/page + frozen manifest + delivery <=100/request. Fixture 151/225 accounts, 215 recipient lost-ACK/partial replay và negative privacy/role-policy tests PASS. Rollout SQL migration 003/staging RLS live còn thuộc #05; chưa khẳng định production DBA verification. |
+| 28 | Admin overview aggregate đúng | P1 | DONE | B29: RPC read-only service-role-only aggregate toàn bộ profiles (không sample 100), summary-only SQL page, UI load-more ổn định theo ID, local JSON scan toàn tập, gift audience UUID keyset 250/page + frozen manifest + delivery <=100/request. Fixture 151/225 accounts, 215 recipient lost-ACK/partial replay và negative privacy/role-policy tests PASS; B41 xác nhận migration 003/RPC role live. |
 | 29 | Social capacity/profile offline | P1 | DONE | B31: khóa cả hai tài khoản và đọc durable trước mutation, xác thực request hai chiều, chống 99→101 khi accept đồng thời; bắt buộc atomic savePair trước publish, loại fallback ghi độc lập; profile offline ưu tiên durable profile và cache whitelist 30s/256 entries, invalidate theo socket, từ chối sai userId. Kiểm thử fixtures JSON concurrency, giới hạn 98/99/100, lost ACK qua signed WS/mock RPC, HTML escaping PASS. Cloud staging/distributed coordinator theo #04/#05; browser/a11y rộng theo #31. |
 | 30 | Quan sát lỗi/benchmark | P1/P2 | DONE | B30: bounded allowlist operation journal (128), secret/error-message redaction, provider read-only /health/live + /health/ready TTL/singleflight/deadline, admin-only /api/admin/observability JSON export, runtime + pending Ranked settlement age/retries và 6 diagnostic alerts, versioned synthetic benchmark baseline/compare (small, large, history, single/double, multi-tab, pair coordinator), 10k journal/320 queue synthetic soak. Focused regression, npm run check và full 1.427/1.427 PASS. Đây là export per-process/pollable, không tuyên bố multi-worker aggregator, hosted CI hay production SLO. |
 | 31 | UX/accessibility/storage fallback | P2 | DONE | B24/B33/B34/B37: storage getter/read/write lỗi chuyển memory và cảnh báo rõ; modal trap/inert/return-focus; skip-link + main landmark cho game/battle/Admin; route title/focus một lần, không cướp focus khi WS redraw; account menu và Admin tabs điều hướng bàn phím; current/live/badge semantics; reduced-motion/forced-colors. Gate 9 source, focused 32/32, full 1.471/1.471 và browser QA PASS. `app/docs/accessibility-completion-b37.md`. |
@@ -516,6 +516,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** focused guards/state/room **16/16 PASS**; `npm run benchmark:websocket-guards` PASS; `npm run check` PASS; full `npm test` **1.483/1.483 PASS trên 237 file**, 0 fail/skip/todo. Chi tiết: `app/docs/websocket-guard-completion-b40.md`.
 - **Hosted CI:** run [`36536450212`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36536450212) cho commit `b23b413`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** guard là per-process. Global connection ownership/cap đa worker thuộc #18 và hạ tầng deployment; không tuyên bố DDoS/WAF hay production traffic SLO. **Tổng sau B40: 25 DONE / 8 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B41: đóng #05 Supabase optimistic concurrency/transaction
+
+- **Verifier live an toàn:** thêm `npm run verify:supabase-staging`; script chỉ đọc key từ `.dev.vars` ignored, cần cờ `--live`, không in key/project URL và phân biệt legacy service-role JWT với `sb_secret_...`. Mỗi lượt tạo hai Auth user/campaign có marker ngẫu nhiên, không chọn sửa dữ liệu người chơi; cleanup trong `finally` xóa campaign và Auth users, để foreign key cascade profile/save/receipt. Cleanup lỗi làm cả run fail.
+- **RLS và role:** authenticated fixture chỉ đọc profile của chính mình, không thấy account còn lại; anon bị từ chối đọc. Authenticated không thể sửa profile, gọi pair-save hay admin aggregate. Server role chạy được `admin_account_page`, `admin_account_aggregate`, `admin_gift_audience_page`; campaign chỉ server role đọc/ghi.
+- **Concurrency/transaction:** hai writer cùng revision xác nhận winner commit và stale writer nhận `STORAGE_REVISION_CONFLICT`. Pair RPC commit hai save, retry cùng ID/fingerprint trả duplicate, cùng ID/khác payload bị từ chối. Conflict cưỡng bức ở account thứ hai chứng minh update account thứ nhất trong transaction được rollback, còn write độc lập thắng vẫn nguyên vẹn.
+- **Nghiệm thu:** hai lượt `verify:supabase-staging` độc lập đều PASS đủ 7 nhóm và `fixtureCleanup: PASS`; focused storage/admin/social **31/31 PASS**; `npm run check` PASS sau khi lint bắt và loại một helper thừa; full `npm test` **1.483/1.483 PASS trên 237 file**, 0 fail/skip/todo. Chi tiết: `app/docs/supabase-staging-verification-b41.md`.
+- **Ranh giới:** B41 xác nhận database/RLS của migration 001–003, không nhận thay phần coordinator đa process #04, session revoke #11, JSON power-loss #13 hay active PvP recovery #18. **Tổng sau B41: 26 DONE / 7 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 
