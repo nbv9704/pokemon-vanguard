@@ -62,3 +62,6 @@ durable two-account settlement receipts.
 - Regression includes state-before-ACK retention, reload, wrong-domain ACK,
   explicit same-ID retry, two-client duplicate, payload conflict, and durable
   versus session ACK parsing.
+- GitHub Actions run
+  [`36531482564`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36531482564):
+  Ubuntu PASS, Windows PASS, and `release-smoke` PASS for commit `06016d4`.

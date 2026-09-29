@@ -494,6 +494,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Ngữ nghĩa trung thực:** wire ACK phân biệt `commitStatus: committed` + account revision cho Ranked settlement/dismiss đã persist, và `commitStatus: session` + authoritative phase revision cho lệnh giữa trận. Banner nói rõ active PvP chỉ bền trong phiên; không lấy socket online hay broadcast làm bằng chứng đã lưu.
 - **Multi-client/lost ACK:** Friendly có receipt phiên giới hạn 1.000 entry và fingerprint canonical. Hai client retry cùng ID chỉ mutate một lần và nhận duplicate; cùng ID/khác payload fail-closed. Ranked giữ receipt match và settlement receipt bền vững hiện có.
 - **Nghiệm thu:** `npm run check` PASS; focused PvP/ACK/contract **36/36 PASS** sau bước siết ACK domain cuối; full `npm test` **1.474/1.474 PASS trên 235 file**, 0 fail/skip/todo. Full suite bao gồm test B38 state-before-ACK, reload, explicit same-ID retry, hai client duplicate, conflict payload và parser status/revision. Chi tiết: `app/docs/pvp-ack-b38.md`.
+- **Hosted CI:** run [`36531482564`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36531482564) cho commit `06016d4`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** #18 tiếp tục `DEFERRED`; receipt lệnh giữa trận không bền qua process restart. Archival/compaction receipt bền vững còn thuộc #08/#09; distributed/Supabase staging thuộc #04/#05. **Tổng sau B38: 23 DONE / 10 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
