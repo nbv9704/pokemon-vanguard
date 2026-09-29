@@ -16,13 +16,13 @@ export class RuntimeMetrics{
  snapshot(){const memory=this.memoryUsage(),since=Date.now()-300_000;this.persistFailureTimes=this.persistFailureTimes.filter(at=>at>=since);return {persist:{...this.persist.snapshot(),errors:this.persistErrors,recentErrors:this.persistFailureTimes.length},eventLoop:this.eventLoop.snapshot(),memory:{heapUsedBytes:finite(memory.heapUsed),heapTotalBytes:finite(memory.heapTotal),rssBytes:finite(memory.rss)},broadcast:{frames:this.broadcasts,deliveries:this.broadcastDeliveries,bytes:this.broadcastBytes},socketDrops:{...this.socketDrops}};}
 }
 
-export function instrumentPersistence(storage,metrics,methods=['save','savePair','restore'],onFailure=()=>{},onSuccess=()=>{}){
+export function instrumentPersistence(storage,metrics,methods=['save','savePair','restore'],onFailure=()=>{},onSuccess=()=>{},beforeCommit=async()=>{}){
  for(const method of methods){
   if(typeof storage[method]!=='function')continue;
   const original=storage[method].bind(storage);
   storage[method]=(...args)=>metrics.measurePersist(async()=>{
    const started=performance.now();
-   try{const result=await original(...args);onSuccess({operation:method,elapsedMs:performance.now()-started,revision:method==='save'?args[1]?.revision:undefined});return result;}
+   try{await beforeCommit({operation:method});const result=await original(...args);onSuccess({operation:method,elapsedMs:performance.now()-started,revision:method==='save'?args[1]?.revision:undefined});return result;}
    catch(error){onFailure({operation:method,errorCode:error?.code,elapsedMs:performance.now()-started});throw error;}
   });
  }

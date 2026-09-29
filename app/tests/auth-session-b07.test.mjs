@@ -26,12 +26,12 @@ test('logout revokes only the selected tab session and preserves the other sessi
  assert.equal(auth.sessionValid(a),false);assert.equal(auth.sessionValid(b),true);assert.deepEqual(revoked,[a.sid]);assert.equal(logout.status,303);
 });
 
-test('signed payload rejects wrong providers, cross-account room mappings, and accepts older valid cookie IDs',()=>{
+test('signed payload rejects wrong providers, cross-account room mappings, and accepts older valid cookie IDs',async()=>{
  const timestamp=2_000_000_000_000,auth=createLocalAuth({env:{AUTH_SESSION_SECRET:secret},now:()=>timestamp}),exp=Math.floor(timestamp/1000)+3600;
  assert.equal(auth.readSession(reqFor(sign({...local('p'),provider:'evil',exp}))),null);
  assert.equal(auth.readSession(reqFor(sign({...local('p'),roomId:'aether-other',exp}))),null);
  assert.equal(auth.readSession(reqFor(sign({...local('p'),accountId:'dev:other',exp}))),null);
  assert.equal(auth.readSession(reqFor(sign({accountId:'invalid',playerId:'invalid',roomId:'invalid',provider:'google',exp}))),null);
  const older=sign({...local('a'.repeat(128)),exp}),valid=auth.readSession(reqFor(older));assert.ok(valid);assert.equal(valid.roomId.length,135);assert.equal(valid.sid,createHash('sha256').update(older).digest('base64url'));
- assert.equal(auth.revokeSession(valid),true);assert.equal(auth.readSession(reqFor(older)),null);
+ assert.equal(await auth.revokeSession(valid),true);assert.equal(auth.readSession(reqFor(older)),null);
 });

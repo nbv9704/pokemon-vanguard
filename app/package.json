@@ -56,6 +56,7 @@
     "benchmark:state-delta": "node scripts/benchmark-state-delta-b39.mjs",
     "benchmark:websocket-guards": "node scripts/benchmark-websocket-guards-b40.mjs",
     "verify:supabase-staging": "node scripts/verify-supabase-staging-b41.mjs --live",
+    "verify:session-supabase": "node scripts/verify-session-supabase-b42.mjs --live",
     "release:verify": "node scripts/run-verify-release.mjs",
     "assets:responsive:validate": "node scripts/validate-image-assets-b25.mjs",
     "assets:responsive:generate": "python3 scripts/optimize-image-assets.py",

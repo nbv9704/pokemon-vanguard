@@ -23,6 +23,8 @@ import {createWebsocketController} from './server/websocket-controller.mjs';
 import {RuntimeMetrics,instrumentPersistence} from './server/runtime-metrics.mjs';
 import {OperationsJournal,ReadinessGate,settlementHealth,operationalAlerts} from './server/operational-observability.mjs';
 import {assertStoragePort} from './server/storage-port.mjs';
+import {FileSessionRevocationStore} from './server/session-revocation-store.mjs';
+import {SessionCommitContext} from './server/session-commit-context.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 export const BETA_TEST_WALLET=Object.freeze({coins:999999,crystals:999999,recruitmentTickets:999});
@@ -40,9 +42,11 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const accounts=new AccountCoordinator();
   const runtimeMetrics=new RuntimeMetrics();
   const ops=new OperationsJournal({now:()=>clock.now(),write:opsWrite});
+  let auth=null;
+  const sessionCommits=new SessionCommitContext({authorize:session=>auth.sessionStatus(session)});
   let broadcast=()=>{},wsController=null;
   function closeAuthSocket(...args){return wsController?.closeAuthSocket(...args);}
-  const storage = instrumentPersistence(assertStoragePort(new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})})),runtimeMetrics,['save','savePair','restore'],failure=>{ops.record({domain:'storage',outcome:'error',...failure});},success=>{ops.record({domain:'storage',outcome:'ok',...success});});
+  const storage = instrumentPersistence(assertStoragePort(new HybridAdventureStorage({local:new JsonAdventureStorage(saveDir),remote:new SupabaseAdventureStorage({url:authEnv.SUPABASE_URL,secretKey:authEnv.SUPABASE_SECRET_KEY||authEnv.SUPABASE_SERVICE_ROLE_KEY,fetchImpl:storageFetch})})),runtimeMetrics,['save','savePair','restore'],failure=>{ops.record({domain:'storage',outcome:'error',...failure});},success=>{ops.record({domain:'storage',outcome:'ok',...success});},()=>sessionCommits.beforeCommit());
   const requestPolicy=createPublicOriginPolicy({env:authEnv});
   const defaultProbe=async(signal)=>{
    if(authRequired&&!storage.remote.configured)return false;
@@ -52,7 +56,8 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
    await storage.local.load('__pv_readiness__');return true;
   };
   const readiness=new ReadinessGate({probe:readinessProbe||defaultProbe,now:()=>clock.now(),onFailure:info=>ops.record({domain:'readiness',operation:'probe',outcome:'error',errorCode:'STORAGE_NOT_READY',...info})});
-  const auth=createLocalAuth({env:authEnv,fetchImpl:authFetch,requireSessionSecret:authRequired,now:()=>clock.now(),originAllowed:(req,url)=>requestPolicy.browserMutationAllowed(req,url),onLogout:session=>{
+  const revocationStore=new FileSessionRevocationStore({filePath:path.join(path.resolve(saveDir),'.auth','session-revocations.json'),now:()=>clock.now()});
+  auth=createLocalAuth({env:authEnv,fetchImpl:authFetch,requireSessionSecret:authRequired,now:()=>clock.now(),revocationStore,originAllowed:(req,url)=>requestPolicy.browserMutationAllowed(req,url),onLogout:session=>{
    for(const room of rooms.values())for(const ws of new Set([...room.clients.keys(),...(room.pendingSockets||[])]))if(ws.authSessionId===session.sid)closeAuthSocket(ws,'AUTH_REVOKED');
   }});
   const quotas=createRequestQuotas({now:()=>clock.now(),limits:requestRateLimits});
@@ -90,11 +95,11 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const serveV2Catalog=createCatalogHttpResponse(publicV2Catalog);
   const serveV3Catalog=createCatalogHttpResponse(publicV3Catalog);
   const serveStatic=createStaticHttpResponse(publicDir);
-  const handleHttp=createHttpRequestHandler({isClosing:()=>closing,readiness,requestPolicy,auth,admin,
+  const handleHttp=createHttpRequestHandler({isClosing:()=>closing,readiness,requestPolicy,auth,admin,sessionCommits,
    quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic});
   const server=http.createServer((req,res)=>{void handleHttp(req,res);});
-  wsController=createWebsocketController({server,isClosing:()=>closing,requestPolicy,auth,authRequired,quotas,rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,ensureBetaTestWallet,ops,websocketHeartbeatMs,websocketJoinDeadlineMs,maxSocketsPerIp,maxSocketsPerAccount,setBroadcast:next=>{broadcast=next;}});
-  const {wss,websocketHeartbeatTimer}=wsController;
+  wsController=createWebsocketController({server,isClosing:()=>closing,requestPolicy,auth,authRequired,quotas,rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,ensureBetaTestWallet,ops,sessionCommits,websocketHeartbeatMs,websocketJoinDeadlineMs,maxSocketsPerIp,maxSocketsPerAccount,setBroadcast:next=>{broadcast=next;}});
+  const {wss,websocketHeartbeatTimer,sessionSweepTimer}=wsController;
   let closePromise=null,closing=false;
   const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise(resolve=>{timer=setTimeout(resolve,ms);timer.unref?.();})]);}finally{clearTimeout(timer);}};
   return {
@@ -103,7 +108,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
     readiness,
     operations:ops,
     listen: (port = 3100) => new Promise((resolve,reject) => {server.once('error',reject); server.listen(port,'127.0.0.1',()=>{server.off('error',reject);resolve(server.address().port);});}),
-    close: async () => closePromise||(closePromise=(async()=>{closing=true;clearInterval(lifecycleTimer);clearInterval(eventLoopTimer);clearInterval(websocketHeartbeatTimer);const budget=Number.isSafeInteger(shutdownDeadlineMs)?Math.max(100,Math.min(60_000,shutdownDeadlineMs)):10_000,endsAt=Date.now()+budget,remaining=()=>Math.max(1,endsAt-Date.now());const serverClosed=!server.listening?Promise.resolve():new Promise(resolve=>server.close(()=>resolve()));for(const ws of wss.clients)ws.close(1001,'server shutting down');await bounded(Promise.all([...rooms.values()].map(r=>r.queue.idle())),remaining());for(const ws of wss.clients)ws.terminate();await bounded(new Promise(resolve=>wss.close(resolve)),remaining());server.closeAllConnections?.();await bounded(serverClosed,remaining());})())
+    close: async () => closePromise||(closePromise=(async()=>{closing=true;clearInterval(lifecycleTimer);clearInterval(eventLoopTimer);clearInterval(websocketHeartbeatTimer);clearInterval(sessionSweepTimer);const budget=Number.isSafeInteger(shutdownDeadlineMs)?Math.max(100,Math.min(60_000,shutdownDeadlineMs)):10_000,endsAt=Date.now()+budget,remaining=()=>Math.max(1,endsAt-Date.now());const serverClosed=!server.listening?Promise.resolve():new Promise(resolve=>server.close(()=>resolve()));for(const ws of wss.clients)ws.close(1001,'server shutting down');await bounded(Promise.all([...rooms.values()].map(r=>r.queue.idle())),remaining());for(const ws of wss.clients)ws.terminate();await bounded(new Promise(resolve=>wss.close(resolve)),remaining());server.closeAllConnections?.();await bounded(serverClosed,remaining());})())
   };
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

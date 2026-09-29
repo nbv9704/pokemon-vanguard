@@ -14,7 +14,7 @@ const sha256url=value=>createHash('sha256').update(value).digest('base64url');
 const validUuid=value=>/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value||'');
 const apiKeyHeaders=key=>({apikey:key,...(String(key).startsWith('eyJ')?{Authorization:`Bearer ${key}`}:{})});
 
-export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionSecret=false,now=()=>Date.now(),onLogout=()=>{},originAllowed=()=>true}={}){
+export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionSecret=false,now=()=>Date.now(),onLogout=()=>{},originAllowed=()=>true,revocationStore=null}={}){
  const secret=String(env.AUTH_SESSION_SECRET||'');
  const unsafeSecrets=new Set(['pokemon-vanguard-local-beta-session-secret','replace-with-at-least-32-random-characters']);
  if(requireSessionSecret&&(secret.trim().length<32||unsafeSecrets.has(secret)))throw new Error('AUTH_SESSION_SECRET must contain at least 32 non-default characters when authentication is required');
@@ -38,7 +38,21 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionS
  const issueSession=profile=>signed({...profile,sid:randomBytes(16).toString('base64url'),exp:Math.floor(now()/1000)+SESSION_AGE},secret);
  const decodeSession=req=>{const raw=cookies(req)[SESSION_COOKIE],session=readSigned(raw,secret);if(session&&!session.sid&&raw)session.sid=sha256url(raw);return session;};
  const readSession=req=>{const session=decodeSession(req);return sessionValid(session)?session:null;};
- const revokeSession=session=>{if(!sessionValid(session))return false;revoked.set(session.sid,session.exp);if(revoked.size>=512)for(const [id,expiry] of revoked){if(expiry<=Math.floor(now()/1000))revoked.delete(id);}onLogout(session);return true;};
+ const sessionStatus=async session=>{
+  if(!session||!Number.isSafeInteger(session.exp)||session.exp<=Math.floor(now()/1000))return {active:false,reason:'expired'};
+  if(!sessionValid(session))return {active:false,reason:revoked.has(session.sid)?'revoked':'invalid'};
+  try{if(revocationStore&&await revocationStore.isRevoked(session)){revoked.set(session.sid,session.exp);return {active:false,reason:'revoked'};}}
+  catch(cause){throw Object.assign(new Error('Session revocation status unavailable'),{code:'AUTH_REVOCATION_STORE_UNAVAILABLE',statusCode:503,cause});}
+  return {active:true,reason:null};
+ };
+ const sessionActive=async session=>(await sessionStatus(session)).active;
+ const authenticate=async req=>{const session=decodeSession(req);return await sessionActive(session)?session:null;};
+ const revokeSession=async session=>{
+  if(!sessionValid(session))return false;
+  try{if(revocationStore)await revocationStore.revoke(session);}
+  catch(cause){throw Object.assign(new Error('Session revocation could not be persisted'),{code:'AUTH_REVOCATION_STORE_UNAVAILABLE',statusCode:503,cause});}
+  revoked.set(session.sid,session.exp);if(revoked.size>=512)for(const [id,expiry] of revoked){if(expiry<=Math.floor(now()/1000))revoked.delete(id);}onLogout(session);return true;
+ };
  const json=(res,status,body,headers={})=>{res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers});res.end(JSON.stringify(body));};
  const redirect=(res,location,setCookie)=>{res.writeHead(303,{Location:location,'Cache-Control':'no-store',...(setCookie?{'Set-Cookie':setCookie}:{})});res.end();};
  const secure=url=>url.protocol==='https:';
@@ -59,9 +73,15 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionS
  }
  async function handle(req,res,url){
   if(url.pathname==='/api/auth/session'){
-   const session=readSession(req);json(res,200,{authenticated:!!session,user:session?{accountId:session.accountId,playerId:session.playerId,roomId:session.roomId,name:session.name,avatar:session.avatar,provider:session.provider,admin:isAdmin(session)}:null,providers:{google:cloudSaveConfigured,discord:cloudSaveConfigured},devLogin,supabaseConfigured,cloudSaveConfigured});return true;
+   const session=await authenticate(req);json(res,200,{authenticated:!!session,user:session?{accountId:session.accountId,playerId:session.playerId,roomId:session.roomId,name:session.name,avatar:session.avatar,provider:session.provider,admin:isAdmin(session)}:null,providers:{google:cloudSaveConfigured,discord:cloudSaveConfigured},devLogin,supabaseConfigured,cloudSaveConfigured});return true;
   }
-  if(url.pathname==='/api/auth/logout'&&req.method==='POST'){if(!originAllowed(req,url)){json(res,403,{error:'ORIGIN_MISMATCH'});return true;}revokeSession(readSession(req));redirect(res,'/',cookie(SESSION_COOKIE,'',{maxAge:0,secure:secure(url)}));return true;}
+  if(url.pathname==='/api/auth/logout'&&req.method==='POST'){
+   if(!originAllowed(req,url)){json(res,403,{error:'ORIGIN_MISMATCH'});return true;}
+   const expiredCookie=cookie(SESSION_COOKIE,'',{maxAge:0,secure:secure(url)}),session=decodeSession(req);
+   try{if(await sessionActive(session))await revokeSession(session);redirect(res,'/',expiredCookie);}
+   catch{json(res,503,{error:'SESSION_REVOCATION_UNAVAILABLE'},{'Set-Cookie':expiredCookie});}
+   return true;
+  }
   if(url.pathname==='/api/auth/dev'&&req.method==='POST'&&devLogin){
    if(!originAllowed(req,url)){json(res,403,{error:'ORIGIN_MISMATCH'});return true;}
    let body='';for await(const chunk of req){body+=chunk;if(body.length>4096)break;}const legacy=new URLSearchParams(body).get('legacyPlayerId'),valid=/^[A-Za-z0-9_-]{1,128}$/.test(legacy||'');
@@ -93,5 +113,5 @@ export function createLocalAuth({env=process.env,fetchImpl=fetch,requireSessionS
   }
   return false;
  }
- return {handle,readSession,isAdmin,sessionValid,revokeSession};
+ return {handle,readSession,authenticate,isAdmin,sessionValid,sessionActive,sessionStatus,revokeSession};
 }

@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 26 |
-| IN PROGRESS | 7 |
+| DONE | 27 |
+| IN PROGRESS | 6 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B41 — hoàn tất #05 Supabase optimistic concurrency/transaction**. Verifier live tạo hai Auth fixture cô lập rồi kiểm RLS, CAS stale writer, pair commit/duplicate/conflict, rollback nguyên tử, ba RPC reporting và campaign service-role-only; campaign/tài khoản được dọn trong `finally`. Hai lượt live đều PASS và cleanup PASS; `npm run check` cùng full regression **1.483/1.483 PASS trên 237 file**.
+Đợt hiện tại: **B42 — hoàn tất #11 vòng đời session và thu hồi phiên**. Session bị thu hồi được ghi bằng hash vào journal bền, dùng atomic replace và khóa liên tiến trình; HTTP/WebSocket xác thực lại từ journal, socket được quét mỗi giây và mọi persistence commit đều có cổng kiểm tra session mới nhất. Kiểm thử liên tiến trình/restart/fail-closed cùng verifier Supabase live đều PASS; `npm run check` và full regression **1.487/1.487 PASS trên 238 file**.
 
 ## Bảng tiến độ
 
@@ -38,7 +38,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn. Còn receipt PvP qua process restart (#18) và archival/compaction bền vững (#09) |
 | 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
 | 10 | Giới hạn WebSocket/backpressure | P1 | DONE | B06/B07/B08/B10/B17/B18/B24/B39/B40: payload 70 KiB, join 12s, 24 socket/IP, 4/account, queue 32, buffer 8 MiB, token bucket, room cap/TTL/LRU và cursor/resync. Real-transport flood/oversize/multi-tab/no-starvation cùng benchmark 100k PASS; cross-worker/global ownership thuộc #18/deployment. `app/docs/websocket-guard-completion-b40.md` |
-| 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
+| 11 | Vòng đời session và thu hồi phiên | P1 | DONE | B07/B42: SID + expiry/binding, journal thu hồi bền chỉ lưu SHA-256 với atomic replace/khóa liên tiến trình, quét socket mỗi giây, xác thực mới ở HTTP/WS và ngay trước commit. Test restart/hai server/child process/fail-closed cùng Supabase UUID live PASS. Mô hình nhiều host không dùng chung save directory thuộc #04/#18. `app/docs/session-lifecycle-b42.md` |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
 | 13 | Save JSON schema/concurrency/recovery | P1 | IN PROGRESS | B03: JSON pair WAL redo sau restart, pre/post hash guard, durable receipt và khóa IO trong một tiến trình; còn power-loss/Windows, đa tiến trình và live-room rehydration |
 | 14 | Deadline I/O và phân loại lỗi | P1 | DONE | B02/B08 storage body + icon proxy deadline/error bounds; B10 OAuth/profile timeout codes và graceful shutdown idempotent theo một budget; focused integration PASS |
@@ -525,6 +525,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** hai lượt `verify:supabase-staging` độc lập đều PASS đủ 7 nhóm và `fixtureCleanup: PASS`; focused storage/admin/social **31/31 PASS**; `npm run check` PASS sau khi lint bắt và loại một helper thừa; full `npm test` **1.483/1.483 PASS trên 237 file**, 0 fail/skip/todo. Chi tiết: `app/docs/supabase-staging-verification-b41.md`.
 - **Hosted CI:** run đầu `36538849716` bắt fixture B40 dùng join deadline 60 ms bị flaky trên Windows tải nặng; tăng riêng test deadline lên 1 giây và chạy lặp 3 lần PASS. Run thay thế [`36539402514`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36539402514) cho commit `7064fcc`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** B41 xác nhận database/RLS của migration 001–003, không nhận thay phần coordinator đa process #04, session revoke #11, JSON power-loss #13 hay active PvP recovery #18. **Tổng sau B41: 26 DONE / 7 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B42: đóng #11 vòng đời session và thu hồi phiên
+
+- **Thu hồi bền và kín dữ liệu:** thêm journal phiên tại `<saveDir>/.auth/session-revocations.json`, chỉ lưu SHA-256 của SID cùng expiry, không ghi cookie/SID thô. Writer dùng file tạm mode `0600`, `fsync`, atomic rename và lock liên tiến trình có stale-lock recovery; prune entry hết hạn và fail-closed khi journal hỏng hoặc vượt trần 100.000 phiên đang hiệu lực.
+- **Ranh giới commit:** HTTP admin và từng message WebSocket chạy trong session context; `save`, `savePair` và `restore` xác thực lại phiên ngay trước persistence commit. Logout ghi journal trước rồi mới đóng socket; mọi server dùng chung save directory quan sát thu hồi, socket cũ bị sweep trong tối đa khoảng một giây và phiên hết hạn/thu hồi không thể commit tác vụ đang chờ.
+- **Nghiệm thu:** test B42 tạo bốn child process ghi đồng thời, đọc journal qua adapter mới sau restart, kiểm không rò SID, kiểm storage write bằng 0 sau expiry/revoke, lỗi store fail-closed và logout trả 503 đồng thời xóa cookie. Fixture ba server xác nhận logout ở A đóng socket đã join ở B và server C sau restart từ chối cookie cũ. Focused **40/40 PASS**; `npm run workflow:validate` PASS; `npm run check` PASS; full `npm test` **1.487/1.487 PASS trên 238 file**, 0 fail/skip/todo.
+- **Supabase live:** `npm run verify:session-supabase` tạo Auth user tạm, join save cloud bằng UUID qua hai server, xác nhận row tồn tại, logout chéo server đóng socket và restart vẫn từ chối cookie cũ; hai lượt độc lập đều PASS và `fixtureCleanup: PASS`. Script không in secret/project URL và xóa Auth fixture trong `finally`.
+- **Migration:** B42 không thêm schema hay migration Supabase; migrations 001–003 hiện tại là đủ. Journal là metadata vận hành của server và phải nằm trên save directory dùng chung giữa các process trên cùng host.
+- **Ranh giới:** chưa tuyên bố orchestration nhiều host không có shared volume, distributed room ownership hay khôi phục PvP đang chạy; các phần đó vẫn thuộc #04/#18. Việc thu hồi access token tại nhà cung cấp OAuth cũng không phải contract của session nội bộ. Chi tiết: `app/docs/session-lifecycle-b42.md`. **Tổng sau B42: 27 DONE / 6 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

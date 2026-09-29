@@ -13,7 +13,7 @@ export async function readJsonBody(req,maxBytes=32*1024){
 }
 
 /** Keep route precedence and HEAD behavior explicit and testable without a server. */
-export function createHttpRequestHandler({isClosing,readiness,requestPolicy,auth,admin,quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic}){
+export function createHttpRequestHandler({isClosing,readiness,requestPolicy,auth,admin,sessionCommits={run:(_session,work)=>work()},quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic}){
  return async function handleHttp(req,res){
   try{
    const healthPath=new URL(req.url,'http://localhost').pathname;
@@ -25,8 +25,8 @@ export function createHttpRequestHandler({isClosing,readiness,requestPolicy,auth
    }
    const url=requestPolicy.requestUrl(req);
    if(await auth.handle(req,res,url))return;
-   const adminSession=auth.readSession(req);
-   if(await admin.handle(req,res,url,adminSession))return;
+   const adminSession=auth.authenticate?await auth.authenticate(req):auth.readSession(req);
+   if(await sessionCommits.run(adminSession,()=>admin.handle(req,res,url,adminSession)))return;
    const pathname=decodeURIComponent(url.pathname);
    if(pathname==='/api/v2/damage'){
     if(req.method!=='POST'){res.writeHead(405);return res.end();}

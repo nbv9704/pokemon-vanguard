@@ -36,3 +36,12 @@ Google and Discord client secrets stay in the Supabase dashboard and do not belo
 `BETA_TEST_FUNDS`: optional development-only flag that tops up the beta test wallet when set to `true`. Production defaults to normal balances.
 
 Restart `npm run dev` after changing `.dev.vars`. OAuth users use Supabase save storage. The Local Beta option is development-only and uses `.local-data`. Authenticated Google/Discord UUID accounts require Supabase server-side save storage and never silently fall back to local JSON.
+
+Logout revocations are stored as SHA-256 session-ID hashes in
+`<saveDir>/.auth/session-revocations.json`. The journal is written atomically,
+uses a cross-process lock, removes expired entries on the next logout and never
+stores the signed cookie or raw session ID. Every process serving the same
+installation must use the same durable `saveDir`; a read/lock/write failure
+fails authentication closed. Separate hosts without a shared directory are not
+a supported multi-process topology. Supabase still owns account game saves;
+the revocation journal contains no player save or provider token.
