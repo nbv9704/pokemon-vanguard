@@ -25,6 +25,8 @@ export function parseServerEnvelope(raw){
   if(typeof raw.actionId!=='string'||!ACTION_ID.test(raw.actionId)||typeof raw.actionType!=='string'||raw.actionType.length<1||raw.actionType.length>100)return null;
   if(raw.duplicate!==undefined&&typeof raw.duplicate!=='boolean')return null;
   if(raw.committedRevision!==undefined&&(typeof raw.committedRevision!=='number'||!Number.isSafeInteger(raw.committedRevision)||raw.committedRevision<0))return null;
+  if(raw.authoritativeRevision!==undefined&&(typeof raw.authoritativeRevision!=='number'||!Number.isSafeInteger(raw.authoritativeRevision)||raw.authoritativeRevision<0))return null;
+  if(raw.commitStatus!==undefined&&(typeof raw.commitStatus!=='string'||!['committed','session'].includes(raw.commitStatus)))return null;
   return /** @type {import('./types/browser-contracts.d.ts').ServerEnvelope} */(/** @type {unknown} */(raw));
  }
  return null;

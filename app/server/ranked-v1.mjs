@@ -43,7 +43,7 @@ export class RankedService{
    // A surrender may have completed the two-account write before its ACK was lost.
    // Never report it as complete without first restoring/finishing settlement.
    if(!match.settled&&(match.battle?.phase==='FINISHED'||match.forfeitReason))await this.settle(match);
-   this.notify([accountId]);return {ok:true,duplicate:true};
+   this.notify([accountId]);return {ok:true,duplicate:true,...(Number.isSafeInteger(match.battle?.phaseRevision)?{authoritativeRevision:match.battle.phaseRevision}:{})};
   }
   if(type==='rankedV1.preview.lock'){if(match.battle||match.settled)return {ok:false,code:'WRONG_PHASE'};const p=participant,pick=this.catalog.regulations[0].pick[match.mode];if(!Array.isArray(action.buildIds)||action.buildIds.length!==pick||new Set(action.buildIds).size!==pick||action.buildIds.some(id=>!p.teamBuildIds.includes(id)))return {ok:false,code:'INVALID_PREVIEW_SELECTION'};p.lockedBuildIds=[...action.buildIds];this.startBattleIfReady(match);}
   else if(type==='rankedV1.commands'){if(match.settled||match.battle?.phase!=='COMMAND'||action.phaseRevision!==revision)return {ok:false,code:'STALE_PHASE'};const validated=normalizeCommands(match.battle,side,action.commands,this.catalog);if(!validated.ok)return validated;match.pending.commands[revision]??={};match.pending.commands[revision][side]=clone(action.commands);const resolved=resolvePvpCommands(match,this.catalog);if(!resolved.ok)return resolved;}
@@ -55,7 +55,7 @@ export class RankedService{
    await this.finishForfeit(match,side,match.battle?'surrender':'preview-forfeit');}
   else if(type==='rankedV1.dismiss'){if(!match.settled)return {ok:false,code:'MATCH_NOT_FINISHED'};await this.dismissRecent(accountId,state,now,match.id);this.playerMatch.delete(accountId);match.dismissed.add(accountId);if(match.dismissed.size===2)this.matches.delete(match.id);this.notify([accountId]);return {ok:true};}
   else return {ok:false,code:'UNKNOWN_RANKED_ACTION'};
-  markPvpActivity(match,now);syncPvpDecisionClock(match,now);if(receiptKey&&!match.actionReceipts.includes(receiptKey)){match.actionReceipts.push(receiptKey);match.actionFingerprints.set(receiptKey,fingerprint);}match.actionReceipts=match.actionReceipts.slice(-200);for(const key of match.actionFingerprints.keys())if(!match.actionReceipts.includes(key))match.actionFingerprints.delete(key);if(match.battle?.phase==='FINISHED'&&!match.settled)await this.settle(match);this.notify([match.participants.A.accountId,match.participants.B.accountId]);return {ok:true};
+  markPvpActivity(match,now);syncPvpDecisionClock(match,now);if(receiptKey&&!match.actionReceipts.includes(receiptKey)){match.actionReceipts.push(receiptKey);match.actionFingerprints.set(receiptKey,fingerprint);}match.actionReceipts=match.actionReceipts.slice(-200);for(const key of match.actionFingerprints.keys())if(!match.actionReceipts.includes(key))match.actionFingerprints.delete(key);if(match.battle?.phase==='FINISHED'&&!match.settled)await this.settle(match);this.notify([match.participants.A.accountId,match.participants.B.accountId]);return {ok:true,...(Number.isSafeInteger(match.battle?.phaseRevision)?{authoritativeRevision:match.battle.phaseRevision}:{})};
  }
  async dismissRecent(accountId,state,now,matchId=null){
   const durable=this.loadState?await this.loadState(accountId):null,base=durable||state;

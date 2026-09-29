@@ -6,7 +6,8 @@ export type ServerStateEnvelope = { type: 'state'; view: PublicView; [field: str
 export type ServerErrorEnvelope = { type: 'error'; error: string; actionId?: string };
 export type ServerActionAck = {
   type: 'action-ack'; actionId: string; actionType: string;
-  duplicate?: boolean; committedRevision?: number;
+  duplicate?: boolean; committedRevision?: number; authoritativeRevision?: number;
+  commitStatus?: 'committed' | 'session';
 };
 export type ServerEnvelope = ServerStateEnvelope | ServerErrorEnvelope | ServerActionAck;
 export type SocketLike = Pick<WebSocket, 'readyState' | 'send' | 'close' | 'onopen' | 'onmessage' | 'onclose' | 'onerror'>;

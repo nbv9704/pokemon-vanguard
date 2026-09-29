@@ -17,13 +17,19 @@ import {applyBagAction} from './ticket-bag.mjs';
 import {commitReceiptCommand} from './receipt-command-handler.mjs';
 import {validSocialActionId} from './social-action-receipts.mjs';
 
+const validActionId=value=>typeof value==='string'&&/^[A-Za-z0-9:_-]{1,128}$/.test(value);
+const pvpAck=(action,result,state)=>{
+ const durable=action.type==='rankedV1.surrender'||action.type==='rankedV1.dismiss';
+ return {type:'action-ack',actionId:action.actionId,actionType:action.type,duplicate:!!result.duplicate,commitStatus:durable?'committed':'session',...(durable&&Number.isSafeInteger(state?.revision)?{committedRevision:state.revision}:{}),...(Number.isSafeInteger(result.authoritativeRevision)?{authoritativeRevision:result.authoritativeRevision}:{})};
+};
+
 /** Dependencies are scoped to one server instance, not process-global state. */
 export function createPlayerActionDispatcher({accounts,ranked,social,trainingPvp,storage,
   migrationBackups,v2Catalog,v3Catalog,clock,persist,broadcast,send}){
  return async function dispatchPlayerAction({ws,name,room,player,session,message,fail}){
-        if(message.action?.type?.startsWith('rankedV1.')){if(trainingPvp.busy(name))return fail('TRAINING_ROOM_ACTIVE');const result=await ranked.action(name,session||{provider:'local',name:player},message.action);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));return;}
+        if(message.action?.type?.startsWith('rankedV1.')){if(trainingPvp.busy(name))return fail('TRAINING_ROOM_ACTIVE');const result=await ranked.action(name,session||{provider:'local',name:player},message.action);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));if(validActionId(message.action.actionId))send(ws,pvpAck(message.action,result,room.state));return;}
         if(message.action?.type?.startsWith('socialV1.')){const result=await social.action(name,session||{provider:'local',name:player},message.action),actionId=message.action.actionId;if(!result.ok){send(ws,{type:'error',error:result.code,...(validSocialActionId(actionId)?{actionId}:{})});return;}if(validSocialActionId(actionId))send(ws,{type:'action-ack',actionId,actionType:message.action.type,duplicate:!!result.duplicate});return;}
-        if(message.action?.type?.startsWith('trainingPvpV1.'))return accounts.withAccounts(trainingPvp.accountIdsForAction(name,message.action),async()=>{if(ranked.busy(name))return fail('RANKED_MATCH_ACTIVE');const result=await trainingPvp.action(name,session||{provider:'local',name:player},message.action);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));});
+        if(message.action?.type?.startsWith('trainingPvpV1.'))return accounts.withAccounts(trainingPvp.accountIdsForAction(name,message.action),async()=>{if(ranked.busy(name))return fail('RANKED_MATCH_ACTIVE');const result=await trainingPvp.action(name,session||{provider:'local',name:player},message.action);if(!result.ok)return fail(result.code+(result.details?.length?`: ${result.details.join(', ')}`:''));if(validActionId(message.action.actionId))send(ws,pvpAck(message.action,result,room.state));});
         return accounts.withAccounts([name],async()=>{
         if(ranked.busy(name)&&(message.action?.type?.startsWith('battleV3.')||['buildV3.save','teamV3.save','teamV3.activate','replicaV3.apply'].includes(message.action?.type)||isV3RecruitmentAction(message.action)||isV3ShopAction(message.action)||message.action?.type==='bagV1.rankProtection'))return fail('RANKED_MATCH_ACTIVE');
         if(trainingPvp.busy(name)&&(message.action?.type?.startsWith('battleV3.')||['buildV3.save','teamV3.save','teamV3.activate','replicaV3.apply'].includes(message.action?.type)||isV3RecruitmentAction(message.action)||isV3ShopAction(message.action)||message.action?.type==='bagV1.rankProtection'))return fail('TRAINING_ROOM_ACTIVE');

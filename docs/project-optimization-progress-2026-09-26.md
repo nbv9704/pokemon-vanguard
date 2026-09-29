@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 22 |
-| IN PROGRESS | 11 |
+| DONE | 23 |
+| IN PROGRESS | 10 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B37 — hoàn tất UX/accessibility/storage fallback**. Game và Admin có landmark/skip-link, focus theo route không cướp focus khi realtime redraw, menu/tab keyboard, current/live semantics, forced-colors/reduced-motion và cảnh báo storage tồn tại lâu. Gate `accessibility:validate` đã nằm trong `npm run check`; focused 32/32, full regression **1.471/1.471 PASS trên 234 file** và browser keyboard QA thật PASS. #31 chuyển `DONE`; #22 vẫn tách riêng phần quyền 847 asset cũ/DPR visual matrix.
+Đợt hiện tại: **B38 — hoàn tất #19 ACK/trạng thái lưu**. Ranked/Friendly PvP có outbox theo `actionId` + domain, explicit Retry/Discard, không tự replay; state/presence push không xóa pending. ACK phân biệt `committed` bền vững với `session` chỉ được match server chấp nhận; Friendly chống duplicate/conflict giữa nhiều client trong cùng phiên. `npm run check` PASS; full regression **1.474/1.474 PASS trên 235 file**. #18 vẫn `DEFERRED`, nên UI không gọi action PvP giữa trận là đã lưu qua restart.
 
 ## Bảng tiến độ
 
@@ -35,7 +35,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 05 | Supabase optimistic concurrency và transaction | P1 | IN PROGRESS | CAS revision + pair-save RPC; thêm bảng campaign idempotency bằng migration 202609260002; cần apply migration 001/002 và B29 migration 003, kiểm chứng RLS/RPC + pair transaction trên Supabase staging thật |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
-| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–15 bao phủ schema-3/account/schema-2 management; B16 thêm toàn chuỗi schema-2 PvE battle; còn PvP per-turn và archival |
+| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn. Còn receipt PvP qua process restart (#18) và archival/compaction bền vững (#09) |
 | 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
 | 10 | Giới hạn WebSocket/backpressure | P1 | IN PROGRESS | B06 queue/buffer/payload; B07 deadline/cap; B08 quota; B10 trusted proxy; B18 đếm broadcast bytes và drop theo backpressure/closed/error; B24 checkJs strict quota/flow-control, hành vi guard giữ nguyên; còn soak và distributed cap |
 | 11 | Vòng đời session và thu hồi phiên | P1 | IN PROGRESS | B07 session ID + expiry trên WS, logout thu hồi/đóng socket theo phiên, strict provider/account/room và giữ legacy ID 128; còn revoke store liên process/restart, commit-boundary expiry, integration WS/Supabase thật |
@@ -46,7 +46,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 16 | Giảm full-state broadcast/render | P2 | IN PROGRESS | B12 cùng audience/tab project + serialize 1 lần; B13 browser baseline: Team p50/p95 11,5/51,9 ms, các route chính còn lại p95 <=3,8 ms, focus/caret giữ qua push; B24 guard broadcaster fail-fast khi projector trả undefined; còn delta/cursor và profiling Team |
 | 17 | Thu hồi room/presence | P1 | DONE | B07 TTL guard socket/join/job/PvP; B17 hard cap + safe detached LRU, dirty guard, presence cleanup, capacity rejection và aggregate metrics; distributed ownership theo #10/#18 |
 | 18 | Khôi phục PvP sau restart | P1 | DEFERRED | B04 có kết quả Ranked đã settle; mid-match snapshot/timer/Friendly cố ý hoãn sau B08 theo ưu tiên mới, không coi đã hỗ trợ restart trận đang đánh |
-| 19 | ACK và trạng thái đã lưu | P1 | IN PROGRESS | B05–15 bao phủ schema-3/account/schema-2 management; B16 thêm ACK + session outbox cho schema-2 PvE battle; còn PvP và multi-device QA |
+| 19 | ACK và trạng thái đã lưu | P1 | DONE | B05–16 bao phủ action bền vững/PvE; B38 thêm Ranked/Friendly outbox theo ID+domain, ACK `committed`/`session`, state-before-ACK, lost-ACK explicit retry và multi-client duplicate/conflict; không tuyên bố PvP mid-match bền qua restart (#18) |
 | 20 | Cache/nén HTTP | P2 | DONE | B22: cold/warm + invalidation + HEAD/gzip/Brotli/private no-store đều có regression; benchmark wire bytes/timing và browser/WebSocket smoke đạt; hosted CI PASS |
 | 21 | Lazy-load UI/catalog | P2 | DONE | B23: registry `import()` + catalog promise theo version, CSS ready barrier, retry cô lập; V3 không tải V2/legacy, save V1 active battle vẫn hoạt động; benchmark/browser/full CI PASS |
 | 22 | Tối ưu ảnh/manifest | P2 | IN PROGRESS | B25: 303 responsive images, 606 1×/2× lossless PNG, manifest SHA-256/dimensions/license-review, 544 original sprite hashes; 606/606 pixel-integrity QA và HTTP tests PASS. B26/B34 thêm browser/real-route harness. B36 bỏ hoàn toàn nguồn/proxy icon ngoài và đã nhận đủ 39/39 artwork local (18 icon 86×86, 18 strip 120×28, 3 category 50×50), strict validator PASS; còn 847 record ảnh cũ cần duyệt và Chrome desktop DPR/a11y matrix chưa nghiệm thu. |
@@ -487,6 +487,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** gate mới `accessibility:validate` kiểm 9 source và nằm trong `npm run check`; focused **32/32 PASS**; `npm run check` PASS; full regression **1.471/1.471 PASS trên 234 file**. Browser thật xác nhận skip-link, End/Escape/return-focus, Shop/Settings route focus, title, `aria-current`, storage status; QA còn bắt và loại một listener focus race trước khi chốt. Hosted run [`36483764482`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36483764482) cho commit `b9a9410`: Ubuntu PASS, Windows PASS và `release-smoke` PASS.
 - **Ranh giới:** đây là contract source/runtime có regression, không tuyên bố chứng nhận từ auditor bên thứ ba. #22 vẫn sở hữu quyền 847 asset cũ và asset DPR/visual matrix.
 - **Tổng sau B37:** **22 DONE / 11 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 29/09/2026 — B38: đóng #19 ACK và trạng thái lưu
+
+- **#19 DONE:** thêm outbox PvP riêng cho Ranked/Friendly preview, command, replacement, surrender và dismiss. Client lưu đúng một intent trong `sessionStorage`, không auto-replay khi reconnect, không xóa pending khi state/presence push và chỉ xóa khi ACK khớp cả `actionId` lẫn `actionType`.
+- **Ngữ nghĩa trung thực:** wire ACK phân biệt `commitStatus: committed` + account revision cho Ranked settlement/dismiss đã persist, và `commitStatus: session` + authoritative phase revision cho lệnh giữa trận. Banner nói rõ active PvP chỉ bền trong phiên; không lấy socket online hay broadcast làm bằng chứng đã lưu.
+- **Multi-client/lost ACK:** Friendly có receipt phiên giới hạn 1.000 entry và fingerprint canonical. Hai client retry cùng ID chỉ mutate một lần và nhận duplicate; cùng ID/khác payload fail-closed. Ranked giữ receipt match và settlement receipt bền vững hiện có.
+- **Nghiệm thu:** `npm run check` PASS; focused PvP/ACK/contract **36/36 PASS** sau bước siết ACK domain cuối; full `npm test` **1.474/1.474 PASS trên 235 file**, 0 fail/skip/todo. Full suite bao gồm test B38 state-before-ACK, reload, explicit same-ID retry, hai client duplicate, conflict payload và parser status/revision. Chi tiết: `app/docs/pvp-ack-b38.md`.
+- **Ranh giới:** #18 tiếp tục `DEFERRED`; receipt lệnh giữa trận không bền qua process restart. Archival/compaction receipt bền vững còn thuộc #08/#09; distributed/Supabase staging thuộc #04/#05. **Tổng sau B38: 23 DONE / 10 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 
