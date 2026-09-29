@@ -44,8 +44,8 @@ account rename; a fresh adapter reclaims the abandoned lock and rolls both
 accounts plus the durable receipt forward.
 
 Existing pair, migration, Ranked and Social recovery suites remain part of the
-acceptance batch. Hosted Ubuntu and Windows CI are required before this batch is
-recorded complete.
+acceptance batch. GitHub Actions run 36577024267 passed Ubuntu, Windows and the
+clean-source `release-smoke` job for commit `9a6fd1c`.
 
 ## Boundary
 
