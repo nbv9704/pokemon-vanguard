@@ -104,7 +104,7 @@ export function createWebsocketController({server,isClosing,requestPolicy,auth,a
           }
           if(betaTestFunds)ensureBetaTestWallet(room.state);ensureRankedState(room.state);ensureSocialState(room.state);if((room.state.schemaVersion||1)>=2)prepareRecruitmentState(room.state,v2Catalog,clock.now());if(room.state.progressionV3)prepareV3RecruitmentState(room.state,v3Catalog,clock.now());ensureMissionState(room.state,clock.now(),{login:true});ensureAdminGiftState(room.state);ensureMailboxState(room.state,{now:clock.now()});room.state=reconcileV3BattlePresentation(room.state,v3Catalog).state;await persist(name,room.state);room.dirty=false;
           if(room.state.adminV1?.suspended){send(ws,{type:'error',error:'ACCOUNT_SUSPENDED'});ws.close(4003,'account suspended');return;}
-          room.pendingSockets.delete(ws);room.clients.set(ws,message.playerId);ws.joinedToRoom=true;clearTimeout(joinTimer);const identitySession=session||{provider:'local',name:message.playerId};ranked.register(name,identitySession);social.register(name,identitySession);trainingPvp.register(name,identitySession); broadcast(room); return;
+          room.pendingSockets.delete(ws);room.clients.set(ws,message.playerId);ws.joinedToRoom=true;clearTimeout(joinTimer);const identitySession=session||{provider:'local',name:message.playerId};await ranked.register(name,identitySession);await social.register(name,identitySession);await trainingPvp.register(name,identitySession);broadcast(room);return;
         }
         const player = room.clients.get(ws);
         if (!player) return fail('join first');
@@ -115,7 +115,7 @@ export function createWebsocketController({server,isClosing,requestPolicy,auth,a
         return dispatchPlayerAction({ws,name,room,player,session,message,fail});
       })).catch(error => {if(['AUTH_REVOKED','AUTH_EXPIRED','AUTH_REVOCATION_STORE_UNAVAILABLE'].includes(error?.code)){closeAuthSocket(ws,error.code);return;}const operationId=ops.record({domain:'ws-action',operation:'action',outcome:'error',errorCode:error?.code});console.error('Player action failed',operationId);send(ws,{type:'error',error:'Could not save this action. Check the local server terminal.'});}).finally(()=>inbound.release(ws));
     });
-    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);stateBroadcaster.reset(ws);room.pendingSockets.delete(ws);room.queue.run(() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();ranked.unregister(name);social.unregister(name);trainingPvp.unregister(name);} if(room.state) broadcast(room);}).catch(error=>{ops.record({domain:'lifecycle',operation:'tick',outcome:'error',errorCode:error?.code});console.error('Socket cleanup failed [redacted]');}); });
+    ws.on('close', () => {clearTimeout(joinTimer);clearTimeout(expiryTimer);stateBroadcaster.reset(ws);room.pendingSockets.delete(ws);room.queue.run(async() => {room.clients.delete(ws);room.lastActiveAt=clock.now();if(room.clients.size===0){room.lastDetachedAt=clock.now();await ranked.unregister(name);await social.unregister(name);await trainingPvp.unregister(name);}if(room.state)broadcast(room);}).catch(error=>{ops.record({domain:'lifecycle',operation:'tick',outcome:'error',errorCode:error?.code});console.error('Socket cleanup failed [redacted]');}); });
   });
   return {wss,websocketHeartbeatTimer,sessionSweepTimer,closeAuthSocket};
 }

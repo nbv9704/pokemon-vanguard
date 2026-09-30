@@ -31,7 +31,7 @@ test('two Friendly clients retrying one operation get one mutation and a duplica
 
 test('PvP dispatcher ACKs the exact operation and distinguishes durable from session scope',async()=>{
  const frames=[],failures=[],room={state:{revision:42}},base={accounts:{withAccounts:async(_ids,work)=>work()},storage:{},migrationBackups:0,v2Catalog:{},v3Catalog:{},clock:{now:()=>0},persist:async()=>{},broadcast:()=>{},send:(_ws,frame)=>frames.push(frame)};
- const ranked={busy:()=>false,action:async()=>({ok:true,duplicate:false,authoritativeRevision:11})},trainingPvp={busy:()=>false,accountIdsForAction:id=>[id],action:async()=>({ok:true,duplicate:true,authoritativeRevision:12})},social={};
+ const ranked={busy:()=>false,action:async()=>({ok:true,duplicate:false,authoritativeRevision:11})},trainingPvp={busy:()=>false,accountIdsForAction:id=>[id],actionUnlocked:async()=>({ok:true,duplicate:true,authoritativeRevision:12})},social={};
  const dispatch=createPlayerActionDispatcher({...base,ranked,trainingPvp,social});
  await dispatch({ws:{},name:'a',room,player:'a',session:{provider:'discord'},message:{action:{type:'rankedV1.commands',actionId:'ranked:11'}},fail:error=>failures.push(error)});
  await dispatch({ws:{},name:'a',room,player:'a',session:{provider:'discord'},message:{action:{type:'trainingPvpV1.commands',actionId:'friendly:12'}},fail:error=>failures.push(error)});

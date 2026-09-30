@@ -20,8 +20,8 @@ async function pooled(items,limit,worker){
 }
 
 export class AdminService{
- constructor({storage,catalog,clock={now:()=>Date.now()},isAdmin=()=>false,isOnline=()=>false,listOnlineAccountIds=()=>[],getLiveState=()=>null,setLiveState=()=>{},notify=()=>{},disconnect=()=>{},withAccountLock=async(_accountId,work)=>work(),liveOperations={overview:async()=>({}),statusForPlayer:()=>null,stopForPlayer:async()=>({ok:false})},originAllowed=(req,url)=>{if(!req.headers.origin)return true;try{return new URL(req.headers.origin).origin===url.origin;}catch{return false;}},backupDir='.admin-backups'}){
-  Object.assign(this,{storage,catalog,clock,isAdmin,isOnline,listOnlineAccountIds,getLiveState,setLiveState,notify,disconnect,withAccountLock,liveOperations,originAllowed,backupDir});
+ constructor({storage,catalog,clock={now:()=>Date.now()},isAdmin=()=>false,isOnline=()=>false,listOnlineAccountIds=()=>[],getLiveState=()=>null,setLiveState=()=>{},notify=()=>{},disconnect=()=>{},withAccountLock=async(_accountId,work)=>work(),withAccountsLock=null,liveOperations={overview:async()=>({}),statusForPlayer:()=>null,stopForPlayer:async()=>({ok:false})},originAllowed=(req,url)=>{if(!req.headers.origin)return true;try{return new URL(req.headers.origin).origin===url.origin;}catch{return false;}},backupDir='.admin-backups'}){
+  Object.assign(this,{storage,catalog,clock,isAdmin,isOnline,listOnlineAccountIds,getLiveState,setLiveState,notify,disconnect,withAccountLock,liveOperations,originAllowed,backupDir});this.withAccountsLock=withAccountsLock||((ids,work)=>withAccountLock(ids[0],work));
   this.campaigns=new Map();this.campaignTasks=new Map();
  }
  async record(userId){const state=this.getLiveState(userId)||await this.storage.load(userId),profile=await this.storage.profile?.(userId);if(!state&&!profile)return null;return {userId,displayName:profile?.displayName||state?.owner||userId,avatarUrl:profile?.avatarUrl||null,createdAt:profile?.createdAt||null,updatedAt:profile?.updatedAt||null,schemaVersion:state?.schemaVersion||null,revision:state?.revision||0,state};}
@@ -124,7 +124,10 @@ export class AdminService{
  }
 
  async handlePlayerAction(userId,action,session){
-  return this.withAccountLock(userId,async()=>{
+  const ids=action?.type==='battle.stop'?(this.liveOperations.accountIdsForPlayer?.(userId)||[userId]):[userId];
+  return this.withAccountsLock(ids,()=>this.handlePlayerActionUnlocked(userId,action,session));
+ }
+ async handlePlayerActionUnlocked(userId,action,session){
    if(!action||typeof action.type!=='string')return {status:400,body:{error:'INVALID_ADMIN_ACTION'}};
    const special=['save.backup','battle.stop','session.disconnect'].includes(action.type);
    if(action.actionId!==undefined&&(!validAdminActionId(action.actionId)||special))return {status:400,body:{error:'INVALID_ADMIN_ACTION_ID'}};
@@ -154,7 +157,6 @@ export class AdminService{
    appendAdminAudit(result.state,{adminId:session.accountId,action:action.type,details:result.details,now:this.clock.now()});
    if(fingerprint)appendAdminActionReceipt(result.state,{actionId:action.actionId,fingerprint,adminId:session.accountId,type:action.type,committedAt:this.clock.now()});
    await this.storage.save(userId,result.state);this.setLiveState(userId,result.state);this.notify([userId]);if(action.type==='account.suspend'&&result.state.adminV1?.suspended)this.disconnect(userId,'ACCOUNT_SUSPENDED');return {status:200,body:{ok:true,actionId:action.actionId||null,player:await this.detail({...record,state:result.state},userId)}};
-  });
  }
  async handle(req,res,url,session){
   if(!url.pathname.startsWith('/api/admin'))return false;if(!session)return json(res,401,{error:'AUTH_REQUIRED'}),true;if(!this.isAdmin(session))return json(res,403,{error:'ADMIN_REQUIRED'}),true;

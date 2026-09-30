@@ -9,8 +9,8 @@ export function ensureSocialState(state){if(!state.socialV1||typeof state.social
 const friendOf=(state,id)=>ensureSocialState(state).friends.find(entry=>entry.accountId===id);
 export class SocialService{
  constructor({clock={now:()=>Date.now()},getState=()=>null,loadState=async()=>null,loadProfile=async()=>null,persistPair=null,setLiveState=()=>{},notify=()=>{},withAccounts=async(_ids,work)=>work(),profileTtlMs=30_000,profileCacheLimit=256}={}){this.clock=clock;this.getState=getState;this.loadState=loadState;this.persistPair=persistPair;this.setLiveState=setLiveState;this.notify=notify;this.withAccounts=withAccounts;this.presence=new Map();this.lastMessageAt=new Map();this.directory=new SocialProfileDirectory({clock,loadProfile,ttlMs:profileTtlMs,limit:profileCacheLimit});}
- register(accountId,session){this.directory.invalidate(accountId);this.presence.set(accountId,{session,connected:true});}
- unregister(accountId){this.presence.delete(accountId);this.directory.invalidate(accountId);}
+ register(accountId,session){return this.withAccounts([accountId],()=>{this.directory.invalidate(accountId);this.presence.set(accountId,{session,connected:true});});}
+ unregister(accountId){return this.withAccounts([accountId],()=>{this.presence.delete(accountId);this.directory.invalidate(accountId);});}
  isFriend(a,b){const state=this.getState(a);return !!state&&!!friendOf(state,b);}
  async stateFor(id){return await this.loadState(id)||this.getState(id)||null;}
  viewFor(accountId,state){const holder=clone(state),social=ensureSocialState(holder),online=id=>this.presence.get(id)?.connected===true;return {schemaVersion:1,eligible:UUID.test(accountId||''),friendCode:friendCodeFor(accountId),friends:social.friends.map(entry=>({...clone(entry),online:online(entry.accountId)})),incomingRequests:clone(social.incomingRequests),outgoingRequests:clone(social.outgoingRequests),conversations:Object.fromEntries(Object.entries(social.conversations).map(([id,list])=>[id,clone((list||[]).slice(-100))]))};}

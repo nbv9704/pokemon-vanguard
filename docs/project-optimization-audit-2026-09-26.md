@@ -107,9 +107,9 @@ Kiểm thử/đạt: các fixture riêng tư không có trong archive; source/co
 
 ### 04 — Một cơ chế khóa thống nhất cho account và match
 
-**P1; xác nhận thiếu khóa chung, rủi ro race.** Vị trí: `app/local-server.mjs` room queue/lifecycle timer; `social-v1.mjs`, `ranked-v1.mjs`, `training-pvp-v1.mjs`, `admin-service.mjs`.
+**DONE trong B52 cho topology game-server một process đã chọn trong roadmap.** Vị trí: `account-coordinator.mjs`, `app/local-server.mjs`, WS lifecycle, Social/Ranked/Friendly và Admin.
 
-Queue từng room không khóa account đối phương. Social tác động hai người, Ranked/timer tác động match, admin có đường offline không nằm trong room queue. JavaScript một thread vẫn xen kẽ thao tác ở `await`. `savePair()` của Social còn sửa live state trước persist; probe xác nhận state bị sửa dù lưu lỗi.
+Baseline ban đầu chỉ có queue từng room nên không khóa account đối phương. Social tác động hai người, Ranked/timer tác động match và Admin có đường offline không nằm trong room queue; JavaScript một thread vẫn xen kẽ thao tác ở `await`. Probe khi audit từng xác nhận Social làm rò live mutation nếu pair persist lỗi.
 
 Cách làm:
 
@@ -120,6 +120,8 @@ Cách làm:
 5. Khóa trong RAM chỉ bảo vệ một process; nhiều instance vẫn cần CAS/transaction ở mục 05.
 
 Kiểm thử/đạt: dùng barrier-controlled fake storage để ép xen kẽ chat + mua hàng, accept bạn + admin grant, command + timeout, hai admin request vào account offline. Không mất tiền/item/message, không resolve một turn hai lần, không deadlock. Không dùng sleep ngẫu nhiên làm bằng chứng duy nhất.
+
+Kết quả B52: một `AccountCoordinator` FIFO quản lý tập account đã sort cho WS mutation, Admin online/offline, Social pair, Ranked action/settlement/tick/register/unregister và Friendly action/tick/register/unregister/admin stop. Friendly tự sở hữu wrapper khóa; dispatcher chỉ dùng `actionUnlocked` khi đã giữ đúng tập account. Admin `battle.stop` xác định toàn bộ participant trước khi vào coordinator và gọi mutation unlocked bên trong cùng reservation, loại self-deadlock do nâng khóa một account lên hai account. Barrier tests chứng minh Social pair + Admin không mất state, command + timeout không resolve hai lần và Admin stop giữ đúng cả match. Roadmap beta chủ động chỉ có **một live game coordinator process**; distributed match lease/fencing và restart active match vẫn thuộc #18 DEFERRED, không phải claim của #04. Chi tiết: [`../app/docs/coordination-closure-b52.md`](../app/docs/coordination-closure-b52.md).
 
 ### 05 — Supabase cần optimistic concurrency và transaction contract
 

@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 32 |
-| IN PROGRESS | 2 |
+| DONE | 33 |
+| IN PROGRESS | 1 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B51 — đóng #02 bằng Ranked atomic settlement bắt buộc**. Không còn fallback ghi hai save độc lập; pair transaction/WAL + receipt phải hoàn tất trước publish/settled.
+Đợt hiện tại: **B52 — đóng #04 bằng một account/match coordination contract**. Friendly lifecycle đi qua coordinator; Admin stop giữ trọn participant set mà không nâng khóa lồng nhau.
 
 ## Bảng tiến độ
 
@@ -31,7 +31,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 01 | Không cho auth dùng secret công khai mặc định | P0 | DONE | Account mode fail-closed nếu secret thiếu/yếu; local unauthenticated vẫn hoạt động |
 | 02 | Ranked chỉ settlement sau khi lưu thành công | P0 | DONE | B03/B04/B08/B41/B51: JSON WAL hoặc Supabase pair transaction commit cả hai state + receipt trước publish; lost ACK/restart đọc receipt; thiếu atomic adapter fail-closed; concurrent settle chỉ commit một lần. Mid-match restart thuộc #18, multi-process ownership thuộc #04. `app/docs/ranked-settlement-closure-b51.md`. |
 | 03 | Bộ đóng gói chưa loại hết dữ liệu local | P0 | DONE | Exclude backup/report/admin backup/campaign journal/raw candidate/node_modules/dist; release ZIP vẫn chứa normalized validation snapshot đã review |
-| 04 | Một cơ chế khóa thống nhất cho account và match | P1 | IN PROGRESS | `AccountCoordinator` khóa tập account; WS/Admin/Social/Ranked/Friendly action đã dùng; B24 thêm FIFO reservation cho giao dịch multi-account để không bị request mới vượt hàng; còn lifecycle Friendly và multi-process |
+| 04 | Một cơ chế khóa thống nhất cho account và match | P1 | DONE | B24/B52: FIFO `AccountCoordinator` giữ tập account cho WS/Admin/Social/Ranked/Friendly action, settlement, lifecycle tick và connect/disconnect; Admin stop đặt một reservation cho toàn match, không nâng khóa lồng. Supported beta topology là một live coordinator process; distributed ownership/restart thuộc #18. `app/docs/coordination-closure-b52.md`. |
 | 05 | Supabase optimistic concurrency và transaction | P1 | DONE | B41 live verifier trên project cấu hình: RLS own/cross-user và role denial, stale CAS, atomic pair commit/rollback, duplicate/conflict receipt, reporting RPC và campaign service-role-only đều PASS; hai Auth fixture/campaign tự cleanup. Migration 001–003 đã được xác nhận bằng runtime. `app/docs/supabase-staging-verification-b41.md` |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
@@ -66,9 +66,9 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 ## Thứ tự tiếp theo
 
-#02/#08/#09 đã DONE; tiếp theo xử lý #04 theo ranh giới #18 đang DEFERRED. #22 vẫn theo dõi quyền artwork trước mọi public release; #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+#02/#04/#08/#09 đã DONE. #22 là mục IN PROGRESS cuối cùng và tiếp tục theo dõi quyền artwork cùng Chrome desktop DPR/a11y acceptance trước public release; #18 vẫn DEFERRED, #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#02 DONE sau B51. Tổng hiện tại **35 mục: 32 DONE / 2 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#04 DONE sau B52. Tổng hiện tại **35 mục: 33 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -627,6 +627,16 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Thêm gate B51 cho thiếu atomic capability và ba settlement đồng thời; cập nhật fixture Ranked để không vô tình dựa vào nhánh ghi rời đã bị cấm. Focused Ranked/JSON/lifecycle/ticket **29/29 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.514/1.514 PASS trên 243 file** (0 fail/skip/todo). Hosted CI run #48 PASS trên Ubuntu, Windows và release smoke cho commit B51 `b34a94a`.
 - Không có migration mới. #18 vẫn DEFERRED cho snapshot/timer/ownership của trận đang đánh; #04 tiếp tục quản lý coordination đa tiến trình. Hai phạm vi này không làm settlement đã kết thúc quay lại IN PROGRESS.
 - **Tổng:** **32 DONE / 2 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 01/10/2026 — B52: đóng #04 bằng coordinator thống nhất
+
+- `TrainingPvpService` tự đưa action, lifecycle tick, register/unregister và Admin stop qua cùng `AccountCoordinator`; timer khóa đầy đủ participant set rồi mới revalidate room. Ranked và Social connect/disconnect cũng dùng coordinator thay vì mutate presence/match trực tiếp.
+- Dispatcher gọi `actionUnlocked` chỉ bên trong reservation đã tính cho Friendly action. WebSocket join/close await lifecycle mutation nên không để presence update chạy rơi bên ngoài queue.
+- Admin `battle.stop` lấy union participant của Ranked/Friendly trước khi khóa, giữ đúng một multi-account reservation rồi gọi stop unlocked. Điều này loại self-deadlock do trước đây giữ account mục tiêu rồi cố lấy lại account đó cùng đối thủ.
+- Barrier acceptance bao phủ Social pair + Admin grant không mất incoming request/balance, Friendly command + timeout không resolve một phase hai lần, và Admin stop giữ đủ participant mà không khóa lồng. Không dùng sleep ngẫu nhiên.
+- **Nghiệm thu:** focused coordination/lifecycle/Admin **48/48 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.517/1.517 PASS trên 244 file** (0 fail/skip/todo). Hosted CI được xác nhận sau push.
+- Supported beta topology được ghi rõ là một live game-coordinator process. Distributed match lease/fencing và active-match restart vẫn thuộc #18 DEFERRED; B52 không tạo migration mới.
+- **Tổng:** **33 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 
