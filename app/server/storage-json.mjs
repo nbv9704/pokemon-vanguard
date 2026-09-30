@@ -4,6 +4,8 @@ import {validCampaignId} from './admin-campaigns.mjs';
 import {durableJsonWrite,JsonPairJournal} from './json-pair-journal.mjs';
 import {parseAdventureSave,validateAdventureSave} from './save-schema.mjs';
 import {StorageDirectoryLock} from './storage-directory-lock.mjs';
+import {applyHotStateCompaction,hotArchiveLookupTargets,hydrateArchivedRecords,planHotStateCompaction} from './hot-state-retention.mjs';
+import {readJsonHotArchive,writeJsonHotArchive} from './hot-state-archive.mjs';
 
 // A sync of the containing directory makes completed renames more durable on
 // POSIX filesystems. Windows does not expose equivalent directory fsync here.
@@ -54,6 +56,11 @@ export class JsonAdventureStorage{
  pathFor(room){if(!ROOM.test(room))throw new Error('Invalid adventure room name');return path.join(this.saveDir,room+'.json');}
  async readState(room){try{return parseAdventureSave(await readFile(this.pathFor(room),'utf8'));}catch(error){if(error.code==='ENOENT')return null;throw error;}}
  async load(room){return this.locked(()=>this.readState(room));}
+ async loadForAction(room,key){return this.locked(async()=>{
+  const state=await this.readState(room);if(!state)return null;
+  const found=(await Promise.all(hotArchiveLookupTargets(key).map(({collection,key:lookup})=>readJsonHotArchive(this.saveDir,room,collection,lookup)))).filter(Boolean);
+  return hydrateArchivedRecords(state,found);
+ });}
  async writeState(room,encoded){
   const target=this.pathFor(room),temporary=`${target}.${randomUUID()}.tmp`;
   await mkdir(this.saveDir,{recursive:true});
@@ -61,10 +68,22 @@ export class JsonAdventureStorage{
    parseAdventureSave(await readFile(temporary,'utf8'));await rename(temporary,target);await syncDirectory(this.saveDir);
   }catch(error){await rm(temporary,{force:true}).catch(()=>{});throw error;}
  }
- async save(room,state){return this.locked(async()=>{const encoded=JSON.stringify(validateState(state));validateState(JSON.parse(encoded));await this.writeState(room,encoded);});}
+ async save(room,state){return this.locked(async()=>{
+  const plan=planHotStateCompaction(state),encoded=JSON.stringify(validateState(state));validateState(JSON.parse(encoded));await this.writeState(room,encoded);
+  if(plan.records.length){await writeJsonHotArchive(this.saveDir,room,plan.records);applyHotStateCompaction(plan);await this.writeState(room,JSON.stringify(validateState(state)));}
+ });}
  savePair(entries,operationId){return this.locked(async()=>{
   let prepared=false;
-  try{return await this.pairJournal.commit(entries,operationId,{onPrepared:()=>{prepared=true;}});}
+  try{
+   const plans=entries.map(entry=>({entry,plan:planHotStateCompaction(entry.state)})),result=await this.pairJournal.commit(entries,operationId,{onPrepared:()=>{prepared=true;}});
+   if(plans.some(item=>item.plan.records.length)){
+    for(const {entry,plan} of plans)if(plan.records.length)await writeJsonHotArchive(this.saveDir,entry.userId,plan.records);
+    for(const {plan} of plans)applyHotStateCompaction(plan);
+    const compactId=String(operationId).length<=155?`${operationId}:hot`:`hot:${sha(String(operationId))}`;
+    await this.pairJournal.commit(entries,compactId,{onPrepared:()=>{prepared=true;}});
+   }
+   return result;
+  }
   catch(error){if(prepared){this.staleAfterFailedPair=true;this.queue.needsRecovery=true;}throw error;}
  });}
 

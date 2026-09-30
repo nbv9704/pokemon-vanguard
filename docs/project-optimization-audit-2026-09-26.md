@@ -183,7 +183,7 @@ Kiểm thử/đạt: double-click, mất ACK, reconnect, restart, cùng ID khác
 
 ### 09 — Giới hạn dữ liệu nóng mà không phá chống nhận thưởng trùng
 
-**P2, nâng P1 khi save tăng mạnh; xác nhận ledger append không giới hạn trong helper.** Vị trí: `v2-economy-ledger.mjs`, `v3-battle-view.mjs::v3BattleView()`, storage whole-state, Social conversations.
+**DONE trong B49.** Vị trí: `hot-state-retention.mjs`, `hot-state-archive.mjs`, JSON/Supabase storage và các đường action hydrate receipt.
 
 Ledger/receipt lớn dần làm `.find()`, clone, serialize và write JSON đắt hơn. Battle view còn phát `battle.events` history; Social giới hạn 100 message/mỗi cuộc trò chuyện nhưng phát nhiều cuộc trò chuyện trong toàn view. Không được giải quyết bằng `slice(-N)` receipt thanh toán.
 
@@ -195,7 +195,9 @@ Cách làm:
 4. Dùng index in-memory dẫn xuất cho lookup nếu benchmark cần; không serialize Map vào save JSON.
 5. Chỉ gửi event mới có cursor, giữ cửa sổ playback đang cần và endpoint lấy lịch sử cũ.
 
-Kiểm thử/đạt: số dư và chống trùng không đổi trước/sau compaction; cursor reconnect không mất event; memory/write time tăng theo dữ liệu nóng thay vì toàn lịch sử. Đo trước khi chọn database/table mới.
+Kết quả B49: hot window giới hạn receipt/ledger và history của battle đã kết thúc; JSON dùng segment + manifest bền, Supabase dùng backup row private theo key và partial lookup index. Quy trình full-save → archive → compact không thể mất replay barrier khi chết giữa chừng; action ID cũ hydrate đúng receipt trước mutation. Benchmark synthetic 1k/10k/100k giảm save 65.263.089 B xuống 1.390.026 B ở 100k (97,870%), serialize hot p95 5,403 ms. Social vẫn có trần 100×100; active battle không bị cắt khi còn chơi. Bằng chứng: `app/docs/hot-state-archive-b49.md`.
+
+Kiểm thử/đạt: JSON single/pair, process restart thật, retry ngoài hot window không ghi lần hai, Supabase mock archive/hydrate, migration policy, lost-ACK Social/Ranked/commerce, full regression và hosted CI. Migration index B49 cần apply trước production để tránh table scan; correctness của archive không phụ thuộc index. Multi-process ownership và mid-match PvP vẫn thuộc #04/#18, không mở lại #09.
 
 ### 10 — Giới hạn WebSocket: kết nối, queue, tốc độ và backpressure
 

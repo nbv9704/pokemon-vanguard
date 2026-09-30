@@ -11,6 +11,7 @@ const REQUIRED_FILES=[
  'app/server/legacy/logic-v1.js','app/src/logic.js','app/src/v2-engine.mjs',
  'app/supabase/migrations/202609260001_atomic_pair_saves.sql',
  'app/supabase/migrations/202609260002_admin_campaign_identity.sql',
+ 'app/supabase/migrations/202610010004_hot_state_archive_index.sql',
  'docs/developer-workflow-b26.md','docs/code-structure.md',
  'docs/archive/README-pre-B26.md','docs/project-optimization-progress-2026-09-26.md',
  'app/docs/optimization-b09-operations.md'

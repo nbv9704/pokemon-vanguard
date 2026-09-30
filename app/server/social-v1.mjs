@@ -24,7 +24,7 @@ export class SocialService{
   if(actionId){
    // When the pair was committed but publish/ACK failed, the in-memory room can
    // still be stale. Check durable initiating account before any precondition.
-   const stored=await this.loadState(accountId);
+   const stored=await this.loadState(accountId,actionId);
    for(const candidate of [stored,current]){
     const result=inspectSocialReceipt(candidate,actionId,fingerprint);
     if(result.status==='conflict')return {ok:false,code:'SOCIAL_ACTION_ID_CONFLICT'};

@@ -31,6 +31,7 @@ export type CommandOutcome<TState> = CommandFailure | CommandSuccess<TState>;
 
 export interface StoragePort<TState extends SaveState = SaveState> {
   load(accountId: string): Promise<TState | null>;
+  loadForAction(accountId: string, actionId: string): Promise<TState | null>;
   save(accountId: string, state: TState): Promise<void>;
   savePair(entries: Array<{ userId: string; state: TState }>, operationId: string): Promise<{ duplicate: boolean }>;
 }

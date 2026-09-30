@@ -109,7 +109,7 @@ export class AdminService{
    const batch=manifest.audience.slice(cursor,cursor+100);
    const results=await pooled(batch,12,async userId=>this.withAccountLock(userId,async()=>{
     try{
-     const record=await this.record(userId);if(!record?.state)return {userId,ok:false,error:'PLAYER_SAVE_NOT_FOUND'};
+     const record=await this.record(userId);if(!record?.state)return {userId,ok:false,error:'PLAYER_SAVE_NOT_FOUND'};record.state=await (this.storage.loadForAction?.(userId,manifest.campaignId)??this.storage.load(userId))||record.state;
      const state=structuredClone(record.state),queued=enqueueAdminGift(state,manifest.gift,{fingerprint});
      if(!queued.ok)return {userId,ok:false,error:queued.code};
      if(!queued.changed)return {userId,ok:true,duplicate:true};
@@ -133,7 +133,7 @@ export class AdminService{
    if(fingerprint){
     // Always check durable state too: the preceding request may have committed
     // but failed before its live-state publish or HTTP acknowledgement.
-    const persisted=await this.storage.load(userId),saved=lookupAdminActionReceipt(persisted||{},action.actionId,fingerprint),live=lookupAdminActionReceipt(record.state,action.actionId,fingerprint);
+    const persisted=await (this.storage.loadForAction?.(userId,action.actionId)??this.storage.load(userId)),saved=lookupAdminActionReceipt(persisted||{},action.actionId,fingerprint),live=lookupAdminActionReceipt(record.state,action.actionId,fingerprint);
     if(saved.status==='conflict'||live.status==='conflict')return {status:409,body:{error:'ADMIN_ACTION_ID_REUSED'}};
     if(saved.status==='duplicate'||live.status==='duplicate'){
      const current=saved.status==='duplicate'&&(live.status!=='duplicate'||Number(persisted?.revision||0)>Number(record.state.revision||0))?persisted:record.state;

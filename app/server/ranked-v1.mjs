@@ -58,7 +58,7 @@ export class RankedService{
   markPvpActivity(match,now);syncPvpDecisionClock(match,now);if(receiptKey&&!match.actionReceipts.includes(receiptKey)){match.actionReceipts.push(receiptKey);match.actionFingerprints.set(receiptKey,fingerprint);}match.actionReceipts=match.actionReceipts.slice(-200);for(const key of match.actionFingerprints.keys())if(!match.actionReceipts.includes(key))match.actionFingerprints.delete(key);if(match.battle?.phase==='FINISHED'&&!match.settled)await this.settle(match);this.notify([match.participants.A.accountId,match.participants.B.accountId]);return {ok:true,...(Number.isSafeInteger(match.battle?.phaseRevision)?{authoritativeRevision:match.battle.phaseRevision}:{})};
  }
  async dismissRecent(accountId,state,now,matchId=null){
-  const durable=this.loadState?await this.loadState(accountId):null,base=durable||state;
+  const durable=this.loadState?await this.loadState(accountId,matchId||null):null,base=durable||state;
   const receipt=matchId?rankedSettlementReceipt(base,matchId):recentRankedSettlement(base,now,PVP_TIMERS.resultRetentionMs);
   if(!receipt)return matchId?{ok:true}:{ok:false,code:'MATCH_NOT_FINISHED'};
   if(receipt.dismissedAt){if(durable)this.publish(accountId,durable,state);return {ok:true,duplicate:true};}

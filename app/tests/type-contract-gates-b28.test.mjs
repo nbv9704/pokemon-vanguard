@@ -8,6 +8,7 @@ import {ShopView} from '../public/js/shop-view.js';
 function fixtureStorage(){
  const calls=[];const port={
   load:async id=>{calls.push(['load',id]);return {schemaVersion:3,owner:id};},
+  loadForAction:async (id,actionId)=>{calls.push(['loadForAction',id,actionId]);return {schemaVersion:3,owner:id};},
   save:async (id,state)=>{calls.push(['save',id,state]);},
   savePair:async (entries,id)=>{calls.push(['savePair',entries,id]);return {duplicate:false};},
   profile:async()=>null,listAccounts:async()=>({total:0,accounts:[]}),
@@ -18,7 +19,7 @@ function fixtureStorage(){
 
 test('storage facade is checked without a proxy, clone, serialization change or IO',async()=>{
  const {port,calls}=fixtureStorage();
- assert.deepEqual(REQUIRED_METHODS,['load','save','savePair','profile','listAccounts','getCampaign','registerCampaign','backup','restore']);
+ assert.deepEqual(REQUIRED_METHODS,['load','loadForAction','save','savePair','profile','listAccounts','getCampaign','registerCampaign','backup','restore']);
  assert.equal(assertStoragePort(port),port);assert.deepEqual(calls,[]);
  assert.deepEqual(await port.load('fixture'),{schemaVersion:3,owner:'fixture'});
  assert.deepEqual(await port.savePair([{userId:'a',state:{}},{userId:'b',state:{}}],'op'),{duplicate:false});
@@ -27,7 +28,7 @@ test('storage facade is checked without a proxy, clone, serialization change or 
 
 test('storage assertion fails closed on incomplete or forged ports',()=>{
  assert.throws(()=>assertStoragePort(null),/STORAGE_PORT_INVALID/);
- assert.throws(()=>assertStoragePort({load:async()=>{}}),/STORAGE_PORT_MISSING_METHOD:save/);
+ assert.throws(()=>assertStoragePort({load:async()=>{}}),/STORAGE_PORT_MISSING_METHOD:loadForAction/);
  for(const name of REQUIRED_METHODS){const {port}=fixtureStorage();port[name]=false;assert.throws(()=>assertStoragePort(port),new RegExp(`STORAGE_PORT_MISSING_METHOD:${name}`));}
 });
 

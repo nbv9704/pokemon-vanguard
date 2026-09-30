@@ -32,6 +32,7 @@ function mockCloud(){
    if(method==='POST'){rows.set(data.user_id,{state:data.state,revision:1});return json([{revision:1}]);}
    if(method==='PATCH'){const entry=rows.get(id),expected=Number(target.searchParams.get('revision').replace(/^eq\./,''));if(!entry||entry.revision!==expected)return json([]);entry.revision++;entry.state=data.state;return json([{revision:entry.revision}]);}
   }
+  if(route.endsWith('/game_save_backups')&&method==='GET')return json([]);
   if(route.endsWith('/rpc/save_game_state_pair')){
    const data=JSON.parse(init.body),left=rows.get(data.p_left_user_id),right=rows.get(data.p_right_user_id);
    assert.equal(left.revision,data.p_left_expected_revision);assert.equal(right.revision,data.p_right_expected_revision);

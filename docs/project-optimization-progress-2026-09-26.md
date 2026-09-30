@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 29 |
-| IN PROGRESS | 5 |
+| DONE | 30 |
+| IN PROGRESS | 4 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B48 — đóng #35 theo kiến trúc local-only**. Chủ dự án bỏ Supabase Storage/CDN; remote resolver/config endpoint/env/deploy tooling đã được gỡ. Loading thật, bounded preload, local DPR/cache, manifest inventory và PvP non-blocking warm được giữ lại.
+Đợt hiện tại: **B49 — đóng #09 bằng hot window + archive dedupe bền**. Receipt/ledger và history battle đã kết thúc có trần; JSON/Supabase lưu overflow riêng và hydrate đúng key trước retry, không dùng `slice(-N)` làm mất replay barrier.
 
 ## Bảng tiến độ
 
@@ -35,8 +35,8 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 05 | Supabase optimistic concurrency và transaction | P1 | DONE | B41 live verifier trên project cấu hình: RLS own/cross-user và role denial, stale CAS, atomic pair commit/rollback, duplicate/conflict receipt, reporting RPC và campaign service-role-only đều PASS; hai Auth fixture/campaign tự cleanup. Migration 001–003 đã được xác nhận bằng runtime. `app/docs/supabase-staging-verification-b41.md` |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
-| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn. Còn receipt PvP qua process restart (#18) và archival/compaction bền vững (#09) |
-| 09 | Giới hạn dữ liệu nóng | P2 | IN PROGRESS | B12 đo 100k ~65,26 MB; B13 index dẫn xuất cho receipt append-only >=256, steady lookup ~<=0,001 ms nhưng cold build 42,595 ms/100k; chưa compact vì cần archive giữ dedupe bền |
+| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn; B49 đóng archive/compaction bền. Còn quyết định phạm vi receipt PvP qua process restart vì #18 đang DEFERRED. |
+| 09 | Giới hạn dữ liệu nóng | P2 | DONE | B12/B13 baseline/index; B49 hot window + archive bền cho 7 receipt/ledger collection và finished-battle events, retry key cũ hydrate trước mutation. 100k: 65.263.089 B → 1.390.026 B (−97,870%), hot serialize p95 5,403 ms. JSON restart/pair và Supabase adapter PASS. `app/docs/hot-state-archive-b49.md`. |
 | 10 | Giới hạn WebSocket/backpressure | P1 | DONE | B06/B07/B08/B10/B17/B18/B24/B39/B40: payload 70 KiB, join 12s, 24 socket/IP, 4/account, queue 32, buffer 8 MiB, token bucket, room cap/TTL/LRU và cursor/resync. Real-transport flood/oversize/multi-tab/no-starvation cùng benchmark 100k PASS; cross-worker/global ownership thuộc #18/deployment. `app/docs/websocket-guard-completion-b40.md` |
 | 11 | Vòng đời session và thu hồi phiên | P1 | DONE | B07/B42: SID + expiry/binding, journal thu hồi bền chỉ lưu SHA-256 với atomic replace/khóa liên tiến trình, quét socket mỗi giây, xác thực mới ở HTTP/WS và ngay trước commit. Test restart/hai server/child process/fail-closed cùng Supabase UUID live PASS. Mô hình nhiều host không dùng chung save directory thuộc #04/#18. `app/docs/session-lifecycle-b42.md` |
 | 12 | Origin/cookie qua HTTPS proxy | P1 | DONE | B10 canonical `PUBLIC_ORIGIN`, Secure cookie/HTTPS callback, exact HTTP/WS Origin + Fetch Metadata và proxy IP allowlist; focused integration PASS |
@@ -64,11 +64,11 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
 | 35 | Phân phối asset và loading theo nhu cầu | P1 | DONE | B44–B48: local manifest/hash inventory, boot progress, bounded Save-Data preload, responsive DPR/cache và PvP two-client non-blocking warm đạt. B48 chốt local-only và gỡ toàn bộ Supabase Storage/CDN surface; #22 tiếp tục quản lý quyền artwork độc lập. [Kiến trúc](./asset-delivery-loading-roadmap.md). |
 
-## Thứ tự tiếp theo — bổ sung asset/loading
+## Thứ tự tiếp theo
 
-#35 đã DONE theo quyết định local-only; không còn bước bucket/CDN trong roadmap hiện hành. Tiếp theo quay lại #09 → #08; #02/#04 tiếp tục xử lý nếu có vấn đề toàn vẹn dữ liệu. #22 vẫn theo dõi quyền artwork trước mọi public release. Chi tiết ở [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+#09 đã DONE bằng archive bền; tiếp theo xử lý #08 rồi #02/#04 theo ranh giới #18 đang DEFERRED. #22 vẫn theo dõi quyền artwork trước mọi public release; #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#35 DONE sau B48 với runtime local-only. Tổng hiện tại **35 mục: 29 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#09 DONE sau B49. Tổng hiện tại **35 mục: 30 DONE / 4 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -602,6 +602,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - `pokemon-artwork-2` đã được đối chiếu trước khi chốt batch: 272/272 file giống byte với artwork cũ, vì vậy không nhập vào runtime/rights ledger hoặc commit dự án.
 - **Nghiệm thu:** focused asset/server/PvP **19/19 PASS**; `npm run check` PASS (syntax 473 file, import graph 410 module/1.176 edge/0 cycle, structure 492 file và file lớn nhất 359/360 dòng); full `npm test` **1.501/1.501 PASS trên 240 file**, 0 fail/skip/todo; `git diff --check` sạch.
 - #35 chuyển **DONE** trong phạm vi local-only; #22 vẫn IN PROGRESS và độc lập với kỹ thuật loading. Tổng mới **29 DONE / 5 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 01/10/2026 — B49: đóng #09 bằng archive hot-state bền
+
+- **#09 DONE:** giữ hot window `actionReceipts`/economy 512, reward/Admin 256, Social 512, Ranked 128 và event history của battle đã kết thúc 512; active battle không bị cắt. Social chat vốn đã giới hạn 100 friend × 100 message và Admin audit 100.
+- **Không phá idempotency:** storage commit full state trước, archive overflow idempotent, rồi mới commit state compact. JSON dùng segment 256 record + atomic manifest dưới `.hot-archive`; pair save dùng WAL operation riêng. Supabase tái sử dụng `game_save_backups` private với batch read/write; action/campaign/match ID cũ hydrate đúng collection trước mutation.
+- **Đo lại 1k/10k/100k synthetic:** tại 100k, save giảm **65.263.089 B → 1.390.026 B (−97,870%)**, serialize hot p95 **5,403 ms**; one-time safe archive+compact **7.486,343 ms** trên Windows/Node v22.15.0. Không đọc save thật. Chi tiết `app/docs/hot-state-archive-b49.md`.
+- **Nghiệm thu hiện tại:** B49 **6/6 PASS**, regression Admin/local **37/37 PASS**, `npm run check` PASS (475 syntax file, 412 module/1.181 edge/0 cycle, 494 production file, max 359/360 dòng), full `npm test` **1.507/1.507 PASS trên 241 file** (0 fail/skip/todo) và `git diff --check` PASS. Hosted CI được xác nhận sau khi push commit B49.
+- Migration `202610010004_hot_state_archive_index.sql` chỉ thêm partial index `(user_id,label)` cho prefix `hot-v1:` và không grant browser role; cần apply trước production để tránh table scan. Archive vẫn đúng về chức năng nếu index chưa apply. #04/#18 tiếp tục sở hữu distributed ownership và mid-match restart.
+- **Tổng:** **30 DONE / 4 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

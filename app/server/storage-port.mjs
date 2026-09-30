@@ -2,7 +2,7 @@
 // adapter has the same methods. Pure assertion: preserves provider identity,
 // revisions and operation ordering (no proxy, clone, or alternate serialization).
 const REQUIRED_METHODS=Object.freeze([
- 'load','save','savePair','profile','listAccounts','getCampaign','registerCampaign','backup','restore'
+ 'load','loadForAction','save','savePair','profile','listAccounts','getCampaign','registerCampaign','backup','restore'
 ]);
 /**
  * @template {import('../types/runtime-contracts.d.ts').StoragePort} T

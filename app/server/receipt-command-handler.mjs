@@ -7,7 +7,7 @@
  * @param {{
  *  accountId:string,
  *  liveState:TState|null|undefined,
- *  load:(accountId:string)=>Promise<TState|null>,
+ *  load:(accountId:string,action:TAction)=>Promise<TState|null>,
  *  persist:(accountId:string,state:TState)=>Promise<void>,
  *  apply:(state:TState,action:TAction,now:number)=>import('../types/runtime-contracts.d.ts').CommandOutcome<TState>,
  *  action:TAction,
@@ -16,7 +16,7 @@
  * @returns {Promise<import('../types/runtime-contracts.d.ts').CommandOutcome<TState>>}
  */
 export async function commitReceiptCommand({accountId,liveState,load,persist,apply,action,now}){
- const authoritative=await load(accountId);
+ const authoritative=await load(accountId,action);
  const previous=authoritative||liveState;
  if(!previous)return {ok:false,code:'PLAYER_SAVE_NOT_FOUND'};
  const outcome=apply(previous,action,now);

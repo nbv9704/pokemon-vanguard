@@ -7,7 +7,7 @@ export async function commitRankedSettlement(match){
  const winner=match.battle?.result?.winner||match.forfeitWinner||null,a=match.participants.A,b=match.participants.B,aState=this.getState(a.accountId),bState=this.getState(b.accountId);if(!aState||!bState)throw new Error('Ranked settlement state unavailable');
  const key=rankedSettlementKey({matchId:match.id,mode:match.mode,winner,accountA:a.accountId,accountB:b.accountId});
  if(this.loadState){
-  const [savedA,savedB]=await Promise.all([this.loadState(a.accountId),this.loadState(b.accountId)]);
+  const [savedA,savedB]=await Promise.all([this.loadState(a.accountId,match.id),this.loadState(b.accountId,match.id)]);
   const proofA=rankedSettlementReceipt(savedA,match.id),proofB=rankedSettlementReceipt(savedB,match.id);
   if(proofA||proofB){if(!proofA||!proofB||proofA.key!==key||proofB.key!==key)throw Object.assign(Error('Ranked settlement receipt mismatch; manual recovery required'),{code:'RANKED_SETTLEMENT_RECEIPT_CONFLICT'});
    this.publish(a.accountId,savedA,aState);this.publish(b.accountId,savedB,bState);
