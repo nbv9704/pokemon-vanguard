@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 30 |
-| IN PROGRESS | 4 |
+| DONE | 31 |
+| IN PROGRESS | 3 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B49 — đóng #09 bằng hot window + archive dedupe bền**. Receipt/ledger và history battle đã kết thúc có trần; JSON/Supabase lưu overflow riêng và hydrate đúng key trước retry, không dùng `slice(-N)` làm mất replay barrier.
+Đợt hiện tại: **B50 — đóng #08 bằng contract retry xuyên suốt**. V2 Recruitment/Mail dùng chung outbox + committed ACK; policy máy kiểm tra phân biệt mutation bền với lệnh PvP chỉ sống trong phiên.
 
 ## Bảng tiến độ
 
@@ -35,7 +35,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 05 | Supabase optimistic concurrency và transaction | P1 | DONE | B41 live verifier trên project cấu hình: RLS own/cross-user và role denial, stale CAS, atomic pair commit/rollback, duplicate/conflict receipt, reporting RPC và campaign service-role-only đều PASS; hai Auth fixture/campaign tự cleanup. Migration 001–003 đã được xác nhận bằng runtime. `app/docs/supabase-staging-verification-b41.md` |
 | 06 | Queue phục hồi sau exception | P1 | DONE | `SerialTaskQueue`; lỗi job không poison tail; close/admin dùng cùng abstraction |
 | 07 | Kiểm tra số nguyên an toàn economy | P1 | DONE | Chặn non-number/non-safe integer/overflow trước khi mutate |
-| 08 | Idempotency xuyên retry | P1 | IN PROGRESS | B01–16 bao phủ action bền vững/PvE; B38 thêm duplicate/conflict receipt trong phiên cho PvP per-turn; B49 đóng archive/compaction bền. Còn quyết định phạm vi receipt PvP qua process restart vì #18 đang DEFERRED. |
+| 08 | Idempotency xuyên retry | P1 | DONE | B01–16 receipt/fingerprint/outbox cho mutation bền; B38 ACK `committed`/`session` và PvP session dedupe; B49 archive không mở lại claim cũ; B50 đóng V2 Recruitment/Mail, thống nhất ACK policy và test restart/duplicate/conflict. Active PvP rehydration thuộc #18 DEFERRED. `app/docs/action-retry-closure-b50.md`. |
 | 09 | Giới hạn dữ liệu nóng | P2 | DONE | B12/B13 baseline/index; B49 hot window + archive bền cho 7 receipt/ledger collection và finished-battle events, retry key cũ hydrate trước mutation. 100k: 65.263.089 B → 1.390.026 B (−97,870%), hot serialize p95 5,403 ms. JSON restart/pair và Supabase adapter PASS. `app/docs/hot-state-archive-b49.md`. |
 | 10 | Giới hạn WebSocket/backpressure | P1 | DONE | B06/B07/B08/B10/B17/B18/B24/B39/B40: payload 70 KiB, join 12s, 24 socket/IP, 4/account, queue 32, buffer 8 MiB, token bucket, room cap/TTL/LRU và cursor/resync. Real-transport flood/oversize/multi-tab/no-starvation cùng benchmark 100k PASS; cross-worker/global ownership thuộc #18/deployment. `app/docs/websocket-guard-completion-b40.md` |
 | 11 | Vòng đời session và thu hồi phiên | P1 | DONE | B07/B42: SID + expiry/binding, journal thu hồi bền chỉ lưu SHA-256 với atomic replace/khóa liên tiến trình, quét socket mỗi giây, xác thực mới ở HTTP/WS và ngay trước commit. Test restart/hai server/child process/fail-closed cùng Supabase UUID live PASS. Mô hình nhiều host không dùng chung save directory thuộc #04/#18. `app/docs/session-lifecycle-b42.md` |
@@ -66,9 +66,9 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 ## Thứ tự tiếp theo
 
-#09 đã DONE bằng archive bền; tiếp theo xử lý #08 rồi #02/#04 theo ranh giới #18 đang DEFERRED. #22 vẫn theo dõi quyền artwork trước mọi public release; #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+#08/#09 đã DONE; tiếp theo xử lý #02 rồi #04 theo ranh giới #18 đang DEFERRED. #22 vẫn theo dõi quyền artwork trước mọi public release; #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#09 DONE sau B49. Tổng hiện tại **35 mục: 30 DONE / 4 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#08 DONE sau B50. Tổng hiện tại **35 mục: 31 DONE / 3 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -611,6 +611,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu hiện tại:** B49 **6/6 PASS**, regression Admin/local **37/37 PASS**, `npm run check` PASS (475 syntax file, 412 module/1.181 edge/0 cycle, 494 production file, max 359/360 dòng), full `npm test` **1.507/1.507 PASS trên 241 file** (0 fail/skip/todo) và `git diff --check` PASS. Hosted CI run **#44 PASS** trên Ubuntu, Windows và release smoke cho commit B49 `02b9b77`.
 - Migration `202610010004_hot_state_archive_index.sql` chỉ thêm partial index `(user_id,label)` cho prefix `hot-v1:` và không grant browser role; cần apply trước production để tránh table scan. Archive vẫn đúng về chức năng nếu index chưa apply. #04/#18 tiếp tục sở hữu distributed ownership và mid-match restart.
 - **Tổng:** **30 DONE / 4 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 01/10/2026 — B50: đóng #08 bằng retry contract xuyên suốt
+
+- **Khoảng trống đã đóng:** V2 Recruitment và Mail reward chuyển từ gửi trực tiếp sang `CommercePendingActions`; reload/reconnect giữ nguyên toàn payload + action ID. Server luôn load receipt bền/archive trước apply, commit receipt cùng state và chỉ ACK sau persist.
+- **ACK thống nhất:** `player-action-retry-policy.mjs` là source of truth cho `committed` so với `session`; dispatcher không còn tự ghép ACK rải rác. Durable mutation trả revision đã commit; Ranked/Friendly per-turn tiếp tục nói rõ chỉ bền trong live session.
+- **Nghiệm thu hiện tại:** focused retry/ACK/V2/V3/Social/PvP **30/30 PASS**, focused economy/local **35/35 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.512/1.512 PASS trên 242 file** (0 fail/skip/todo). Lần full đầu bắt một source assertion cũ tìm ACK ghép tay; sau khi cập nhật gate theo helper mới, lần chạy sạch từ đầu PASS toàn bộ. Hosted CI được xác nhận sau push.
+- **Ranh giới:** #18 vẫn DEFERRED cho snapshot/timer/ownership trận PvP đang đánh; #04 sở hữu coordination nhiều process. Đây không còn là khoảng trống idempotency của account mutation.
+- **Tổng:** **31 DONE / 3 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

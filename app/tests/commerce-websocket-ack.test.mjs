@@ -52,6 +52,25 @@ test('real WS: Shop/Recruitment ACK is durable across restart, replay is duplica
  }finally{client?.ws.close();await app.close();await rm(dir,{recursive:true,force:true});}
 });
 
+test('real WS: schema-2 Recruitment and Mail use committed ACKs and replay safely after restart',async()=>{
+ const dir=await mkdtemp(path.join(tmpdir(),'pv-b50-v2-commerce-')),storage=new JsonAdventureStorage(dir),now=Date.UTC(2026,9,1,8);
+ const base=upgradeAdventure(setup(['commerce-player']),v2Catalog).state;await storage.save('commerce-net',base);
+ let app=createLocalServer({saveDir:dir,clock:createServerClock(()=>now)}),client;
+ try{
+  let port=await app.listen(0);client=await connect(port);const view=client.initial.view.recruitmentV2;
+  const refresh={type:'recruit.refresh',expectedRevision:view.revision,cycleId:view.cycleId,actionId:'b50:v2:refresh'};
+  const mail={type:'mail.claim',mailId:0,actionId:'b50:v2:mail'};
+  client.send(refresh);let ack=await client.next(frame=>frame.type==='action-ack'&&frame.actionId===refresh.actionId);assert.equal(ack.commitStatus,'committed');assert.equal(ack.duplicate,false);
+  client.send(mail);ack=await client.next(frame=>frame.type==='action-ack'&&frame.actionId===mail.actionId);assert.equal(ack.commitStatus,'committed');assert.equal(ack.duplicate,false);
+  const committed=await storage.load('commerce-net'),coins=committed.wallet.coins,ledgerCount=committed.economyLedger.length;
+  client.ws.close();await app.close();app=createLocalServer({saveDir:dir,clock:createServerClock(()=>now)});port=await app.listen(0);client=await connect(port);
+  for(const action of [refresh,mail]){client.send(action);ack=await client.next(frame=>frame.type==='action-ack'&&frame.actionId===action.actionId);assert.equal(ack.commitStatus,'committed');assert.equal(ack.duplicate,true);}
+  const replayed=await storage.load('commerce-net');assert.equal(replayed.wallet.coins,coins);assert.equal(replayed.economyLedger.length,ledgerCount);
+  client.send({...refresh,type:'recruit.trial',speciesId:client.initial.view.recruitmentV2.offers[0].speciesId});
+  const error=await client.next(frame=>frame.type==='error'&&frame.actionId===refresh.actionId);assert.equal(error.error,'ACTION_ID_REUSED');
+ }finally{client?.ws.close();await app.close();await rm(dir,{recursive:true,force:true});}
+});
+
 test('real WS: Mission, Admin Gift and Rank protection ACKs replay as durable duplicates after restart',async()=>{
  const dir=await mkdtemp(path.join(tmpdir(),'pv-b14-account-actions-')),storage=new JsonAdventureStorage(dir),now=Date.UTC(2026,8,27,8);
  const base=upgradeAdventureToV3(upgradeAdventure(setup(['commerce-player']),v2Catalog).state,v3Catalog).state;ensureMissionState(base,now,{login:true});base.ticketBagV1={version:1,shopTickets:0,trainingTickets:0,rankTickets:1,rankProtectionArmed:false};

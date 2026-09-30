@@ -167,7 +167,7 @@ Kiểm thử/đạt: NaN, Infinity, -Infinity, số thập phân, chuỗi, `1e30
 
 ### 08 — Idempotency xuyên suốt retry, không chỉ trong UI
 
-**P1; xác nhận có receipt nhưng chưa thống nhất.** Vị trí: `v2-economy-ledger.mjs`, các command shop/mail/training, `ranked-v1.mjs`, `admin-service.mjs::sendGiftCampaign()`.
+**DONE trong B50.** Vị trí: receipt-backed player/Admin/Social/Ranked commands, `player-action-retry-policy.mjs`, browser outbox và archive B49.
 
 Game đã có action receipt là điểm tốt. Tuy nhiên campaign ID được tạo mới mỗi POST; nếu admin mất response và bấm lại thì có thể thành campaign khác. Ranked receipt chỉ giữ 200 entry trong RAM. Fingerprint helper mặc định chỉ có type nên cần kiểm từng command gọi nó, không kết luận tất cả caller hiện bị collision.
 
@@ -180,6 +180,8 @@ Cách làm:
 5. Quy định thời hạn retry và thời hạn lưu dedupe; retention không được mở lại cơ hội claim cũ.
 
 Kiểm thử/đạt: double-click, mất ACK, reconnect, restart, cùng ID khác payload, campaign partial failure. Mỗi ý định chỉ tạo một khoản trừ/cộng; không chỉ test “UI đã disabled button”.
+
+Kết quả B50: mọi mutation bền trong runtime schema-2/schema-3 dùng action ID ổn định, fingerprint payload, receipt cùng commit, authoritative/archive lookup và ACK `committed`. Khoảng trống cuối ở V2 Recruitment/Mail đã được đưa qua commerce outbox và có real-WebSocket restart duplicate/conflict test. `player-action-retry-policy.mjs` phân loại bằng mã chạy: lệnh Ranked/Friendly giữa trận chỉ ACK `session`; khôi phục owner/snapshot/timer sau process restart vẫn thuộc #18 DEFERRED, không phải thiếu receipt của mutation account. Mailbox mark-read là assignment metadata idempotent; legacy finish là migration tương thích. Bằng chứng: `app/docs/action-retry-closure-b50.md`.
 
 ### 09 — Giới hạn dữ liệu nóng mà không phá chống nhận thưởng trùng
 

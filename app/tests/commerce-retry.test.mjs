@@ -46,6 +46,14 @@ test('schema-2 Build, Team and Blueprint intents are accepted only with stable I
   {type:'blueprint.import',blueprint:'{"schemaVersion":1}',actionId:'v2:blueprint'}
  ]){const pending=new CommercePendingActions({storage:storage(),scope:'v2'});assert.equal(pending.begin(candidate),true);assert.deepEqual(pending.pending,candidate);}
 });
+test('schema-2 Recruitment and Mail intents survive reload with the exact payload and ID',()=>{
+ for(const candidate of [
+  {type:'recruit.refresh',expectedRevision:2,cycleId:7,actionId:'v2:recruit:refresh'},
+  {type:'recruit.trial',expectedRevision:2,cycleId:7,speciesId:'emberlyn',actionId:'v2:recruit:trial'},
+  {type:'recruit.permanent',expectedRevision:2,cycleId:7,speciesId:'emberlyn',payment:'ticket',actionId:'v2:recruit:permanent'},
+  {type:'mail.claim',mailId:0,actionId:'v2:mail:claim'}
+ ]){const mem=storage(),pending=new CommercePendingActions({storage:mem,scope:'v2-commerce'});assert.equal(pending.begin(candidate),true);assert.deepEqual(new CommercePendingActions({storage:mem,scope:'v2-commerce'}).pending,candidate);}
+});
 test('schema-2 PvE battle intents retain exact command IDs through the commerce outbox',()=>{
  for(const candidate of [
   {type:'battleV2.preview.start',mode:'single',regulationId:'alpha-single',difficulty:'normal',actionId:'v2:battle:start'},
@@ -66,6 +74,8 @@ test('Shop and Recruitment use explicit commerce outbox; header does not call so
  assert.match(client,/new (?:modules\.)?TrainingEditor\(\{fetchImpl:.*sendAction:commerceRetry\.send/);
  assert.match(client,/new (?:modules\.)?TeamBuilder\(\{onChange:redrawWorkspace,sendAction:commerceRetry\.send/);
  assert.match(client,/new (?:modules\.)?V2BattleScreen\(\{onChange:.*sendAction:commerceRetry\.send/);
+ assert.match(client,/new (?:modules\.)?RecruitmentView\(\{onChange:redrawWorkspace,sendAction:commerceRetry\.send/);
+ assert.match(client,/if\(a==="claim"\)commerceRetry\.send/);
  assert.match(client,/function commerceBanner\(\)/);
  assert.doesNotMatch(client,/ADVENTURE SAVED/);
 });
