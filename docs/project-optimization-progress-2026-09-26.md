@@ -16,20 +16,20 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 31 |
-| IN PROGRESS | 3 |
+| DONE | 32 |
+| IN PROGRESS | 2 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B50 — đóng #08 bằng contract retry xuyên suốt**. V2 Recruitment/Mail dùng chung outbox + committed ACK; policy máy kiểm tra phân biệt mutation bền với lệnh PvP chỉ sống trong phiên.
+Đợt hiện tại: **B51 — đóng #02 bằng Ranked atomic settlement bắt buộc**. Không còn fallback ghi hai save độc lập; pair transaction/WAL + receipt phải hoàn tất trước publish/settled.
 
 ## Bảng tiến độ
 
 | # | Hạng mục | Ưu tiên | Trạng thái | Bằng chứng / bước kế tiếp |
 | ---: | --- | --- | --- | --- |
 | 01 | Không cho auth dùng secret công khai mặc định | P0 | DONE | Account mode fail-closed nếu secret thiếu/yếu; local unauthenticated vẫn hoạt động |
-| 02 | Ranked chỉ settlement sau khi lưu thành công | P0 | IN PROGRESS | B03 JSON pair WAL; B08 xác nhận chặn pair cross-backend trước mọi write; B04 thêm receipt kết quả trong hai save, kiểm tra lại receipt sau mất ACK và lifecycle retry; còn mid-battle recovery, multi-process/Supabase rollout |
+| 02 | Ranked chỉ settlement sau khi lưu thành công | P0 | DONE | B03/B04/B08/B41/B51: JSON WAL hoặc Supabase pair transaction commit cả hai state + receipt trước publish; lost ACK/restart đọc receipt; thiếu atomic adapter fail-closed; concurrent settle chỉ commit một lần. Mid-match restart thuộc #18, multi-process ownership thuộc #04. `app/docs/ranked-settlement-closure-b51.md`. |
 | 03 | Bộ đóng gói chưa loại hết dữ liệu local | P0 | DONE | Exclude backup/report/admin backup/campaign journal/raw candidate/node_modules/dist; release ZIP vẫn chứa normalized validation snapshot đã review |
 | 04 | Một cơ chế khóa thống nhất cho account và match | P1 | IN PROGRESS | `AccountCoordinator` khóa tập account; WS/Admin/Social/Ranked/Friendly action đã dùng; B24 thêm FIFO reservation cho giao dịch multi-account để không bị request mới vượt hàng; còn lifecycle Friendly và multi-process |
 | 05 | Supabase optimistic concurrency và transaction | P1 | DONE | B41 live verifier trên project cấu hình: RLS own/cross-user và role denial, stale CAS, atomic pair commit/rollback, duplicate/conflict receipt, reporting RPC và campaign service-role-only đều PASS; hai Auth fixture/campaign tự cleanup. Migration 001–003 đã được xác nhận bằng runtime. `app/docs/supabase-staging-verification-b41.md` |
@@ -66,9 +66,9 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 ## Thứ tự tiếp theo
 
-#08/#09 đã DONE; tiếp theo xử lý #02 rồi #04 theo ranh giới #18 đang DEFERRED. #22 vẫn theo dõi quyền artwork trước mọi public release; #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+#02/#08/#09 đã DONE; tiếp theo xử lý #04 theo ranh giới #18 đang DEFERRED. #22 vẫn theo dõi quyền artwork trước mọi public release; #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#08 DONE sau B50. Tổng hiện tại **35 mục: 31 DONE / 3 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#02 DONE sau B51. Tổng hiện tại **35 mục: 32 DONE / 2 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -619,6 +619,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu hiện tại:** focused retry/ACK/V2/V3/Social/PvP **30/30 PASS**, focused economy/local **35/35 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.512/1.512 PASS trên 242 file** (0 fail/skip/todo). Lần full đầu bắt một source assertion cũ tìm ACK ghép tay; sau khi cập nhật gate theo helper mới, lần chạy sạch từ đầu PASS toàn bộ. Hosted CI run #46 PASS trên Ubuntu, Windows và release smoke cho commit B50 `52ea194`.
 - **Ranh giới:** #18 vẫn DEFERRED cho snapshot/timer/ownership trận PvP đang đánh; #04 sở hữu coordination nhiều process. Đây không còn là khoảng trống idempotency của account mutation.
 - **Tổng:** **31 DONE / 3 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 01/10/2026 — B51: đóng #02 bằng Ranked atomic settlement bắt buộc
+
+- Xóa fallback `Promise.all(persist A, persist B)` khỏi `ranked-settlement-service.mjs`. Khi chưa có durable receipt và adapter thiếu `persistPair`, settlement trả `RANKED_ATOMIC_STORAGE_REQUIRED`; live state, rating, ticket, mission và cờ `settled` không đổi.
+- Đường hợp lệ luôn clone state, ghi settlement receipt vào cả hai bản nháp, commit một lần bằng JSON pair WAL hoặc Supabase pair RPC, rồi mới publish hai live state và đánh dấu kết quả. Lost ACK/restart tiếp tục phục hồi từ receipt thay vì tính rating lần nữa.
+- Thêm gate B51 cho thiếu atomic capability và ba settlement đồng thời; cập nhật fixture Ranked để không vô tình dựa vào nhánh ghi rời đã bị cấm. Focused Ranked/JSON/lifecycle/ticket **29/29 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.514/1.514 PASS trên 243 file** (0 fail/skip/todo). Hosted CI được xác nhận sau push.
+- Không có migration mới. #18 vẫn DEFERRED cho snapshot/timer/ownership của trận đang đánh; #04 tiếp tục quản lý coordination đa tiến trình. Hai phạm vi này không làm settlement đã kết thúc quay lại IN PROGRESS.
+- **Tổng:** **32 DONE / 2 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Cách cập nhật file này
 

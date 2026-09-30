@@ -73,9 +73,9 @@ Kiểm thử/đạt: startup account mode thiếu secret phải fail; chữ ký 
 
 ### 02 — Ranked chỉ hoàn tất settlement sau khi lưu thành công
 
-**P0 với Ranked thật; xác nhận bằng giả lập.** Vị trí: `app/server/ranked-v1.mjs`, `settle()`, `settleProfile()`, `finishForfeit()`.
+**DONE trong B51.** Vị trí: `app/server/ranked-v1.mjs`, `ranked-settlement-service.mjs`, storage pair transaction/WAL và durable settlement receipts.
 
-Hiện sửa trực tiếp hai live state và đặt `match.settled=true` trước `Promise.all(persist A, persist B)`. Khi lưu lỗi, rating live đã đổi nhưng database có thể chỉ lưu một bên hoặc không bên nào. Gọi lại `settle()` thoát sớm vì cờ settled. Probe trong audit xác nhận không có lần ghi mới khi retry.
+Baseline ban đầu sửa trực tiếp hai live state và đặt `match.settled=true` trước `Promise.all(persist A, persist B)`. Khi lưu lỗi, rating live có thể đã đổi nhưng database chỉ lưu một bên hoặc không bên nào; retry lại thoát sớm vì cờ settled. Probe trong audit đã tái hiện lỗi này trước khi các batch settlement sửa contract.
 
 Cách làm:
 
@@ -86,6 +86,8 @@ Cách làm:
 5. Không dùng `history.slice(0,20)` làm hàng rào exactly-once lâu dài. History phục vụ UI, settlement receipt phục vụ tính đúng.
 
 Kiểm thử/đạt: giả lập lỗi trước ghi, ghi A thành công/B lỗi, timeout sau commit, hai lượt settle đồng thời, crash/restart sau commit trước notify. Rating/ticket/mission chỉ áp dụng một lần; hai account và receipt đồng nhất. Làm cùng mục 04–05, 08 và 18.
+
+Kết quả B51: Ranked không còn fallback `Promise.all()` ghi riêng hai tài khoản. Thiếu `savePair` trả `RANKED_ATOMIC_STORAGE_REQUIRED` trước publish; transaction/WAL phải commit cả hai state cùng receipt rồi service mới thay live state và đặt `settled`. Các gate bao phủ thiếu atomic capability, lỗi trước commit, lost ACK sau commit, receipt lệch, retry lifecycle, ba lời gọi settlement đồng thời và JSON restart recovery. #18 tiếp tục là phạm vi riêng cho trận đang đánh khi process restart; #04 là coordination/ownership nhiều process, không phải điều kiện để settlement đã kết thúc được lưu an toàn. Chi tiết: [`../app/docs/ranked-settlement-closure-b51.md`](../app/docs/ranked-settlement-closure-b51.md).
 
 ### 03 — Bộ đóng gói chưa loại hết dữ liệu local
 

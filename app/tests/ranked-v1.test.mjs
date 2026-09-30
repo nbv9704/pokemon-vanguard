@@ -11,7 +11,7 @@ const linked=(name,provider='discord')=>({name,provider});
 function harness(){
  const states=new Map([['alpha',makeState()],['bravo',makeState()],['local',makeState()]]),persisted=[],notifications=[];
  for(const state of states.values())ensureRankedState(state);
- const service=new RankedService({catalog:v3Catalog,clock:{now:()=>Date.UTC(2026,8,23,1,0,0)},getState:id=>states.get(id),persist:async(id,state)=>{persisted.push([id,state.rankedV1.rating]);},notify:ids=>notifications.push([...ids])});
+ const service=new RankedService({catalog:v3Catalog,clock:{now:()=>Date.UTC(2026,8,23,1,0,0)},getState:id=>states.get(id),persist:async(id,state)=>{persisted.push([id,state.rankedV1.rating]);},persistPair:async entries=>{for(const {userId,state} of entries)persisted.push([userId,state.rankedV1.rating]);},notify:ids=>notifications.push([...ids])});
  service.register('alpha',linked('Alpha','google'));service.register('bravo',linked('Bravo','discord'));service.register('local',linked('Local','local'));
  return {service,states,persisted,notifications};
 }
@@ -61,7 +61,7 @@ test('Preview forfeit produces a dismissible ranked result without fabricating a
 });
 
 test('Ranked settlement keeps live state retryable when persistence fails',async()=>{
- const ctx=harness();let failed=false;ctx.service.persist=async(id,state)=>{ctx.persisted.push([id,state.rankedV1.rating]);if(id==='bravo'&&!failed){failed=true;throw new Error('synthetic persistence failure');}};
+ const ctx=harness();let failed=false;ctx.service.persistPair=async entries=>{if(!failed){failed=true;throw new Error('synthetic persistence failure');}for(const {userId,state} of entries)ctx.persisted.push([userId,state.rankedV1.rating]);};
  await ctx.service.action('alpha',linked('Alpha','google'),{type:'rankedV1.queue.join',mode:'single'});await ctx.service.action('bravo',linked('Bravo','discord'),{type:'rankedV1.queue.join',mode:'single'});
  const action={type:'rankedV1.surrender',actionId:'retryable-forfeit'};await assert.rejects(ctx.service.action('alpha',linked('Alpha','google'),action),/synthetic persistence failure/);
  assert.equal(ctx.states.get('alpha').rankedV1.rating,1000);assert.equal(ctx.states.get('bravo').rankedV1.rating,1000);assert.equal(ctx.states.get('alpha').rankedV1.matches,0);assert.equal(ctx.states.get('bravo').rankedV1.matches,0);

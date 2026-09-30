@@ -80,7 +80,7 @@ test('Rank protection does not consume at 0 RP floor or when disarmed',()=>{
 
 test('Ranked settlement preserves history loss, uses one ticket, records 0 delta and shows protected result',async()=>{
  const a=state(),b=state();for(const s of [a,b])ensureRankedState(s);a.owner='A';b.owner='B';grant(b,{rankTickets:1});b.ticketBagV1.rankProtectionArmed=true;
- const states={A:a,B:b};let writes=0;const service=new RankedService({catalog:v3Catalog,getState:id=>states[id],persist:async()=>{writes++;}});
+ const states={A:a,B:b};let writes=0;const service=new RankedService({catalog:v3Catalog,getState:id=>states[id],persistPair:async entries=>{writes+=entries.length;}});
  const match={id:'ranked:protected',mode:'single',participants:{A:{accountId:'A',name:'Winner'},B:{accountId:'B',name:'Loser'}},settled:false,battle:null,forfeitWinner:'A'};
  await service.settle(match);assert.equal(match.settled,true);assert.equal(match.rankTicketProtected.B,true);
  assert.equal(b.rankedV1.losses,1);assert.equal(b.rankedV1.rating,1000);assert.equal(b.rankedV1.history[0].rankTicketProtected,true);
