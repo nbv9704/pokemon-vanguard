@@ -624,7 +624,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 - Xóa fallback `Promise.all(persist A, persist B)` khỏi `ranked-settlement-service.mjs`. Khi chưa có durable receipt và adapter thiếu `persistPair`, settlement trả `RANKED_ATOMIC_STORAGE_REQUIRED`; live state, rating, ticket, mission và cờ `settled` không đổi.
 - Đường hợp lệ luôn clone state, ghi settlement receipt vào cả hai bản nháp, commit một lần bằng JSON pair WAL hoặc Supabase pair RPC, rồi mới publish hai live state và đánh dấu kết quả. Lost ACK/restart tiếp tục phục hồi từ receipt thay vì tính rating lần nữa.
-- Thêm gate B51 cho thiếu atomic capability và ba settlement đồng thời; cập nhật fixture Ranked để không vô tình dựa vào nhánh ghi rời đã bị cấm. Focused Ranked/JSON/lifecycle/ticket **29/29 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.514/1.514 PASS trên 243 file** (0 fail/skip/todo). Hosted CI được xác nhận sau push.
+- Thêm gate B51 cho thiếu atomic capability và ba settlement đồng thời; cập nhật fixture Ranked để không vô tình dựa vào nhánh ghi rời đã bị cấm. Focused Ranked/JSON/lifecycle/ticket **29/29 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.514/1.514 PASS trên 243 file** (0 fail/skip/todo). Hosted CI run #48 PASS trên Ubuntu, Windows và release smoke cho commit B51 `b34a94a`.
 - Không có migration mới. #18 vẫn DEFERRED cho snapshot/timer/ownership của trận đang đánh; #04 tiếp tục quản lý coordination đa tiến trình. Hai phạm vi này không làm settlement đã kết thúc quay lại IN PROGRESS.
 - **Tổng:** **32 DONE / 2 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
