@@ -16,13 +16,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 
 | Trạng thái | Số lượng |
 | --- | ---: |
-| DONE | 33 |
+| DONE | 34 |
 | IN PROGRESS | 1 |
 | TODO | 0 |
 | BLOCKED | 0 |
 | DEFERRED | 1 |
 
-Đợt hiện tại: **B52 — đóng #04 bằng một account/match coordination contract**. Friendly lifecycle đi qua coordinator; Admin stop giữ trọn participant set mà không nâng khóa lồng nhau.
+Đợt hiện tại: **B53 — đóng kỹ thuật #22 bằng Chrome/DPR acceptance**. Sửa overflow Home tìm thấy qua browser; tách quyền phát hành media thành gate #36 để không hợp thức hóa 847 record upstream bằng nhãn giả.
 
 ## Bảng tiến độ
 
@@ -49,7 +49,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 19 | ACK và trạng thái đã lưu | P1 | DONE | B05–16 bao phủ action bền vững/PvE; B38 thêm Ranked/Friendly outbox theo ID+domain, ACK `committed`/`session`, state-before-ACK, lost-ACK explicit retry và multi-client duplicate/conflict; không tuyên bố PvP mid-match bền qua restart (#18) |
 | 20 | Cache/nén HTTP | P2 | DONE | B22: cold/warm + invalidation + HEAD/gzip/Brotli/private no-store đều có regression; benchmark wire bytes/timing và browser/WebSocket smoke đạt; hosted CI PASS |
 | 21 | Lazy-load UI/catalog | P2 | DONE | B23: registry `import()` + catalog promise theo version, CSS ready barrier, retry cô lập; V3 không tải V2/legacy, save V1 active battle vẫn hoạt động; benchmark/browser/full CI PASS |
-| 22 | Tối ưu ảnh/manifest | P2 | IN PROGRESS | B25: 303 responsive images, 606 1×/2× lossless PNG, manifest SHA-256/dimensions/license-review, 544 original sprite hashes; 606/606 pixel-integrity QA và HTTP tests PASS. B26/B34 thêm browser/real-route harness. B36 bỏ hoàn toàn nguồn/proxy icon ngoài và đã nhận đủ 39/39 artwork local (18 icon 86×86, 18 strip 120×28, 3 category 50×50), strict validator PASS; còn 847 record ảnh cũ cần duyệt và Chrome desktop DPR/a11y matrix chưa nghiệm thu. |
+| 22 | Tối ưu ảnh/manifest | P2 | DONE | B25/B26/B34/B36/B53: 303 responsive master, 606 lossless 1×/2× variant, 544 sprite hash và 39/39 symbol local; checksum/dimension/pixel/HTTP gates PASS. Chrome 8/8 gallery 360/1366 × DPR1/2 chọn đúng variant, CLS 0; real-route Home/Bag/Shop/Profile/Arena/Team Preview không ảnh lỗi. Browser tìm và B53 sửa Home horizontal scrollbar. Quyền phát hành đã tách minh bạch sang #36. `app/docs/image-browser-acceptance-b53.md`. |
 | 23 | CSS layers/cascade | P2 | DONE | B32: native layer contract thứ tự cố định, manifest phân loại 35 stylesheet, tokens tách riêng, entry/lazy CSS giữ thứ tự; gate inventory 3.155 block/67 selector trùng và không cho `!important` vượt 1.062. Browser parity 27 capture ở 4 viewport + 3 accessibility mode PASS; full 1.439/1.439 PASS. |
 | 24 | Tách module theo trách nhiệm | P2 | DONE | B20/B33/B35: tách HTTP, WS/controller và action dispatch, pure public projection; Ranked tách profile/matchmaking/view/transition/timer/durable settlement với facade/export tương thích; manifest tách value/handler/move; client tách shell/route, modal, account/mail/settings và feature dispatch; Admin markup tách khỏi request/mutation. Thêm byte-budget gate 45 điều kiện cùng import/cycle, 360-line, lint và characterization + toàn bộ regression. Format-only migration trên mã legacy và nâng UI controller `mount/update/unmount` đồng loạt được xem là đợt hygiene riêng, không thay hợp đồng module đã nghiệm thu. `app/docs/module-boundaries-b35.md`. |
 | 25 | Lint/type contracts | P2 | DONE | B19–24 ESLint promise-aware, import/cycle, 7 strict Node modules. B28: strict DOM/browser config cho WebSocket envelope và Shop purchase builder; discriminated TS positive/negative assertions cho Command/Result/SavePort/reviewed action/ACK; storage bootstrap kiểm 9 method không clone; browser reject ACK/state malformed. Negative CI thực thi xác minh thiếu await và import browser→server đều FAIL. `npm run check` PASS; focused 12 file/61 test PASS. Giới hạn: không coi toàn bộ JS/storage internals là typed hoặc thay runtime schema #13. |
@@ -62,13 +62,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | 32 | Workflow/tài liệu thống nhất | P2 | DONE | B26: DONE — chuẩn hóa root README/AGENTS, app AGENTS, code structure và developer workflow Node/npm duy nhất; archive README cũ; gate đối chiếu đường dẫn/scripts/lock; clean-source ZIP `npm run check` và 11 focused tests PASS với dependency lock-matched đã cài sẵn; local auth smoke PASS. `npm ci` mới trong container bị chặn bởi npm registry DNS EAI_AGAIN, không tuyên bố fresh install ở B26; B23 hosted đã xác minh cùng lockfile. Con người có thể review tài liệu tiếp. |
 | 33 | Release tái lập/clean environment | P2 | DONE | Reproducible per-file content/source archive (không cam kết whole-ZIP byte-identical cross-zlib); B09-fix1 + hosted Linux/Windows B24 npm-ci/check và clean-unpack smoke, B25 thêm test hai lần đóng gói byte-stable với cùng tool, xác nhận safe manifest/CRC và save không thay đổi. Runtime ZIP/debug report không thuộc loại artifact đã hỗ trợ. |
 | 34 | Không mất quà pending khi inbox đầy | P1 | DONE | Quota 50 pending: từ chối thư mới, không cắt quyền nhận cũ; duplicate vẫn idempotent |
-| 35 | Phân phối asset và loading theo nhu cầu | P1 | DONE | B44–B48: local manifest/hash inventory, boot progress, bounded Save-Data preload, responsive DPR/cache và PvP two-client non-blocking warm đạt. B48 chốt local-only và gỡ toàn bộ Supabase Storage/CDN surface; #22 tiếp tục quản lý quyền artwork độc lập. [Kiến trúc](./asset-delivery-loading-roadmap.md). |
+| 35 | Phân phối asset và loading theo nhu cầu | P1 | DONE | B44–B48: local manifest/hash inventory, boot progress, bounded Save-Data preload, responsive DPR/cache và PvP two-client non-blocking warm đạt. B48 chốt local-only và gỡ toàn bộ Supabase Storage/CDN surface. [Kiến trúc](./asset-delivery-loading-roadmap.md). |
+| 36 | Quyền phát hành công khai cho media đã pin | P0 | IN PROGRESS | 847 record vẫn fail-closed: 31 UI master thiếu owner/hash attestation, 272 artwork ghi nguồn PokéAPI official artwork, 544 sprite ghi nguồn Pokémon Showdown. Hoàn tất bằng asset thay thế có quyền hoặc evidence cụ thể gắn từng SHA-256; không suy ra quyền từ local/free/public URL. `app/docs/asset-rights-decision-b47.md`. |
 
 ## Thứ tự tiếp theo
 
-#02/#04/#08/#09 đã DONE. #22 là mục IN PROGRESS cuối cùng và tiếp tục theo dõi quyền artwork cùng Chrome desktop DPR/a11y acceptance trước public release; #18 vẫn DEFERRED, #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
+#02/#04/#08/#09/#22 đã DONE. #36 là mục IN PROGRESS cuối cùng và chỉ theo dõi quyền phát hành media; #18 vẫn DEFERRED, #35 giữ local-only theo [roadmap asset/loading](./asset-delivery-loading-roadmap.md).
 
-#04 DONE sau B52. Tổng hiện tại **35 mục: 33 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+#22 DONE kỹ thuật sau B53. Tổng hiện tại **36 mục: 34 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
 ## Nhật ký triển khai
 
@@ -637,6 +638,15 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Nghiệm thu:** focused coordination/lifecycle/Admin **48/48 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.517/1.517 PASS trên 244 file** (0 fail/skip/todo). Hosted CI run [`36765816083`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36765816083) PASS trên Ubuntu, Windows và `release-smoke` cho commit B52 `634c67b`.
 - Supported beta topology được ghi rõ là một live game-coordinator process. Distributed match lease/fencing và active-match restart vẫn thuộc #18 DEFERRED; B52 không tạo migration mới.
 - **Tổng:** **33 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
+
+### 01/10/2026 — B53: đóng kỹ thuật #22 bằng Chrome/DPR acceptance
+
+- Chrome desktop chạy gallery thật đủ **8/8 capture**: 360/1366 px × DPR1/2 × baseline/optimized. Không ảnh lỗi, đúng 1×/2× manifest candidate, CLS 0; optimized transfer còn 218.292 B ở DPR1 và 633.093 B ở DPR2 so với baseline 7.903.341 B.
+- Server loopback/save/account synthetic riêng kiểm Home, Bag, Shop, Profile, Arena và Team Preview ở 1366×900; kiểm lại Home/Bag/Shop/Profile/Team Preview ở 360×800 theo fixed logical viewport. Không đọc `.dev.vars`, `.local-data`, save thật hay remote storage; không ảnh visible bị thiếu.
+- Browser phát hiện Home `.content` có horizontal scrollbar 45 px do decorative artwork transform. Thêm Home-only `overflow-x:hidden` nhưng giữ `overflow-y:auto`; Chrome xác nhận thanh ngang biến mất và regression source khóa selector. Keyboard thật duyệt đủ primary nav; ArrowDown/Escape menu hoạt động và trả focus đúng.
+- Focused image/CSS/a11y **32/32 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.517/1.517 PASS trên 244 file** (0 fail/skip/todo). Hosted CI được xác nhận sau push.
+- **#22 DONE kỹ thuật.** Không tự gắn quyền cho media: 847 record hiện vẫn ghi PokéAPI/Showdown hoặc thiếu attestation. Chúng chuyển nguyên trạng sang release gate #36 `IN PROGRESS`; `assets:rights:release` tiếp tục fail-closed. Không có migration mới.
+- **Tổng:** **34 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED** trên 36 mục.
 
 ## Cách cập nhật file này
 

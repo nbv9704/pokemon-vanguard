@@ -28,5 +28,5 @@ export async function auditPublicAssetRights({root=ROOT}={}){
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
  const result=await auditPublicAssetRights();
  console.log(JSON.stringify(result,null,2));
- if(process.argv.includes('--release')&&!result.releaseReady)throw Error('Public redistribution gate NOT CLEARED. Finish existing asset review and supply all project-owned UI symbols.');
+ if(process.argv.includes('--release')&&!result.releaseReady)throw Error('Public redistribution gate NOT CLEARED. Resolve every pending media rights record and keep all project-owned UI symbols complete.');
 }

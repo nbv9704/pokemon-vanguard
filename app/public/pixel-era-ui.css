@@ -698,6 +698,10 @@ body.pixel-era.resolution-locked .content{
   overflow:auto;
   scrollbar-gutter:stable;
 }
+body.pixel-era.resolution-locked[data-app-screen="home"] .content{
+  overflow-x:hidden;
+  overflow-y:auto;
+}
 body.pixel-era.resolution-locked .battle-shell-layout,
 body.pixel-era.resolution-locked .battle-content,
 body.pixel-era.resolution-locked .pokemon-game-surface,

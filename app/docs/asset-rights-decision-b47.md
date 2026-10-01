@@ -1,6 +1,6 @@
 # Asset redistribution decision — B47
 
-Status: the project uses local assets only. Public release rights remain unresolved because the current upstream evidence does not grant this project blanket redistribution rights for the Pokémon images.
+Status: the project uses local assets only. Public release gate #36 remains unresolved because the current upstream evidence does not grant this project blanket redistribution rights for the Pokémon images. Technical image optimization/browser acceptance is closed separately under #22/B53.
 
 ## Verified inventory
 

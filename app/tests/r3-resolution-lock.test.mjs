@@ -62,6 +62,7 @@ test('R3-103 resolution lock owns the root surface and preserves desktop composi
   assert.ok(modalRule.indexOf('inset:auto!important')<modalRule.indexOf('left:50%!important'),'modal inset must be reset before the centered coordinates are applied');
   assert.match(css,/font-size:calc\(12px \* var\(--game-fit-scale\)\)!important/,'toast size must override the earlier 8px important rule');
   assert.match(css,/resolution-locked #app>\.loading\{[\s\S]*?width:var\(--game-logical-width\)!important[\s\S]*?height:var\(--game-logical-height\)!important[\s\S]*?margin:0!important[\s\S]*?translate\(-50%,-50%\) scale\(var\(--game-fit-scale\)\)/,'loading must use the same centered 1280x720 fitted surface as the app shell');
+  assert.match(css,/resolution-locked\[data-app-screen="home"\] \.content\{[\s\S]*?overflow-x:hidden;[\s\S]*?overflow-y:auto;/,'decorative Home artwork must not create a horizontal content scrollbar');
 });
 
 test('modal handling uses the shared focus manager and keeps backdrop close behavior',()=>{

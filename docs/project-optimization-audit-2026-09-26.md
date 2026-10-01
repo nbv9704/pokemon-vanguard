@@ -402,6 +402,8 @@ Cách làm:
 
 Kiểm thử/đạt: ảnh trong suốt, palette, form và front/back đúng; không vỡ ở DPR2; asset checks đạt; đo transfer/decode/layout shift trước/sau. Rà quyền sử dụng riêng trước public release, không suy ra giấy phép từ việc URL tải được.
 
+**DONE kỹ thuật ở B53.** Chrome desktop đã chạy đủ gallery 360/1366 × DPR1/2 × baseline/optimized, chọn đúng manifest variant, không ảnh lỗi và CLS bằng 0. Real-route smoke trên save tạm bao phủ Home/Bag/Shop/Profile/Arena/Team Preview ở logical desktop và viewport hẹp; lỗi Home xuất hiện thanh cuộn ngang đã được sửa và khóa regression. Accessibility thuộc #31 đã DONE; quyền phát hành không bị nhập nhằng với tối ưu kỹ thuật và chuyển sang gate #36.
+
 ### 23 — CSS theo layer, giữ hợp đồng cascade
 
 **P2; xác nhận 31 stylesheet khởi đầu.** Vị trí: `public/index.html`, `pixel-era-ui.css`, `r3-release-polish.css`, `pokemon-battle-shell.css` và các route CSS; `docs/code-structure.md`.
@@ -595,11 +597,19 @@ Kiểm thử/đạt: enqueue 51+ quà chưa claim, mix read/unread/expired/claim
 
 Kế hoạch chốt: [asset-delivery-loading-roadmap.md](./asset-delivery-loading-roadmap.md). B44–B45 hoàn tất loader, bounded Save-Data preload, DPR/cache và two-client PvP deadline test. B48 xóa remote resolver, endpoint config, env, deployment scripts/tests/docs và giữ manifest như inventory/hash gate local. Sau #35 quay lại #09/#08; lỗi toàn vẹn dữ liệu #02/#04 vẫn được ưu tiên nếu xuất hiện.
 
-#22 sở hữu tối ưu ảnh/DPR/quyền sử dụng; #35 sở hữu phân phối và loading. Kế thừa #20 cache, #21 lazy-load, #27 source/release và #31 accessibility; không mở lại trạng thái DONE của chúng chỉ vì thêm tính năng mới. Tổng roadmap tăng từ 34 lên 35 mục.
+#22 sở hữu tối ưu ảnh/DPR; #35 sở hữu phân phối và loading. Kế thừa #20 cache, #21 lazy-load, #27 source/release và #31 accessibility; không mở lại trạng thái DONE của chúng chỉ vì thêm tính năng mới.
 
 Tiêu chí trọng yếu: vào Home sau nhóm tài nguyên thiết yếu; file progress trung thực; timeout/fallback; local cache và release tái lập. PvP bắt đầu preview timer ngay khi ghép/join: warm không khóa state/input hoặc lượt để đợi ảnh. Không xóa asset khỏi Git trước khi có nguồn master và bundle khôi phục theo hash.
 
 DONE sau automated/browser local acceptance và CI/release smoke; việc viết kế hoạch không phải hoàn thành runtime. CDN về sau là hạng mục mới nếu chủ dự án đổi quyết định.
+
+### 36 — Quyền phát hành công khai cho media đã pin (bổ sung sau B53)
+
+**P0 release gate; IN PROGRESS.** Đây là quyết định pháp lý/provenance, không phải tối ưu ảnh. `npm run assets:rights:release` tiếp tục fail-closed cho 847 record: 31 UI master chưa có owner attestation gắn hash, 272 artwork ghi nguồn PokéAPI official artwork và 544 sprite ghi nguồn Pokémon Showdown.
+
+Cách hoàn tất: thay các file hạn chế bằng artwork độc lập mà dự án có quyền phân phối, hoặc ghi permission/compatible-license evidence cụ thể cho từng source hash. Sau thay file phải regenerate manifest/variants, kiểm checksum/dimensions/pixel integrity, chạy Chrome B53 và full release gate lại. Không đổi `licenseStatus` chỉ dựa trên việc file có sẵn local, dự án miễn phí hay URL nguồn công khai.
+
+Kiểm thử/đạt: `npm run assets:rights:release` PASS; manifest không còn record thiếu evidence; clean package verify và browser image acceptance PASS. Runtime local-only #35 không bị mở lại trong lúc gate này còn IN PROGRESS. Tổng roadmap tăng từ 35 lên 36 mục để không che khuất blocker phát hành khi đóng kỹ thuật #22.
 
 ## 4. Nguyên tắc bắt buộc khi triển khai
 
