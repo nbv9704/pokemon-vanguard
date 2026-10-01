@@ -17,7 +17,7 @@ export class SocialPendingActions{
  save(){try{if(this.current)this.storage?.setItem(this.key,JSON.stringify({version:1,action:this.current}));else this.storage?.removeItem(this.key);return !!this.storage;}catch{this.persistent=false;return false;}}
  begin(action){if(!validAction(action)||this.current)return false;this.current=structuredClone(action);this.lastError=null;this.save();return true;}
  acknowledge(id){if(!this.current||this.current.actionId!==id)return false;this.current=null;this.lastError=null;this.save();return true;}
- reject(id,error){if(!this.current||this.current.actionId!==id)return false;this.lastError=String(error||'Server rejected action').slice(0,128);return true;}
+ reject(id){if(!this.current||this.current.actionId!==id)return false;this.discard();return true;}
  discard(){this.current=null;this.lastError=null;this.save();}
  retry(sendAction){if(!this.current)return false;this.lastError=null;return !!sendAction(structuredClone(this.current));}
 }

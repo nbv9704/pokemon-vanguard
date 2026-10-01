@@ -74,7 +74,7 @@ function updateLiveChrome(){
  patchLiveChrome({root:document,view:V,connectionText:connectionLabel(),unreadMailCount:unreadMailCount()});
 }
 function receiveView(next,envelope=null){
- joinedReady=true;const previous=latestView;latestView=next;pending=false;completedBattleResults.accept(next,{reentry:!previous});
+ joinedReady=true;const previous=latestView;latestView=next;pending=false;commercePending.reconcile(next);completedBattleResults.accept(next,{reentry:!previous});
  if(deltaCanPatchChrome({envelope,route:router.current,hasView:!!V,playback:!!playback})){V=next;announceNotice(!!previous);updateLiveChrome();return;}
  prepareRoute(router.current,next);
  if(playback){

@@ -12,7 +12,7 @@ test('Shop pending outbox keeps exact payload/ID across reload and discards only
  const restored=new CommercePendingActions({storage:mem,scope:'player-A'});
  assert.deepEqual(restored.pending,action);assert.equal(restored.acknowledge('unrelated'),false);
  assert.deepEqual(restored.pending,action);assert.equal(restored.reject(action.actionId,'NETWORK_UNKNOWN'),true);
- assert.match(restored.lastError,/NETWORK_UNKNOWN/);assert.equal(restored.acknowledge(action.actionId),true);
+ assert.equal(restored.pending,null);assert.equal(restored.acknowledge(action.actionId),false);
  assert.equal(new CommercePendingActions({storage:mem,scope:'player-A'}).pending,null);
 });
 test('commerce retry requires an explicit user intent and never mints a new action ID',()=>{
@@ -24,6 +24,13 @@ test('commerce retry requires an explicit user intent and never mints a new acti
  assert.equal(controls.retry(),true);assert.deepEqual(sent,[action,action]);
  assert.equal(pending.acknowledge('wrong-id'),false);assert.deepEqual(pending.pending,action);
  pending.discard();assert.equal(controls.retry(),false);assert.equal(commerceActionLabel(action),'Shop Ticket purchase');
+});
+test('a local send race and an authoritative battle state remove background-only retry notices',()=>{
+ const mem=storage(),start={type:'battleV3.preview.start',mode:'single',difficulty:'normal',actionId:'battle:start'},pending=new CommercePendingActions({storage:mem,scope:'player'}),changes=[];
+ const controls=createCommerceRetryController({outbox:pending,sendAction:()=>false,isBusy:()=>false,isReady:()=>true,onChange:()=>changes.push('changed')});
+ assert.equal(controls.send(start),false);assert.equal(pending.pending,null);assert.deepEqual(changes,['changed']);
+ assert.equal(pending.begin(start),true);assert.equal(pending.reconcile({battleV3:{phase:'COMMAND',snapshot:{phaseRevision:2}}}),true);assert.equal(pending.pending,null);
+ assert.equal(pending.begin(start),true);assert.equal(pending.reconcile({battleV3:{phase:'FINISHED'}}),false);assert.deepEqual(pending.pending,start);
 });
 test('invalid pending payloads and blocked session storage do not execute arbitrary saved actions',()=>{
  const mem=storage();mem.setItem('pv:commerce-pending:v1:player',JSON.stringify({version:1,action:{type:'battleV3.commands',actionId:'shop:valid'}}));

@@ -21,6 +21,13 @@ test('PvP outbox survives unrelated state, reload and explicit same-ID retry',()
  assert.deepEqual(sent,[action,action]);assert.equal(restored.acknowledge('other-id',action.type),false);assert.equal(restored.acknowledge(action.actionId,'trainingPvpV1.commands'),false);assert.deepEqual(restored.pending,action);assert.equal(restored.acknowledge(action.actionId,action.type),true);assert.equal(restored.pending,null);
 });
 
+test('PvP outbox clears definitive rejection and a first send that never reached the socket',()=>{
+ const storage=new MemoryStorage(),action={type:'rankedV1.commands',actionId:'ranked:turn-8',phaseRevision:8,commands:[{kind:'move'}]},rejected=new PvpPendingActions({storage,scope:'rejected'});
+ assert.equal(rejected.begin(action),true);assert.equal(rejected.reject(action.actionId,'STALE_PHASE'),true);assert.equal(rejected.pending,null);
+ const unsent=new PvpPendingActions({storage,scope:'unsent'}),changes=[],controller=createPvpRetryController({outbox:unsent,sendAction:()=>false,isBusy:()=>false,isReady:()=>true,onChange:()=>changes.push('changed')});
+ assert.equal(controller.send(action),false);assert.equal(unsent.pending,null);assert.deepEqual(changes,['changed']);
+});
+
 test('two Friendly clients retrying one operation get one mutation and a duplicate receipt',async()=>{
  const account='11111111-1111-4111-8111-111111111111',value=state(),service=new TrainingPvpService({catalog:v3Catalog,getState:id=>id===account?value:null});
  const team=activeTeam(value),action={type:'trainingPvpV1.room.create',mode:'single',teamId:team.teamId,actionId:'device-shared:create'};

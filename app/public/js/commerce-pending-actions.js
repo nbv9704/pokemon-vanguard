@@ -38,7 +38,13 @@ export class CommercePendingActions{
  save(){try{if(this.current)this.storage?.setItem(this.key,JSON.stringify({version:1,action:this.current}));else this.storage?.removeItem(this.key);return !!this.storage;}catch{this.persistent=false;return false;}}
  begin(action){if(!valid(action)||this.current)return false;this.current=structuredClone(action);this.lastError=null;this.save();return true;}
  acknowledge(id){if(!this.current||id!==this.current.actionId)return false;this.current=null;this.lastError=null;this.save();return true;}
- reject(id,error){if(!this.current||id!==this.current.actionId)return false;this.lastError=String(error||'Server rejected the action').slice(0,140);return true;}
+ reject(id){if(!this.current||id!==this.current.actionId)return false;this.discard();return true;}
+ reconcile(view){
+  const action=this.current,type=action?.type;if(!type?.startsWith('battleV2.')&&!type?.startsWith('battleV3.'))return false;
+  const battle=view?.[type.startsWith('battleV3.')?'battleV3':'battleV2'],revision=battle?.snapshot?.phaseRevision,suffix=type.split('.').at(-1);
+  const settled=suffix==='start'?!!battle&&battle.phase!=='FINISHED':suffix==='lock'?!!battle&&battle.phase!=='PREVIEW':suffix==='commands'?(!battle||battle.phase!=='COMMAND'||revision!==action.phaseRevision):suffix==='replacements'?(!battle||battle.phase!=='REPLACE'||revision!==action.phaseRevision):suffix==='surrender'?(!battle||battle.phase==='FINISHED'):suffix==='dismiss'?!battle:false;
+  return settled?this.acknowledge(action.actionId):false;
+ }
  discard(){this.current=null;this.lastError=null;this.save();}
  retry(sendAction){if(!this.current)return false;this.lastError=null;return !!sendAction(structuredClone(this.current));}
 }
@@ -48,7 +54,7 @@ export function createCommerceRetryController({outbox,sendAction,isBusy,isReady,
   if(!isReady()||isBusy()){notify('Wait until the server is ready before submitting this action.');return false;}
   if(!outbox.begin(action)){notify('Resolve the pending Shop, Recruitment or battle action first.');return false;}
   if(!outbox.persistent)notify('Session storage is blocked: keep this page open until your action is confirmed.');
-  const sent=sendAction(action);if(!sent)onChange();return sent;
+  const sent=sendAction(action);if(!sent){outbox.discard();onChange();}return sent;
  };
  const retry=()=>{if(!canRetry()){notify('Wait for the server to reconnect and sync.');return false;}const sent=outbox.retry(sendAction);onChange();return sent;};
  return {send,retry,canRetry};

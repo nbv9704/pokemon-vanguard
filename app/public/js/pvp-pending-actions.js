@@ -28,7 +28,7 @@ export class PvpPendingActions{
  save(){try{if(this.current)this.storage?.setItem(this.key,JSON.stringify({version:1,action:this.current}));else this.storage?.removeItem(this.key);return !!this.storage;}catch{this.persistent=false;return false;}}
  begin(action){if(!valid(action)||this.current)return false;this.current=structuredClone(action);this.lastError=null;this.save();return true;}
  acknowledge(id,type){if(!this.current||id!==this.current.actionId||type!==this.current.type)return false;this.current=null;this.lastError=null;this.save();return true;}
- reject(id,error){if(!this.current||id!==this.current.actionId)return false;this.lastError=String(error||'Server rejected the PvP action').slice(0,140);return true;}
+ reject(id){if(!this.current||id!==this.current.actionId)return false;this.discard();return true;}
  discard(){this.current=null;this.lastError=null;this.save();}
  retry(sendAction){if(!this.current)return false;this.lastError=null;return !!sendAction(structuredClone(this.current));}
 }
@@ -38,7 +38,7 @@ export function createPvpRetryController({outbox,sendAction,isBusy,isReady,notif
   if(!isReady()||isBusy()){notify('Wait until the match connection is ready before submitting this action.');return false;}
   if(!outbox.begin(action)){notify('Resolve the unconfirmed PvP action first.');return false;}
   if(!outbox.persistent)notify('Session storage is blocked: keep this page open until the match server confirms the action.');
-  const sent=sendAction(action);if(!sent)onChange();return sent;
+  const sent=sendAction(action);if(!sent){outbox.discard();onChange();}return sent;
  };
  const retry=()=>{if(!canRetry()){notify('Wait for the match to reconnect and sync.');return false;}const sent=outbox.retry(sendAction);onChange();return sent;};
  return {send,retry,canRetry};

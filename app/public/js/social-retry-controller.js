@@ -5,7 +5,7 @@ export function createSocialRetryController({outbox,sendAction,isBusy,isConnecte
   if(isBusy()){notify('Wait for your current action to finish.');return false;}
   if(!outbox.begin(action)){notify('Resolve the pending Social action before sending another.');return false;}
   if(!outbox.persistent)notify('Browser session storage is unavailable; your pending Social action may not survive a reload.');
-  const sent=sendAction(action);if(!sent)onChange();return sent;
+  const sent=sendAction(action);if(!sent){outbox.discard();onChange();}return sent;
  };
  const retry=()=>{
   if(!canRetry()){notify('Wait until your connection is ready.');return false;}

@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 0 |
 
-Đợt hiện tại: **B56 — khôi phục Team Preview và rà toàn bộ UI V3**. Route battle nạp đầy đủ layout dùng chung; Team Preview, command/switch UI, Arena và 10 màn quản lý đã được kiểm tra bằng browser thật.
+Đợt hiện tại: **B57 — dọn trạng thái nền khỏi giao diện người chơi**. Retry notice chỉ còn xuất hiện khi request đã gửi nhưng thật sự mất ACK; skip link chỉ hiện với thao tác bàn phím.
 
 ## Bảng tiến độ
 
@@ -672,6 +672,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Rà Home, Pokedex, Box, Recruitment, Shop, Missions, Friends, Gym Challenge, Training và Mailbox: **10/10 route** có `scrollWidth === clientWidth` và 0 ảnh lỗi. Việc kiểm thử chỉ mutate save tạm và đã cleanup, không chạm save local của người dùng.
 - **Nghiệm thu:** focused UI/Arena/loader/CSS/a11y **66/66 PASS**; `npm run check` PASS (477 syntax file, 414 module/1.185 edge/0 cycle, 496 production file, max 359/360 dòng); full `npm test` **1.524/1.524 PASS trên 245 file** (0 fail/skip/todo); `git diff --check` sạch. Hosted CI run [`36852676362`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36852676362) PASS trên Ubuntu, Windows và `release-smoke` cho code commit B56 `c44360e`.
 - Không có migration Supabase hoặc thay đổi dữ liệu. **Tổng giữ nguyên: 35 DONE / 1 IN PROGRESS / 0 TODO / 0 DEFERRED / 0 BLOCKED**; #36 vẫn là gate quyền phát hành công khai cho media.
+
+### 01/10/2026 — B57: dọn trạng thái nền và retry notice giả khỏi UI
+
+- **Nguyên nhân và bản sửa:** các outbox Commerce/PvE, PvP và Social trước đây giữ pending khi server đã trả lỗi có `actionId`, hoặc khi lần gửi đầu tiên trả `false` trước khi frame đi vào socket. Hai trường hợp đã có kết quả xác định này nay tự dọn; chỉ request đã gửi nhưng mất ACK/không có phản hồi tương quan mới giữ nút Retry/Discard để tránh thực thi hoặc thanh toán hai lần.
+- PvE pending cũ được đối chiếu với authoritative battle state sau mỗi full view: start/lock/command/replacement/surrender/dismiss đã chuyển phase hoặc revision sẽ tự hoàn tất. Điều này dọn an toàn banner `BATTLE_ALREADY_ACTIVE` còn sót sau reload mà không gửi thêm action.
+- Skip link vẫn được giữ cho accessibility nhưng dùng visually-hidden contract và chỉ mở bằng `:focus-visible`; mouse focus, restore focus và trạng thái bình thường không còn làm nó lộ ở góc trái. Cùng contract được áp dụng cho game và Admin.
+- **Nghiệm thu:** focused retry/accessibility/network **43/43 PASS**; browser thật xác nhận Home không có retry notice và skip link ở trạng thái 1×1 px, clipped; `npm run check` PASS (477 syntax file, 414 module/1.185 edge/0 cycle, 496 production file, max 359/360 dòng); full `npm test` **1.527/1.527 PASS trên 245 file** (0 fail/skip/todo); `git diff --check` sạch.
+- Đây là regression fix cho các mục UI/ACK đã DONE, không đổi database và không cần migration Supabase. Admin vẫn giữ cảnh báo HTTP ambiguous vì đó là trạng thái vận hành cần người quản trị quyết định. **Tổng giữ nguyên: 35 DONE / 1 IN PROGRESS / 0 TODO / 0 DEFERRED / 0 BLOCKED**; #36 vẫn là gate quyền phát hành công khai cho media.
 
 ## Cách cập nhật file này
 

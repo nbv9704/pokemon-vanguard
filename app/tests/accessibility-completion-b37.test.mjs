@@ -53,4 +53,9 @@ test('accessibility source contract catches a removed invariant',()=>{
  assert.ok(errors.some(error=>error.includes('public/admin.html')));
 });
 
+test('skip links stay visually hidden except for keyboard-visible focus',()=>{
+ const game=fs.readFileSync(new URL('../public/style.css',import.meta.url),'utf8'),admin=fs.readFileSync(new URL('../public/admin.css',import.meta.url),'utf8');
+ for(const css of [game,admin]){assert.match(css,/\.skip-link:focus-visible\{/);assert.doesNotMatch(css,/\.skip-link:focus\{/);assert.match(css,/clip-path:inset\(50%\)/);}
+});
+
 function requireText(file){return fs.readFileSync(new URL(`../${file}`,import.meta.url),'utf8');}

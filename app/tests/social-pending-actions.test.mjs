@@ -16,17 +16,17 @@ test('Social pending envelope survives reload only for same account and clears e
  assert.deepEqual(reloaded.pending,chat);
  assert.equal(new SocialPendingActions({storage:backing,scope:'trainer-B'}).pending,null);
  assert.equal(reloaded.acknowledge('unrelated'),false);assert.equal(reloaded.reject('unrelated','ERROR'),false);
- assert.equal(reloaded.reject(chat.actionId,'CHAT_RATE_LIMITED'),true);assert.equal(reloaded.lastError,'CHAT_RATE_LIMITED');
- const sent=[];assert.equal(reloaded.retry(action=>(sent.push(action),true)),true);assert.deepEqual(sent,[chat]);assert.equal(reloaded.acknowledge(chat.actionId),true);
+ assert.equal(reloaded.reject(chat.actionId,'CHAT_RATE_LIMITED'),true);assert.equal(reloaded.pending,null);
+ const sent=[];assert.equal(reloaded.retry(action=>(sent.push(action),true)),false);assert.deepEqual(sent,[]);assert.equal(reloaded.acknowledge(chat.actionId),false);
  assert.equal(new SocialPendingActions({storage:backing,scope:'trainer-A'}).pending,null);
 });
 
-test('Social retry controller requires explicit retry, refuses new action and retains draft on failed send',()=>{
+test('Social retry controller clears a first attempt that never reached the socket',()=>{
  const outbox=new SocialPendingActions({storage:storage(),scope:'scope'}),frames=[],alerts=[];
  let connected=false,busy=false;
  const ctrl=createSocialRetryController({outbox,sendAction:action=>(frames.push(structuredClone(action)),connected),isBusy:()=>busy,isConnected:()=>connected,notify:text=>alerts.push(text)});
- assert.equal(ctrl.send(chat),false);assert.deepEqual(outbox.pending,chat);assert.equal(frames.length,1);assert.equal(ctrl.retry(),false);
- connected=true;assert.equal(ctrl.send({...chat,actionId:'new-chat'}),false);assert.equal(ctrl.retry(),true);assert.deepEqual(frames[1],chat);
+ assert.equal(ctrl.send(chat),false);assert.equal(outbox.pending,null);assert.equal(frames.length,1);assert.equal(ctrl.retry(),false);
+ connected=true;const next={...chat,actionId:'new-chat'};assert.equal(ctrl.send(next),true);assert.deepEqual(outbox.pending,next);assert.deepEqual(frames[1],next);
  busy=true;assert.equal(ctrl.retry(),false);outbox.discard();assert.equal(outbox.pending,null);
  const blocked={getItem(){throw Error('disabled')},setItem(){throw Error('disabled')},removeItem(){throw Error('disabled')}};
  assert.equal(new SocialPendingActions({storage:blocked,scope:'scope'}).persistent,false);
