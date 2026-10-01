@@ -32,7 +32,7 @@ Keyboard smoke traversed the full primary navigation in order. Account-menu Arro
 - Focused image/CSS/accessibility suite: 32/32 passing.
 - Responsive inventory: 303 source images, 606 lossless 1x/2x variants and 544 pinned original sprites remain checksum/dimension verified.
 - Project UI symbols: 39/39 local files pass their strict dimension/runtime policy.
-- Full project `npm run check`, `npm test` and hosted CI are recorded in the B53 progress journal after the batch is pushed.
+- Full project `npm run check` and `npm test` passed; hosted run [`36813560857`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36813560857) passed Ubuntu, Windows and `release-smoke` for commit `65662a3`.
 
 ## Boundary: release rights
 
