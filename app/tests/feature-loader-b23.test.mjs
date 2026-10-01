@@ -37,4 +37,5 @@ test('client selects legacy and battle features through dynamic imports without 
  assert.doesNotMatch(source,/trainingEditor\.load\(\)\.catch/u);assert.doesNotMatch(source,/v3TrainingEditor\.load\(\)\.catch/u);assert.match(source,/state\.trainingV3/u);assert.match(source,/data-action="feature-retry"/u);
  for(const coreStyle of ['/training-editor.css','/team-builder.css','/recruitment.css'])assert.equal(html.includes(`href="${coreStyle}"`),true,coreStyle);
  for(const lazyStyle of ['/box-view.css','/v2-battle.css','/damage-inspector.css','/v3-battle-arena.css']){assert.equal(html.includes(`href="${lazyStyle}"`),false,lazyStyle);assert.equal(source.includes(`'${lazyStyle}'`),true,lazyStyle);}
+ assert.match(source,/'v3-battle':async\(\)=>\{[^\n]+styles\.loadMany\(\['\/v2-battle\.css','\/v3-battle-arena\.css'/u);
 });

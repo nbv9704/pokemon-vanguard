@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 0 |
 
-Đợt hiện tại: **B55 — khôi phục layout UI lõi sau regression tải CSS**. Home giữ artwork trong card; Box, Recruitment và Training nạp stylesheet ngay từ fresh boot V3.
+Đợt hiện tại: **B56 — khôi phục Team Preview và rà toàn bộ UI V3**. Route battle nạp đầy đủ layout dùng chung; Team Preview, command/switch UI, Arena và 10 màn quản lý đã được kiểm tra bằng browser thật.
 
 ## Bảng tiến độ
 
@@ -664,6 +664,14 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - **Browser acceptance:** fresh boot xác nhận 6/6 artwork Home nằm trong card; Box dùng đúng grid team builder; Recruitment dùng đúng grid ranch/detail; Training hiển thị đúng editor. Audit 10 route quản lý không có ảnh vỡ hoặc tràn ngang; 1366×900 và 360×800 đều giữ đúng fixed-resolution contract, console không warning/error.
 - **Nghiệm thu:** focused UI/loader/CSS/a11y **40/40 PASS**; `npm run check` PASS (477 syntax file, 414 module/1.185 edge/0 cycle, 496 production file, max 359/360 dòng); full `npm test` **1.524/1.524 PASS trên 245 file** (0 fail/skip/todo); `git diff --check` sạch. Hosted CI run [`36822350975`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36822350975) PASS trên Ubuntu, Windows và `release-smoke` cho code commit B55 `21a6c72`.
 - Đây là regression fix cho các mục UI đã DONE, không đổi phạm vi roadmap hoặc database và không cần migration. **Tổng giữ nguyên: 35 DONE / 1 IN PROGRESS / 0 TODO / 0 DEFERRED / 0 BLOCKED**; #36 vẫn chỉ là gate quyền phát hành công khai cho media.
+
+### 01/10/2026 — B56: khôi phục Team Preview và rà toàn bộ UI V3
+
+- **Nguyên nhân và bản sửa:** Team Preview V3 dùng `.preview-columns`, `.preview-roster` và `.preview-mon` trong `v2-battle.css`, nhưng route loader `v3-battle` chỉ nạp nhóm stylesheet V3. Thêm `v2-battle.css` vào đúng ready barrier của route battle và khóa quan hệ này bằng source regression; loader vẫn deduplicate khi legacy cũng cần cùng file.
+- **Browser acceptance tách biệt dữ liệu thật:** dùng save thử mới để đi trọn Home → Single Team Preview → chọn 3 Pokémon → lock lineup → command screen → switch Pokémon → surrender/result → Arena hub/PvE setup. Team Preview trở lại hai cột 584 px, 12 card cao khoảng 83 px, artwork khoảng 63–72 px nằm trong card; battle/Arena không ảnh vỡ hoặc tràn ngang.
+- Rà Home, Pokedex, Box, Recruitment, Shop, Missions, Friends, Gym Challenge, Training và Mailbox: **10/10 route** có `scrollWidth === clientWidth` và 0 ảnh lỗi. Việc kiểm thử chỉ mutate save tạm và đã cleanup, không chạm save local của người dùng.
+- **Nghiệm thu:** focused UI/Arena/loader/CSS/a11y **66/66 PASS**; `npm run check` PASS (477 syntax file, 414 module/1.185 edge/0 cycle, 496 production file, max 359/360 dòng); full `npm test` **1.524/1.524 PASS trên 245 file** (0 fail/skip/todo); `git diff --check` sạch.
+- Không có migration Supabase hoặc thay đổi dữ liệu. **Tổng giữ nguyên: 35 DONE / 1 IN PROGRESS / 0 TODO / 0 DEFERRED / 0 BLOCKED**; #36 vẫn là gate quyền phát hành công khai cho media.
 
 ## Cách cập nhật file này
 
