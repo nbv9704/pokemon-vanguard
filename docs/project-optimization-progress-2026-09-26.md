@@ -634,7 +634,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Dispatcher gọi `actionUnlocked` chỉ bên trong reservation đã tính cho Friendly action. WebSocket join/close await lifecycle mutation nên không để presence update chạy rơi bên ngoài queue.
 - Admin `battle.stop` lấy union participant của Ranked/Friendly trước khi khóa, giữ đúng một multi-account reservation rồi gọi stop unlocked. Điều này loại self-deadlock do trước đây giữ account mục tiêu rồi cố lấy lại account đó cùng đối thủ.
 - Barrier acceptance bao phủ Social pair + Admin grant không mất incoming request/balance, Friendly command + timeout không resolve một phase hai lần, và Admin stop giữ đủ participant mà không khóa lồng. Không dùng sleep ngẫu nhiên.
-- **Nghiệm thu:** focused coordination/lifecycle/Admin **48/48 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.517/1.517 PASS trên 244 file** (0 fail/skip/todo). Hosted CI được xác nhận sau push.
+- **Nghiệm thu:** focused coordination/lifecycle/Admin **48/48 PASS**; `npm run check` PASS (476 syntax file, 413 module/1.182 edge/0 cycle, 495 production file, max 359/360 dòng); full `npm test` **1.517/1.517 PASS trên 244 file** (0 fail/skip/todo). Hosted CI run [`36765816083`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36765816083) PASS trên Ubuntu, Windows và `release-smoke` cho commit B52 `634c67b`.
 - Supported beta topology được ghi rõ là một live game-coordinator process. Distributed match lease/fencing và active-match restart vẫn thuộc #18 DEFERRED; B52 không tạo migration mới.
 - **Tổng:** **33 DONE / 1 IN PROGRESS / 0 TODO / 1 DEFERRED / 0 BLOCKED**.
 
