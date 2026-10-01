@@ -21,7 +21,7 @@ import {createPlayerActionDispatcher} from './player-action-dispatch.mjs';
 
 export function createWebsocketController({server,isClosing,requestPolicy,auth,authRequired,quotas,
  rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,
- trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,
+ trainingPvp,restartRecovery,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,
  ensureBetaTestWallet,ops,sessionCommits,websocketHeartbeatMs,websocketJoinDeadlineMs,
  maxSocketsPerIp,maxSocketsPerAccount,setBroadcast}){
   let broadcast=()=>{};
@@ -97,7 +97,7 @@ export function createWebsocketController({server,isClosing,requestPolicy,auth,a
           ws.stateDeltaV1=Array.isArray(message.capabilities)&&message.capabilities.includes('state-delta-v1');
           room.dirty=true;
           if (!room.state) {
-            const loaded=await storage.load(name);
+            const loaded=await restartRecovery.recoverForPlayer(name);
             if(!loaded){const v2=upgradeAdventure(setup([message.playerId]),v2Catalog),v3=upgradeAdventureToV3(v2.state,v3Catalog);room.state=v3.state;await persist(name,room.state);}
             else if(!loaded.battle){let base=loaded;if((loaded.schemaVersion||1)<2){const v2=upgradeAdventure(loaded,v2Catalog);base=v2.state;}const upgraded=upgradeAdventureToV3(base,v3Catalog);if(['migrated','catalog-upgraded','progression-upgraded'].includes(upgraded.status)){await storage.backup(name,migrationBackups,'pre-v3-schema');room.state=upgraded.state;await persist(name,room.state);}else room.state=upgraded.state;}
             else room.state=loaded;

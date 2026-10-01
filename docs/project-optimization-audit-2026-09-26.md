@@ -341,6 +341,8 @@ Cách làm:
 
 Kiểm thử/đạt: kill/restart tại preview, sau A submit, sau resolve trước persist, sau commit trước notify. Không nhận thưởng/trừ ticket hai lần; không reveal pending command đối phương. Liên quan chặt 02/04/05/08/27.
 
+**DONE ở B54 theo topology beta đã chốt.** Dự án chọn nhánh policy no-contest thay vì resume: trước ACK ghép Ranked, marker tối thiểu được ghi atomically vào hai save; marker không chứa seed, roster, snapshot hoặc pending command. Sau process restart, WebSocket join giữ khóa cả hai account, đối chiếu marker rồi ghi đúng một receipt `server-restart-no-contest` cho mỗi bên bằng pair transaction; rating, record, reward và ticket giữ nguyên. Normal settlement/no-contest xóa marker trong cùng commit; lost ACK đọc lại marker và reconnect cùng coordinator không bị nhận nhầm là restart. Friendly là session-only, tự đóng không penalty và UI công khai policy. `PV_GAME_COORDINATOR_COUNT` fail startup nếu khác 1, nên không ngầm quảng cáo multi-process khi chưa có lease/fencing. Không cần migration Supabase. Bằng chứng: [`../app/docs/pvp-restart-policy-b54.md`](../app/docs/pvp-restart-policy-b54.md).
+
 ### 19 — ACK rõ ràng và phân biệt “kết nối” với “đã lưu”
 
 **P1 về độ tin cậy UX; xác nhận.** Vị trí: `public/js/net.js`, `public/client.js::send/receiveView/draw`.

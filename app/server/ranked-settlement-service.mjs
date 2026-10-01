@@ -15,6 +15,14 @@ export async function commitRankedSettlement(match){
   }
  }
  const aNext=clone(aState),bNext=clone(bState);ensureRankedState(aNext);ensureRankedState(bNext);const scoreA=winner==='A'?1:winner==='B'?0:.5,delta=rankedRatingDelta(aNext.rankedV1.rating,bNext.rankedV1.rating,scoreA),now=this.clock.now(),aBefore=aNext.rankedV1.rating,bBefore=bNext.rankedV1.rating;
+ this.restartRecovery?.clearFromState(aNext,match.id);this.restartRecovery?.clearFromState(bNext,match.id);
+ if(match.noContest){
+  recordRankedSettlement(aNext,{matchId:match.id,key,outcome:'no-contest',reason:match.battle?.result?.reason||match.forfeitReason||'no-contest',mode:match.mode,opponentName:b.name,opponentRating:bBefore,ratingDelta:0,ratingAfter:aNext.rankedV1.rating,rankTicketProtected:false,settledAt:now});
+  recordRankedSettlement(bNext,{matchId:match.id,key,outcome:'no-contest',reason:match.battle?.result?.reason||match.forfeitReason||'no-contest',mode:match.mode,opponentName:a.name,opponentRating:aBefore,ratingDelta:0,ratingAfter:bNext.rankedV1.rating,rankTicketProtected:false,settledAt:now});
+  if(typeof this.persistPair!=='function')throw Object.assign(Error('Atomic two-account storage is required for Ranked settlement'),{code:'RANKED_ATOMIC_STORAGE_REQUIRED'});
+  await this.persistPair([{userId:a.accountId,state:aNext},{userId:b.accountId,state:bNext}],`ranked:settlement:${match.id}`);this.publish(a.accountId,aNext,aState);this.publish(b.accountId,bNext,bState);
+  match.rankTicketProtected={A:false,B:false};match.ratingDelta={A:0,B:0};match.ratingAfter={A:aNext.rankedV1.rating,B:bNext.rankedV1.rating};match.settled=true;match.settledAt=now;match.decisionClock=null;return;
+ }
  const shieldA=protectRankedLoss(aNext,match.id,delta.A),shieldB=protectRankedLoss(bNext,match.id,delta.B);
  settleProfile(aNext,{matchId:match.id,opponentName:b.name,opponentRating:bBefore,score:scoreA,delta:shieldA.delta,now,mode:match.mode,protected:shieldA.protected});
  settleProfile(bNext,{matchId:match.id,opponentName:a.name,opponentRating:aBefore,score:1-scoreA,delta:shieldB.delta,now,mode:match.mode,protected:shieldB.protected});

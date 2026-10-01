@@ -25,9 +25,14 @@ import {OperationsJournal,ReadinessGate,settlementHealth,operationalAlerts} from
 import {assertStoragePort} from './server/storage-port.mjs';
 import {FileSessionRevocationStore} from './server/session-revocation-store.mjs';
 import {SessionCommitContext} from './server/session-commit-context.mjs';
+import {PvpRestartRecovery} from './server/pvp-restart-recovery.mjs';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 export const BETA_TEST_WALLET=Object.freeze({coins:999999,crystals:999999,recruitmentTickets:999});
+export function assertSingleCoordinatorEnv(env={}){
+ const raw=env.PV_GAME_COORDINATOR_COUNT;if(raw===undefined)return 1;const value=Number(raw);
+ if(!Number.isSafeInteger(value)||value!==1)throw new Error('PV_GAME_COORDINATOR_COUNT must be 1; beta PvP does not support multiple live coordinators');return value;
+}
 export function ensureBetaTestWallet(state){
   if(!state?.progressionV3)return false;
   ensureEconomyState(state);let changed=false;
@@ -64,8 +69,10 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const notifyAccounts=accountIds=>{for(const accountId of new Set(accountIds||[])){const target=rooms.get(accountId);if(target?.state)broadcast(target);}};
   const setLiveState=(accountId,state)=>{const target=rooms.get(accountId);if(target){target.state=state;target.dirty=false;target.lastActiveAt=clock.now();}};
   const loadState=(accountId,key)=>key?storage.loadForAction(accountId,key):storage.load(accountId);
+  let ranked;
+  const restartRecovery=new PvpRestartRecovery({loadState:accountId=>storage.load(accountId),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),publishState:setLiveState,withAccounts:(ids,work)=>accounts.withAccounts(ids,work),isMatchLive:matchId=>ranked?.matches.has(matchId)===true,clock});
   const social=new SocialService({clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState,loadProfile:accountId=>storage.profile(accountId),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
-  const ranked=new RankedService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState,persist:async(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),publishState:setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work),onSettlementFailure:failure=>ops.record({domain:'ranked',operation:'settlement',outcome:'error',...failure})});
+  ranked=new RankedService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,loadState,persist:async(accountId,state)=>storage.save(accountId,state),persistPair:(entries,operationId)=>storage.savePair(entries,operationId),publishState:setLiveState,notify:notifyAccounts,withAccounts:(ids,work)=>accounts.withAccounts(ids,work),restartRecovery,onSettlementFailure:failure=>ops.record({domain:'ranked',operation:'settlement',outcome:'error',...failure})});
   const trainingPvp=new TrainingPvpService({catalog:v3Catalog,clock,getState:accountId=>rooms.get(accountId)?.state||null,notify:notifyAccounts,isFriend:(a,b)=>social.isFriend(a,b),withAccounts:(ids,work)=>accounts.withAccounts(ids,work)});
   const roomLimit=Number.isSafeInteger(maxResidentRooms)?Math.max(1,Math.min(100_000,maxResidentRooms)):1000,roomCounters={ttl:0,capacity:0,capacityRejected:0};
   const roomBusy=id=>ranked.busy(id)||trainingPvp.busy(id);
@@ -100,7 +107,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
   const handleHttp=createHttpRequestHandler({isClosing:()=>closing,readiness,requestPolicy,auth,admin,sessionCommits,
    quotas,v2Catalog,serveV2Catalog,serveV3Catalog,serveStatic});
   const server=http.createServer((req,res)=>{void handleHttp(req,res);});
-  wsController=createWebsocketController({server,isClosing:()=>closing,requestPolicy,auth,authRequired,quotas,rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,trainingPvp,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,ensureBetaTestWallet,ops,sessionCommits,websocketHeartbeatMs,websocketJoinDeadlineMs,maxSocketsPerIp,maxSocketsPerAccount,setBroadcast:next=>{broadcast=next;}});
+  wsController=createWebsocketController({server,isClosing:()=>closing,requestPolicy,auth,authRequired,quotas,rooms,sweepRooms,roomLimit,roomCounters,clock,runtimeMetrics,accounts,ranked,social,trainingPvp,restartRecovery,storage,migrationBackups,v2Catalog,v3Catalog,betaTestFunds,ensureBetaTestWallet,ops,sessionCommits,websocketHeartbeatMs,websocketJoinDeadlineMs,maxSocketsPerIp,maxSocketsPerAccount,setBroadcast:next=>{broadcast=next;}});
   const {wss,websocketHeartbeatTimer,sessionSweepTimer}=wsController;
   let closePromise=null,closing=false;
   const bounded=async(promise,ms)=>{let timer;try{return await Promise.race([promise,new Promise(resolve=>{timer=setTimeout(resolve,ms);timer.unref?.();})]);}finally{clearTimeout(timer);}};
@@ -115,6 +122,7 @@ export function createLocalServer({ saveDir = path.join(root, '.local-data'), cl
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const envLimit=(name,defaultValue,min=1,max=100_000)=>{const raw=process.env[name];if(raw===undefined)return defaultValue;const value=Number(raw);if(!Number.isSafeInteger(value)||value<min||value>max)throw new Error(`Invalid integer configuration: ${name}`);return value;};
+  assertSingleCoordinatorEnv(process.env);
   const app = createLocalServer({betaTestFunds:process.env.BETA_TEST_FUNDS==='true',authRequired:true,
    shutdownDeadlineMs:envLimit('PV_SHUTDOWN_TIMEOUT_MS',10_000,100,60_000),
    maxSocketsPerIp:envLimit('PV_WS_MAX_SOCKETS_PER_IP',24,1,256),
