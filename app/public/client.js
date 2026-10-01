@@ -143,7 +143,7 @@ const redrawWorkspace=()=>{if(V&&['home','training','collection','teams','recrui
 const catalogs=createCatalogLoader((...args)=>fetch(...args));
 const styles=createStyleLoader(document);
 const routeModules=new RouteModuleRegistry({
- 'legacy-core':async()=>{const [modules]=await Promise.all([Promise.all([import('./js/training-editor.js'),import('./js/box-view.js'),import('./js/team-builder.js'),import('./js/v2-battle-screen.js'),import('./js/v2-tutorial.js'),import('./js/recruitment-view.js')]),styles.loadMany(['/training-editor.css','/box-view.css','/team-builder.css','/recruitment.css','/v2-battle.css','/v2-tutorial.css'])]);const [training,box,team,battle,tutorial,recruitment]=modules;return {...training,...box,...team,...battle,...tutorial,...recruitment};},
+ 'legacy-core':async()=>{const [modules]=await Promise.all([Promise.all([import('./js/training-editor.js'),import('./js/box-view.js'),import('./js/team-builder.js'),import('./js/v2-battle-screen.js'),import('./js/v2-tutorial.js'),import('./js/recruitment-view.js')]),styles.loadMany(['/box-view.css','/v2-battle.css','/v2-tutorial.css'])]);const [training,box,team,battle,tutorial,recruitment]=modules;return {...training,...box,...team,...battle,...tutorial,...recruitment};},
  'damage-inspector':async()=>{const [module]=await Promise.all([import('./js/damage-inspector.js'),styles.load('/damage-inspector.css')]);return module;},
  'v3-battle':async()=>{const [module]=await Promise.all([import('./js/v3-battle-screen.js'),styles.loadMany(['/v3-battle-arena.css','/v3-move-fx.css','/v3-playback.css','/v3-field-effects.css','/pokemon-battle-shell.css','/battle-presentation-polish.css'])]);return module;}
 });

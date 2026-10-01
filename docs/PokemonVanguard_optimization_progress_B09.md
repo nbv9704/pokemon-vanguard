@@ -22,7 +22,7 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 | BLOCKED | 0 |
 | DEFERRED | 0 |
 
-Đợt hiện tại: **B54 — đóng #18 bằng Ranked restart no-contest bền vững**. Marker hai-save được ghi trước ACK, recovery không đổi rating/ticket và policy single-coordinator/Friendly session-only được công khai.
+Đợt hiện tại: **B55 — khôi phục layout UI lõi sau regression tải CSS**. Home giữ artwork trong card; Box, Recruitment và Training nạp stylesheet ngay từ fresh boot V3.
 
 ## Bảng tiến độ
 
@@ -657,6 +657,13 @@ Ngày bắt đầu triển khai: 26/09/2026. Baseline: commit `26601b2`.
 - Dedicated B54 **7/7 PASS**; broader Ranked/recovery/lifecycle **38/38 PASS** trước các guard cuối; `npm run check` PASS (477 syntax file, 414 module/1.185 edge/0 cycle, 496 production file, max 359/360 dòng); full `npm test` **1.524/1.524 PASS trên 245 file** (0 fail/skip/todo). Hosted CI run [`36815940073`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36815940073) PASS trên Ubuntu, Windows và `release-smoke` cho commit B54 `d3424ab`.
 - Không có migration Supabase mới. Chi tiết: `app/docs/pvp-restart-policy-b54.md`.
 - **#18 DONE. Tổng:** **35 DONE / 1 IN PROGRESS / 0 TODO / 0 DEFERRED / 0 BLOCKED** trên 36 mục; #36 vẫn fail-closed với 847 rights record.
+
+### 01/10/2026 — B55: khôi phục layout UI lõi sau regression tải CSS
+
+- **Nguyên nhân và bản sửa:** rule kích thước `.pokemon-art img` trước đây nằm trong `recruitment.css`, nên Home fresh boot có thể dùng kích thước nội tại 475×475 và tràn khỏi squad card. Rule dùng chung đã chuyển sang `pokemon-ui.css`. Ba stylesheet `team-builder.css`, `recruitment.css` và `training-editor.css` được nạp ở core vì view V3 tương ứng cũng được import ngay từ boot; loader legacy không tải trùng chúng nữa.
+- **Browser acceptance:** fresh boot xác nhận 6/6 artwork Home nằm trong card; Box dùng đúng grid team builder; Recruitment dùng đúng grid ranch/detail; Training hiển thị đúng editor. Audit 10 route quản lý không có ảnh vỡ hoặc tràn ngang; 1366×900 và 360×800 đều giữ đúng fixed-resolution contract, console không warning/error.
+- **Nghiệm thu:** focused UI/loader/CSS/a11y **40/40 PASS**; `npm run check` PASS (477 syntax file, 414 module/1.185 edge/0 cycle, 496 production file, max 359/360 dòng); full `npm test` **1.524/1.524 PASS trên 245 file** (0 fail/skip/todo); `git diff --check` sạch.
+- Đây là regression fix cho các mục UI đã DONE, không đổi phạm vi roadmap hoặc database và không cần migration. **Tổng giữ nguyên: 35 DONE / 1 IN PROGRESS / 0 TODO / 0 DEFERRED / 0 BLOCKED**; #36 vẫn chỉ là gate quyền phát hành công khai cho media.
 
 ## Cách cập nhật file này
 

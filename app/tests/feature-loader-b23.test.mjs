@@ -35,5 +35,6 @@ test('client selects legacy and battle features through dynamic imports without 
  for(const eager of ['./js/training-editor.js"','./js/box-view.js"','./js/team-builder.js"','./js/v2-battle-screen.js"','./js/damage-inspector.js"','./js/v3-battle-screen.js"'])assert.equal(source.includes(`from "${eager}`),false,eager);
  assert.match(source,/import\('\.\/js\/training-editor\.js'\)/u);assert.match(source,/import\('\.\/js\/damage-inspector\.js'\)/u);assert.match(source,/import\('\.\/js\/v3-battle-screen\.js'\)/u);
  assert.doesNotMatch(source,/trainingEditor\.load\(\)\.catch/u);assert.doesNotMatch(source,/v3TrainingEditor\.load\(\)\.catch/u);assert.match(source,/state\.trainingV3/u);assert.match(source,/data-action="feature-retry"/u);
- for(const lazyStyle of ['/training-editor.css','/v2-battle.css','/damage-inspector.css','/v3-battle-arena.css']){assert.equal(html.includes(`href="${lazyStyle}"`),false,lazyStyle);assert.equal(source.includes(`'${lazyStyle}'`),true,lazyStyle);}
+ for(const coreStyle of ['/training-editor.css','/team-builder.css','/recruitment.css'])assert.equal(html.includes(`href="${coreStyle}"`),true,coreStyle);
+ for(const lazyStyle of ['/box-view.css','/v2-battle.css','/damage-inspector.css','/v3-battle-arena.css']){assert.equal(html.includes(`href="${lazyStyle}"`),false,lazyStyle);assert.equal(source.includes(`'${lazyStyle}'`),true,lazyStyle);}
 });

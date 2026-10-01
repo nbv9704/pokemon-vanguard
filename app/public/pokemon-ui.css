@@ -1,5 +1,6 @@
 @layer pv.routes{
 :root{--game-ui-bg:#f8f4e8;--game-ui-ink:#172334;--game-ui-edge:#34485f;--game-ui-edge-hi:#fdfbf4;--game-ui-shadow:#07111cb8;--game-ui-accent:#8bcf5b;--game-ui-focus:#f4d35e;--game-ui-radius:7px}
+.pokemon-art img{display:block;width:100%;height:100%;object-fit:contain;image-rendering:auto;filter:drop-shadow(0 10px 8px #07111d66)}.pokemon-key-art img{transform:scale(var(--art-scale,1));transform-origin:center}
 .aether-window{position:relative;color:var(--game-ui-ink);background:linear-gradient(180deg,#fffdf7,#ece7d9);border:3px solid var(--game-ui-edge);border-radius:var(--game-ui-radius);box-shadow:inset 0 0 0 2px var(--game-ui-edge-hi),0 5px 0 #152334,0 10px 24px var(--game-ui-shadow);overflow:hidden}
 .aether-window:before{content:"";position:absolute;inset:5px;border:1px solid #9da7ad75;border-radius:3px;pointer-events:none}.aether-window-body{position:relative;padding:14px 16px}.aether-window-title{position:relative;padding:8px 15px 5px;font:700 13px 'Barlow Condensed',system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;border-bottom:1px solid #98a0a8;background:linear-gradient(180deg,#e9edf0,#cfd7dc)}
 .aether-window-thin .aether-window-body{padding:8px 10px}.aether-window-dialog{background:linear-gradient(180deg,#fffefa,#eee9dc)}.aether-window-command{background:linear-gradient(180deg,#fbfaf5,#e4e0d5)}
