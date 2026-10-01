@@ -29,6 +29,6 @@ No Supabase migration is required because the marker and receipt are fields insi
 - Dedicated B54 marker/restart/lost-ACK/reconnect/corruption/UI file: 7/7 PASS; broader Ranked/recovery/lifecycle regression: 38/38 PASS before the final guard cases were added.
 - Full `npm test`: 1,524/1,524 PASS across 245 files, with 0 fail/skip/todo.
 - Source syntax, imports, lint, type contracts, structure, negative contracts, CSS, module and accessibility gates PASS.
-- Hosted Ubuntu, Windows and release-smoke evidence is recorded in the B54 progress journal after push.
+- Hosted CI run [`36815940073`](https://github.com/nbv9704/pokemon-vanguard/actions/runs/36815940073) PASS on Ubuntu, Windows and `release-smoke` for B54 code commit `d3424ab`.
 
 This closes optimization item #18 for the declared beta topology. It does not claim live match resume or multi-coordinator deployment support.
